@@ -44,6 +44,7 @@ func _ready() -> void:
 	add_child(UI.full(m))
 	_col = m
 	resized.connect(_fit)
+	_fit.call_deferred()
 	var v := UI.vbox(20)
 	m.add_child(v)
 

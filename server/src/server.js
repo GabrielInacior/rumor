@@ -48,8 +48,14 @@ const server = http.createServer((req, res) => {
   const file = path.normalize(path.join(PUBLIC, rel));
   if (!file.startsWith(path.normalize(PUBLIC))) { res.writeHead(403); res.end(); return; }
   fs.stat(file, (err, st) => {
-    if (err || !st.isFile()) { res.writeHead(404); res.end('não encontrado'); return; }
     const ext = path.extname(file).toLowerCase();
+    // na hospedagem só vão os .gz (repositório menor); entrega o comprimido mesmo sem o original
+    if ((err || !st.isFile()) && fs.existsSync(file + '.gz')) {
+      res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream', 'Content-Encoding': 'gzip', 'Cache-Control': 'public, max-age=300' });
+      fs.createReadStream(file + '.gz').pipe(res);
+      return;
+    }
+    if (err || !st.isFile()) { res.writeHead(404); res.end('não encontrado'); return; }
     const headers = {
       'Content-Type': MIME[ext] || 'application/octet-stream',
       // HTML sempre fresco (pega build novo); o resto pode ficar em cache curto

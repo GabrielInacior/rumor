@@ -1,0 +1,11 @@
+# Hospedagem gratuita no Render: um único serviço entrega o jogo (server/public) e as salas (WebSocket /ws).
+services:
+  - type: web
+    name: rumor
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install --omit=dev
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    autoDeploy: true

@@ -48,7 +48,7 @@ func _ready() -> void:
 		for f in 30:
 			await get_tree().process_frame
 		var img: Image = cs.vp.get_texture().get_image()
-		img.save_png(OUT + id + ".png")
+		img.save_png(OUT + id + OS.get_environment("SHOT_SUFFIX") + ".png")
 		shots.append(img)
 		# auditoria: âncoras faltando, malhas e luzes
 		var missing := []
@@ -59,7 +59,7 @@ func _ready() -> void:
 		print("SHOT %s size=%s meshes=%d omni_spot=%d dir=%d flavors=%d missing=%s" % [id, img.get_size(), counts[0], counts[1], counts[2], _flavors(cs), missing])
 		cs.queue_free()
 		await get_tree().process_frame
-	if only == "":
+	if only == "" and OS.get_environment("SHOT_SUFFIX") == "":
 		_sheet(shots)
 	get_tree().quit()
 

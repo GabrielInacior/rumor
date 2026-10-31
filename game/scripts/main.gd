@@ -106,6 +106,12 @@ func _dev_hooks() -> void:
 			if what == "palette" and current and current.has_method("_open_palette"):
 				current._open_palette()
 				return
+			if what == "submit_sheet" and current and current.has_method("_open_submit"):
+				current._open_submit()
+				return
+			if what.begins_with("loc_") and current and current.has_method("_load_location"):
+				current._load_location(what.substr(4))
+				return
 			if what == "close" and current and current.has_method("_close_sheet"):
 				current._close_sheet()
 				return
