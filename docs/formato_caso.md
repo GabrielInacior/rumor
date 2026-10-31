@@ -8,10 +8,12 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
 - Cada equipe tem um **quadro de detetive compartilhado** (cortiça). Qualquer membro fixa cartas
   (pessoas, lugares, fatos, pistas) e liga duas cartas com uma **linha** de um tipo (`link_types`).
 - Uma pista pode ser **presa numa linha** como prova (`evidence`).
-- A teoria entregue é o próprio quadro. O servidor confere as linhas exigidas em `solution.edges`.
-- Cada aluno recebe pistas **só dele** (distribuição `split`), então a equipe precisa conversar.
-  Ele decide fixar no quadro (aí a equipe inteira vê).
-- Algumas pistas aparecem tocando objetos da **cena 3D** (`hotspots`), outras chegam com o tempo.
+- A teoria entregue é o quadro **mais o culpado apontado** (`solution.culprit`).
+- A equipe anda por 3 a 4 **cenas** (`locations`), toca objetos (`hotspots`) e **interroga** pessoas
+  (`talk.tree`). Pistas também chegam com o tempo (`t+`).
+- Itens (`items`) ficam na **mochila da equipe** e servem para trocas com personagens.
+- O estado das conversas é **compartilhado pela equipe** via flags: se um colega ofendeu alguém,
+  a pessoa trata o próximo colega diferente.
 
 ## Campos
 
@@ -19,128 +21,155 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
 {
   "id": "rumor_1017",                 // = nome do arquivo
   "title": "O Rumor das 10h17",
-  "tagline": "Uma mensagem inocente. Uma escola em pânico.",   // 1 linha, tom noir divertido
+  "tagline": "Ninguém cancelou nada. Mas a escola inteira já chorou.",   // 1 linha, tom noir divertido
   "difficulty": 1,                    // 1 fácil, 2 médio, 3 difícil
   "duration_sec": 600,
-  // 3 cenas do caso. A primeira é onde o caso começa. Ids possíveis:
+  // Cenas do caso (fácil 3, médio 3 a 4, difícil 4). A primeira é onde o caso começa.
   // corredor | biblioteca | teatro | sala_aula | cantina | patio | sala_professores | quadra
-  "locations": ["corredor", "sala_aula", "patio"],
+  // sala_diretor | deposito | laboratorio | sala_musica
+  "locations": ["corredor", "sala_aula", "sala_musica"],
   "scene": "corredor",                // legado: sempre igual a locations[0]
-  // pessoas que aparecem fisicamente nas cenas: 1 a 2 por location (máx. 3). Cada uma tem talk.tree.
-  "scene_people": [{"id": "caio", "scene": "corredor"}, {"id": "duda", "scene": "patio"}],
-  "briefing": "Texto curto (máx. 45 palavras) lido na abertura. Voz de narrador noir.",
-  "goal": "Descubra quem contou para quem e onde a história mudou.",   // 1 frase, fica fixa na tela
+  // pessoas presentes fisicamente nas cenas (1 a 3 por cena). Cada uma precisa de talk.tree.
+  "scene_people": [{"id": "caio", "scene": "corredor"}, {"id": "duda", "scene": "sala_musica"}],
+  "briefing": "Máx. 45 palavras, com gancho forte. Voz de narrador noir.",
+  "goal": "1 frase, fica fixa na tela.",
 
-  "link_types": [                     // SÓ os tipos que este caso usa (2, máx. 3)
+  "link_types": [                     // 2 tipos (máx. 3), rótulos curtíssimos
     {"id": "contou", "label": "contou para", "directed": true},
-    {"id": "criou",  "label": "criou a versão", "directed": true}
+    {"id": "postou", "label": "postou", "directed": true}
   ],
 
   "cards": [                          // tudo que pode ir pro quadro, menos pistas
-    {"id": "lucia", "kind": "pessoa", "name": "Profa. Lúcia", "role": "organiza a viagem",
-     "look": {"skin": "#c98d6b", "hair": "coque", "hair_color": "#3a2a20", "top": "#7a5a9e", "accessory": "oculos"},
-     // talk: falas ao tocar na pessoa na cena 3D antes do depoimento (1 a 2, sem revelar nada)
-     // e a expressão padrão do rosto (mesmos valores de expr do dialogue)
-     "talk": {"greet": [{"text": "Eu? Tô só passando. Juro.", "expr": "nervoso", "anim": "negando"}], "mood": "neutro",
-       // tree: interrogatório (só para quem está em scene_people). Ver seção "Interrogatório".
-       "tree": {"start": "n1", "nodes": {
-         "n1": {"lines": [{"text": "Se for sobre a viagem, já falei mil vezes.", "expr": "desconfiado", "anim": "dando_de_ombros"}],
-                "choices": [
-                  {"text": "Mostrar o bilhete da Lúcia", "kind": "boa", "next": "conta",
-                   "requires": "c_bilhete", "unlock": "c_dep_caio"},
-                  {"text": "O que você sabe da viagem?", "kind": "neutra", "next": "n2"},
-                  {"text": "Foi você que inventou isso!", "kind": "ruim", "next": "bravo"}]},
-         "n2": {"lines": [...], "choices": [{"text": "Valeu, depois eu volto.", "kind": "neutra", "end": true}]},
-         "conta": {"lines": [...], "choices": [{"text": "Valeu, Caio.", "kind": "neutra", "end": true}]},
-         "bravo": {"lines": [{"text": "Sem prova? Tchau.", "expr": "bravo", "anim": "negando"}],
-                   "choices": [], "end": true, "lock": 20}}}}},
+    {"id": "caio", "kind": "pessoa", "name": "Caio", "role": "presidente do grêmio",
+     "look": {"skin": "#8d5524", "hair": "raspado", "hair_color": "#1a1a1a", "top": "#2e7d32", "accessory": "bone"},
+     // hair: curto|longo|coque|cacheado|raspado|franja|rabo  accessory: nenhum|oculos|bone|fones|brinco|cachecol
+     "talk": {
+       "greet": [{"text": "Eu? Tô só passando. Juro.", "expr": "nervoso", "anim": "negando"}],  // 1 a 2 falas, sem revelar nada
+       "mood": "desconfiado",                                                                      // expressão padrão
+       "tree": { ... }                                                                             // ver "Interrogatório"
+     }},
     {"id": "biblioteca", "kind": "lugar", "name": "Biblioteca"},
-    {"id": "versao_cancelada", "kind": "fato", "name": "\"A viagem foi cancelada\""}
+    {"id": "boato", "kind": "fato", "name": "Boato: \"a viagem foi cancelada\""}
+  ],
+
+  "items": [                          // objetos de troca, vão para a mochila da equipe
+    {"id": "carregador", "name": "Carregador de celular", "desc": "Vale ouro numa escola com celular em 2%."}
   ],
 
   "clues": [
     {
-      "id": "c_msg_1017",
-      "kind": "mensagem",             // mensagem | depoimento | registro | objeto | post | bilhete
-      "title": "Grupo do grêmio, 10h17",
-      "time": "10h17",                // opcional, mostrado na carta
-      "from": "caio",                 // opcional, id de carta pessoa (autor)
-      "text": "Texto curto (máx. 35 palavras). Mensagens podem usar \\n entre falas.",
-      "release": "start",             // start | "t+240" (segundos desde o início) | "hotspot" | "interrogatorio"
-                                      // interrogatorio = liberada por uma escolha com "unlock" numa talk.tree
-      "deal": "split"                 // split = vai pra UM aluno da equipe | team = todos veem
+      "id": "c_bilhete",
+      "kind": "bilhete",              // mensagem | depoimento | registro | objeto | post | bilhete
+      "title": "Bilhete da Lúcia",    // até 4 palavras
+      "time": "09h55",                // opcional
+      "who": "lucia",                 // opcional, id de pessoa (autor / quem fala)
+      "text": "Máx. 35 palavras. Uma informação clara por pista.",
+      "release": "hotspot",           // start | "t+180" | hotspot | interrogatorio
+      "deal": "team"                  // team = todos veem | split = vai pra UM aluno
     }
   ],
+  // Campos extras por tipo de pista:
+  //  mensagem: "app": "chat", "chat": {"group": "nome", "lines": [{"who": "id ou nome solto", "text": "...", "time": "10h17"}]}
+  //            o "text" vira resumo de 1 linha
+  //  post:     "post": {"user": "@arroba", "who": "id", "caption": "...", "likes": 87, "image": "o que a foto mostra",
+  //                     "comments": [{"user": "@x", "text": "..."}]}
+  //  depoimento: "dialogue" opcional: [{"text","expr","anim"}] (2 a 4 falas)
+  //  release "interrogatorio": a pista só existe quando um nó de talk.tree com "unlock" é alcançado.
 
-  // Campos opcionais por tipo de pista (a UI simula redes sociais):
-  //  "who": "id_pessoa"   autor/quem fala (depoimento, bilhete, registro). Substitui "from".
-  //  kind "mensagem" -> "app": "chat" e
-  //    "chat": {"group": "nome do grupo ou da pessoa",
-  //             "lines": [{"who": "id_pessoa ou nome solto", "text": "...", "time": "10h17"}]}
-  //    O "text" da pista vira um resumo de 1 linha, usado em listas.
-  //  kind "post" ->
-  //    "post": {"user": "@arroba", "who": "id_pessoa (opcional)", "caption": "...", "likes": 87,
-  //             "image": "descrição curta do que a foto mostra",
-  //             "comments": [{"user": "@x", "text": "..."}]}
-  //    O "text" da pista também vira resumo de 1 linha.
-  //  "title" curto (até 4 palavras). "time" opcional.
-  //  kind "depoimento" -> "dialogue": [{"text": "...", "expr": "...", "anim": "..."}]
-  //    2 a 4 falas (até 22 palavras cada) para a conversa 3D, com o MESMO conteúdo do "text".
-  //    O "text" continua como resumo.
-  //    expr: neutro | feliz | surpreso | bravo | desconfiado | triste | nervoso
-  //    anim: falando | pensando | nervoso | negando | apontando | dando_de_ombros | rindo
-
-  // objetos tocáveis nas cenas que liberam pista para a equipe. 1 a 2 por location (3 a 5 no caso).
-  // "scene" = uma das locations. "object" = uma âncora daquela cena:
-  //  corredor: quadro_avisos, mural, celular, armario_aberto, lixeira
-  //  biblioteca: caderno_entrada, pasta_gremio, computador, estante, mesa_estudo
-  //  teatro: caixa_props, quadro_teatro, trono, arara_figurino, cortina
-  //  sala_aula: lousa, mesa_professor, carteira_fundo, mochila, janela
-  //  cantina: balcao, cardapio, bandeja, geladeira, mural_cantina
-  //  patio: banco_patio, arvore, bicicletario, lixeira_patio, poste
-  //  sala_professores: escaninho, cafeteira, mural_recados, computador_prof, armario_prof
-  //  quadra: arquibancada, placar, bolsa_esportiva, vestiario_porta, rede
+  // 1 a 2 hotspots por cena. Cada hotspot dá UMA pista ("clue") OU UM item ("item").
   "hotspots": [
-    {"id": "hs_quadro", "scene": "corredor", "object": "quadro_avisos", "label": "Quadro de avisos", "clue": "c_bilhete"}
+    {"id": "hs_quadro", "scene": "corredor", "object": "quadro_avisos", "label": "Quadro de avisos", "clue": "c_bilhete"},
+    {"id": "hs_mochila", "scene": "sala_aula", "object": "mochila", "label": "Mochila perdida", "item": "carregador"}
   ],
 
   "solution": {
-    "categories": [                   // perguntas do caso, cada uma vira um selo de feedback
-      {"id": "origem", "label": "De onde veio a informação"},
-      {"id": "cadeia", "label": "Como ela se espalhou"},
-      {"id": "distorcao", "label": "Onde a história mudou"}
+    "culprit": "duda",                              // id da pessoa culpada (responsável principal)
+    "culprit_question": "Quem mudou a história?",   // mostrada na hora de apontar; vale como categoria a mais
+    "culprit_evidence": ["c_celular", "c_dm_duda"], // pistas que sustentam o culpado (para validação e revelação)
+    "categories": [{"id": "cadeia", "label": "Por onde o recado passou"}],   // máx. 3
+    "edges": [                                      // 3 a 4 linhas exigidas
+      {"from": "caio", "to": "duda", "type": "contou", "category": "cadeia",
+       "evidence": ["c_celular", "c_print_gremio"]}  // qualquer UMA delas presa vale
     ],
-    "edges": [                        // linhas EXIGIDAS (3 a 4 por caso, máx. 3 categorias)
-      {"from": "lucia", "to": "caio", "type": "contou", "category": "origem",
-       "evidence": ["c_dep_caio", "c_bilhete_lucia"]}   // [] = não exige prova presa
-    ],
-    "traps": [                        // linhas de hipóteses erradas plausíveis
-      {"from": "rafa", "to": "versao_cancelada", "type": "criou", "category": "distorcao"}
+    "traps": [                                      // 1 a 2 hipóteses erradas plausíveis
+      {"from": "rafa", "to": "boato", "type": "postou", "category": "post"}
     ]
   },
 
   "reveal": {
-    "timeline": [{"time": "09h50", "text": "A Profa. Lúcia avisa o Caio no corredor."}],
-    "explanation": "2 a 4 frases explicando a verdade e por que a pista X muda tudo.",
-    "refuted": ["Rafa não começou nada: o meme dele é das 10h40, depois da mensagem da Bia."]
+    "timeline": [{"time": "09h55", "text": "..."}],
+    "explanation": "2 a 4 frases com a verdade e o 'aha'.",
+    "refuted": ["Por que cada suspeito errado não foi."]
   }
 }
 ```
 
-## Interrogatório (talk.tree)
+### Âncoras de hotspot por cena
 
-- Árvore de 2 a 3 níveis. Cada nó tem `lines` (falas com expr/anim, até 22 palavras) e `choices` (2 a 3).
-- Escolha: `text` (fala do detetive, até 9 palavras), `kind` (`boa` | `neutra` | `ruim`), e então
-  `next` (id do próximo nó) OU `end: true` (encerra a conversa sem punição).
-  - `requires`: id de pista. A escolha só aparece se a equipe já tem essa pista (ex.: "Mostrar o print").
-  - `unlock`: id de pista com `release: "interrogatorio"`. Ao escolher, a pista vai para a equipe inteira
-    e a fala do nó de destino conta o conteúdo dela.
-- Escolha `ruim` (acusar sem prova, ser grosso) leva a um nó final: `"choices": [], "end": true, "lock": 20`.
-  A pessoa se fecha (expr bravo ou nervoso) e fica `lock` segundos sem conversa. Depois a conversa recomeça
-  do `start`, então a escolha boa continua disponível. Nenhum caminho trava a equipe para sempre.
-- Laço típico: achar pista na cena → mostrar para a pessoa (`requires`) → ela conta (`unlock`) → nova pista.
-- Toda pista com `release: "interrogatorio"` precisa de pelo menos um `unlock` alcançável, e toda linha
-  exigida precisa de pelo menos uma prova que não dependa de interrogatório (start team, t+ ou hotspot).
+| cena | objetos |
+|---|---|
+| corredor | quadro_avisos, mural, celular, armario_aberto, lixeira |
+| biblioteca | caderno_entrada, pasta_gremio, computador, estante, mesa_estudo |
+| teatro | caixa_props, quadro_teatro, trono, arara_figurino, cortina |
+| sala_aula | lousa, mesa_professor, carteira_fundo, mochila, janela |
+| cantina | balcao, cardapio, bandeja, geladeira, mural_cantina |
+| patio | banco_patio, arvore, bicicletario, lixeira_patio, poste |
+| sala_professores | escaninho, cafeteira, mural_recados, computador_prof, armario_prof |
+| quadra | arquibancada, placar, bolsa_esportiva, vestiario_porta, rede |
+| sala_diretor | mesa_diretor, gaveta, quadro_fotos, telefone, cofre |
+| deposito | caixa_achados, prateleira, vassoura, caixa_fusiveis, porta_fundos |
+| laboratorio | bancada, microscopio, armario_vidros, quadro_tabela, pia |
+| sala_musica | piano, bateria, estante_partituras, armario_instrumentos, quadro_horarios |
+
+## Interrogatório (talk.tree v2, estado da equipe)
+
+```jsonc
+"tree": {
+  "entries": [                                        // a primeira que casa vence
+    {"if": ["caio_bravo"], "ifnot": ["caio_carregado"], "node": "fechado"},
+    {"if": ["caio_contou"], "node": "reencontro"},
+    {"node": "inicio"}                                // a última, sem condição, é o padrão
+  ],
+  "nodes": {
+    "inicio": {
+      "lines": [{"text": "Fala rápido, meu celular tá com 2%.", "expr": "desconfiado", "anim": "dando_de_ombros"}],
+      "choices": [
+        {"text": "Mostrar o bilhete da Profa. Lúcia", "kind": "boa", "next": "conta", "requires": ["c_bilhete"]},
+        {"text": "Toma, carrega seu celular aqui", "kind": "boa", "next": "carrega", "requires": ["carregador"]},
+        {"text": "Foi você que inventou isso, né?", "kind": "ruim", "next": "bravo"},
+        {"text": "Valeu, depois eu volto.", "kind": "neutra", "end": true}
+      ]},
+    "carrega": {"lines": [...], "sets": ["caio_carregado"], "unlock": "c_print_gremio", "take_item": "carregador",
+                "choices": [{"text": "Valeu, Caio.", "kind": "neutra", "end": true}]},
+    "bravo":   {"lines": [{"text": "Sem prova? Tchau.", "expr": "bravo", "anim": "negando"}],
+                "sets": ["caio_bravo"], "end": true, "lock": 20, "choices": []},
+    "fechado": {"lines": [{"text": "{por:caio_bravo} já veio me chamar de mentiroso.", "expr": "bravo", "anim": "negando"}],
+                "choices": [...]}
+  }
+}
+```
+
+**Nó:** `lines` (1 a 3 falas, até 22 palavras cada; `expr`: neutro | feliz | surpreso | bravo | desconfiado | triste | nervoso;
+`anim`: falando | pensando | nervoso | negando | apontando | dando_de_ombros | rindo). Ao chegar no nó, a equipe ganha:
+`sets` (flags), `unlock` (pista com release interrogatorio), `give_item` (item na mochila). `take_item` tira o item da mochila
+(o nó só é alcançável se a equipe tem o item). `end: true` + `lock: N` encerra e bloqueia a conversa com essa pessoa por N segundos.
+
+**Escolha:** `text` (até 9 palavras, fala do detetive), `kind` (boa | neutra | ruim), `next` OU `end: true`.
+Condições: `requires` (ids de pista ou item que a equipe tem), `if` / `ifnot` (flags). Escolha que não passa nas
+condições fica escondida.
+
+**`{por:flag}`** nas falas é trocado pelo codinome do colega que ganhou aquela flag. Só use num nó que seta a flag
+ou que é aberto por uma entry com essa flag em `if`.
+
+**Regras de roteiro:**
+- 3 a 6 nós por pessoa. Entradas diferentes para a 1ª conversa, o reencontro e depois de flags importantes.
+- Todo nó não final tem uma saída livre (escolha sem `requires`/`if`, que não seja ruim).
+- Escolha `ruim` leva a um nó final com `sets` (ex.: `bia_ofendida`), `lock` e expressão brava ou nervosa.
+  A flag fecha a rota fácil: a pessoa passa a dar menos, ou só fala depois de uma troca ou de uma prova melhor.
+- NUNCA bloquear o progresso: toda linha exigida e o culpado precisam de pelo menos uma prova que não dependa
+  de interrogatório (start, t+ ou hotspot), e continuam alcançáveis mesmo com todas as flags ruins setadas.
+- Pelo menos uma tarefa de troca por caso: a pessoa pede algo, o item está em outra cena, entregar (`take_item`)
+  libera info extra ou um atalho.
 
 ## Regras de validação (servidor)
 
@@ -149,20 +178,18 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
 - Se `evidence` não está vazio, a linha precisa ter presa UMA das pistas da lista;
   senão o feedback da categoria é "a ligação existe, mas falta a prova".
 - Uma armadilha presente marca a categoria como "tem uma ligação errada aqui".
+- O culpado apontado vale como categoria extra (`culprit_question`).
 - Linhas a mais que não são armadilha são ignoradas.
-- Teoria correta = todas as linhas exigidas com prova e nenhuma armadilha.
+- Teoria correta = todas as linhas exigidas com prova, nenhuma armadilha e o culpado certo.
 - Teoria errada: equipe bloqueada por `penalty_sec` (padrão 45 s) para entregar de novo.
 - Fim do tempo sem acerto: vence a equipe com mais pontos de dedução na última entrega.
-  Pontos = 100 por linha exigida certa com prova, 50 sem prova, −60 por armadilha.
+  Pontos = 100 por linha exigida certa com prova, 50 sem prova, −60 por armadilha, +150 pelo culpado certo.
 
 ## Regras de escrita
 
-- Público com pouca experiência em jogos: casos simples. 3 a 4 linhas exigidas (máx. 3 categorias),
-  2 tipos de linha (máx. 3), 4 a 5 pessoas, até 2 lugares e 2 fatos, 7 a 9 pistas com UMA informação cada,
-  1 ou 2 armadilhas. Briefing até 45 palavras, pista até 35.
-- Cada linha exigida aceita 2 pistas como prova sempre que possível, uma delas `team` ou hotspot,
-  para nenhuma equipe travar se um aluno faltar.
-- Pistas curtas, legíveis no celular. Pelo menos 2 hipóteses plausíveis no começo.
-- Pelo menos uma pista que chega depois (`t+...`) e muda a leitura.
+- Público com pouca experiência em jogos: nada complexo, mas o culpado não pode ser óbvio.
+  2 suspeitos plausíveis + o verdadeiro, uma pista falsa justa, uma reviravolta que se encaixa, um "aha" deduzível.
+- 4 a 5 pessoas. Uma informação clara por pista. Pelo menos 1 pista `t+` (150 a 300) que vira o jogo.
+- Cada linha exigida aceita 2 ou mais pistas como prova, uma delas team ou hotspot.
 - Tudo deduzível só com as pistas, sem conhecimento externo. Nada pesado; tom leve.
-- Personagens fictícios. Sem travessão "—" nos textos ao jogador. Português do Brasil.
+- Personagens fictícios. Sem travessão nos textos ao jogador. Português do Brasil.

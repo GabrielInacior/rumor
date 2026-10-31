@@ -147,7 +147,7 @@ func _ready() -> void:
 	bubble.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var bv := UI.vbox(10)
 	text_l = UI.label("", 32, UI.INK, "type")
-	text_l.custom_minimum_size.y = 150
+	text_l.custom_minimum_size.y = 96
 	text_l.add_theme_constant_override("line_spacing", 8)
 	bv.add_child(text_l)
 	hint_l = UI.label("toque para continuar", 20, Color(UI.INK, 0.5), "bold")
@@ -226,10 +226,10 @@ func _build_set() -> void:
 	rim.position = Vector3(-1.1, 2.0, -0.8)
 	w.add_child(rim)
 	var cam := Camera3D.new()
-	cam.fov = 32
+	cam.fov = 36
 	w.add_child(cam)
-	cam.position = Vector3(0.15, 1.58, 1.9)
-	cam.look_at(Vector3(0.0, 1.42, 0), Vector3.UP)
+	cam.position = Vector3(0.18, 1.55, 2.35)
+	cam.look_at(Vector3(0.0, 1.36, 0), Vector3.UP)
 
 
 func _show_choices() -> bool:

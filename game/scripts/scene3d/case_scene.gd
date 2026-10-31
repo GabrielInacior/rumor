@@ -12,18 +12,18 @@ const TOON := preload("res://shaders/toon.gdshader")
 const OUTLINE := preload("res://shaders/outline.gdshader")
 const Character := preload("res://scripts/scene3d/character.gd")
 const PEOPLE_SPOTS := {
-	"corredor": [Vector3(0.9, 0, -3.6), Vector3(-1.1, 0, -6.6), Vector3(1.1, 0, -8.8)],
-	"biblioteca": [Vector3(-1.4, 0, -2.6), Vector3(0.4, 0, -5.4), Vector3(2.3, 0, -1.7)],
-	"teatro": [Vector3(-1.0, 0.9, -7.0), Vector3(1.9, 0.9, -7.3), Vector3(-3.5, 0, -2.6)],
-	"sala_aula": [Vector3(-0.2, 0, -5.6), Vector3(-2.0, 0, -2.0), Vector3(0.6, 0, -0.6)],
-	"cantina": [Vector3(-1.2, 0, -5.4), Vector3(1.6, 0, -3.6), Vector3(-0.8, 0, -0.8)],
-	"patio": [Vector3(0.2, 0, -4.4), Vector3(-1.4, 0, -6.2), Vector3(1.4, 0, -1.6)],
-	"sala_professores": [Vector3(-1.4, 0, -5.4), Vector3(1.6, 0, -4.6), Vector3(-0.2, 0, -1.6)],
-	"quadra": [Vector3(-1.2, 0, -4.0), Vector3(2.2, 0, -7.4), Vector3(0.4, 0, -1.4)],
+	"corredor": [Vector3(0.9, 0, -3.2), Vector3(-0.9, 0, -9.6), Vector3(1.0, 0, -11.4)],
+	"biblioteca": [Vector3(-1.1, 0, -2.4), Vector3(1.6, 0, -4.6), Vector3(-0.6, 0, -8.6)],
+	"teatro": [Vector3(-0.6, 0.9, -7.0), Vector3(1.9, 0.9, -7.3), Vector3(-1.4, 0, -4.4)],
+	"sala_aula": [Vector3(2.4, 0, -5.4), Vector3(-2.6, 0, -1.6), Vector3(1.25, 0, -3.2)],
+	"cantina": [Vector3(-2.5, 0, -5.4), Vector3(1.6, 0, -3.2), Vector3(-1.2, 0, -2.9)],
+	"patio": [Vector3(0.2, 0, -4.4), Vector3(-1.4, 0, -6.2), Vector3(-0.5, 0, -2.4)],
+	"sala_professores": [Vector3(0.9, 0, -5.0), Vector3(1.7, 0, -2.6), Vector3(-1.1, 0, -3.0)],
+	"quadra": [Vector3(-1.2, 0, -4.0), Vector3(2.2, 0, -7.4), Vector3(1.4, 0, -2.6)],
 	"sala_diretor": [Vector3(-0.9, 0, -5.4), Vector3(1.6, 0, -4.8), Vector3(-1.3, 0, -2.2)],
-	"deposito": [Vector3(-0.6, 0, -4.2), Vector3(1.4, 0, -4.6), Vector3(-0.5, 0, -1.0)],
-	"laboratorio": [Vector3(-1.6, 0, -3.8), Vector3(1.6, 0, -5.6), Vector3(0.4, 0, -1.2)],
-	"sala_musica": [Vector3(-1.6, 0, -5.4), Vector3(1.8, 0, -4.2), Vector3(-1.0, 0, -2.6)],
+	"deposito": [Vector3(-0.6, 0, -4.2), Vector3(1.3, 0, -3.6), Vector3(-0.9, 0, -2.6)],
+	"laboratorio": [Vector3(-1.6, 0, -3.8), Vector3(2.0, 0, -3.6), Vector3(-1.2, 0, -2.0)],
+	"sala_musica": [Vector3(-1.6, 0, -5.6), Vector3(1.7, 0, -4.6), Vector3(-1.3, 0, -3.0)],
 	"fachada": [Vector3(-1.5, 0, 0.6), Vector3(0.0, 0, 1.0), Vector3(1.5, 0, 0.6)],
 }
 
@@ -97,7 +97,7 @@ func _build() -> void:
 	e.background_color = Color("#0a1430")
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = Color("#2a3f78")
-	e.ambient_light_energy = 0.9
+	e.ambient_light_energy = 1.35
 	e.fog_enabled = true
 	e.fog_light_color = Color("#16244d")
 	e.fog_density = 0.025
@@ -524,11 +524,18 @@ func _win_wall(along_x: bool, at: float, a0: float, a1: float, h: float, sill: f
 		else:
 			ledge = _box(Vector3(at + lin, sill + 0.02, c), Vector3(0.2, 0.05, ww + 0.1), WALL_L, 0.0, 0.0, 0.012)
 		ledges.append(ledge)
+		if sill < 2.0:
+			for half in [-1.0, 1.0]:
+				var pc := c + half * ww * 0.25
+				var pdepth := -out * 1.25
+				var ppos := Vector3(pc, 0.008, at + pdepth) if along_x else Vector3(at + pdepth, 0.008, pc)
+				var psz := Vector3(ww * 0.45, 0.004, 1.1) if along_x else Vector3(1.1, 0.004, ww * 0.45)
+				_flat(ppos, psz, Color("#7d9be0"), 0.0, 0.3, Color("#7d9be0"))
 	if a1 - cursor > 0.02:
 		_wpiece(along_x, at, (cursor + a1) * 0.5, (sill + head) * 0.5, a1 - cursor, head - sill, th, col)
 	# céu lá fora: um painel aceso longe da parede e a chuva entre os dois
 	var sky_pos := Vector3(mid, h * 0.5, at + out * 2.2) if along_x else Vector3(at + out * 2.2, h * 0.5, mid)
-	_flat(sky_pos, Vector3(length + 4, h + 4, 0.1) if along_x else Vector3(0.1, h + 4, length + 4), SKY, 0.0, 0.9, SKY)
+	_flat(sky_pos, Vector3(length + 4, h + 4, 0.1) if along_x else Vector3(0.1, h + 4, length + 4), SKY, 0.0, 1.5, SKY)
 	if rain:
 		var rc := Vector3(mid, h * 0.5, at + out * 1.0) if along_x else Vector3(at + out * 1.0, h * 0.5, mid)
 		_rain(rc, Vector3(length, h + 1.0, 1.2) if along_x else Vector3(1.2, h + 1.0, length), int(length * 14))
@@ -549,7 +556,7 @@ func _rain(center: Vector3, size: Vector3, count: int, seed := 7) -> void:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	var bm := BoxMesh.new()
-	bm.size = Vector3(0.018, 0.5, 0.018)
+	bm.size = Vector3(0.012, 0.42, 0.012)
 	mm.mesh = bm
 	mm.instance_count = count * 2
 	var b := Basis(Vector3(1, 0, 0), 0.1)
@@ -561,7 +568,7 @@ func _rain(center: Vector3, size: Vector3, count: int, seed := 7) -> void:
 	mmi.multimesh = mm
 	var m := StandardMaterial3D.new()
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.albedo_color = Color(0.62, 0.74, 1.0, 0.5)
+	m.albedo_color = Color(0.62, 0.74, 1.0, 0.38)
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mmi.material_override = m
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -596,8 +603,8 @@ func _beam(from: Vector3, to: Vector3, r_from: float, r_to: float, col: Color, a
 ## poça: mancha escura com o reflexo esticado da luz mais próxima (reflexo falso, custo zero)
 func _puddle(pos: Vector3, size: Vector2, refl: Color, refl_off := 0.0) -> void:
 	_disc(pos + Vector3(0, 0.006, 0), 1.0, Color("#0e1a40"), Vector3(size.x, 1, size.y))
-	_disc(pos + Vector3(refl_off, 0.012, 0), 1.0, Color("#6f8fd8"), Vector3(size.x * 0.75, 1, size.y * 0.6), 0.35)
-	_flat(pos + Vector3(refl_off, 0.016, size.y * 0.1), Vector3(0.12, 0.004, size.y * 1.2), refl, 0.0, 1.6, refl)
+	_disc(pos + Vector3(refl_off, 0.012, 0), 1.0, Color("#3a52a0"), Vector3(size.x * 0.75, 1, size.y * 0.6), 0.12)
+	_flat(pos + Vector3(refl_off, 0.016, size.y * 0.1), Vector3(0.07, 0.004, size.y * 1.1), refl, 0.0, 0.8, refl)
 
 
 ## lua no céu: disco aceso e halo
@@ -639,7 +646,10 @@ func _chair(pos: Vector3, rot_y: float, col: Color) -> MeshInstance3D:
 	var fwd := Vector3(sin(rot_y), 0, cos(rot_y))
 	var seat := _box(pos + Vector3(0, 0.45, 0), Vector3(0.42, 0.05, 0.4), col, rot_y, 0.0, 0.012)
 	_box(pos + Vector3(0, 0.72, 0) - fwd * 0.19, Vector3(0.42, 0.3, 0.04), col, rot_y, 0.0, 0.012)
-	_box(pos + Vector3(0, 0.22, 0), Vector3(0.36, 0.44, 0.34), METAL_D, rot_y, 0.0, 0.0)
+	# armação em trenó: duas laterais finas de metal (lê como pés, custa duas caixas)
+	var side := Vector3(cos(rot_y), 0, -sin(rot_y))
+	for s in [-1.0, 1.0]:
+		_flat(pos + Vector3(0, 0.22, 0) + side * (0.18 * s), Vector3(0.025, 0.44, 0.34), METAL_D, rot_y)
 	return seat
 
 
@@ -718,11 +728,11 @@ func _scene_corredor() -> void:
 	var cel := _box(Vector3(W - 0.3, 0.48, -2.4), Vector3(0.12, 0.02, 0.2), INK, 0.4, 0.0, 0.006)
 	_flat(Vector3(W - 0.3, 0.495, -2.4), Vector3(0.1, 0.005, 0.17), Color("#fff2b8"), 0.4, 2.5, Color("#fff2b8"))
 	# lixeira com bolinhas de papel: duas erraram o arremesso
-	var lixo := _cyl(Vector3(1.75, 0.36, -4.0), 0.22, 0.72, METAL_D, 0.25)
-	_torus(Vector3(1.75, 0.72, -4.0), 0.22, 0.26, METAL)
-	_ball(Vector3(1.72, 0.74, -3.95), 0.08, PAPER)
-	_ball(Vector3(1.45, 0.07, -3.55), 0.07, PAPER)
-	_ball(Vector3(1.2, 0.07, -4.3), 0.07, PAPER)
+	var lixo := _cyl(Vector3(1.85, 0.36, -5.2), 0.22, 0.72, METAL_D, 0.25)
+	_torus(Vector3(1.85, 0.72, -5.2), 0.22, 0.26, METAL)
+	_ball(Vector3(1.82, 0.74, -5.15), 0.08, PAPER)
+	_ball(Vector3(1.5, 0.07, -4.7), 0.07, PAPER)
+	_ball(Vector3(1.3, 0.07, -5.5), 0.07, PAPER)
 	# bebedouro e extintor na parede das janelas
 	var beb := _box(Vector3(W - 0.2, 0.75, -7.5), Vector3(0.34, 0.5, 0.5), METAL)
 	_box(Vector3(W - 0.2, 1.02, -7.5), Vector3(0.38, 0.06, 0.54), METAL_D, 0.0, 0.0, 0.01)
@@ -767,7 +777,12 @@ func _scene_corredor() -> void:
 	}
 	_free_anchors = [{"mesh": banco}, {"pos": Vector3(-W + 0.6, 0.15, -1.0), "size": Vector3(0.3, 0.05, 0.25)}]
 	_moon(Vector3(-1.0, -0.6, 0.25), 1.15)
-	_camera(Vector3(-0.3, 1.55, 2.6), Vector3(0.1, 1.2, -4.5), 0.42)
+	# piso encerado: reflexo comprido da porta acesa e folhas caídas perto da câmera
+	_flat(Vector3(0, 0.004, -10.5), Vector3(0.7, 0.004, 8.0), Color("#c8a868"), 0.0, 0.22, Color("#c8a868"))
+	_flat(Vector3(0, 0.003, -12.5), Vector3(0.35, 0.004, 4.0), Color("#e8c070"), 0.0, 0.5, Color("#e8c070"))
+	_box(Vector3(-0.5, 0.01, -1.4), Vector3(0.22, 0.01, 0.3), PAPER, 0.5, 0.0, 0.006)
+	_box(Vector3(-0.2, 0.01, -1.9), Vector3(0.22, 0.01, 0.3), CREAM, -0.3, 0.0, 0.006)
+	_camera(Vector3(0.5, 1.75, 2.8), Vector3(-0.5, 1.15, -5.0), 0.42)
 
 
 func _scene_biblioteca() -> void:
@@ -848,11 +863,14 @@ func _scene_biblioteca() -> void:
 	_free_anchors = [{"pos": Vector3(0.4, 0.82, -6.2), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-2.8, 0.1, -1.4), "size": Vector3(0.3, 0.15, 0.3)}]
 	_moon(Vector3(0.3, -0.7, 1.0), 0.9)
 	_light(Vector3(0.4, 2.2, -10.6), Color("#9fb8ff"), 1.0, 4.5)
-	_camera(Vector3(0.2, 1.8, 2.4), Vector3(0.2, 1.0, -4.4), 0.5)
+	# pilha de livros no chão perto da câmera, esperando alguém guardar
+	for b in 4:
+		_box(Vector3(-0.55, 0.05 + b * 0.09, -0.5), Vector3(0.34 - b * 0.03, 0.08, 0.26), BOOK_COLS[b + 1], b * 0.35 - 0.4, 0.0, 0.01)
+	_camera(Vector3(0.7, 2.3, 2.8), Vector3(0.1, 0.9, -4.4), 0.5)
 
 
 func _scene_teatro() -> void:
-	_flat(Vector3(0, -0.05, -4), Vector3(12, 0.1, 15), Color("#3a2a3e"))
+	_flat(Vector3(0, -0.05, -4), Vector3(12, 0.1, 15), Color("#4e3a52"))
 	_flat(Vector3(0, 6.0, -4), Vector3(12, 0.1, 15), INK)
 	_flat(Vector3(-5.5, 3, -4), Vector3(0.1, 6, 15), WALL)
 	_flat(Vector3(5.5, 3, -4), Vector3(0.1, 6, 15), WALL)
@@ -865,7 +883,7 @@ func _scene_teatro() -> void:
 		_cyl(Vector3(-2.7 + f * 0.9, 0.95, -5.65), 0.08, 0.08, CREAM, 0.05, 1.5)
 	_flat(Vector3(0, 3, -9.7), Vector3(11, 6, 0.1), NAVY)
 	# cenário pintado ao fundo: lua de papelão e cidade recortada
-	var lua := _cyl(Vector3(-1.6, 3.6, -9.55), 0.75, 0.05, CREAM)
+	var lua := _cyl(Vector3(-1.6, 3.6, -9.55), 0.75, 0.05, CREAM, -1.0, 0.35)
 	lua.rotation.x = PI / 2.0
 	_flavor(lua, "A lua do cenário. Papelão, cola quente e muita fé.")
 	for b in [[-3.6, 1.6, 1.0], [-2.5, 2.4, 0.8], [-1.5, 1.3, 1.0], [-0.3, 2.9, 0.9], [0.9, 1.8, 1.1], [2.1, 2.5, 0.8], [3.2, 1.5, 1.2]]:
@@ -873,13 +891,13 @@ func _scene_teatro() -> void:
 		_flat(Vector3(b[0] + 0.15, 0.9 + b[1] * 0.7, -9.46), Vector3(0.14, 0.18, 0.01), Color("#a8873d"))
 	var cortina: MeshInstance3D
 	for side in [-1, 1]:
-		var cort := _box(Vector3(side * 3.6, 3.0, -5.6), Vector3(1.6, 4.8, 0.25), RED_D)
+		var cort := _box(Vector3(side * 3.3, 3.0, -5.6), Vector3(1.6, 4.8, 0.25), RED_D)
 		for f in 5:
-			_flat(Vector3(side * (2.95 + f * 0.32), 3.0, -5.45), Vector3(0.06, 4.8, 0.06), Color("#5e1a2a"))
+			_flat(Vector3(side * (2.65 + f * 0.32), 3.0, -5.45), Vector3(0.06, 4.8, 0.06), Color("#5e1a2a"))
 		if side == -1:
 			cortina = cort
 		# cordão dourado prendendo a cortina
-		_torus(Vector3(side * 2.85, 2.0, -5.45), 0.06, 0.1, Color("#c9a24a"), Vector3(0, 0, PI / 2.0))
+		_torus(Vector3(side * 2.55, 2.0, -5.45), 0.06, 0.1, Color("#c9a24a"), Vector3(0, 0, PI / 2.0))
 	_box(Vector3(0, 5.3, -5.6), Vector3(9, 0.9, 0.3), RED_D)
 	for f in 9:
 		_flat(Vector3(-4.0 + f * 1.0, 4.8, -5.42), Vector3(0.5, 0.12, 0.02), Color("#5e1a2a"))
@@ -897,7 +915,7 @@ func _scene_teatro() -> void:
 	spot.spot_angle = 20.0
 	world.add_child(spot)
 	spot.look_at(Vector3(0.7, 0.9, -7.8), Vector3.UP)
-	_beam(Vector3(0.7, 5.6, -4.6), Vector3(0.7, 0.92, -7.8), 0.08, 1.1, Color("#ffd27a"), 0.08)
+	_beam(Vector3(0.7, 5.6, -4.6), Vector3(0.7, 0.92, -7.8), 0.08, 1.1, Color("#ffd27a"), 0.035)
 	_cyl(Vector3(0.7, 5.7, -4.5), 0.16, 0.35, INK)
 	# arara de figurinos no palco
 	var arara := _box(Vector3(-1.7, 2.6, -7.4), Vector3(1.4, 0.05, 0.05), METAL, 0.0, 0.0, 0.012)
@@ -908,10 +926,10 @@ func _scene_teatro() -> void:
 	for r in roupas:
 		_box(Vector3(r[0], 2.55 - r[1] * 0.5, -7.4), Vector3(0.24, r[1], 0.32), r[2], 0.0, 0.0, 0.012)
 	# caixa de objetos de cena na beira do palco: espada de madeira e máscara
-	var caixa := _box(Vector3(-2.3, 1.2, -6.2), Vector3(0.8, 0.6, 0.6), Color("#a07a4a"))
-	_box(Vector3(-2.25, 1.6, -6.2), Vector3(0.06, 0.9, 0.06), Color("#c9bfa6"), 0.0, 0.0, 0.01).rotation.z = 0.4
-	_ball(Vector3(-2.5, 1.56, -6.1), 0.14, CREAM, Vector3(1, 1, 0.4))
-	_flat(Vector3(-2.3, 1.2, -5.89), Vector3(0.5, 0.12, 0.01), INK)
+	var caixa := _box(Vector3(-1.95, 1.2, -6.2), Vector3(0.8, 0.6, 0.6), Color("#a07a4a"))
+	_box(Vector3(-1.9, 1.6, -6.2), Vector3(0.06, 0.9, 0.06), Color("#c9bfa6"), 0.0, 0.0, 0.01).rotation.z = 0.4
+	_ball(Vector3(-2.15, 1.56, -6.1), 0.14, CREAM, Vector3(1, 1, 0.4))
+	_flat(Vector3(-1.95, 1.2, -5.89), Vector3(0.5, 0.12, 0.01), INK)
 	# quadro de ensaio no cavalete, no chão à direita
 	var quadro := _box(Vector3(2.4, 1.5, -4.5), Vector3(1.0, 0.8, 0.05), BOARD, -0.3)
 	_text(Vector3(2.4, 1.6, -4.46), "ENSAIO GERAL\nSEXTA 19H", 0.12, CREAM, "marker", -0.3)
@@ -923,8 +941,8 @@ func _scene_teatro() -> void:
 		for c in 6:
 			var cx := -2.5 + c * 1.0
 			var cz := -2.6 + r * 1.2
-			var assento := _box(Vector3(cx, 0.45, cz), Vector3(0.7, 0.12, 0.6), Color("#6b2a3e"), 0.0, 0.0, 0.015)
-			_box(Vector3(cx, 0.85, cz + 0.28), Vector3(0.7, 0.7, 0.1), Color("#6b2a3e"), 0.0, 0.0, 0.015)
+			var assento := _box(Vector3(cx, 0.45, cz), Vector3(0.66, 0.12, 0.6), Color("#94485f"), 0.0, 0.0, 0.015)
+			_box(Vector3(cx, 0.78, cz + 0.28), Vector3(0.66, 0.56, 0.1), Color("#94485f"), 0.0, 0.0, 0.015)
 			if r == 0 and c == 4:
 				_flavor(assento, "Poltrona 12F. Tem um chiclete aqui de uma estreia antiga.")
 	# escada do iluminador e saco de areia
@@ -947,7 +965,11 @@ func _scene_teatro() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(-0.8, 1.0, -6.6), "size": Vector3(0.4, 0.2, 0.3)}, {"pos": Vector3(2.4, 1.0, -7.0), "size": Vector3(0.3, 0.3, 0.3)}]
 	_moon(Vector3(0.6, -0.8, -0.4), 0.55)
-	_camera(Vector3(0.0, 2.5, 3.4), Vector3(-0.1, 1.5, -5.0), 0.55)
+	for r in 4:
+		for sx in [-3.15, 3.15]:
+			_flat(Vector3(sx, 0.03, -3.2 + r * 1.2), Vector3(0.12, 0.05, 0.08), WARM, 0.0, 1.6, WARM)
+	_light(Vector3(0, 3.2, -1.2), Color("#ffb070"), 0.7, 5.0)
+	_camera(Vector3(0.0, 3.3, 5.2), Vector3(0.0, 1.25, -6.0), 0.5)
 
 
 func _scene_sala_aula() -> void:
@@ -1005,9 +1027,9 @@ func _scene_sala_aula() -> void:
 	var aviao := _box(Vector3(0.6, 0.03, -1.0), Vector3(0.24, 0.03, 0.12), PAPER, 0.9, 0.0, 0.008)
 	_flavor(aviao, "Um avião de papel. Pousou mal. Piloto não identificado.")
 	# mochila no chão ao lado da carteira do fundo
-	var mochila := _box(Vector3(1.85, 0.22, -0.8), Vector3(0.34, 0.44, 0.22), Color("#4f7a5a"), -0.3)
-	_box(Vector3(1.88, 0.15, -0.68), Vector3(0.26, 0.2, 0.06), Color("#3d6a4a"), -0.3, 0.0, 0.01)
-	_torus(Vector3(1.85, 0.46, -0.8), 0.05, 0.08, INK, Vector3(PI / 2.0, -0.3, 0))
+	var mochila := _box(Vector3(1.2, 0.22, -0.95), Vector3(0.34, 0.44, 0.22), Color("#4f7a5a"), -0.3)
+	_box(Vector3(1.23, 0.15, -0.83), Vector3(0.26, 0.2, 0.06), Color("#3d6a4a"), -0.3, 0.0, 0.01)
+	_torus(Vector3(1.2, 0.46, -0.95), 0.05, 0.08, INK, Vector3(PI / 2.0, -0.3, 0))
 	var lixo := _cyl(Vector3(2.9, 0.3, -6.6), 0.2, 0.6, METAL_D, 0.22)
 	_ball(Vector3(2.9, 0.62, -6.6), 0.09, PAPER)
 	_flavor(lixo, "Lixeira cheia de rascunhos de redação sobre \"o futuro\". Ninguém passou do título.")
@@ -1027,7 +1049,7 @@ func _scene_sala_aula() -> void:
 	}
 	_free_anchors = [{"mesh": ledges[0]}, {"pos": Vector3(0.0, 0.8, -4.4), "size": Vector3(0.3, 0.04, 0.25)}]
 	_moon(Vector3(0.9, -0.6, -0.3), 1.0)
-	_camera(Vector3(1.4, 2.1, 2.4), Vector3(-0.4, 1.1, -4.8), 0.45)
+	_camera(Vector3(1.6, 2.5, 2.6), Vector3(-0.5, 0.95, -4.8), 0.45)
 
 
 func _scene_cantina() -> void:
@@ -1045,7 +1067,9 @@ func _scene_cantina() -> void:
 	# balcão com vidro de proteção, cubas, bandejas empilhadas
 	var balcao := _box(Vector3(-0.4, 0.5, -6.4), Vector3(3.6, 1.0, 0.8), METAL_D)
 	_box(Vector3(-0.4, 1.02, -6.4), Vector3(3.7, 0.05, 0.9), METAL, 0.0, 0.0, 0.012)
-	_flat(Vector3(-0.4, 1.4, -6.05), Vector3(3.5, 0.6, 0.02), Color("#8fb0e8"), 0.0, 0.15, Color("#8fb0e8"))
+	_flat(Vector3(-0.4, 1.7, -6.05), Vector3(3.5, 0.03, 0.03), METAL)
+	for gx in [-2.1, -0.4, 1.3]:
+		_flat(Vector3(gx, 1.36, -6.05), Vector3(0.03, 0.68, 0.03), METAL)
 	for cx in [-1.7, -0.9, -0.1, 0.7]:
 		_flat(Vector3(cx, 1.03, -6.5), Vector3(0.65, 0.04, 0.45), INK)
 	_flat(Vector3(-1.7, 1.05, -6.5), Vector3(0.55, 0.02, 0.35), Color("#c9bfa6"))
@@ -1124,7 +1148,7 @@ func _scene_cantina() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.9, 0.8, -1.4), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-1.0, 0.8, -4.2), "size": Vector3(0.3, 0.05, 0.25)}]
 	_moon(Vector3(-0.6, -0.7, -0.4), 0.8)
-	_camera(Vector3(0.2, 1.9, 2.6), Vector3(0.0, 1.1, -4.8), 0.45)
+	_camera(Vector3(0.4, 2.6, 2.8), Vector3(-0.2, 0.95, -5.5), 0.45)
 
 
 func _scene_patio() -> void:
@@ -1141,8 +1165,10 @@ func _scene_patio() -> void:
 			_flat(Vector3(-6 + c * 2.0, 1.8 + f * 3.0, -12.78), Vector3(1.1, 1.3, 0.05), YEL if lit else Color("#1e2c5a"), 0.0, 1.6 if lit else 0.0, YEL)
 			_flat(Vector3(-6 + c * 2.0, 1.1 + f * 3.0, -12.72), Vector3(1.3, 0.08, 0.15), WALL_L)
 	var janela_acesa := _flat(Vector3(2.0, 4.8, -12.76), Vector3(1.1, 1.3, 0.01), YEL, 0.0, 1.6, YEL)
+	_flat(Vector3(2.0, 4.8, -12.7), Vector3(0.05, 1.3, 0.03), INK)
+	_flat(Vector3(2.0, 4.95, -12.7), Vector3(1.1, 0.05, 0.03), INK)
 	_flavor(janela_acesa, "Uma janela acesa no segundo andar. Alguém ainda está lá dentro. Ou esqueceram a luz.")
-	_moon_disc(Vector3(-5.0, 11.0, -24.0), 1.1)
+	_moon_disc(Vector3(-3.6, 12.5, -24.0), 1.1)
 	# muros laterais
 	_flat(Vector3(-6.5, 1.2, -5), Vector3(0.3, 2.4, 16), WALL_M)
 	_flat(Vector3(6.5, 1.2, -5), Vector3(0.3, 2.4, 16), WALL_M)
@@ -1200,7 +1226,7 @@ func _scene_patio() -> void:
 	_puddle(Vector3(1.0, 0, -3.4), Vector2(1.0, 0.6), YEL, 0.2)
 	_puddle(Vector3(-0.6, 0, -0.2), Vector2(0.7, 0.4), Color("#9fb8ff"))
 	_puddle(Vector3(-3.6, 0, -4.6), Vector2(0.8, 0.5), Color("#9fb8ff"))
-	_rain(Vector3(0, 4, -4), Vector3(10, 8, 10), 520)
+	_rain(Vector3(0, 4, -6.5), Vector3(12, 8, 8), 360)
 	_light(Vector3(2.0, 3.2, -11.8), YEL, 1.4, 4.0)
 	_anchors = {
 		"banco_patio": {"mesh": banco, "say": "O banco do pátio. Encharcado. Já ouviu mais segredos que o diário de qualquer um."},
@@ -1211,7 +1237,7 @@ func _scene_patio() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.5, 0.5, -5.2), "size": Vector3(0.3, 0.06, 0.25)}, {"pos": Vector3(-1.0, 0.05, -3.4), "size": Vector3(0.3, 0.06, 0.3)}]
 	_moon(Vector3(0.7, -0.6, 0.5), 0.9)
-	_camera(Vector3(0.0, 1.7, 3.6), Vector3(0.0, 1.6, -6.0), 0.45)
+	_camera(Vector3(0.0, 1.9, 3.6), Vector3(0.0, 1.5, -6.0), 0.45)
 
 
 func _scene_sala_professores() -> void:
@@ -1266,18 +1292,21 @@ func _scene_sala_professores() -> void:
 	var galao := _cyl(Vector3(2.9, 1.35, -4.1), 0.15, 0.4, Color("#8fb0e8"), 0.13)
 	_flavor(galao, "O galão de água está vazio. Ninguém troca. É um jogo de paciência entre adultos.")
 	# mesa do computador encostada à esquerda
-	_box(Vector3(-2.6, 0.74, -1.6), Vector3(0.8, 0.05, 1.4), WOOD, 0.0, 0.0, 0.012)
-	_flat(Vector3(-2.6, 0.37, -2.2), Vector3(0.7, 0.72, 0.05), WOOD_DD)
-	var pc := _box(Vector3(-2.75, 1.05, -1.7), Vector3(0.4, 0.4, 0.4), Color("#c9bfa6"), 0.5)
-	_flat(Vector3(-2.57, 1.07, -1.6), Vector3(0.02, 0.28, 0.32), Color("#8fe8c8"), 0.5 + PI / 2.0, 1.4, Color("#8fe8c8"))
-	_flat(Vector3(-2.4, 0.78, -1.45), Vector3(0.18, 0.02, 0.4), INK, 0.5)
+	var DZ := -3.0
+	_box(Vector3(-2.4, 0.74, -1.6 + DZ), Vector3(0.8, 0.05, 1.4), WOOD, 0.0, 0.0, 0.012)
+	_flat(Vector3(-2.4, 0.37, -2.2 + DZ), Vector3(0.7, 0.72, 0.05), WOOD_DD)
+	_flat(Vector3(-2.4, 0.37, -1.0 + DZ), Vector3(0.7, 0.72, 0.05), WOOD_DD)
+	var pc := _box(Vector3(-2.55, 1.0, -1.7 + DZ), Vector3(0.4, 0.4, 0.4), Color("#c9bfa6"), 0.5)
+	_flat(Vector3(-2.45, 1.02, -1.51 + DZ), Vector3(0.32, 0.28, 0.02), Color("#8fe8c8"), 0.5, 1.4, Color("#8fe8c8"))
+	_flat(Vector3(-2.2, 0.78, -1.45 + DZ), Vector3(0.18, 0.02, 0.4), INK, 0.5)
 	for n in 3:
-		_flat(Vector3(-2.52 + n * 0.02, 1.27, -1.82 + n * 0.12), Vector3(0.01, 0.06, 0.06), YEL, 0.5)
-	_light(Vector3(-2.2, 1.2, -1.4), Color("#a8f0d0"), 0.6, 2.2)
+		_flat(Vector3(-2.32 + n * 0.02, 1.22, -1.82 + n * 0.12 + DZ), Vector3(0.01, 0.06, 0.06), YEL, 0.5)
+	_chair(Vector3(-1.75, 0, -1.6 + DZ), -PI / 2.0, RED_D)
+	_light(Vector3(-2.0, 1.3, -1.4 + DZ), Color("#a8f0d0"), 0.6, 2.2)
 	# planta cansada no canto
-	var vaso := _cyl(Vector3(-2.9, 0.22, -6.0), 0.2, 0.44, Color("#a05a4a"), 0.24)
+	var vaso := _cyl(Vector3(1.6, 0.22, -6.6), 0.2, 0.44, Color("#a05a4a"), 0.24)
 	for f in 4:
-		var folha := _box(Vector3(-2.9 + cos(f * 1.6) * 0.15, 0.6, -6.0 + sin(f * 1.6) * 0.15), Vector3(0.06, 0.4, 0.14), Color("#4f6a4a"), f * 1.6, 0.0, 0.01)
+		var folha := _box(Vector3(1.6 + cos(f * 1.6) * 0.15, 0.6, -6.6 + sin(f * 1.6) * 0.15), Vector3(0.06, 0.4, 0.14), Color("#4f6a4a"), f * 1.6, 0.0, 0.01)
 		folha.rotation.z = 0.6 + f * 0.1
 	_flavor(vaso, "Uma planta que já viu três diretores. Ela está cansada.")
 	# ventilador de teto girando devagar
@@ -1301,20 +1330,20 @@ func _scene_sala_professores() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.2, 0.8, -3.7), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(2.9, 0.98, -2.7), "size": Vector3(0.2, 0.1, 0.2)}]
 	_moon(Vector3(0.8, -0.5, -0.2), 1.0)
-	_camera(Vector3(0.6, 1.9, 2.4), Vector3(-0.2, 1.1, -4.4), 0.45)
+	_camera(Vector3(0.8, 2.4, 2.6), Vector3(-0.3, 0.95, -4.6), 0.45)
 
 
 func _scene_quadra() -> void:
 	_sky(Color("#0a1430"), Color("#2a3f78"), 0.95, Color("#16244d"), 0.02)
-	_flat(Vector3(0, -0.05, -5.5), Vector3(14, 0.1, 18), Color("#6e5a4a"))
+	_flat(Vector3(0, -0.05, -5.5), Vector3(14, 0.1, 18), Color("#7a6450"))
 	for i in 9:
 		_flat(Vector3(-6 + i * 1.5, 0.002, -5.5), Vector3(0.02, 0.004, 18), Color("#5e4a3e"))
 	# linhas da quadra
 	for lz in [-0.5, -10.5]:
-		_flat(Vector3(0, 0.006, lz), Vector3(9, 0.004, 0.06), CREAM)
-	for lx in [-4.5, 4.5]:
+		_flat(Vector3(0, 0.006, lz), Vector3(6.4, 0.004, 0.06), CREAM)
+	for lx in [-3.2, 3.2]:
 		_flat(Vector3(lx, 0.006, -5.5), Vector3(0.06, 0.004, 10), CREAM)
-	_flat(Vector3(0, 0.006, -5.5), Vector3(9, 0.004, 0.06), CREAM)
+	_flat(Vector3(0, 0.006, -5.5), Vector3(6.4, 0.004, 0.06), CREAM)
 	_torus(Vector3(0, 0.006, -5.5), 1.0, 1.06, CREAM, Vector3.ZERO).scale = Vector3(1, 0.02, 1)
 	_flat(Vector3(0, 7.0, -5.5), Vector3(14, 0.1, 18), INK)
 	_flat(Vector3(-7, 3.5, -5.5), Vector3(0.1, 7, 18), WALL_M)
@@ -1323,69 +1352,70 @@ func _scene_quadra() -> void:
 	# janelas altas na parede direita com chuva
 	_win_wall(false, 7.0, -14.5, 3.5, 7.0, 4.2, 6.2, [[-11.0, 2.2], [-7.0, 2.2], [-3.0, 2.2], [1.0, 2.2]], WALL_M, 1.0)
 	# placar aceso no fundo (o time da casa está perdendo)
-	var placar := _box(Vector3(1.2, 5.3, -14.35), Vector3(3.2, 1.3, 0.2), INK)
-	_text(Vector3(1.2, 5.65, -14.22), "CASA      VISITA", 0.16, CREAM, "bebas")
-	_text(Vector3(0.45, 5.15, -14.22), "03", 0.5, YEL, "bebas")
-	_text(Vector3(1.95, 5.15, -14.22), "21", 0.5, YEL, "bebas")
-	_light(Vector3(1.2, 4.6, -13.4), Color("#ffd27a"), 1.2, 4.0)
+	var placar := _box(Vector3(2.2, 5.3, -14.35), Vector3(3.2, 1.3, 0.2), INK)
+	_text(Vector3(2.2, 5.65, -14.22), "CASA      VISITA", 0.16, CREAM, "bebas")
+	_text(Vector3(1.45, 5.15, -14.22), "03", 0.5, YEL, "bebas")
+	_text(Vector3(2.95, 5.15, -14.22), "21", 0.5, YEL, "bebas")
+	_light(Vector3(2.2, 4.6, -13.4), Color("#ffd27a"), 1.2, 4.0)
 	# tabela de basquete
-	_box(Vector3(-2.4, 3.6, -14.0), Vector3(1.6, 1.0, 0.06), PAPER, 0.0, 0.0, 0.015)
-	_flat(Vector3(-2.4, 3.45, -13.96), Vector3(0.5, 0.4, 0.01), RED)
-	_flat(Vector3(-2.4, 3.45, -13.955), Vector3(0.4, 0.3, 0.012), PAPER)
-	_flat(Vector3(-2.4, 3.6, -14.3), Vector3(0.1, 0.1, 0.5), METAL_D)
-	_torus(Vector3(-2.4, 3.1, -13.75), 0.2, 0.23, RED)
-	var cesta := _cyl(Vector3(-2.4, 2.9, -13.75), 0.2, 0.36, CREAM, 0.13)
+	_box(Vector3(-0.9, 3.6, -14.0), Vector3(1.6, 1.0, 0.06), PAPER, 0.0, 0.0, 0.015)
+	_flat(Vector3(-0.9, 3.45, -13.96), Vector3(0.5, 0.4, 0.01), RED)
+	_flat(Vector3(-0.9, 3.45, -13.955), Vector3(0.4, 0.3, 0.012), PAPER)
+	_flat(Vector3(-0.9, 3.6, -14.3), Vector3(0.1, 0.1, 0.5), METAL_D)
+	_torus(Vector3(-0.9, 3.1, -13.75), 0.2, 0.23, RED)
+	var cesta := _cyl(Vector3(-0.9, 2.9, -13.75), 0.2, 0.36, CREAM, 0.13)
 	_flavor(cesta, "Placa: \"Proibido pendurar no aro\". O aro está torto. Alguém leu tarde.")
 	# porta do vestiário no fundo
-	_flat(Vector3(-5.2, 1.15, -14.42), Vector3(1.3, 2.3, 0.06), WALL_L)
-	var vest := _box(Vector3(-5.2, 1.1, -14.38), Vector3(1.1, 2.1, 0.06), TEAL)
-	_flat(Vector3(-5.2, 1.6, -14.34), Vector3(0.4, 0.5, 0.01), Color("#8fb0e8"), 0.0, 0.3, Color("#8fb0e8"))
-	_text(Vector3(-5.2, 2.5, -14.36), "VESTIÁRIO", 0.18, CREAM, "bebas")
-	_flat(Vector3(-4.75, 1.05, -14.33), Vector3(0.12, 0.04, 0.04), METAL)
+	_flat(Vector3(-3.9, 1.15, -14.42), Vector3(1.3, 2.3, 0.06), WALL_L)
+	var vest := _box(Vector3(-3.9, 1.1, -14.38), Vector3(1.1, 2.1, 0.06), TEAL)
+	_flat(Vector3(-3.9, 1.6, -14.34), Vector3(0.4, 0.5, 0.01), Color("#8fb0e8"), 0.0, 0.3, Color("#8fb0e8"))
+	_text(Vector3(-3.9, 2.5, -14.36), "VESTIÁRIO", 0.18, CREAM, "bebas")
+	_flat(Vector3(-3.45, 1.05, -14.33), Vector3(0.12, 0.04, 0.04), METAL)
 	# arquibancada de degraus à direita
 	var arq: MeshInstance3D
 	for s in 5:
 		var st := _box(Vector3(5.9 - s * 0.0 + s * 0.0, 0.25 + s * 0.5, -6.5), Vector3(1.8 - s * 0.36, 0.5, 11), Color("#5a6a9e") if s % 2 == 0 else Color("#4c5c94"), 0.0, 0.0, 0.015)
-		st.position.x = 5.1 + s * 0.18
+		st.position.x = 4.6 + s * 0.18
 		if s == 0:
 			arq = st
-		_flat(Vector3(4.2 + s * 0.36, 0.52 + s * 0.5, -6.5), Vector3(0.12, 0.04, 11), WOOD)
-	_box(Vector3(4.35, 0.7, -4.5), Vector3(0.3, 0.2, 0.25), RED, 0.3, 0.0, 0.01)
+		_flat(Vector3(3.7 + s * 0.36, 0.52 + s * 0.5, -6.5), Vector3(0.12, 0.04, 11), WOOD)
+	_box(Vector3(3.9, 0.7, -4.5), Vector3(0.3, 0.2, 0.25), RED, 0.3, 0.0, 0.01)
 	# rede de vôlei atravessando a quadra
-	var rede := _box(Vector3(0, 2.38, -5.5), Vector3(9.0, 0.08, 0.04), PAPER, 0.0, 0.0, 0.012)
-	for px in [-4.6, 4.6]:
+	var rede := _box(Vector3(0, 2.38, -5.5), Vector3(6.6, 0.08, 0.04), PAPER, 0.0, 0.0, 0.012)
+	for px in [-3.35, 3.35]:
 		_cyl(Vector3(px, 1.25, -5.5), 0.05, 2.5, METAL_D)
 	var net := []
-	for i in 46:
-		net.append([Vector3(-4.5 + i * 0.2, 1.9, -5.5), Vector3(0.012, 0.9, 0.012), INK])
+	for i in 33:
+		net.append([Vector3(-3.2 + i * 0.2, 1.9, -5.5), Vector3(0.012, 0.9, 0.012), INK])
 	for j in 5:
-		net.append([Vector3(0, 1.48 + j * 0.2, -5.5), Vector3(9.0, 0.012, 0.012), INK])
-	_flat(Vector3(0, 1.45, -5.5), Vector3(9.0, 0.03, 0.02), PAPER)
+		net.append([Vector3(0, 1.48 + j * 0.2, -5.5), Vector3(6.6, 0.012, 0.012), INK])
+	_flat(Vector3(0, 1.45, -5.5), Vector3(6.6, 0.03, 0.02), PAPER)
 	_mm(net)
 	# banco com a bolsa esportiva, bolas espalhadas, carrinho e cone
-	_box(Vector3(-2.2, 0.42, -1.2), Vector3(2.0, 0.06, 0.4), WOOD, 0.0, 0.0, 0.012)
+	_box(Vector3(-1.3, 0.42, -2.0), Vector3(2.0, 0.06, 0.4), WOOD, 0.0, 0.0, 0.012)
 	for lx in [-0.85, 0.85]:
-		_flat(Vector3(-2.2 + lx, 0.2, -1.2), Vector3(0.06, 0.4, 0.34), METAL_D)
-	var bolsa := _cyl(Vector3(-2.0, 0.62, -1.2), 0.17, 0.75, Color("#26407a"))
+		_flat(Vector3(-1.3 + lx, 0.2, -2.0), Vector3(0.06, 0.4, 0.34), METAL_D)
+	var bolsa := _cyl(Vector3(-1.1, 0.62, -2.0), 0.17, 0.75, Color("#26407a"))
 	bolsa.rotation.z = PI / 2.0
-	_flat(Vector3(-2.0, 0.62, -1.02), Vector3(0.6, 0.04, 0.02), CREAM)
-	_torus(Vector3(-2.0, 0.8, -1.2), 0.12, 0.15, INK, Vector3(PI / 2.0, 0, 0))
-	_ball(Vector3(-2.7, 0.55, -1.2), 0.1, CREAM, Vector3(1.4, 0.6, 1))   # toalha
-	var murcha := _ball(Vector3(1.6, 0.08, -2.4), 0.13, Color("#a0603e"), Vector3(1.2, 0.55, 1.2))
+	_flat(Vector3(-1.1, 0.62, -1.82), Vector3(0.6, 0.04, 0.02), CREAM)
+	_torus(Vector3(-1.1, 0.8, -2.0), 0.12, 0.15, INK, Vector3(PI / 2.0, 0, 0))
+	_ball(Vector3(-1.8, 0.55, -2.0), 0.1, CREAM, Vector3(1.4, 0.6, 1))   # toalha
+	var murcha := _ball(Vector3(0.6, 0.08, -3.4), 0.13, Color("#a0603e"), Vector3(1.2, 0.55, 1.2))
 	_flavor(murcha, "Uma bola de basquete murcha. Ela também desistiu do campeonato.")
 	_ball(Vector3(2.8, 0.12, -8.5), 0.12, CREAM)
 	_ball(Vector3(-0.8, 0.12, -9.2), 0.12, Color("#a0603e"))
-	var carr := _box(Vector3(-4.6, 0.55, -8.0), Vector3(0.8, 0.9, 0.6), METAL_D, 0.3, 0.0, 0.012)
+	var carr := _box(Vector3(-3.0, 0.55, -8.0), Vector3(0.8, 0.9, 0.6), METAL_D, 0.3, 0.0, 0.012)
 	for b in 4:
-		_ball(Vector3(-4.8 + (b % 2) * 0.35, 1.1, -8.1 + (b / 2) * 0.25), 0.13, Color("#a0603e") if b % 2 == 0 else CREAM)
+		_ball(Vector3(-3.2 + (b % 2) * 0.35, 1.1, -8.1 + (b / 2) * 0.25), 0.13, Color("#a0603e") if b % 2 == 0 else CREAM)
 	_flavor(carr, "O carrinho de bolas. Metade murcha, metade fugiu. Típico fim de bimestre.")
-	var cone := _cyl(Vector3(3.4, 0.2, -3.0), 0.16, 0.4, RED, 0.02)
+	var cone := _cyl(Vector3(2.7, 0.2, -3.6), 0.16, 0.4, RED, 0.02)
 	_flavor(cone, "Um cone. Ninguém sabe de onde veio, mas ele sempre volta para a quadra.")
 	# refletores do teto: um aceso
 	for lx in [-3.0, 3.0]:
 		_cyl(Vector3(lx, 6.7, -6.0), 0.4, 0.3, METAL_D, 0.3)
 	_cyl(Vector3(-3.0, 6.53, -6.0), 0.32, 0.02, Color("#dfe8ff"), -1.0, 1.4)
-	_light(Vector3(-3.0, 5.0, -6.0), Color("#cfdcff"), 1.3, 9.0)
+	_light(Vector3(-3.0, 5.0, -6.0), Color("#cfdcff"), 1.5, 9.0)
+	_light(Vector3(2.0, 3.5, -3.0), Color("#9fb8ff"), 0.8, 7.0)
 	_anchors = {
 		"arquibancada": {"mesh": arq, "say": "A arquibancada. Chiclete grudado em cada degrau, como fósseis."},
 		"placar": {"mesh": placar, "say": "Casa 03, visita 21. O placar ficou ligado para a humilhação durar."},
@@ -1395,7 +1425,7 @@ func _scene_quadra() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(-1.6, 0.48, -1.2), "size": Vector3(0.3, 0.06, 0.25)}, {"pos": Vector3(4.4, 1.02, -7.5), "size": Vector3(0.3, 0.06, 0.25)}]
 	_moon(Vector3(-0.8, -0.5, -0.3), 0.9)
-	_camera(Vector3(-0.8, 2.4, 3.4), Vector3(0.6, 1.8, -8.0), 0.5)
+	_camera(Vector3(-0.6, 3.2, 4.0), Vector3(0.8, 1.5, -8.5), 0.5)
 
 
 func _scene_sala_diretor() -> void:
@@ -1474,7 +1504,7 @@ func _scene_sala_diretor() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.3, 0.9, -4.5), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-2.3, 0.1, -4.6), "size": Vector3(0.3, 0.15, 0.3)}]
 	_moon(Vector3(-1.0, -0.5, -0.3), 1.0)
-	_camera(Vector3(0.3, 1.75, 1.8), Vector3(-0.1, 1.05, -4.6), 0.45)
+	_camera(Vector3(0.3, 2.2, 2.1), Vector3(-0.1, 0.95, -4.6), 0.45)
 
 
 func _scene_deposito() -> void:
@@ -1559,7 +1589,7 @@ func _scene_deposito() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(-1.95, 1.2, -2.8), "size": Vector3(0.3, 0.1, 0.25)}, {"pos": Vector3(0.0, 0.05, -2.4), "size": Vector3(0.3, 0.1, 0.3)}]
 	_moon(Vector3(0.4, -0.8, -0.3), 0.5)
-	_camera(Vector3(0.15, 1.65, 1.5), Vector3(0.0, 1.0, -4.0), 0.42)
+	_camera(Vector3(0.2, 2.1, 1.8), Vector3(0.0, 0.9, -4.0), 0.42)
 
 
 func _scene_laboratorio() -> void:
@@ -1665,7 +1695,7 @@ func _scene_laboratorio() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.6, 0.98, -5.0), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-1.0, 0.98, -2.6), "size": Vector3(0.2, 0.1, 0.2)}]
 	_moon(Vector3(0.9, -0.6, -0.3), 1.0)
-	_camera(Vector3(0.6, 2.0, 2.3), Vector3(-0.1, 1.15, -4.6), 0.45)
+	_camera(Vector3(0.7, 2.5, 2.6), Vector3(-0.2, 1.0, -4.8), 0.45)
 
 
 func _scene_sala_musica() -> void:
@@ -1748,8 +1778,8 @@ func _scene_sala_musica() -> void:
 	_text(Vector3(-3.42, 2.1, -2.4), "FESTIVAL\nDA CANÇÃO", 0.1, CREAM, "marker", PI / 2.0)
 	_flavor(cartaz, "Cartaz do festival da canção. A vencedora do ano passado ainda canta no recreio. Sem parar.")
 	_mm(keys)
-	_light(Vector3(-0.6, 2.2, -4.4), WARM, 1.6, 4.0)
-	_light(Vector3(2.4, 2.0, -3.0), Color("#9fb8ff"), 0.6, 3.0)
+	_light(Vector3(-0.6, 2.2, -4.4), WARM, 2.2, 4.5)
+	_light(Vector3(2.0, 2.2, -3.0), Color("#9fb8ff"), 1.0, 4.0)
 	_anchors = {
 		"piano": {"mesh": piano, "say": "O piano. Duas teclas não tocam. Por isso todo mundo só sabe tocar música triste."},
 		"bateria": {"mesh": bumbo, "say": "A bateria da banda \"Os Suspeitos\". O nome não ajuda nesse momento."},
@@ -1759,7 +1789,7 @@ func _scene_sala_musica() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.0, 0.5, -2.4), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-1.6, 0.1, -3.2), "size": Vector3(0.3, 0.15, 0.3)}]
 	_moon(Vector3(0.6, -0.7, -0.3), 0.7)
-	_camera(Vector3(0.4, 1.8, 2.2), Vector3(-0.2, 1.0, -4.6), 0.45)
+	_camera(Vector3(0.5, 2.4, 2.6), Vector3(-0.3, 0.9, -4.6), 0.45)
 
 
 ## fachada da escola à noite, só para o menu: chuva, poste amarelo e uma janela acesa no 2º andar
@@ -1801,6 +1831,7 @@ func _scene_fachada() -> void:
 	_flat(Vector3(0, 2.8, BZ + 1.0), Vector3(0.3, 0.04, 0.3), Color("#dfe8ff"), 0.0, 1.0, Color("#dfe8ff"))
 	_box(Vector3(0, 3.55, BZ + 0.28), Vector3(4.2, 0.85, 0.12), NAVY, 0.0, 0.0, 0.02)
 	_text(Vector3(0, 3.55, BZ + 0.36), "ESCOLA", 0.62, CREAM, "bebas", 0.0, 10)
+	_text(Vector3(0, 3.2, BZ + 0.36), "DESDE 1974", 0.13, Color("#9aa6c8"), "bebas")
 	_light(Vector3(0, 2.6, BZ + 1.5), Color("#cfdcff"), 0.9, 4.0)
 	# muro com grade e portão entreaberto
 	for side in [-1, 1]:
@@ -1855,15 +1886,15 @@ func _scene_fachada() -> void:
 	_puddle(Vector3(-2.0, 0, 2.2), Vector2(1.3, 0.7), YEL, 0.1)
 	_puddle(Vector3(1.4, 0, 3.6), Vector2(1.0, 0.5), Color("#9fb8ff"))
 	_puddle(Vector3(3.0, 0, 1.6), Vector2(0.8, 0.4), YEL, 0.0)
-	_moon_disc(Vector3(-6.0, 12.0, -26.0), 1.3)
+	_moon_disc(Vector3(-2.4, 13.5, -26.0), 1.3)
 	# morros/prédios distantes atrás da escola
 	for b in [[-12, 4, 6], [-6, 3, 5], [9, 5, 6], [14, 3.5, 5]]:
 		_flat(Vector3(b[0], b[1] * 0.5 + 1.0, -16), Vector3(b[2], b[1] + 2, 0.5), Color("#141e44"))
-	_rain(Vector3(0, 4.5, 0.5), Vector3(12, 9, 10), 600)
+	_rain(Vector3(0, 4.5, -1.5), Vector3(13, 9, 7), 380)
 	_anchors = {}
 	_free_anchors = []
 	_moon(Vector3(0.6, -0.6, -0.5), 0.8)
-	_camera(Vector3(0.4, 1.5, 8.0), Vector3(0.2, 3.2, -6.0), 0.35)
+	_camera(Vector3(0.4, 1.7, 7.2), Vector3(0.2, 3.9, -6.0), 0.35)
 
 
 # ------------------------------------------------------------------ interação

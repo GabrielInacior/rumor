@@ -1,13 +1,14 @@
 {
   "id": "objeto_trocado",
   "title": "O Troféu que Mudou de Lugar",
-  "tagline": "Dourado, brilhante e no lugar errado.",
-  "difficulty": 2,
-  "duration_sec": 720,
+  "tagline": "O troféu nunca sumiu. Ele só virou de plástico.",
+  "difficulty": 3,
+  "duration_sec": 900,
   "scene": "teatro",
   "locations": [
     "teatro",
-    "corredor",
+    "sala_diretor",
+    "laboratorio",
     "quadra"
   ],
   "scene_people": [
@@ -16,105 +17,139 @@
       "scene": "teatro"
     },
     {
-      "id": "jorge",
-      "scene": "teatro"
+      "id": "otavio",
+      "scene": "sala_diretor"
     },
     {
-      "id": "caio",
-      "scene": "corredor"
+      "id": "vini",
+      "scene": "laboratorio"
     },
     {
       "id": "gabriel",
       "scene": "quadra"
     }
   ],
-  "briefing": "Terça, 16h. O troféu da gincana sumiu do armário do grêmio e apareceu no depósito do teatro. O time do Gabriel perdeu a final, e a escola já decidiu: foi vingança. Será? Refaça o caminho do troféu, mão por mão.",
-  "goal": "Descubra por quais mãos o troféu passou e quem levou para o depósito.",
+  "briefing": "15h, ensaio da peça. O 'troféu do rei', de plástico, de repente pesa uma tonelada e tem gravação: Gincana 2026. É o troféu de verdade. Então o que está na sala do diretor? A escola já culpa o Gabriel. Será?",
+  "goal": "Refaça o caminho do troféu verdadeiro e aponte quem trocou os troféus.",
   "link_types": [
-    {
-      "id": "entregou",
-      "label": "entregou para",
-      "directed": true
-    },
-    {
-      "id": "deixou",
-      "label": "deixou em",
-      "directed": true
-    },
     {
       "id": "estava",
       "label": "estava em",
+      "directed": true
+    },
+    {
+      "id": "levou",
+      "label": "levou o troféu para",
       "directed": true
     }
   ],
   "cards": [
     {
-      "id": "caio",
+      "id": "sofia",
       "kind": "pessoa",
-      "name": "Caio",
-      "role": "presidente do grêmio",
+      "name": "Sofia",
+      "role": "cuida dos objetos da peça",
       "look": {
-        "skin": "#8d5524",
-        "hair": "raspado",
-        "hair_color": "#1a1a1a",
-        "top": "#2e7d32",
-        "accessory": "bone"
+        "skin": "#6b4423",
+        "hair": "franja",
+        "hair_color": "#1b1b1b",
+        "top": "#4a148c",
+        "accessory": "brinco"
       },
       "talk": {
         "greet": [
           {
-            "text": "Se a Profa. Marta perguntar, eu tô procurando o troféu. Muito.",
-            "expr": "nervoso",
-            "anim": "nervoso"
+            "text": "Cuidado aí, isso é cenário! Não encosta na coroa!",
+            "expr": "surpreso",
+            "anim": "apontando"
           }
         ],
         "mood": "nervoso",
         "tree": {
-          "start": "n1",
+          "entries": [
+            {
+              "if": [
+                "sofia_ajudou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "sofia_brava"
+              ],
+              "node": "fechada"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
           "nodes": {
-            "n1": {
+            "inicio": {
               "lines": [
                 {
-                  "text": "Se a Profa. Marta perguntar, eu tô procurando o troféu. Muito.",
-                  "expr": "nervoso",
+                  "text": "Gente, o troféu do rei tá PESADO. E tem uma gravação nele. Eu tô surtando.",
+                  "expr": "surpreso",
                   "anim": "nervoso"
                 }
               ],
               "choices": [
                 {
-                  "text": "Mostrar a ficha do armário",
+                  "text": "Quem devolveu o troféu do rei hoje?",
                   "kind": "boa",
                   "next": "conta",
-                  "requires": "c_ficha",
-                  "unlock": "c_dep_caio"
+                  "requires": [
+                    "c_lista_teatro"
+                  ]
                 },
                 {
-                  "text": "Cadê o troféu, Caio?",
+                  "text": "Toma, fita pra arrumar a coroa",
+                  "kind": "boa",
+                  "next": "fita",
+                  "requires": [
+                    "fita"
+                  ]
+                },
+                {
+                  "text": "Calma. Desde quando ele tá assim?",
                   "kind": "neutra",
-                  "next": "n2"
+                  "next": "calma"
                 },
                 {
-                  "text": "Você sumiu com o troféu!",
+                  "text": "Você escondeu o troféu, né, Sofia?",
                   "kind": "ruim",
-                  "next": "bravo"
+                  "next": "brava"
                 }
               ]
             },
-            "n2": {
+            "calma": {
               "lines": [
                 {
-                  "text": "Se eu soubesse, não tava suando assim, né?",
+                  "text": "Segunda ele era de plástico, levinho. Hoje, no ensaio das 15h, o rei quase deslocou o ombro.",
                   "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "E a coroa quebrou também. Dia lindo. Alguém tem fita?",
+                  "expr": "triste",
                   "anim": "dando_de_ombros"
                 }
               ],
               "choices": [
                 {
-                  "text": "Mostrar a ficha do armário",
+                  "text": "Quem devolveu o troféu do rei hoje?",
                   "kind": "boa",
                   "next": "conta",
-                  "requires": "c_ficha",
-                  "unlock": "c_dep_caio"
+                  "requires": [
+                    "c_lista_teatro"
+                  ]
+                },
+                {
+                  "text": "Toma, fita pra arrumar a coroa",
+                  "kind": "boa",
+                  "next": "fita",
+                  "requires": [
+                    "fita"
+                  ]
                 },
                 {
                   "text": "Valeu, depois eu volto.",
@@ -126,22 +161,190 @@
             "conta": {
               "lines": [
                 {
-                  "text": "Emprestei pro Vini às 14h50, pra foto do anuário. Ele jurou devolver às 15h30.",
-                  "expr": "neutro",
-                  "anim": "falando"
+                  "text": "Só o Vini assina essa lista. Pegou segunda pra uma foto e devolveu hoje, 13h25.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
                 },
                 {
-                  "text": "Não devolveu. E meu celular morreu às 15h. Dia perfeito.",
-                  "expr": "triste",
+                  "text": "Tava suado e nem me olhou. Achei que era treino de academia.",
+                  "expr": "neutro",
                   "anim": "dando_de_ombros"
+                }
+              ],
+              "sets": [
+                "sofia_ajudou"
+              ],
+              "unlock": "c_dep_sofia",
+              "choices": [
+                {
+                  "text": "Valeu, Sofia.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "fita": {
+              "lines": [
+                {
+                  "text": "Fita silver tape! Você salvou a coroa do rei. E a minha sanidade.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Em troca: quem devolveu o troféu do rei foi o Vini, 13h25, suando que nem tampa de panela.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "sofia_ajudou"
+              ],
+              "unlock": "c_dep_sofia",
+              "take_item": "fita",
+              "choices": [
+                {
+                  "text": "Valeu, Sofia.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "brava": {
+              "lines": [
+                {
+                  "text": "Eu?! Fui EU que avisei do troféu! Sai do meu palco.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "sofia_brava"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechada": {
+              "lines": [
+                {
+                  "text": "{por:sofia_brava} me acusou na frente do elenco inteiro. Só converso se me ajudarem com a coroa.",
+                  "expr": "bravo",
+                  "anim": "negando"
                 }
               ],
               "choices": [
                 {
-                  "text": "Seu celular já carregou?",
+                  "text": "Toma, fita pra arrumar a coroa",
                   "kind": "boa",
-                  "next": "msg",
-                  "unlock": "c_chat_vini"
+                  "next": "fita",
+                  "requires": [
+                    "fita"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "otavio",
+      "kind": "pessoa",
+      "name": "Sr. Otávio",
+      "role": "diretor da escola",
+      "look": {
+        "skin": "#8a5a3c",
+        "hair": "curto",
+        "hair_color": "#bdbdbd",
+        "top": "#263238",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Jovem, isso aqui é uma sala, não um corredor.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "diretor_sabe"
+              ],
+              "node": "reencontro"
+            },
+            {
+              "if": [
+                "diretor_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Sala do diretor não é passagem, jovem. Seja breve.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "O troféu verdadeiro está no teatro",
+                  "kind": "boa",
+                  "next": "choque",
+                  "requires": [
+                    "c_trofeu_pesado"
+                  ]
+                },
+                {
+                  "text": "Quem passou aqui hoje?",
+                  "kind": "neutra",
+                  "next": "visitas"
+                },
+                {
+                  "text": "O senhor perdeu o troféu, né?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "visitas": {
+              "lines": [
+                {
+                  "text": "O Gabriel, por causa de uma bola no telhado. E o Vini, querendo fotografar o troféu. Neguei. Só sexta.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                },
+                {
+                  "text": "Fui buscar um café e ele esperou um minutinho aqui. Bom menino, o Vini.",
+                  "expr": "feliz",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "sets": [
+                "diretor_visitas"
+              ],
+              "choices": [
+                {
+                  "text": "O troféu verdadeiro está no teatro",
+                  "kind": "boa",
+                  "next": "choque",
+                  "requires": [
+                    "c_trofeu_pesado"
+                  ]
                 },
                 {
                   "text": "Valeu, depois eu volto.",
@@ -150,17 +353,25 @@
                 }
               ]
             },
-            "msg": {
+            "choque": {
               "lines": [
                 {
-                  "text": "Peraí, ligou! Ih, o Vini mandou mensagem às 15h12. Olha isso.",
+                  "text": "No teatro?! Mas ele está ali na estan... isso é PLÁSTICO?",
                   "expr": "surpreso",
                   "anim": "apontando"
+                },
+                {
+                  "text": "Às 13h fiquei vinte minutos no telefone, aqui dentro. Ninguém conseguiria destrocar sem eu ver.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
                 }
+              ],
+              "sets": [
+                "diretor_sabe"
               ],
               "choices": [
                 {
-                  "text": "Valeu, Caio.",
+                  "text": "Vamos descobrir, diretor.",
                   "kind": "neutra",
                   "end": true
                 }
@@ -169,14 +380,57 @@
             "bravo": {
               "lines": [
                 {
-                  "text": "Eu?? Eu sou o presidente do grêmio! Sem prova, sem papo.",
+                  "text": "Perdi? Eu? Quarenta anos de magistério, jovem. Fora.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "diretor_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:diretor_bravo} já me faltou com respeito. Volte com algo útil.",
                   "expr": "bravo",
                   "anim": "negando"
                 }
               ],
-              "choices": [],
-              "end": true,
-              "lock": 20
+              "choices": [
+                {
+                  "text": "O troféu verdadeiro está no teatro",
+                  "kind": "boa",
+                  "next": "choque",
+                  "requires": [
+                    "c_trofeu_pesado"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "reencontro": {
+              "lines": [
+                {
+                  "text": "Encontrem quem trocou isso. Até sexta, por favor. A cerimônia tem bolo.",
+                  "expr": "nervoso",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
             }
           }
         }
@@ -202,74 +456,90 @@
             "anim": "rindo"
           }
         ],
-        "mood": "feliz"
-      }
-    },
-    {
-      "id": "sofia",
-      "kind": "pessoa",
-      "name": "Sofia",
-      "role": "cuida dos objetos da peça",
-      "look": {
-        "skin": "#6b4423",
-        "hair": "franja",
-        "hair_color": "#1b1b1b",
-        "top": "#4a148c",
-        "accessory": "brinco"
-      },
-      "talk": {
-        "greet": [
-          {
-            "text": "Cuidado aí, isso é cenário! Não encosta na coroa!",
-            "expr": "surpreso",
-            "anim": "apontando"
-          }
-        ],
-        "mood": "nervoso",
+        "mood": "feliz",
         "tree": {
-          "start": "n1",
+          "entries": [
+            {
+              "if": [
+                "vini_confessou"
+              ],
+              "node": "confessa"
+            },
+            {
+              "if": [
+                "vini_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
           "nodes": {
-            "n1": {
+            "inicio": {
               "lines": [
                 {
-                  "text": "Cuidado aí, isso é cenário! Não encosta na coroa!",
-                  "expr": "surpreso",
-                  "anim": "apontando"
+                  "text": "Opa! Foto pro anuário? Sorria! Brincadeira, tô sem tempo. Prova de química.",
+                  "expr": "feliz",
+                  "anim": "rindo"
                 }
               ],
               "choices": [
                 {
-                  "text": "Mostrar o post-it 'ACHEI!!!'",
-                  "kind": "boa",
-                  "next": "conta",
-                  "requires": "c_postit"
-                },
-                {
-                  "text": "Você tem a chave do depósito?",
+                  "text": "Você viu algo estranho hoje?",
                   "kind": "neutra",
-                  "next": "n2"
+                  "next": "mentira"
                 },
                 {
-                  "text": "Você roubou o troféu da gincana!",
+                  "text": "Mostrar a lista do teatro e seu story",
+                  "kind": "boa",
+                  "next": "confessa",
+                  "requires": [
+                    "c_lista_teatro",
+                    "c_post_anuario"
+                  ]
+                },
+                {
+                  "text": "Você roubou o troféu, Vini!",
                   "kind": "ruim",
                   "next": "bravo"
                 }
               ]
             },
-            "n2": {
+            "mentira": {
               "lines": [
                 {
-                  "text": "Tenho, sou eu que guardo os objetos da peça. Por quê?",
+                  "text": "Vi, sim. O Gabriel saindo da sala do diretor com uma sacola dourada. Suspeito, né?",
                   "expr": "desconfiado",
-                  "anim": "pensando"
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Eu? Tava aqui no laboratório o almoço todo. Estudando. Amo química.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
                 }
               ],
+              "sets": [
+                "vini_mentiu"
+              ],
+              "unlock": "c_dep_vini",
               "choices": [
                 {
-                  "text": "Mostrar o post-it 'ACHEI!!!'",
+                  "text": "A sacola do Gabriel era amarela, com bola",
                   "kind": "boa",
-                  "next": "conta",
-                  "requires": "c_postit"
+                  "next": "suando",
+                  "requires": [
+                    "c_bolsa"
+                  ]
+                },
+                {
+                  "text": "Mostrar a lista do teatro e seu story",
+                  "kind": "boa",
+                  "next": "confessa",
+                  "requires": [
+                    "c_lista_teatro",
+                    "c_post_anuario"
+                  ]
                 },
                 {
                   "text": "Valeu, depois eu volto.",
@@ -278,22 +548,64 @@
                 }
               ]
             },
-            "conta": {
+            "suando": {
               "lines": [
                 {
-                  "text": "Meu post-it! Um menino me entregou isso na correria e eu achei que era o troféu do rei.",
-                  "expr": "surpreso",
-                  "anim": "pensando"
-                },
-                {
-                  "text": "Era o da gincana?? Ai, gente. Os dois são dourados com alças!",
+                  "text": "Amarela? Ah... de longe parecia dourada. Ilusão de ótica. Acontece.",
                   "expr": "nervoso",
                   "anim": "nervoso"
+                },
+                {
+                  "text": "Licença que eu tenho... uma coisa. Em outro lugar. Agora.",
+                  "expr": "nervoso",
+                  "anim": "negando"
                 }
+              ],
+              "sets": [
+                "vini_suando"
               ],
               "choices": [
                 {
-                  "text": "Valeu, Sofia.",
+                  "text": "Mostrar a lista do teatro e seu story",
+                  "kind": "boa",
+                  "next": "confessa",
+                  "requires": [
+                    "c_lista_teatro",
+                    "c_post_anuario"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "confessa": {
+              "lines": [
+                {
+                  "text": "Tá bom. O diretor não deixou fotografar até sexta, e a capa do anuário fecha amanhã.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Troquei pelo troféu do rei, fotografei aqui e ia destrocar. Mas o diretor ficou no telefone na sala.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                },
+                {
+                  "text": "Larguei o verdadeiro no teatro. E culpei o Gabriel. Foi mal, de verdade.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "vini_confessou"
+              ],
+              "unlock": "c_confissao_vini",
+              "choices": [
+                {
+                  "text": "Vai pedir desculpa pro Gabriel.",
                   "kind": "neutra",
                   "end": true
                 }
@@ -302,14 +614,42 @@
             "bravo": {
               "lines": [
                 {
-                  "text": "Roubei?? Eu tô no ensaio desde as 15h! Sai do meu palco.",
+                  "text": "Roubei?! Eu sou artista! Sem prova, sem foto.",
                   "expr": "bravo",
                   "anim": "negando"
                 }
               ],
-              "choices": [],
+              "sets": [
+                "vini_bravo"
+              ],
               "end": true,
-              "lock": 20
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:vini_bravo} já veio me acusar. Só falo com prova de verdade.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a lista do teatro e seu story",
+                  "kind": "boa",
+                  "next": "confessa",
+                  "requires": [
+                    "c_lista_teatro",
+                    "c_post_anuario"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
             }
           }
         }
@@ -319,7 +659,7 @@
       "id": "gabriel",
       "kind": "pessoa",
       "name": "Gabriel",
-      "role": "capitão do time vermelho",
+      "role": "capitão do time que perdeu a final",
       "look": {
         "skin": "#f5d0b0",
         "hair": "curto",
@@ -337,28 +677,45 @@
         ],
         "mood": "bravo",
         "tree": {
-          "start": "n1",
+          "entries": [
+            {
+              "if": [
+                "gabriel_falou"
+              ],
+              "node": "reencontro"
+            },
+            {
+              "if": [
+                "gabriel_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
           "nodes": {
-            "n1": {
+            "inicio": {
               "lines": [
                 {
-                  "text": "Vem me acusar também? Fica à vontade, todo mundo já veio.",
+                  "text": "Já sei: o perdedor da final virou o vilão da escola. Clássico.",
                   "expr": "bravo",
                   "anim": "dando_de_ombros"
                 }
               ],
               "choices": [
                 {
-                  "text": "Mostrar a súmula do jogo",
+                  "text": "O que tinha na sua sacola?",
                   "kind": "boa",
-                  "next": "conta",
-                  "requires": "c_sumula",
-                  "unlock": "c_dep_gabriel"
+                  "next": "sacola",
+                  "requires": [
+                    "c_bolsa"
+                  ]
                 },
                 {
-                  "text": "Como foi o jogo hoje?",
+                  "text": "Onde você tava depois do almoço?",
                   "kind": "neutra",
-                  "next": "n2"
+                  "next": "onde"
                 },
                 {
                   "text": "Confessa a vingança, Gabriel!",
@@ -367,21 +724,31 @@
                 }
               ]
             },
-            "n2": {
+            "onde": {
               "lines": [
                 {
-                  "text": "Foi bom. Bem melhor que a final da gincana, pelo menos.",
+                  "text": "Levei bronca do diretor às 12h30 por causa da bola no telhado. Depois, treino até as 14h.",
                   "expr": "neutro",
+                  "anim": "falando"
+                },
+                {
+                  "text": "Pergunta pro Prof. Ivo. Ele grita meu nome a cada cinco minutos.",
+                  "expr": "feliz",
                   "anim": "rindo"
                 }
               ],
+              "sets": [
+                "gabriel_falou"
+              ],
+              "unlock": "c_dep_gabriel",
               "choices": [
                 {
-                  "text": "Mostrar a súmula do jogo",
+                  "text": "O que tinha na sua sacola?",
                   "kind": "boa",
-                  "next": "conta",
-                  "requires": "c_sumula",
-                  "unlock": "c_dep_gabriel"
+                  "next": "sacola",
+                  "requires": [
+                    "c_bolsa"
+                  ]
                 },
                 {
                   "text": "Valeu, depois eu volto.",
@@ -390,19 +757,23 @@
                 }
               ]
             },
-            "conta": {
+            "sacola": {
               "lines": [
                 {
-                  "text": "Isso aí. Eu tava jogando handebol das 15h às 15h40, mano.",
-                  "expr": "feliz",
+                  "text": "A bola! O diretor devolveu às 12h40, numa sacola amarela. Amarela, não dourada.",
+                  "expr": "bravo",
                   "anim": "apontando"
                 },
                 {
-                  "text": "O Prof. Ivo apitou tudo. Perdi a final, mas não perdi a cabeça.",
-                  "expr": "feliz",
-                  "anim": "rindo"
+                  "text": "E fui direto pro treino. Quem te disse que era dourada tá enxergando troféu em tudo.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
                 }
               ],
+              "sets": [
+                "gabriel_falou"
+              ],
+              "unlock": "c_dep_gabriel",
               "choices": [
                 {
                   "text": "Valeu, Gabriel.",
@@ -419,79 +790,29 @@
                   "anim": "negando"
                 }
               ],
-              "choices": [],
+              "sets": [
+                "gabriel_bravo"
+              ],
               "end": true,
-              "lock": 20
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "jorge",
-      "kind": "pessoa",
-      "name": "Seu Jorge",
-      "role": "zelador",
-      "look": {
-        "skin": "#7a4b2a",
-        "hair": "raspado",
-        "hair_color": "#cfcfcf",
-        "top": "#546e7a",
-        "accessory": "nenhum"
-      },
-      "talk": {
-        "greet": [
-          {
-            "text": "Eu só limpo, detetive. Mas eu vejo tudo, viu?",
-            "expr": "desconfiado",
-            "anim": "apontando"
-          }
-        ],
-        "mood": "neutro",
-        "tree": {
-          "start": "n1",
-          "nodes": {
-            "n1": {
-              "lines": [
-                {
-                  "text": "Eu só limpo, detetive. Mas eu vejo tudo, viu?",
-                  "expr": "desconfiado",
-                  "anim": "apontando"
-                }
-              ],
-              "choices": [
-                {
-                  "text": "Mostrar a selfie do Vini",
-                  "kind": "boa",
-                  "next": "conta",
-                  "requires": "c_post_vini"
-                },
-                {
-                  "text": "O que o senhor viu hoje?",
-                  "kind": "neutra",
-                  "next": "n2"
-                },
-                {
-                  "text": "O senhor tá protegendo alguém?",
-                  "kind": "ruim",
-                  "next": "bravo"
-                }
-              ]
+              "lock": 20,
+              "choices": []
             },
-            "n2": {
+            "fechado": {
               "lines": [
                 {
-                  "text": "Um menino de moletom vermelho entregando uma coisa dourada pra Sofia. Umas 15h10.",
-                  "expr": "neutro",
-                  "anim": "falando"
+                  "text": "{por:gabriel_bravo} já me chamou de vingativo. Volta com prova de que não fui eu.",
+                  "expr": "bravo",
+                  "anim": "negando"
                 }
               ],
               "choices": [
                 {
-                  "text": "Mostrar a selfie do Vini",
+                  "text": "Mostrar a chamada do treino",
                   "kind": "boa",
-                  "next": "conta",
-                  "requires": "c_post_vini"
+                  "next": "sacola",
+                  "requires": [
+                    "c_chamada"
+                  ]
                 },
                 {
                   "text": "Valeu, depois eu volto.",
@@ -500,42 +821,40 @@
                 }
               ]
             },
-            "conta": {
+            "reencontro": {
               "lines": [
                 {
-                  "text": "Esse moletom aí! E esse cabelo cacheado. Era esse menino, com certeza.",
-                  "expr": "surpreso",
-                  "anim": "apontando"
+                  "text": "Mais alguma acusação ou posso treinar? A final do ano que vem não se ganha sozinha.",
+                  "expr": "neutro",
+                  "anim": "dando_de_ombros"
                 }
               ],
               "choices": [
                 {
-                  "text": "Obrigado, Seu Jorge.",
+                  "text": "Valeu, depois eu volto.",
                   "kind": "neutra",
                   "end": true
                 }
               ]
-            },
-            "bravo": {
-              "lines": [
-                {
-                  "text": "Protegendo? Eu protejo é o chão limpo. Licença.",
-                  "expr": "bravo",
-                  "anim": "negando"
-                }
-              ],
-              "choices": [],
-              "end": true,
-              "lock": 20
             }
           }
         }
       }
     },
     {
-      "id": "deposito",
+      "id": "sala_diretor",
       "kind": "lugar",
-      "name": "Depósito do teatro"
+      "name": "Sala do diretor"
+    },
+    {
+      "id": "laboratorio",
+      "kind": "lugar",
+      "name": "Laboratório"
+    },
+    {
+      "id": "teatro",
+      "kind": "lugar",
+      "name": "Teatro"
     },
     {
       "id": "quadra",
@@ -543,96 +862,48 @@
       "name": "Quadra"
     },
     {
-      "id": "trofeu_gincana",
+      "id": "trofeu_real",
       "kind": "fato",
-      "name": "Troféu da gincana (dourado)"
+      "name": "Troféu verdadeiro (metal, gravado)"
     },
     {
       "id": "trofeu_rei",
       "kind": "fato",
-      "name": "Troféu do rei (objeto da peça)"
+      "name": "Troféu do rei (plástico, da peça)"
+    }
+  ],
+  "items": [
+    {
+      "id": "fita",
+      "name": "Fita silver tape",
+      "desc": "Do clube de robótica. Conserta qualquer coisa, inclusive coroa de rei."
     }
   ],
   "clues": [
-    {
-      "id": "c_ficha",
-      "kind": "registro",
-      "title": "Ficha do armário",
-      "time": "14h50",
-      "text": "Troféu da gincana, dourado, com alças. Retirado por Caio às 14h50. Motivo: emprestado pro Vini fotografar pro anuário.",
-      "release": "hotspot",
-      "deal": "team"
-    },
-    {
-      "id": "c_dep_caio",
-      "kind": "depoimento",
-      "title": "Fala do Caio",
-      "who": "caio",
-      "text": "Emprestei o troféu pro Vini às 14h50, pra foto do anuário. Ele jurou devolver às 15h30. Não devolveu, e meu celular morreu às 15h.",
-      "release": "interrogatorio",
-      "deal": "team",
-      "dialogue": [
-        {
-          "text": "Eu emprestei o troféu pro Vini às 14h50, pra foto do anuário.",
-          "expr": "neutro",
-          "anim": "falando"
-        },
-        {
-          "text": "Ele jurou que devolvia às 15h30. Jurou!",
-          "expr": "bravo",
-          "anim": "apontando"
-        },
-        {
-          "text": "Não devolveu. E meu celular morreu às 15h. Dia perfeito.",
-          "expr": "triste",
-          "anim": "dando_de_ombros"
-        }
-      ]
-    },
-    {
-      "id": "c_chat_vini",
-      "kind": "mensagem",
-      "app": "chat",
-      "title": "Mensagem do Vini",
-      "time": "15h12",
-      "text": "Vini avisa o Caio que deixou o troféu com a Sofia.",
-      "chat": {
-        "group": "Vini",
-        "lines": [
-          {
-            "who": "vini",
-            "text": "caio foi mal 🙏 tô atrasadão pro reforço",
-            "time": "15h12"
-          },
-          {
-            "who": "vini",
-            "text": "deixei o troféu com a Sofia do teatro, dps eu pego",
-            "time": "15h12"
-          }
-        ]
-      },
-      "release": "interrogatorio",
-      "deal": "team"
-    },
     {
       "id": "c_boato",
       "kind": "mensagem",
       "app": "chat",
       "title": "Grupo da gincana",
-      "time": "16h35",
-      "text": "A turma culpa o Gabriel por causa de um moletom vermelho.",
+      "time": "15h20",
+      "text": "A turma culpa o Gabriel e desconfia da Sofia.",
       "chat": {
         "group": "Gincana 2026 🏆",
         "lines": [
           {
             "who": "Lu",
-            "text": "seu Jorge viu um cara de moletom vermelho entregando o troféu no teatro 👀",
-            "time": "16h35"
+            "text": "o troféu de verdade tava no TEATRO 👀",
+            "time": "15h20"
           },
           {
             "who": "Kiko",
-            "text": "vermelho = time do Gabriel 💀 vingança da final",
-            "time": "16h36"
+            "text": "aposto que foi o Gabriel, vingança da final 💀",
+            "time": "15h21"
+          },
+          {
+            "who": "Lu",
+            "text": "ou a Sofia, ela que tem a chave dos objetos",
+            "time": "15h21"
           }
         ]
       },
@@ -640,11 +911,90 @@
       "deal": "team"
     },
     {
-      "id": "c_sumula",
-      "kind": "registro",
-      "title": "Súmula do jogo",
-      "text": "Handebol na quadra, terça, das 15h às 15h40. Time vermelho, capitão Gabriel: em quadra do começo ao fim. Ass. Prof. Ivo",
+      "id": "c_trofeu_pesado",
+      "kind": "objeto",
+      "title": "Caixa de objetos",
+      "text": "O 'troféu do rei' da caixa é de metal, pesado, e tem gravado: 'Gincana 2026, campeão: 2º A'. É o troféu verdadeiro.",
       "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_lista_teatro",
+      "kind": "registro",
+      "title": "Lista do teatro",
+      "text": "Empréstimo de objetos:\nSegunda 16h: troféu do rei, pro anuário. Ass. V.\nTerça 13h25: troféu do rei DEVOLVIDO. Ass. V.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_trofeu_falso",
+      "kind": "objeto",
+      "title": "Estante do diretor",
+      "text": "Na estante, o 'troféu da gincana' é leve demais. Embaixo, etiqueta: 'Papelaria Estrela, R$ 19,90'. É o troféu do rei.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_visitas",
+      "kind": "registro",
+      "title": "Agenda do diretor",
+      "text": "Visitas de terça:\n12h30 Gabriel (bola no telhado, bronca)\n12h45 Vini (pediu pra fotografar o troféu: NEGADO, só sexta)\n13h00 a 13h20 ligação da Secretaria",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_bancada",
+      "kind": "objeto",
+      "title": "Bancada do laboratório",
+      "text": "Na bancada, um fundo preto improvisado, dois abajures e uma lente de câmera com etiqueta 'ANUÁRIO'. Alguém fez um estúdio aqui.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_bolsa",
+      "kind": "objeto",
+      "title": "Sacola do Gabriel",
+      "text": "Na sacola amarela do Gabriel, uma bola de vôlei e um bilhete: 'Devolvida às 12h40. Chega de telhado! Diretor Otávio'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_chamada",
+      "kind": "registro",
+      "title": "Placar do treino",
+      "text": "Presa no placar: 'Treino, terça, 12h45 às 14h. Gabriel: presente o tempo todo. Ass. Prof. Ivo'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_post_anuario",
+      "kind": "post",
+      "title": "Story do anuário",
+      "time": "12h55",
+      "text": "Às 12h55 o anuário posta o troféu de metal, com gravação, fotografado no laboratório.",
+      "post": {
+        "user": "@anuario.oficial",
+        "who": "vini",
+        "caption": "capa do anuário VEM AÍ 🏆✨ spoiler exclusivo",
+        "likes": 63,
+        "image": "o troféu gravado 'Gincana 2026' num fundo preto, com a tabela periódica aparecendo no canto",
+        "comments": [
+          {
+            "user": "@caio.gremio",
+            "text": "ué, o diretor não disse que só sexta? 👀"
+          }
+        ]
+      },
+      "release": "t+240",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_sofia",
+      "kind": "depoimento",
+      "title": "Fala da Sofia",
+      "who": "sofia",
+      "text": "Sofia diz que só o Vini usa a lista: pegou o troféu do rei segunda pra foto e devolveu hoje às 13h25, suado e com pressa.",
+      "release": "interrogatorio",
       "deal": "team"
     },
     {
@@ -652,63 +1002,26 @@
       "kind": "depoimento",
       "title": "Fala do Gabriel",
       "who": "gabriel",
-      "text": "Vingança? Eu tava jogando handebol na quadra das 15h às 15h40, mano. Pergunta pro Prof. Ivo. Perdi a final, mas não perdi a cabeça.",
+      "text": "Gabriel levou bronca às 12h30 e recebeu a bola de volta às 12h40, numa sacola amarela. Depois foi pro treino até as 14h.",
       "release": "interrogatorio",
-      "deal": "team",
-      "dialogue": [
-        {
-          "text": "Vingança? Eu tava jogando handebol na quadra das 15h às 15h40, mano.",
-          "expr": "bravo",
-          "anim": "negando"
-        },
-        {
-          "text": "Pergunta pro Prof. Ivo, ele apitou o jogo inteiro.",
-          "expr": "neutro",
-          "anim": "apontando"
-        },
-        {
-          "text": "Perdi a final, mas não perdi a cabeça.",
-          "expr": "feliz",
-          "anim": "rindo"
-        }
-      ]
-    },
-    {
-      "id": "c_postit",
-      "kind": "objeto",
-      "title": "Caixa do depósito",
-      "text": "Na caixa de objetos da peça, o troféu da gincana. Colado nele, um post-it: 'Troféu do rei, cena 3. ACHEI!!! Sofia'",
-      "release": "hotspot",
       "deal": "team"
     },
     {
-      "id": "c_lista",
-      "kind": "registro",
-      "title": "Lista da peça",
-      "text": "Objetos da peça:\nCoroa de papelão: ok\nTroféu do rei: dourado, com alças. SUMIU ontem 😩\nAchou? Entrega pra Sofia, que guarda no depósito.",
-      "release": "hotspot",
+      "id": "c_dep_vini",
+      "kind": "depoimento",
+      "title": "Fala do Vini",
+      "who": "vini",
+      "text": "Vini diz que viu o Gabriel sair da sala do diretor com uma sacola dourada, e que passou o almoço estudando no laboratório.",
+      "release": "interrogatorio",
       "deal": "team"
     },
     {
-      "id": "c_post_vini",
-      "kind": "post",
-      "title": "Story do Vini",
-      "time": "15h02",
-      "text": "Às 15h02 o Vini, de moletom vermelho, posta selfie com o troféu e diz que vai deixar com a Sofia.",
-      "post": {
-        "user": "@vini.clica",
-        "who": "vini",
-        "caption": "missão anuário ✅ agora deixar com a Sofia no teatro e correr pro reforço 🏃",
-        "likes": 52,
-        "image": "Vini de moletom vermelho segurando o troféu da gincana",
-        "comments": [
-          {
-            "user": "@caio.gremio",
-            "text": "devolve às 15h30 hein"
-          }
-        ]
-      },
-      "release": "t+180",
+      "id": "c_confissao_vini",
+      "kind": "depoimento",
+      "title": "Confissão do Vini",
+      "who": "vini",
+      "text": "Vini trocou os troféus pra fotografar a capa do anuário. Não conseguiu destrocar e largou o verdadeiro no teatro.",
+      "release": "interrogatorio",
       "deal": "team"
     }
   ],
@@ -717,40 +1030,72 @@
       "id": "hs_caixa",
       "scene": "teatro",
       "object": "caixa_props",
-      "label": "Caixa do depósito",
-      "clue": "c_postit"
+      "label": "Caixa de objetos",
+      "clue": "c_trofeu_pesado"
     },
     {
       "id": "hs_quadro",
       "scene": "teatro",
       "object": "quadro_teatro",
-      "label": "Quadro do teatro",
-      "clue": "c_lista"
+      "label": "Lista do teatro",
+      "clue": "c_lista_teatro"
+    },
+    {
+      "id": "hs_estante",
+      "scene": "sala_diretor",
+      "object": "quadro_fotos",
+      "label": "Estante de troféus",
+      "clue": "c_trofeu_falso"
+    },
+    {
+      "id": "hs_agenda",
+      "scene": "sala_diretor",
+      "object": "mesa_diretor",
+      "label": "Agenda do diretor",
+      "clue": "c_visitas"
+    },
+    {
+      "id": "hs_bancada",
+      "scene": "laboratorio",
+      "object": "bancada",
+      "label": "Bancada",
+      "clue": "c_bancada"
     },
     {
       "id": "hs_armario",
-      "scene": "corredor",
-      "object": "armario_aberto",
-      "label": "Armário do grêmio",
-      "clue": "c_ficha"
+      "scene": "laboratorio",
+      "object": "armario_vidros",
+      "label": "Armário de vidros",
+      "item": "fita"
+    },
+    {
+      "id": "hs_bolsa",
+      "scene": "quadra",
+      "object": "bolsa_esportiva",
+      "label": "Sacola amarela",
+      "clue": "c_bolsa"
     },
     {
       "id": "hs_placar",
       "scene": "quadra",
       "object": "placar",
-      "label": "Súmula no placar",
-      "clue": "c_sumula"
+      "label": "Placar",
+      "clue": "c_chamada"
     }
   ],
   "solution": {
+    "culprit": "vini",
+    "culprit_question": "Quem trocou os troféus?",
+    "culprit_evidence": [
+      "c_lista_teatro",
+      "c_post_anuario",
+      "c_visitas",
+      "c_confissao_vini"
+    ],
     "categories": [
       {
         "id": "caminho",
-        "label": "Por quais mãos o troféu passou"
-      },
-      {
-        "id": "destino",
-        "label": "Quem levou para o depósito"
+        "label": "Por onde passou o troféu verdadeiro"
       },
       {
         "id": "alibi",
@@ -759,34 +1104,35 @@
     ],
     "edges": [
       {
-        "from": "caio",
-        "to": "vini",
-        "type": "entregou",
+        "from": "vini",
+        "to": "sala_diretor",
+        "type": "estava",
         "category": "caminho",
         "evidence": [
-          "c_ficha",
-          "c_dep_caio",
-          "c_post_vini"
+          "c_visitas",
+          "c_confissao_vini"
         ]
       },
       {
         "from": "vini",
-        "to": "sofia",
-        "type": "entregou",
+        "to": "laboratorio",
+        "type": "levou",
         "category": "caminho",
         "evidence": [
-          "c_post_vini",
-          "c_chat_vini"
+          "c_post_anuario",
+          "c_bancada",
+          "c_confissao_vini"
         ]
       },
       {
-        "from": "sofia",
-        "to": "deposito",
-        "type": "deixou",
-        "category": "destino",
+        "from": "vini",
+        "to": "teatro",
+        "type": "levou",
+        "category": "caminho",
         "evidence": [
-          "c_postit",
-          "c_lista"
+          "c_lista_teatro",
+          "c_dep_sofia",
+          "c_confissao_vini"
         ]
       },
       {
@@ -795,7 +1141,7 @@
         "type": "estava",
         "category": "alibi",
         "evidence": [
-          "c_sumula",
+          "c_chamada",
           "c_dep_gabriel"
         ]
       }
@@ -803,41 +1149,53 @@
     "traps": [
       {
         "from": "gabriel",
-        "to": "sofia",
-        "type": "entregou",
+        "to": "teatro",
+        "type": "levou",
         "category": "caminho"
       },
       {
         "from": "gabriel",
-        "to": "deposito",
-        "type": "deixou",
-        "category": "destino"
+        "to": "laboratorio",
+        "type": "levou",
+        "category": "caminho"
       }
     ]
   },
   "reveal": {
     "timeline": [
       {
-        "time": "14h50",
-        "text": "Caio empresta o troféu pro Vini fotografar pro anuário."
+        "time": "Segunda, 16h",
+        "text": "Vini pega o troféu do rei, de plástico, emprestado no teatro."
       },
       {
-        "time": "15h02",
-        "text": "Vini posta a selfie com o troféu, de moletom vermelho."
+        "time": "12h30",
+        "text": "Gabriel leva bronca do diretor. Às 12h40 sai com a bola numa sacola amarela."
       },
       {
-        "time": "15h10",
-        "text": "Atrasado, Vini deixa o troféu com a Sofia. Seu Jorge vê o moletom vermelho de longe."
+        "time": "12h45",
+        "text": "O diretor nega a foto e vai buscar café. Vini troca os troféus."
       },
       {
-        "time": "15h15",
-        "text": "Sofia acha que é o troféu do rei da peça e guarda no depósito."
+        "time": "12h55",
+        "text": "Vini fotografa o troféu verdadeiro no laboratório e posta o spoiler."
+      },
+      {
+        "time": "13h00",
+        "text": "O diretor fica no telefone na sala. Vini não consegue destrocar."
+      },
+      {
+        "time": "13h25",
+        "text": "Vini 'devolve' o troféu do rei no teatro. Só que é o verdadeiro."
+      },
+      {
+        "time": "15h00",
+        "text": "No ensaio, o rei quase desloca o ombro."
       }
     ],
-    "explanation": "Ninguém roubou nada. O troféu foi do Caio pro Vini e do Vini pra Sofia. O story do Vini vira o jogo: o moletom vermelho era dele. E o troféu do rei da peça também é dourado com alças e tinha sumido, então a Sofia achou que era ele.",
+    "explanation": "Duas camadas de engano: os troféus foram trocados, e o Vini culpou o Gabriel com a história da sacola dourada. O aha está na lista do teatro: o Vini 'devolveu' o troféu do rei às 13h25, mas o que voltou foi o de metal. A foto das 12h55 no laboratório prova que ele estava com o verdadeiro.",
     "refuted": [
-      "Gabriel estava jogando na quadra das 15h às 15h40. O moletom vermelho era do Vini.",
-      "Sofia não roubou: guardou o troféu achando que era o objeto da peça, e assinou o post-it."
+      "Gabriel saiu da sala às 12h40 com uma bola numa sacola amarela e treinou até as 14h.",
+      "Sofia só descobriu a troca no ensaio. Quem assinou a lista foi o Vini."
     ]
   }
 }
