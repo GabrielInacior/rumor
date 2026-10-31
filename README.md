@@ -7,7 +7,13 @@ A teoria entregue é o próprio quadro; o servidor confere. O professor projeta 
 
 Casos escritos à mão (sem IA gerando história): `server/cases/*.json`, formato em `docs/formato_caso.md`.
 
-## Usar numa aula
+## Jogar agora (hospedado)
+
+**https://rumor.inaciodev.online** (Render, plano gratuito; cada push na branch `main` publica sozinho).
+O plano gratuito dorme depois de 15 min sem uso: abra o link uns 2 minutos antes da aula para acordar.
+Para publicar uma versão nova do jogo: `bash tools/build_web.sh`, commit e push.
+
+## Usar numa aula sem internet (rede da escola)
 
 1. No computador do professor (precisa de Node.js 18+):
    ```bash
