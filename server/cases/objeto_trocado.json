@@ -1,0 +1,193 @@
+{
+  "id": "objeto_trocado",
+  "title": "O Troféu que Mudou de Lugar",
+  "tagline": "Dourado, brilhante e no lugar errado.",
+  "difficulty": 2,
+  "duration_sec": 1080,
+  "scene": "teatro",
+  "briefing": "Terça, 16h. A Profa. Marta abre o armário do grêmio: o troféu da gincana sumiu. Meia hora depois, ele aparece no depósito do teatro, no meio de coroas de papelão. O time do Gabriel perdeu a final e a escola já decidiu: foi vingança. Será? Refaça o caminho do troféu, mão por mão.",
+  "goal": "Refaça o caminho do troféu: quem entregou para quem e onde ele foi parar.",
+
+  "link_types": [
+    {"id": "entregou", "label": "entregou para", "directed": true},
+    {"id": "deixou", "label": "deixou o troféu em", "directed": true},
+    {"id": "viu", "label": "viu", "directed": true}
+  ],
+
+  "cards": [
+    {"id": "marta", "kind": "pessoa", "name": "Profa. Marta", "role": "cuida da gincana",
+     "look": {"skin": "#b5835a", "hair": "curto", "hair_color": "#9e9e9e", "top": "#00695c", "accessory": "oculos"}},
+    {"id": "caio", "kind": "pessoa", "name": "Caio", "role": "presidente do grêmio",
+     "look": {"skin": "#8d5524", "hair": "raspado", "hair_color": "#1a1a1a", "top": "#2e7d32", "accessory": "bone"}},
+    {"id": "vini", "kind": "pessoa", "name": "Vini", "role": "fotógrafo do anuário",
+     "look": {"skin": "#e8b98f", "hair": "cacheado", "hair_color": "#5a3825", "top": "#d32f2f", "accessory": "fones"}},
+    {"id": "sofia", "kind": "pessoa", "name": "Sofia", "role": "diretora de palco da peça",
+     "look": {"skin": "#6b4423", "hair": "franja", "hair_color": "#1b1b1b", "top": "#4a148c", "accessory": "brinco"}},
+    {"id": "gabriel", "kind": "pessoa", "name": "Gabriel", "role": "capitão do time vermelho",
+     "look": {"skin": "#f5d0b0", "hair": "curto", "hair_color": "#3b2a1a", "top": "#c62828", "accessory": "bone"}},
+    {"id": "jorge", "kind": "pessoa", "name": "Seu Jorge", "role": "zelador",
+     "look": {"skin": "#7a4b2a", "hair": "raspado", "hair_color": "#cfcfcf", "top": "#546e7a", "accessory": "nenhum"}},
+    {"id": "armario_gremio", "kind": "lugar", "name": "Armário do grêmio"},
+    {"id": "estudio_anuario", "kind": "lugar", "name": "Estúdio do anuário"},
+    {"id": "deposito_teatro", "kind": "lugar", "name": "Depósito do teatro"},
+    {"id": "quadra", "kind": "lugar", "name": "Quadra"},
+    {"id": "trofeu_gincana", "kind": "fato", "name": "Troféu da gincana (dourado, com alças)"},
+    {"id": "trofeu_rei", "kind": "fato", "name": "Troféu do rei (objeto da peça)"}
+  ],
+
+  "clues": [
+    {
+      "id": "c_ficha_armario",
+      "kind": "registro",
+      "title": "Ficha do armário do grêmio",
+      "text": "Troféu da gincana (dourado, com alças).\nGuardado por: Profa. Marta, segunda, 8h.\nRetirado por: Caio, terça, 14h50. Motivo: emprestado pro Vini fotografar pro anuário. Devolver às 15h30.",
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_marta",
+      "kind": "depoimento",
+      "title": "Depoimento da Profa. Marta",
+      "from": "marta",
+      "text": "Guardei o troféu no armário do grêmio na segunda cedinho. A chave fica comigo e com o Caio, só. Às 16h abri e nada. Quase desmaiei, gente.",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dep_caio",
+      "kind": "depoimento",
+      "title": "Depoimento do Caio",
+      "from": "caio",
+      "text": "Emprestei pro Vini às 14h50, ele jurou devolver às 15h30. Não devolveu, e meu celular morreu às 15h. Agora tão dizendo que eu sumi com o troféu? Sério?",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_msg_vini",
+      "kind": "mensagem",
+      "title": "Mensagem do Vini (não lida pelo Caio)",
+      "time": "15h12",
+      "from": "vini",
+      "text": "Vini: caio foi mal 🙏 tô atrasadão pro reforço\nVini: deixei o troféu com uma menina do teatro pra guardar\nVini: dps eu pego, juro",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dep_sofia",
+      "kind": "depoimento",
+      "title": "Depoimento da Sofia",
+      "from": "sofia",
+      "text": "Eu não roubei nada! Desde as 15h tô no ensaio geral, correria total. No depósito eu só guardo coisa da peça, como sempre. Se tem troféu lá, é da peça.",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dep_jorge",
+      "kind": "depoimento",
+      "title": "Depoimento do Seu Jorge",
+      "from": "jorge",
+      "text": "Umas 15h10 vi um menino de moletom vermelho, de capuz, entregar uma coisa dourada pra Sofia na porta do teatro. O rosto eu não vi. Tava com pressa, o menino.",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_boato",
+      "kind": "mensagem",
+      "title": "Grupo da gincana",
+      "time": "16h35",
+      "text": "Lu: o troféu tava no depósito do teatro 👀\nKiko: seu Jorge viu um cara de moletom vermelho\nLu: vermelho = time do Gabriel 💀 vingança da final\nKiko: e a Sofia tem a chave do depósito, hein",
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_sumula",
+      "kind": "registro",
+      "title": "Súmula do jogo",
+      "text": "Handebol, amistoso na quadra, terça, das 15h às 15h40. Time vermelho, capitão Gabriel: em quadra do começo ao fim, 4 gols. Ass. Prof. Ivo",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_foto_anuario",
+      "kind": "registro",
+      "title": "Câmera do anuário",
+      "time": "15h02",
+      "text": "Última foto da câmera do anuário, 15h02, no estúdio do anuário. Selfie de teste: Vini, de moletom vermelho do clube de fotografia, segurando o troféu da gincana 👍",
+      "release": "t+180",
+      "deal": "team"
+    },
+    {
+      "id": "c_lista_props",
+      "kind": "registro",
+      "title": "Lista de objetos da peça",
+      "text": "'O Rei de Papelão', objetos de cena:\nCoroa de papelão: ok\nCapa de veludo: ok\nTroféu do rei, cena 3: dourado, com alças. SUMIU ontem 😩 quem achar, guarda no depósito!",
+      "release": "t+300",
+      "deal": "team"
+    },
+    {
+      "id": "c_postit",
+      "kind": "objeto",
+      "title": "Caixa de objetos do depósito",
+      "text": "Dentro da caixa de objetos da peça, o troféu da gincana. Colado nele, um post-it com letra caprichada: 'Troféu do rei, cena 3. ACHEI!!! S.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_quadro_teatro",
+      "kind": "registro",
+      "title": "Quadro do teatro",
+      "text": "Ensaio geral: terça, das 15h às 17h.\nDiretora de palco: Sofia.\nChave do depósito: só com a diretora de palco 🔑",
+      "release": "hotspot",
+      "deal": "team"
+    }
+  ],
+
+  "hotspots": [
+    {"id": "hs_caixa", "object": "caixa_props", "label": "Caixa de objetos no depósito", "clue": "c_postit"},
+    {"id": "hs_quadro", "object": "quadro_teatro", "label": "Quadro do teatro", "clue": "c_quadro_teatro"}
+  ],
+
+  "solution": {
+    "categories": [
+      {"id": "origem", "label": "Onde o troféu estava"},
+      {"id": "caminho", "label": "Por quais mãos ele passou"},
+      {"id": "testemunha", "label": "Quem o Seu Jorge viu"},
+      {"id": "destino", "label": "Quem levou para o depósito"}
+    ],
+    "edges": [
+      {"from": "marta", "to": "armario_gremio", "type": "deixou", "category": "origem",
+       "evidence": ["c_ficha_armario", "c_dep_marta"]},
+      {"from": "caio", "to": "vini", "type": "entregou", "category": "caminho",
+       "evidence": ["c_ficha_armario", "c_dep_caio", "c_foto_anuario"]},
+      {"from": "vini", "to": "sofia", "type": "entregou", "category": "caminho",
+       "evidence": ["c_msg_vini", "c_dep_jorge"]},
+      {"from": "jorge", "to": "vini", "type": "viu", "category": "testemunha",
+       "evidence": ["c_dep_jorge", "c_foto_anuario", "c_sumula"]},
+      {"from": "sofia", "to": "deposito_teatro", "type": "deixou", "category": "destino",
+       "evidence": ["c_postit", "c_quadro_teatro", "c_lista_props"]}
+    ],
+    "traps": [
+      {"from": "gabriel", "to": "sofia", "type": "entregou", "category": "caminho"},
+      {"from": "jorge", "to": "gabriel", "type": "viu", "category": "testemunha"},
+      {"from": "gabriel", "to": "deposito_teatro", "type": "deixou", "category": "destino"},
+      {"from": "caio", "to": "deposito_teatro", "type": "deixou", "category": "destino"}
+    ]
+  },
+
+  "reveal": {
+    "timeline": [
+      {"time": "Segunda, 8h", "text": "A Profa. Marta guarda o troféu no armário do grêmio."},
+      {"time": "14h50", "text": "Caio empresta o troféu pro Vini fotografar pro anuário."},
+      {"time": "15h02", "text": "Vini tira a foto no estúdio, de moletom vermelho."},
+      {"time": "15h10", "text": "Atrasado, Vini deixa o troféu com a Sofia na porta do teatro. Seu Jorge vê de longe."},
+      {"time": "15h12", "text": "Vini avisa o Caio, mas o celular do Caio já tinha morrido."},
+      {"time": "15h15", "text": "Sofia acha que é o troféu do rei da peça e guarda no depósito."}
+    ],
+    "explanation": "Ninguém roubou nada. O troféu passou da Marta pro Caio, do Caio pro Vini, e do Vini pra Sofia. A lista de objetos da peça vira o jogo: o troféu do rei também é dourado com alças e tinha sumido. A Sofia achou que era ele e guardou no depósito, com post-it e tudo.",
+    "refuted": [
+      "Gabriel estava jogando na quadra das 15h às 15h40. O moletom vermelho das 15h10 era do Vini.",
+      "Sofia não roubou: ela guardou o troféu achando que era o objeto da peça, e assinou o post-it.",
+      "Caio não escondeu nada: emprestou pro Vini com ficha assinada."
+    ]
+  }
+}

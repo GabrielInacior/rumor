@@ -1,0 +1,9 @@
+[
+  {"id": "amostra_bia",  "look": {"skin": "#f1c7a5", "hair": "longo",    "hair_color": "#4a2a1a", "top": "#8a2f45", "accessory": "brinco",   "expression": "confiante", "top_style": "jaqueta"}},
+  {"id": "amostra_davi", "look": {"skin": "#8d5a3b", "hair": "cacheado", "hair_color": "#1a1210", "top": "#2f6f6a", "accessory": "fones",    "expression": "alegre",    "top_style": "moletom"}},
+  {"id": "amostra_lia",  "look": {"skin": "#e8b48e", "hair": "coque",    "hair_color": "#b5582a", "top": "#5d3a78", "accessory": "oculos",   "expression": "nervoso",   "top_style": "gola_alta", "freckles": true}},
+  {"id": "amostra_caio", "look": {"skin": "#5a3826", "hair": "raspado",  "hair_color": "#140d0a", "top": "#c9a03a", "accessory": "bone",     "expression": "desconfiado", "top_style": "camiseta"}},
+  {"id": "amostra_nina", "look": {"skin": "#c68863", "hair": "franja",   "hair_color": "#101018", "top": "#3b5b9a", "accessory": "cachecol", "expression": "entediado", "top_style": "camiseta"}},
+  {"id": "amostra_theo", "look": {"skin": "#f6dcc4", "hair": "curto",    "hair_color": "#d8b56a", "top": "#4a4e5a", "accessory": "nenhum",   "expression": "serio",     "top_style": "camisa"}},
+  {"id": "amostra_maya", "look": {"skin": "#a86b47", "hair": "rabo",     "hair_color": "#2b1a12", "top": "#e0dccd", "accessory": "nenhum",   "expression": "alegre",    "top_style": "moletom"}}
+]

@@ -11,3 +11,6 @@ __pycache__/
 node_modules/
 server/public/*
 !server/public/.gitkeep
+
+# trilha original sem compressão (fica só local)
+/*.wav

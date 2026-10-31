@@ -270,7 +270,7 @@ class Room {
       const hs = (this.caseData.hotspots || []).find((h) => h.id === msg.id);
       if (hs && !team.found.has(hs.clue)) {
         team.found.add(hs.clue);
-        this.emitEvent({ k: 'hotspot', team: team.id, by: p.name, clue: hs.clue, label: hs.label }, team.id);
+        this.emitEvent({ k: 'hotspot', team: team.id, by: p.name, id: hs.id, label: hs.label }, team.id);
         this.broadcastTeam(team);
       }
       return;
@@ -425,6 +425,7 @@ class Room {
       s.clues = this.caseData.clues.filter((c) => vis.has(c.id));
       s.mine = [...p.clues];
       s.board = { cards: team.board.cards, links: team.board.links };
+      s.hotspots = (this.caseData.hotspots || []).filter((h) => team.found.has(h.clue)).map((h) => h.id);
       s.lockUntil = team.lockUntil;
       s.lastResult = team.lastResult;
       s.solved = !!team.solvedAt;
