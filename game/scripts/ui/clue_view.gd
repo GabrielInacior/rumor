@@ -60,6 +60,7 @@ static func _chat(clue: Dictionary) -> Control:
 	ic.setup(str(clue.get("from", "")), 30, group)
 	bh.add_child(ic)
 	var gv := UI.vbox(0)
+	gv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	gv.add_child(UI.label(UI.strip_emoji(group), 26, Color.WHITE, "bold"))
 	gv.add_child(UI.label("Papo  ·  " + str(clue.get("time", "")), 18, Color("#9fb3e6")))
 	bh.add_child(gv)
@@ -127,6 +128,7 @@ static func _post(clue: Dictionary) -> Control:
 	av.ring = UI.PINK
 	hh.add_child(av)
 	var hv := UI.vbox(0)
+	hv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hv.add_child(UI.label(user, 24, Color("#111"), "bold"))
 	hv.add_child(UI.label("Flash  ·  " + str(clue.get("time", "")), 18, Color("#8a8fa3")))
 	hh.add_child(hv)
@@ -135,6 +137,7 @@ static func _post(clue: Dictionary) -> Control:
 	var photo := Photo.new()
 	photo.caption = UI.strip_emoji(str(p.get("image", clue.get("title", ""))))
 	photo.custom_minimum_size = Vector2(0, 330)
+	photo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_child(photo)
 	var foot := UI.margin(18, 0, 18)
 	var fv := UI.vbox(8)
@@ -183,6 +186,7 @@ static func _testimony(clue: Dictionary) -> Control:
 		av.setup(who, 44, person_name(who))
 		h.add_child(av)
 	var hv := UI.vbox(0)
+	hv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hv.add_child(UI.title("DEPOIMENTO", 34, UI.RED))
 	if who != "":
 		hv.add_child(UI.label(person_name(who), 30, UI.INK, "marker"))

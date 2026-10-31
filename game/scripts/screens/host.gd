@@ -65,43 +65,42 @@ func _host_url() -> String:
 
 func _build_lobby() -> void:
 	UI.clear(body)
-	var m := UI.margin(36, 40, 30)
+	var wide := _wide()
+	var m := UI.margin(36 if wide else 24, 40 if wide else 30, 24)
 	body.add_child(UI.full(m))
-	var outer: BoxContainer = UI.hbox(30) if _wide() else UI.vbox(18)
-	m.add_child(outer)
-
-	var left := UI.vbox(14)
-	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	outer.add_child(left)
-	left.add_child(UI.label("Entrem em  " + _host_url() + "  e digitem o código:", 30, UI.MIST, "bold"))
-	var code := UI.title("SALA " + Net.code, 150 if _wide() else 110, UI.YELLOW)
-	left.add_child(code)
-	lobby_count = UI.label("", 30, UI.PAPER, "bold")
-	left.add_child(lobby_count)
+	var page := UI.vbox(14)
+	m.add_child(page)
+	# no celular em pé tudo vira uma página só que rola; o botão de começar fica fixo embaixo
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	page.add_child(scroll)
+	var outer: BoxContainer = UI.hbox(30) if wide else UI.vbox(18)
+	outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(outer)
+
+	var left := UI.vbox(12)
+	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	outer.add_child(left)
+	left.add_child(UI.label("Entrem em  " + _host_url() + "  e digitem:", 26, UI.MIST, "bold"))
+	left.add_child(UI.title("SALA " + Net.code, 150 if wide else 120, UI.YELLOW))
+	lobby_count = UI.label("", 28, UI.PAPER, "bold")
+	left.add_child(lobby_count)
 	lobby_teams = GridContainer.new()
-	(lobby_teams as GridContainer).columns = 3 if _wide() else 2
+	(lobby_teams as GridContainer).columns = 3 if wide else 1
 	lobby_teams.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	lobby_teams.add_theme_constant_override("h_separation", 14)
-	lobby_teams.add_theme_constant_override("v_separation", 14)
-	scroll.add_child(lobby_teams)
-	left.add_child(scroll)
+	lobby_teams.add_theme_constant_override("v_separation", 12)
+	left.add_child(lobby_teams)
 
-	var right := UI.vbox(14)
-	right.custom_minimum_size.x = 560 if _wide() else 0
+	var right := UI.vbox(12)
+	right.custom_minimum_size.x = 560 if wide else 0
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL if not wide else Control.SIZE_FILL
 	outer.add_child(right)
-	right.add_child(UI.title("CASO", 44, UI.PAPER))
-	var cs := ScrollContainer.new()
-	cs.custom_minimum_size.y = 420 if _wide() else 360
-	cs.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	cs.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	right.add_child(UI.title("ESCOLHA O CASO", 40, UI.PAPER))
 	lobby_cases = UI.vbox(12)
 	lobby_cases.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	cs.add_child(lobby_cases)
-	right.add_child(cs)
+	right.add_child(lobby_cases)
 	var tc := UI.hbox(12)
 	var tl := UI.label("Equipes", 30, UI.PAPER, "bold")
 	tl.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -113,6 +112,8 @@ func _build_lobby() -> void:
 	tc.add_child(minus)
 	var cnt := UI.title("", 56, UI.YELLOW)
 	cnt.name = "TeamCount"
+	cnt.custom_minimum_size.x = 40
+	cnt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tc.add_child(cnt)
 	var plus := UI.button("+", "ghost", 80)
 	plus.custom_minimum_size.x = 90
@@ -123,14 +124,15 @@ func _build_lobby() -> void:
 	shuffle.pressed.connect(func() -> void: Net.send({"t": "host_shuffle"}))
 	tc.add_child(shuffle)
 	right.add_child(tc)
-	var start := UI.button("COMEÇAR O CASO", "primary", 120)
-	start.add_theme_font_size_override("font_size", 54)
+
+	var start := UI.button("COMEÇAR O CASO", "primary", 116)
+	start.add_theme_font_size_override("font_size", 52)
 	start.name = "Start"
 	start.pressed.connect(func() -> void: Net.send({"t": "host_start"}))
-	right.add_child(start)
+	page.add_child(start)
 	var leave := UI.button("Fechar a sala", "ghost", 64)
 	leave.pressed.connect(func() -> void: get_meta("main").go_home())
-	right.add_child(leave)
+	page.add_child(leave)
 
 
 func _refresh_lobby() -> void:
@@ -150,14 +152,27 @@ func _refresh_lobby() -> void:
 		var col := Color(str(t["color"]))
 		var p := PanelContainer.new()
 		p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		p.custom_minimum_size.y = 150
 		p.add_theme_stylebox_override("panel", UI.box(Color(col, 0.1), col, 3, 18, 18))
-		var v := UI.vbox(4)
-		v.add_child(UI.title(str(t["name"]).to_upper(), 42, col))
+		var v := UI.vbox(8)
+		var th := UI.hbox(8)
+		var tn := UI.title(str(t["name"]).to_upper(), 42, col)
+		tn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		th.add_child(tn)
+		th.add_child(UI.title(str((t["players"] as Array).size()), 42, Color(col, 0.6)))
+		v.add_child(th)
+		var flow := HFlowContainer.new()
+		flow.add_theme_constant_override("h_separation", 8)
+		flow.add_theme_constant_override("v_separation", 8)
 		for pl in t["players"]:
-			v.add_child(UI.label(str(pl["name"]), 26, UI.PAPER if pl["online"] else UI.MIST))
+			var chip := PanelContainer.new()
+			chip.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.8), Color(col, 0.6), 2, 26, 12))
+			var cl := UI.label(str(pl["name"]), 22, UI.PAPER if pl["online"] else UI.MIST, "bold")
+			cl.autowrap_mode = TextServer.AUTOWRAP_OFF
+			chip.add_child(cl)
+			flow.add_child(chip)
 		if (t["players"] as Array).is_empty():
-			v.add_child(UI.label("vazia", 24, UI.MIST, "type"))
+			flow.add_child(UI.label("vazia", 22, UI.MIST, "type"))
+		v.add_child(flow)
 		p.add_child(v)
 		lobby_teams.add_child(p)
 	UI.clear(lobby_cases)
@@ -195,8 +210,8 @@ func _build_game() -> void:
 	body.add_child(UI.full(m))
 	var v := UI.vbox(16)
 	m.add_child(v)
-	var top := UI.hbox(24)
-	timer_l = UI.title("0:00", 130, UI.YELLOW)
+	var top: BoxContainer = UI.hbox(24) if _wide() else UI.vbox(4)
+	timer_l = UI.title("0:00", 130 if _wide() else 100, UI.YELLOW)
 	top.add_child(timer_l)
 	var tv := UI.vbox(2)
 	tv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -221,20 +236,26 @@ func _build_game() -> void:
 	scroll.add_child(grid)
 	v.add_child(scroll)
 
-	var ctrl := UI.hbox(12)
-	var rel := UI.button("Liberar próxima pista", "ghost")
+	var ctrl := GridContainer.new()
+	(ctrl as GridContainer).columns = 3 if _wide() else 2
+	ctrl.add_theme_constant_override("h_separation", 12)
+	ctrl.add_theme_constant_override("v_separation", 12)
+	var rel := UI.button("Liberar pista", "ghost")
 	rel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rel.pressed.connect(func() -> void: Net.send({"t": "host_release"}))
 	ctrl.add_child(rel)
 	var more := UI.button("+1 minuto", "ghost")
-	more.custom_minimum_size.x = 200
+	more.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	more.pressed.connect(func() -> void: Net.send({"t": "host_add_time"}))
 	ctrl.add_child(more)
 	var end := UI.button("ENCERRAR E REVELAR", "danger")
 	end.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	end.pressed.connect(func() -> void: Net.send({"t": "host_end"}))
-	ctrl.add_child(end)
 	v.add_child(ctrl)
+	if _wide():
+		ctrl.add_child(end)
+	else:
+		v.add_child(end)
 
 
 func _refresh_game() -> void:
@@ -278,7 +299,9 @@ func _team_card(t: Dictionary) -> Control:
 			var c2 := UI.GREEN if ok else (UI.RED if cat["status"] == "errado" else UI.YELLOW)
 			var chip := PanelContainer.new()
 			chip.add_theme_stylebox_override("panel", UI.box(Color(c2, 0.2), c2, 2, 10, 8))
-			chip.add_child(UI.label(str(cat["label"]), 18, c2, "bold"))
+			var chl := UI.label(str(cat["label"]), 18, c2, "bold")
+			chl.autowrap_mode = TextServer.AUTOWRAP_OFF
+			chip.add_child(chl)
 			row.add_child(chip)
 		var flow := HFlowContainer.new()
 		for ch in row.get_children():

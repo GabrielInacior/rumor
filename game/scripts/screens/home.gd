@@ -29,9 +29,12 @@ func _ready() -> void:
 	var shade := TextureRect.new()
 	var grad := GradientTexture2D.new()
 	var g := Gradient.new()
-	g.set_color(0, Color(UI.NIGHT, 0.0))
-	g.set_color(1, Color(UI.NIGHT, 0.92))
-	g.add_point(0.45, Color(UI.NIGHT, 0.15))
+	# escurece atrás do logotipo e dos botões; a fachada aparece entre os dois
+	g.set_color(0, Color(UI.NIGHT, 0.55))
+	g.set_color(1, Color(UI.NIGHT, 0.95))
+	g.add_point(0.3, Color(UI.NIGHT, 0.62))
+	g.add_point(0.5, Color(UI.NIGHT, 0.08))
+	g.add_point(0.68, Color(UI.NIGHT, 0.5))
 	grad.gradient = g
 	grad.fill_from = Vector2(0, 0)
 	grad.fill_to = Vector2(0, 1)
@@ -48,10 +51,12 @@ func _ready() -> void:
 	var v := UI.vbox(20)
 	m.add_child(v)
 
-	v.add_child(UI.spacer(0, true))
+	v.add_child(UI.spacer(10))
 	var logo := Logo.new()
 	v.add_child(logo)
 	var tag := UI.label("Nada começa como parece.", 34, UI.PAPER, "type")
+	tag.add_theme_color_override("font_outline_color", UI.NIGHT)
+	tag.add_theme_constant_override("outline_size", 10)
 	tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(tag)
 	var sub := UI.label("Mistérios em equipe para a sala de aula", 24, UI.MIST)
