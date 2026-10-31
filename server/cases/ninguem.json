@@ -1,130 +1,281 @@
 {
   "id": "ninguem",
   "title": "Quem é @ninguém?",
-  "tagline": "Uma conta sem rosto. Segredos demais.",
-  "difficulty": 2,
-  "duration_sec": 1080,
+  "tagline": "Uma conta sem rosto. Um segredo a menos.",
+  "difficulty": 1,
+  "duration_sec": 720,
   "scene": "biblioteca",
-  "briefing": "Terça, 14h05. A conta anônima @ninguém solta dois segredos da escola de uma vez só. Dez minutos depois, o 2º ano já escolheu o culpado, sem prova nenhuma. Acusar é fácil. Provar é outra história. Quem sabia dos segredos, quem estava onde, e quem teve chance de postar?",
-  "goal": "Descubra quem é @ninguém, como soube dos segredos e quem tem álibi.",
-
+  "scene_people": [
+    "joana",
+    "lia",
+    "pedro"
+  ],
+  "briefing": "Terça, 14h05. A conta anônima @ninguém vaza o segredo do grêmio: sexta tem pizza surpresa. O 2º ano já escolheu o culpado, sem prova nenhuma. Acusar é fácil. Descubra quem estava onde e quem teve chance de postar.",
+  "goal": "Descubra quem é @ninguém e prove quem não poderia ser.",
   "link_types": [
-    {"id": "postou", "label": "postou como", "directed": true},
-    {"id": "sabia", "label": "sabia de", "directed": true},
-    {"id": "estava", "label": "estava em", "directed": true},
-    {"id": "contou", "label": "contou para", "directed": true}
+    {
+      "id": "postou",
+      "label": "postou",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
   ],
-
   "cards": [
-    {"id": "joana", "kind": "pessoa", "name": "Joana", "role": "monitora da biblioteca",
-     "look": {"skin": "#d9a066", "hair": "longo", "hair_color": "#2c1b10", "top": "#00897b", "accessory": "oculos"}},
-    {"id": "nico", "kind": "pessoa", "name": "Nico", "role": "toca na banda da escola",
-     "look": {"skin": "#4a2c17", "hair": "cacheado", "hair_color": "#111111", "top": "#fbc02d", "accessory": "fones"}},
-    {"id": "lia", "kind": "pessoa", "name": "Lia", "role": "aluna do 2º ano",
-     "look": {"skin": "#ffe0bd", "hair": "rabo", "hair_color": "#7b4b2a", "top": "#8e24aa", "accessory": "brinco"}},
-    {"id": "pedro", "kind": "pessoa", "name": "Pedro", "role": "do time de vôlei, reclama de tudo",
-     "look": {"skin": "#c68642", "hair": "curto", "hair_color": "#1e1208", "top": "#37474f", "accessory": "bone"}},
-    {"id": "caio", "kind": "pessoa", "name": "Caio", "role": "presidente do grêmio",
-     "look": {"skin": "#8d5524", "hair": "raspado", "hair_color": "#1a1a1a", "top": "#2e7d32", "accessory": "bone"}},
-    {"id": "rosa", "kind": "pessoa", "name": "Profa. Rosa", "role": "professora de matemática",
-     "look": {"skin": "#a86b4c", "hair": "coque", "hair_color": "#5d5d5d", "top": "#c2185b", "accessory": "cachecol"}},
-    {"id": "biblioteca", "kind": "lugar", "name": "Biblioteca"},
-    {"id": "sala_prova", "kind": "lugar", "name": "Sala 12 (recuperação)"},
-    {"id": "quadra", "kind": "lugar", "name": "Quadra"},
-    {"id": "ninguem", "kind": "fato", "name": "A conta @ninguém"},
-    {"id": "ensaio", "kind": "fato", "name": "Segredo: ensaio da banda cancelado"},
-    {"id": "pizza", "kind": "fato", "name": "Segredo: pizza surpresa do grêmio"}
+    {
+      "id": "joana",
+      "kind": "pessoa",
+      "name": "Joana",
+      "role": "monitora da biblioteca",
+      "look": {
+        "skin": "#d9a066",
+        "hair": "longo",
+        "hair_color": "#2c1b10",
+        "top": "#00897b",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Shhh. Biblioteca, né? Fala baixinho, detetive.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "neutro"
+      }
+    },
+    {
+      "id": "lia",
+      "kind": "pessoa",
+      "name": "Lia",
+      "role": "aluna do 2º ano",
+      "look": {
+        "skin": "#ffe0bd",
+        "hair": "rabo",
+        "hair_color": "#7b4b2a",
+        "top": "#8e24aa",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Se veio me acusar, entra na fila. Tá grande hoje.",
+            "expr": "desconfiado",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "desconfiado"
+      }
+    },
+    {
+      "id": "pedro",
+      "kind": "pessoa",
+      "name": "Pedro",
+      "role": "reclama de tudo",
+      "look": {
+        "skin": "#c68642",
+        "hair": "curto",
+        "hair_color": "#1e1208",
+        "top": "#37474f",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Já sei, já sei. Todo mundo acha que fui eu.",
+            "expr": "bravo",
+            "anim": "negando"
+          },
+          {
+            "text": "Pelo menos traz um lanche da próxima vez.",
+            "expr": "neutro",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "bravo"
+      }
+    },
+    {
+      "id": "rosa",
+      "kind": "pessoa",
+      "name": "Profa. Rosa",
+      "role": "professora de matemática",
+      "look": {
+        "skin": "#a86b4c",
+        "hair": "coque",
+        "hair_color": "#5d5d5d",
+        "top": "#c2185b",
+        "accessory": "cachecol"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Se for dúvida de matemática, meu horário é quinta.",
+            "expr": "neutro",
+            "anim": "falando"
+          }
+        ],
+        "mood": "neutro"
+      }
+    },
+    {
+      "id": "biblioteca",
+      "kind": "lugar",
+      "name": "Biblioteca"
+    },
+    {
+      "id": "sala_prova",
+      "kind": "lugar",
+      "name": "Sala da recuperação"
+    },
+    {
+      "id": "ninguem",
+      "kind": "fato",
+      "name": "Post da @ninguém"
+    }
   ],
-
   "clues": [
     {
-      "id": "c_posts",
+      "id": "c_post",
       "kind": "post",
-      "title": "Perfil @ninguém",
+      "title": "Post da @ninguém",
       "time": "14h05",
-      "text": "@ninguém: ensaio da banda de amanhã CANCELADO e ninguém avisou os alunos, tá ligado?? 🤫\n@ninguém: e sexta tem pizza surpresa do grêmio pro 2º ano. surpresa pra quem? 🍕 tá ligado??",
+      "text": "A @ninguém vaza a pizza surpresa às 14h05 e os comentários acusam Pedro e Lia.",
+      "post": {
+        "user": "@ninguem",
+        "caption": "sexta tem pizza surpresa pro 2º ano 🍕 o grêmio escondeu de vcs, tá ligado??",
+        "likes": 214,
+        "image": "foto borrada de uma lista escrita 'PIZZA SEXTA'",
+        "comments": [
+          {
+            "user": "@mari.s",
+            "text": "certeza que é o Pedro 💀"
+          },
+          {
+            "user": "@leo_2b",
+            "text": "esse 'tá ligado??' é a cara da Lia kkk"
+          }
+        ]
+      },
       "release": "start",
       "deal": "team"
     },
     {
-      "id": "c_boatos",
+      "id": "c_chat_lia",
       "kind": "mensagem",
-      "title": "Grupo do 2º ano",
-      "time": "14h15",
-      "text": "Mari: certeza que é o Pedro 💀 vive reclamando da escola\nLéo: ou a Lia, ela escreve 'tá ligado??' igualzinho\nMari: e o Nico já sabia do ensaio, hein 👀",
-      "release": "start",
-      "deal": "team"
-    },
-    {
-      "id": "c_msg_lia",
-      "kind": "mensagem",
+      "app": "chat",
       "title": "Grupo da sala",
       "time": "13h20",
-      "from": "lia",
-      "text": "Lia: recuperação de mat daqui a pouco, tá ligado?? 😩\nLia: se eu sumir foi a equação do 2º grau",
+      "text": "A Lia escreve 'tá ligado??' igualzinho à @ninguém.",
+      "chat": {
+        "group": "2º ano 📚",
+        "lines": [
+          {
+            "who": "lia",
+            "text": "recuperação de mat daqui a pouco, tá ligado?? 😩",
+            "time": "13h20"
+          }
+        ]
+      },
       "release": "start",
       "deal": "split"
+    },
+    {
+      "id": "c_ata",
+      "kind": "registro",
+      "title": "Ata da recuperação",
+      "who": "rosa",
+      "text": "Recuperação de matemática, 13h30 às 14h30. Alunos: Lia e Pedro. Celulares na caixa da professora o tempo todo. Ass. Profa. Rosa",
+      "release": "start",
+      "deal": "team"
     },
     {
       "id": "c_dep_lia",
       "kind": "depoimento",
-      "title": "Depoimento da Lia",
-      "from": "lia",
-      "text": "Eu?? Tava na recuperação das 13h30 às 14h30, sem celular. E metade da escola escreve 'tá ligado', gente 🙄",
+      "title": "Fala da Lia",
+      "who": "lia",
+      "text": "Eu tava na recuperação das 13h30 às 14h30, sem celular! E metade da escola escreve 'tá ligado', gente 🙄",
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "dialogue": [
+        {
+          "text": "Eu?? Eu tava na recuperação de mat das 13h30 às 14h30.",
+          "expr": "surpreso",
+          "anim": "negando"
+        },
+        {
+          "text": "Sem celular! A Profa. Rosa recolheu tudo numa caixa.",
+          "expr": "bravo",
+          "anim": "apontando"
+        },
+        {
+          "text": "E metade da escola escreve 'tá ligado', gente. Me poupa.",
+          "expr": "desconfiado",
+          "anim": "dando_de_ombros"
+        }
+      ]
     },
     {
-      "id": "c_ata_prova",
-      "kind": "registro",
-      "title": "Ata da recuperação",
-      "from": "rosa",
-      "text": "Sala 12, recuperação de matemática, 13h30 às 14h30. Aluna: Lia. Celular recolhido na caixa da professora às 13h30, devolvido às 14h31. Ass. Profa. Rosa",
-      "release": "start",
-      "deal": "split"
-    },
-    {
-      "id": "c_story_volei",
-      "kind": "post",
-      "title": "Story do time de vôlei",
-      "time": "14h04",
-      "text": "Foto do treino na quadra: Pedro no meio do saque. Legenda do Prof. Ivo: 'treino puxado até as 15h, celular trancado no vestiário 💪'",
-      "release": "start",
-      "deal": "team"
-    },
-    {
-      "id": "c_dep_nico",
+      "id": "c_dep_pedro",
       "kind": "depoimento",
-      "title": "Depoimento do Nico",
-      "from": "nico",
-      "text": "Soube do ensaio cancelado no grupo da banda, 13h40. Passei na biblioteca e contei pra Joana, umas 13h50. Às 13h55 fui pra aula de química. Pizza? Primeira vez que ouço falar.",
+      "title": "Fala do Pedro",
+      "who": "pedro",
+      "text": "Só porque eu reclamo da escola? Eu tava na recuperação com a Lia, celular na caixa da Profa. Rosa. Nem sabia de pizza nenhuma.",
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "dialogue": [
+        {
+          "text": "Só porque eu reclamo da escola, já virei o vilão?",
+          "expr": "bravo",
+          "anim": "negando"
+        },
+        {
+          "text": "Eu tava na recuperação com a Lia. Celular na caixa da Profa. Rosa.",
+          "expr": "neutro",
+          "anim": "falando"
+        },
+        {
+          "text": "E pizza? Nem sabia de pizza nenhuma. Ninguém me conta nada.",
+          "expr": "triste",
+          "anim": "dando_de_ombros"
+        }
+      ]
     },
     {
-      "id": "c_dm_joana",
-      "kind": "mensagem",
-      "title": "DM da Joana para o Nico",
-      "time": "13h58",
-      "from": "joana",
-      "text": "Joana: sério que cancelaram e ninguém avisa os alunos??\nJoana: isso vive acontecendo, tá ligado??\nJoana: alguém devia falar disso",
-      "release": "start",
-      "deal": "split"
-    },
-    {
-      "id": "c_dep_caio",
+      "id": "c_dep_joana",
       "kind": "depoimento",
-      "title": "Depoimento do Caio",
-      "from": "caio",
-      "text": "A pizza era segredo! Só eu e a Joana contamos os pedidos. Às 14h eu tava na sala do grêmio, em reunião com a diretora até 14h40. Ensaio da banda? Nem sabia.",
+      "title": "Fala da Joana",
+      "who": "joana",
+      "text": "Passei a tarde toda na biblioteca, cuidando da monitoria. Não sei quem é @ninguém. Mas que ninguém avisa nada pros alunos, isso é verdade, tá ligado??",
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "dialogue": [
+        {
+          "text": "Passei a tarde toda aqui na biblioteca, cuidando da monitoria.",
+          "expr": "neutro",
+          "anim": "falando"
+        },
+        {
+          "text": "Quem é @ninguém? Não faço ideia.",
+          "expr": "nervoso",
+          "anim": "negando"
+        },
+        {
+          "text": "Mas que ninguém avisa nada pros alunos, isso é verdade, tá ligado??",
+          "expr": "bravo",
+          "anim": "apontando"
+        }
+      ]
     },
     {
-      "id": "c_lista_pizza",
-      "kind": "registro",
+      "id": "c_pasta",
+      "kind": "objeto",
       "title": "Pasta do grêmio",
-      "text": "Esquecida na mesa da monitoria: 'Pizza surpresa do 2º ano. SEGREDO até sexta 🤫 54 pedidos. Contagem: Caio e Joana, segunda à tarde.'",
+      "text": "Esquecida na mesa da monitoria desde as 13h: 'Pizza surpresa do 2º ano, sexta. SEGREDO 🤫'",
       "release": "hotspot",
       "deal": "team"
     },
@@ -132,69 +283,129 @@
       "id": "c_caderno",
       "kind": "registro",
       "title": "Caderno de entrada",
-      "text": "Biblioteca, terça:\n13h30 Joana (monitora, fica até 15h)\n13h45 Nico (saiu 13h55)\n14h15 9º ano B com a Profa. Dalva\nEntre 13h55 e 14h15, ninguém entrou nem saiu.",
+      "text": "Biblioteca, terça.\n13h30: Joana (monitora)\n14h15: turma do 9º ano\nEntre 13h30 e 14h15, só a Joana estava aqui.",
       "release": "hotspot",
       "deal": "team"
     },
     {
       "id": "c_wifi",
       "kind": "registro",
-      "title": "Registro do roteador",
-      "text": "Da coordenação: os dois posts da @ninguém saíram às 14h05 pela rede 'Biblioteca-Alunos'. Essa rede só pega dentro da biblioteca. O sinal morre na porta.",
-      "release": "t+300",
+      "title": "Registro do wifi",
+      "time": "14h05",
+      "text": "Da coordenação: o post da @ninguém saiu às 14h05 pelo wifi da biblioteca. Esse wifi só pega lá dentro.",
+      "release": "t+180",
       "deal": "team"
     }
   ],
-
   "hotspots": [
-    {"id": "hs_pasta", "object": "pasta_gremio", "label": "Pasta na mesa da monitoria", "clue": "c_lista_pizza"},
-    {"id": "hs_caderno", "object": "caderno_entrada", "label": "Caderno de entrada no balcão", "clue": "c_caderno"}
+    {
+      "id": "hs_pasta",
+      "object": "pasta_gremio",
+      "label": "Pasta na mesa",
+      "clue": "c_pasta"
+    },
+    {
+      "id": "hs_caderno",
+      "object": "caderno_entrada",
+      "label": "Caderno de entrada",
+      "clue": "c_caderno"
+    }
   ],
-
   "solution": {
     "categories": [
-      {"id": "identidade", "label": "Quem é @ninguém"},
-      {"id": "acesso", "label": "Como soube dos segredos"},
-      {"id": "oportunidade", "label": "Onde estava na hora do post"},
-      {"id": "alibi", "label": "Quem não poderia ter postado"}
+      {
+        "id": "identidade",
+        "label": "Quem é @ninguém"
+      },
+      {
+        "id": "oportunidade",
+        "label": "Onde estava quem postou"
+      },
+      {
+        "id": "alibi",
+        "label": "Quem tem álibi"
+      }
     ],
     "edges": [
-      {"from": "joana", "to": "ninguem", "type": "postou", "category": "identidade",
-       "evidence": ["c_wifi", "c_caderno"]},
-      {"from": "nico", "to": "joana", "type": "contou", "category": "acesso",
-       "evidence": ["c_dep_nico", "c_dm_joana"]},
-      {"from": "joana", "to": "pizza", "type": "sabia", "category": "acesso",
-       "evidence": ["c_lista_pizza", "c_dep_caio"]},
-      {"from": "joana", "to": "biblioteca", "type": "estava", "category": "oportunidade",
-       "evidence": ["c_caderno", "c_dep_nico"]},
-      {"from": "lia", "to": "sala_prova", "type": "estava", "category": "alibi",
-       "evidence": ["c_ata_prova", "c_dep_lia"]},
-      {"from": "pedro", "to": "quadra", "type": "estava", "category": "alibi",
-       "evidence": ["c_story_volei"]}
+      {
+        "from": "joana",
+        "to": "ninguem",
+        "type": "postou",
+        "category": "identidade",
+        "evidence": [
+          "c_wifi",
+          "c_caderno"
+        ]
+      },
+      {
+        "from": "joana",
+        "to": "biblioteca",
+        "type": "estava",
+        "category": "oportunidade",
+        "evidence": [
+          "c_caderno",
+          "c_dep_joana"
+        ]
+      },
+      {
+        "from": "lia",
+        "to": "sala_prova",
+        "type": "estava",
+        "category": "alibi",
+        "evidence": [
+          "c_ata",
+          "c_dep_lia"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "sala_prova",
+        "type": "estava",
+        "category": "alibi",
+        "evidence": [
+          "c_ata",
+          "c_dep_pedro"
+        ]
+      }
     ],
     "traps": [
-      {"from": "lia", "to": "ninguem", "type": "postou", "category": "identidade"},
-      {"from": "pedro", "to": "ninguem", "type": "postou", "category": "identidade"},
-      {"from": "nico", "to": "ninguem", "type": "postou", "category": "identidade"},
-      {"from": "caio", "to": "ninguem", "type": "postou", "category": "identidade"}
+      {
+        "from": "lia",
+        "to": "ninguem",
+        "type": "postou",
+        "category": "identidade"
+      },
+      {
+        "from": "pedro",
+        "to": "ninguem",
+        "type": "postou",
+        "category": "identidade"
+      }
     ]
   },
-
   "reveal": {
     "timeline": [
-      {"time": "Segunda", "text": "Joana ajuda o Caio a contar os pedidos da pizza surpresa."},
-      {"time": "13h30", "text": "Joana começa a monitoria. Lia entra na recuperação sem celular."},
-      {"time": "13h50", "text": "Nico conta pra Joana que o ensaio foi cancelado."},
-      {"time": "13h55", "text": "Nico sai pra química. Joana fica sozinha na biblioteca."},
-      {"time": "14h04", "text": "Pedro aparece no story do treino, na quadra."},
-      {"time": "14h05", "text": "@ninguém posta os dois segredos pelo wifi da biblioteca."}
+      {
+        "time": "13h00",
+        "text": "O grêmio esquece a pasta da pizza na mesa da monitoria."
+      },
+      {
+        "time": "13h30",
+        "text": "Joana começa a monitoria. Lia e Pedro entram na recuperação, sem celular."
+      },
+      {
+        "time": "14h05",
+        "text": "Joana posta como @ninguém pelo wifi da biblioteca."
+      },
+      {
+        "time": "14h15",
+        "text": "A turma do 9º ano chega na biblioteca."
+      }
     ],
-    "explanation": "Só a Joana sabia dos dois segredos: o ensaio pelo Nico, a pizza pela contagem do grêmio. E só ela estava na biblioteca às 14h05. O registro do roteador vira o jogo: o post saiu de uma rede que só pega lá dentro. A Joana queria que a escola percebesse que ninguém avisava os alunos das mudanças.",
+    "explanation": "O post saiu do wifi da biblioteca às 14h05, e só a Joana estava lá. Ela viu a pasta do grêmio na própria mesa. O registro do wifi vira o jogo. A Joana queria que a escola percebesse que ninguém avisa os alunos de nada.",
     "refuted": [
-      "Lia escreve 'tá ligado??', mas estava na recuperação e o celular dela estava na caixa da professora.",
-      "Pedro estava no treino na quadra, celular trancado no vestiário.",
-      "Nico sabia do ensaio, mas saiu da biblioteca às 13h55 e não sabia da pizza.",
-      "Caio sabia da pizza, mas estava em reunião com a diretora e não sabia do ensaio."
+      "Lia escreve 'tá ligado??', mas estava na recuperação sem celular.",
+      "Pedro reclama de tudo, mas também estava na recuperação sem celular."
     ]
   }
 }

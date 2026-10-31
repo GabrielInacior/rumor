@@ -11,7 +11,7 @@ signal card_moved(ref: String, pos: Vector2)   # pos normalizada 0..1
 
 const BOARD := Vector2(1500, 1500)
 const SIZES := {
-	"pessoa": Vector2(150, 196), "lugar": Vector2(190, 104), "fato": Vector2(214, 120), "pista": Vector2(196, 132),
+	"pessoa": Vector2(176, 228), "lugar": Vector2(210, 116), "fato": Vector2(236, 132), "pista": Vector2(216, 146),
 }
 const DRAG_START := 14.0
 
@@ -390,7 +390,7 @@ func _draw_card(c: Dictionary) -> void:
 			else:
 				_draw_silhouette(ph, card)
 			var nm := str(card.get("name", "?"))
-			draw_string(f_m, Vector2(lr.position.x + 8, lr.end.y - 18), nm, HORIZONTAL_ALIGNMENT_CENTER, lr.size.x - 16, _fit_size(f_m, nm, lr.size.x - 16, 26), UI.INK)
+			draw_string(f_m, Vector2(lr.position.x + 8, lr.end.y - 18), nm, HORIZONTAL_ALIGNMENT_CENTER, lr.size.x - 16, _fit_size(f_m, nm, lr.size.x - 16, 30), UI.INK)
 		"lugar":
 			var card := Net.card_by_id(ref.substr(2))
 			draw_rect(lr, Color("#cfe0f5"))

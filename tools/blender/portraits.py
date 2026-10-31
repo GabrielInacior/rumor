@@ -436,7 +436,7 @@ class Face:
 
 
 # índices de material do rosto
-F_WHITE, F_LIDSH, F_IRIS, F_IRIS_L, F_PUPIL, F_HI, F_LINE, F_SKDK, F_MOUTH, F_TEETH, F_BROW, F_GLINT, F_TONGUE, F_BLUSH = range(14)
+F_WHITE, F_LIDSH, F_IRIS, F_IRIS_L, F_PUPIL, F_HI, F_LINE, F_SKDK, F_MOUTH, F_TEETH, F_BROW, F_GLINT, F_TONGUE, F_BLUSH, F_BANDAID, F_BANDPAD = range(16)
 
 EXPR = {
     #            lid(L,R)    lowerlid  brows (inner, mid, outer) L / R           gaze      mouth        roll
@@ -606,8 +606,9 @@ def build_hair(look, rnd, mats):
         v, f = tube(pts, radii + [0.003], flat=flat)
         mb.add(v, f, pick(i))
 
+    under_cap = look.get("accessory") == "bone"
     if style == "curto":
-        for i in range(15):
+        for i in range(0 if under_cap else 15):
             th = -78 + 156 * i / 14 + J(5)
             tip = S(th * 0.8 + sweep, 19 + J(4) + abs(th) * 0.08, 0.16)
             lock([S(th * 0.2 + 180 * 0, 84, 0.02), S(th * 0.9 + sweep * 0.5, 58, 0.13), S(th + sweep, 36, 0.14), tip],
@@ -689,7 +690,7 @@ def build_hair(look, rnd, mats):
             if abs(th) < 55 and ph < 24:
                 continue
             hgt = (ph + 40) / 128
-            off = 0.06 + 0.22 * hgt * rnd.uniform(0.5, 1.0) + (0.06 if abs(th) > 60 else 0)
+            off = 0.06 + 0.16 * hgt * rnd.uniform(0.5, 1.0) + (0.06 if abs(th) > 60 else 0)
             c = S(th, ph, off)
             r = rnd.uniform(0.065, 0.1)
             v, f = ellipsoid(c, (r, r, r * 0.9), 10, 7)
@@ -719,7 +720,7 @@ def build_hair(look, rnd, mats):
             lock([tie, tie + Vector((dx + 0.12, 0.16, -0.06)), HC + Vector((0.34 + dx, 0.34, -0.36)),
                   HC + Vector((0.5 + dx, 0.12, -0.66)), HC + Vector((0.5 + dx * 1.2, -0.3, -0.86)),
                   HC + Vector((0.44 + dx * 1.3, -0.46, -1.22 + J(0.05)))],
-                 0.12, 0.04, k, flat=0.75, mid=0.14)
+                 0.12, 0.075, k, flat=0.75, mid=0.14)
     return mb
 
 
@@ -833,18 +834,31 @@ def build_body(look, rnd, top_style, skin_m, M):
             acc.add(v, f, 1)
     elif top_style == "jaqueta":
         # camiseta por dentro (V) + gola levantada de detetive
-        vs = [Vector((-0.2, front_y(0.2, 0.17) - 0.01, neck_bot + 0.1)), Vector((0.2, front_y(0.2, 0.17) - 0.01, neck_bot + 0.1)), Vector((0, front_y(0, -0.75) - 0.01, sh_z - 0.75))]
-        acc.add(vs, [(0, 1, 2)], 2)
-        v, f = loop_tube(Vector((0, 0.03, neck_bot + 0.14)), 0.17, (0, 0.2, 1), 0.03)
-        acc.add(v, f, 2)
+        def fp(x, zr, out=0.0):
+            return Vector((x, front_y(x, zr) - out, sh_z + zr))
+
+        # camiseta de dentro: V subdividido que acompanha a curva do peito
+        rows, cols = 10, 6
+        vs, fs = [], []
+        for i in range(rows + 1):
+            zr = 0.12 + (-0.75 - 0.12) * i / rows
+            wv = 0.19 * (1 - i / rows) + 0.004
+            for j in range(cols + 1):
+                vs.append(fp(-wv + 2 * wv * j / cols, zr, 0.03))
+        for i in range(rows):
+            for j in range(cols):
+                a0 = i * (cols + 1) + j
+                fs.append((a0, a0 + 1, a0 + cols + 2, a0 + cols + 1))
+        acc.add(vs, fs, 2)
+        # gola de detetive: faixa em pé atrás do pescoço + lapelas deitadas no peito
+        pts = [Vector((math.sin(t) * 0.25, 0.03 + math.cos(t) * 0.23, neck_bot + 0.14)) for t in np.linspace(-1.9, 1.9, 9)]
+        v, f = tube(pts, [0.07, 0.07], flat=0.35, ring=8, per=4, center=Vector((0, 0.03, neck_bot - 0.3)))
+        tb.add(v, f, 2)
         for s in (-1, 1):
-            a = Vector((s * 0.12, -0.24, neck_bot + 0.08))
-            b = Vector((s * 0.32, 0.0, neck_bot + 0.34))
-            c = Vector((s * 0.28, -0.12, neck_bot + 0.38))
-            d = Vector((s * 0.06, front_y(0.06, -0.55) - 0.03, sh_z - 0.55))
-            n = Vector((0, -0.03, 0))
-            vs = [a, b, c, d, a + n, b + n, c + n, d + n]
-            fs = [(0, 3, 1, 2), (4, 6, 5, 7), (0, 4, 7, 3), (3, 7, 5, 1), (1, 5, 6, 2), (2, 6, 4, 0)]
+            q = [fp(s * 0.15, 0.15, 0.035), fp(s * 0.36, 0.07, 0.03), fp(s * 0.25, -0.2, 0.035), fp(s * 0.05, -0.62, 0.035)]
+            n = Vector((0, -0.025, 0))
+            vs = q + [p_ + n for p_ in q]
+            fs = [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)]
             tb.add(vs, fs, 2)
             v, f = tube([Vector((s * 0.06, front_y(0.06, -0.5) - 0.035, sh_z - 0.5)), Vector((s * 0.1, front_y(0.1, -0.9) - 0.035, sh_z - 0.9))], [0.01, 0.01], ring=6, per=2,
                         center=Vector((0, 0.3, sh_z)))
@@ -973,7 +987,7 @@ def build_scarf(M):
         top = Vector((x0, -0.3, z + 0.02))
         pts = [top, top + Vector((dx * 0.5, -0.06, -ln * 0.4)), top + Vector((dx, -0.08, -ln))]
         v, f = tube(pts, [0.085, 0.095, 0.09], flat=0.28, ring=10, per=4, center=top + Vector((0, 0.6, 0)))
-        mb.add(v, f, j % 2)
+        mb.add(v, f, 0)
         for q in range(5):
             b = top + Vector((dx - 0.06 + q * 0.03, -0.085, -ln - 0.01))
             v, f = tube([b, b + Vector((0, -0.005, -0.06))], [0.009, 0.006], ring=5, per=2, center=b + Vector((0, 0.5, 0)))
@@ -1011,6 +1025,8 @@ def build_portrait(pid, look):
     # materiais
     M_SKIN = toon("pele", skin, stroke=0.12, brush=6)
     hair_stroke = 0.35 if look.get("hair") == "raspado" else 0.24
+    if look.get("hair") == "raspado":   # cabelo raspado deixa o couro aparecer
+        hairc = hairc * 0.6 + skin * 0.4
     M_HAIR = [toon("cabelo", hairc, stroke=hair_stroke, brush=14),
               toon("cabelo_claro", hairc * 1.45 + 0.004, stroke=hair_stroke, brush=14),
               toon("cabelo_escuro", hairc * 0.62, stroke=hair_stroke, brush=14)]
@@ -1073,6 +1089,8 @@ def build_portrait(pid, look):
         flat("glint", lin("#ffffff")),
         flat("lingua", lin("#b0475c")),
         flat("rubor", skin * np.array([1.0, 0.55, 0.6]) * 0.9 + PINK * 0.08),
+        flat("curativo", lin("#d9b48a")),
+        flat("curativo_gaze", lin("#f1e6d2")),
     ]
     wing = float(look.get("lashes", fr.choice([0.04, 0.08, 0.14, 0.24])))
     eyw, eyh, eyx, eyy = fr.uniform(0.098, 0.115), fr.uniform(0.072, 0.088), fr.uniform(0.18, 0.2), -0.06
@@ -1092,6 +1110,19 @@ def build_portrait(pid, look):
         face.stroke([(0.06, -0.19), (0.07, -0.22), (0.045, -0.24)], 0.013, F_SKDK, 0.011, taper=(0.3, 0.3))
         face.stroke([(-0.06, -0.19), (-0.07, -0.22), (-0.045, -0.24)], 0.011, F_SKDK, 0.011, taper=(0.3, 0.3))
         face.stroke([(-0.02, -0.245), (0.02, -0.245)], 0.01, F_SKDK, 0.011, taper=(0.4, 0.4))
+    mark = look.get("mark") or ["nenhum", "pinta", "nenhum", "curativo", "nenhum", "nenhum"][seeded(pid, "marca") % 6]
+    if mark == "pinta":
+        face.circle(0.13 * (1 if seeded(pid, "pl") % 2 else -1), -0.29, 0.011, F_LINE, 0.0105, k=8)
+    elif mark == "curativo":   # band-aid na bochecha do lado da luz
+        cx, cy, ang = -0.2, -0.2, math.radians(-25)
+        rot2 = lambda x, y: (cx + x * math.cos(ang) - y * math.sin(ang), cy + x * math.sin(ang) + y * math.cos(ang))
+        pts = [rot2(0.075 * math.copysign(abs(math.cos(t)) ** 0.4, math.cos(t)), 0.026 * math.copysign(abs(math.sin(t)) ** 0.4, math.sin(t)))
+               for t in np.linspace(0, 2 * math.pi, 24, endpoint=False)]
+        face.shape(pts, F_BANDAID, 0.0102)
+        face.shape([rot2(-0.022, -0.02), rot2(0.022, -0.02), rot2(0.022, 0.02), rot2(-0.022, 0.02)], F_BANDPAD, 0.0106)
+        for k in range(4):
+            x = -0.055 + k * 0.035 if k < 2 else 0.04 + (k - 2) * 0.016
+            face.circle(*rot2(x, 0.0), 0.003, F_SKDK, 0.0108, k=6)
     if expr_name in ("alegre", "nervoso"):   # rubor em hachura (desenho à mão)
         for s in (-1, 1):
             for k in range(3):

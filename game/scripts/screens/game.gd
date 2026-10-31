@@ -5,6 +5,7 @@ extends Control
 
 const BoardView := preload("res://scripts/board/board_view.gd")
 const CaseScene := preload("res://scripts/scene3d/case_scene.gd")
+const TalkView := preload("res://scripts/scene3d/talk_view.gd")
 
 var timer_l: Label
 var team_l: Label
@@ -21,6 +22,8 @@ var clue_count_l: Label
 var submit_btn: Button
 var action_bar: HBoxContainer
 var link_banner: PanelContainer
+var guide: PanelContainer
+var guide_l: Label
 var sheet_layer: Control
 var seen_clues := {}
 var new_badge := 0
@@ -90,7 +93,13 @@ func _build_scene_page() -> Control:
 	scene3d = CaseScene.new()
 	page.add_child(UI.full(scene3d))
 	var found := {}
-	scene3d.setup(str(Net.case_data.get("scene", "corredor")), Net.case_data.get("hotspots", []), found)
+	var ppl := []
+	for pid in Net.case_data.get("scene_people", []):
+		var pc := Net.card_by_id(str(pid))
+		if not pc.is_empty():
+			ppl.append(pc)
+	scene3d.setup(str(Net.case_data.get("scene", "corredor")), Net.case_data.get("hotspots", []), found, ppl)
+	scene3d.person_tapped.connect(_talk_to)
 	scene3d.hotspot_tapped.connect(_on_hotspot)
 	scene3d.flavor_tapped.connect(func(t: String) -> void: _narrate(t, false))
 	var hint := UI.label("Arraste para olhar em volta. Toque no que brilha.", 22, UI.PAPER, "bold")
@@ -124,6 +133,39 @@ func _narrate(text: String, important: bool) -> void:
 	tw.tween_interval(4.5 if important else 3.2)
 	tw.tween_property(narr_panel, "modulate:a", 0.0, 0.4)
 	tw.tween_callback(func() -> void: narr_panel.visible = false)
+
+
+## Conversa com quem está na cena: o depoimento só sai se a equipe já tem essa pista
+## (alguém precisa ter achado ou recebido); antes disso, a pessoa desconversa.
+func _talk_to(pid: String) -> void:
+	var card := Net.card_by_id(pid)
+	for c in Net.state.get("clues", []):
+		if str(c.get("kind", "")) == "depoimento" and str(c.get("who", c.get("from", ""))) == pid:
+			_open_talk(card, _dialogue_of(c), "DEPOIMENTO")
+			return
+	var greet: Array = card.get("talk", {}).get("greet", [])
+	if greet.is_empty():
+		greet = [{"text": "Agora não, detetive.", "expr": "desconfiado", "anim": "negando"}]
+	_open_talk(card, greet, "CONVERSA")
+
+
+func _dialogue_of(c: Dictionary) -> Array:
+	var d: Array = c.get("dialogue", [])
+	if not d.is_empty():
+		return d
+	var out := []
+	for sentence in UI.strip_emoji(str(c.get("text", ""))).split(". "):
+		if sentence.strip_edges() != "":
+			out.append({"text": sentence.strip_edges(), "expr": "neutro", "anim": "falando"})
+	return out
+
+
+func _open_talk(card: Dictionary, lines: Array, subtitle: String) -> void:
+	var tv := TalkView.new()
+	tv.open(card, lines, subtitle)
+	add_child(UI.full(tv))
+	scene3d.set_process(false)
+	tv.finished.connect(func() -> void: scene3d.set_process(tab == "cena"))
 
 
 func _on_hotspot(id: String, label: String) -> void:
@@ -177,37 +219,66 @@ func _clue_row(c: Dictionary, mine: bool, pinned: bool) -> Control:
 	var col := UI.clue_color(str(c.get("kind", "")))
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	b.custom_minimum_size = Vector2(0, 124)
-	b.add_theme_stylebox_override("normal", UI.box(UI.PAPER, col, 0, 10))
-	b.add_theme_stylebox_override("hover", UI.box(UI.PAPER.lightened(0.2), col, 3, 10))
-	b.add_theme_stylebox_override("pressed", UI.box(UI.PAPER.darkened(0.1), col, 3, 10))
-	var h := UI.hbox(14)
+	b.custom_minimum_size = Vector2(0, 132)
+	var edge := UI.PINK if (mine and not pinned) else Color(0, 0, 0, 0)
+	b.add_theme_stylebox_override("normal", UI.box(Color("#f4eedf"), edge, 4 if edge.a > 0 else 0, 18))
+	b.add_theme_stylebox_override("hover", UI.box(Color("#fffaf0"), UI.YELLOW, 4, 18))
+	b.add_theme_stylebox_override("pressed", UI.box(Color("#e9e0c8"), UI.YELLOW, 4, 18))
+	var h := UI.hbox(16)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var stripe := ColorRect.new()
-	stripe.color = col
-	stripe.custom_minimum_size = Vector2(16, 0)
-	stripe.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	h.add_child(stripe)
-	var v := UI.vbox(2)
+	h.offset_left = 18; h.offset_right = -16; h.offset_top = 12; h.offset_bottom = -12
+	var who := str(c.get("who", c.get("from", c.get("post", {}).get("who", ""))))
+	var av := ClueView.Avatar.new()
+	av.setup(who, 40, UI.clue_tag(str(c.get("kind", ""))))
+	av.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(av)
+	var v := UI.vbox(4)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var tag := UI.title(UI.clue_tag(str(c.get("kind", ""))) + ("   " + str(c.get("time", "")) if str(c.get("time", "")) != "" else ""), 26, col.darkened(0.45))
-	tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(UI.spacer(8))
-	v.add_child(tag)
-	var t := UI.label(UI.strip_emoji(str(c.get("title", ""))), 28, UI.INK, "type")
+	var top := UI.hbox(8)
+	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	top.add_child(_chip(UI.clue_tag(str(c.get("kind", ""))), col.darkened(0.15)))
+	if str(c.get("time", "")) != "":
+		var tm := UI.label(str(c.get("time", "")), 22, Color("#5a6080"), "bold")
+		tm.autowrap_mode = TextServer.AUTOWRAP_OFF
+		tm.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		top.add_child(tm)
+	v.add_child(top)
+	var t := UI.label(UI.strip_emoji(str(c.get("title", ""))), 30, UI.INK, "bold")
+	t.autowrap_mode = TextServer.AUTOWRAP_OFF
+	t.clip_text = true
 	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	t.max_lines_visible = 1
+	t.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	v.add_child(t)
+	var prev := UI.label(UI.strip_emoji(str(c.get("text", ""))).replace("
+", "  "), 21, Color("#4a4f66"))
+	prev.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	prev.max_lines_visible = 1
+	prev.autowrap_mode = TextServer.AUTOWRAP_OFF
+	prev.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	prev.clip_text = true
+	v.add_child(prev)
 	h.add_child(v)
 	if mine and not pinned:
 		h.add_child(_badge("SÓ VOCÊ", UI.PINK))
 	elif pinned:
 		h.add_child(_badge("NO QUADRO", UI.SKY))
-	h.add_child(UI.spacer(0))
 	b.add_child(h)
 	b.pressed.connect(func() -> void: _open_clue(c))
 	return b
+
+
+func _chip(text: String, col: Color) -> Control:
+	var p := PanelContainer.new()
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	p.add_theme_stylebox_override("panel", UI.box(col, Color.TRANSPARENT, 0, 8, 10))
+	var l := UI.title(text, 22, UI.INK)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	p.add_child(l)
+	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	return p
 
 
 func _badge(text: String, col: Color) -> Control:
@@ -225,11 +296,22 @@ func _badge(text: String, col: Color) -> Control:
 
 func _open_clue(c: Dictionary) -> void:
 	Sfx.play("paper_flip")
-	var v := UI.vbox(16)
+	var v := UI.vbox(18)
 	var col := UI.clue_color(str(c.get("kind", "")))
-	v.add_child(UI.title(UI.clue_tag(str(c.get("kind", ""))) + ("  ·  " + str(c.get("time", "")) if str(c.get("time", "")) != "" else ""), 34, col))
-	v.add_child(UI.label(UI.strip_emoji(str(c.get("title", ""))), 32, UI.PAPER, "bold"))
+	var hd := UI.hbox(12)
+	hd.add_child(_chip(UI.clue_tag(str(c.get("kind", ""))), col))
+	if str(c.get("time", "")) != "":
+		hd.add_child(_chip(str(c.get("time", "")), UI.MIST))
+	v.add_child(hd)
+	v.add_child(UI.title(UI.strip_emoji(str(c.get("title", ""))).to_upper(), 46, UI.PAPER))
 	v.add_child(_clue_body(c))
+	if str(c.get("kind", "")) == "depoimento" and str(c.get("who", c.get("from", ""))) != "":
+		var hear := UI.button("OUVIR O DEPOIMENTO", "ghost")
+		var who_id := str(c.get("who", c.get("from", "")))
+		hear.pressed.connect(func() -> void:
+			_close_sheet()
+			_open_talk(Net.card_by_id(who_id), _dialogue_of(c), "DEPOIMENTO"))
+		v.add_child(hear)
 	var pinned := _pinned_refs().has("c:" + str(c["id"]))
 	if Net.state.get("mine", []).has(c["id"]) and not pinned:
 		v.add_child(UI.label("Só você está vendo esta pista. Leia em voz alta ou fixe no quadro.", 22, UI.PINK, "bold"))
@@ -246,49 +328,7 @@ func _open_clue(c: Dictionary) -> void:
 
 
 func _clue_body(c: Dictionary) -> Control:
-	var text := UI.strip_emoji(str(c.get("text", "")))
-	if str(c.get("kind", "")) in ["mensagem", "post"]:
-		# conversa de celular: cada linha "Nome: fala" vira um balão
-		var v := UI.vbox(10)
-		var phone := UI.panel(Color("#0b1330"), Color(UI.SKY, 0.6), 26)
-		phone.add_child(v)
-		var first_speaker := ""
-		for line in text.split("\n"):
-			line = line.strip_edges()
-			if line == "":
-				continue
-			var who := ""
-			var say := line
-			var i := line.find(":")
-			if i > 0 and i < 26:
-				who = line.substr(0, i).strip_edges()
-				say = line.substr(i + 1).strip_edges()
-			if first_speaker == "":
-				first_speaker = who
-			var right := who != "" and who != first_speaker
-			var bub := PanelContainer.new()
-			bub.add_theme_stylebox_override("panel", UI.box(Color("#26407a") if not right else Color("#3d5a2a"), Color.TRANSPARENT, 0, 18, 16))
-			var bv := UI.vbox(2)
-			if who != "":
-				bv.add_child(UI.label(who, 20, UI.YELLOW, "bold"))
-			bv.add_child(UI.label(say, 26, UI.PAPER))
-			bub.add_child(bv)
-			var row := UI.hbox()
-			if right:
-				row.add_child(UI.spacer(0))
-				row.get_child(0).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			bub.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			bub.size_flags_stretch_ratio = 4.0
-			row.add_child(bub)
-			if not right:
-				var sp := UI.spacer(0)
-				sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-				row.add_child(sp)
-			v.add_child(row)
-		return phone
-	var p := UI.panel(UI.PAPER, UI.INK, 6)
-	p.add_child(UI.label(text, 28, UI.INK, "type"))
-	return p
+	return ClueView.build(c)
 
 
 # ================================================================== QUADRO
@@ -320,6 +360,16 @@ func _build_board_page() -> Control:
 	topbar.add_child(fit)
 	page.add_child(topbar)
 
+	guide = PanelContainer.new()
+	guide.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.88), Color(UI.YELLOW, 0.7), 2, 16, 16))
+	guide_l = UI.label("", 24, UI.PAPER, "bold")
+	guide.add_child(guide_l)
+	guide.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	guide_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	guide.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	guide.offset_left = 16; guide.offset_right = -16; guide.offset_top = 112
+	page.add_child(guide)
+
 	link_banner = PanelContainer.new()
 	link_banner.add_theme_stylebox_override("panel", UI.box(UI.YELLOW, UI.INK, 0, 14, 16))
 	var lb := UI.hbox(10)
@@ -330,6 +380,7 @@ func _build_board_page() -> Control:
 	cancel.pressed.connect(func() -> void:
 		board.link_from = ""
 		link_banner.visible = false
+		_update_guide()
 		board.queue_redraw())
 	lb.add_child(cancel)
 	link_banner.add_child(lb)
@@ -396,6 +447,7 @@ func _update_action_bar() -> void:
 			board.link_from = ref
 			board.selected_ref = ""
 			link_banner.visible = true
+			guide.visible = false
 			Sfx.play("string_stretch")
 			_update_action_bar())
 		action_bar.add_child(link)
@@ -743,11 +795,34 @@ func refresh() -> void:
 		if not first:
 			_show_result(lr)
 	_update_submit()
+	_update_guide()
 
 
 func on_event(evt: Dictionary) -> void:
 	if str(evt.get("k", "")) == "hotspot":
 		scene3d.mark_found(str(evt.get("id", "")))
+
+
+## Passo a passo para quem joga pouco: mostra só o PRÓXIMO passo, até a equipe pegar o jeito.
+func _update_guide() -> void:
+	var bd: Dictionary = Net.state.get("board", {})
+	var people := 0
+	for c in bd.get("cards", []):
+		if str(c["ref"]).begins_with("p:"):
+			people += 1
+	var links: Array = bd.get("links", [])
+	var proved := links.filter(func(l: Dictionary) -> bool: return l.get("evidence") != null).size()
+	var txt := ""
+	if people < 2:
+		txt = "PASSO 1 de 3   Toque em + FIXAR e coloque no quadro as pessoas do caso."
+	elif links.is_empty():
+		txt = "PASSO 2 de 3   Toque numa pessoa e depois em LIGAR COM FIO."
+	elif proved == 0:
+		txt = "PASSO 3 de 3   Toque no nó vermelho do fio e prenda uma PROVA."
+	elif Net.state.get("lastResult") == null:
+		txt = "Isso! Liguem o resto da história e toquem em APRESENTAR TEORIA."
+	guide_l.text = txt
+	guide.visible = txt != "" and not link_banner.visible
 
 
 func _update_submit() -> void:

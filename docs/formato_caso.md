@@ -23,6 +23,7 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
   "difficulty": 1,                    // 1 fácil, 2 médio, 3 difícil
   "duration_sec": 900,
   "scene": "corredor",                // id da cena 3D: corredor | biblioteca | teatro
+  "scene_people": ["caio", "duda"],   // 2 a 3 ids de pessoas que aparecem fisicamente na cena 3D
   "briefing": "Texto curto (máx. ~60 palavras) lido na abertura. Voz de narrador noir.",
   "goal": "Descubra quem contou para quem e onde a história mudou.",   // 1 frase, fica fixa na tela
 
@@ -33,7 +34,10 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
 
   "cards": [                          // tudo que pode ir pro quadro, menos pistas
     {"id": "lucia", "kind": "pessoa", "name": "Profa. Lúcia", "role": "organiza a viagem",
-     "look": {"skin": "#c98d6b", "hair": "coque", "hair_color": "#3a2a20", "top": "#7a5a9e", "accessory": "oculos"}},
+     "look": {"skin": "#c98d6b", "hair": "coque", "hair_color": "#3a2a20", "top": "#7a5a9e", "accessory": "oculos"},
+     // talk: falas ao tocar na pessoa na cena 3D antes do depoimento (1 a 2, sem revelar nada)
+     // e a expressão padrão do rosto (mesmos valores de expr do dialogue)
+     "talk": {"greet": [{"text": "Eu? Tô só passando. Juro.", "expr": "nervoso", "anim": "negando"}], "mood": "neutro"}},
     {"id": "biblioteca", "kind": "lugar", "name": "Biblioteca"},
     {"id": "versao_cancelada", "kind": "fato", "name": "\"A viagem foi cancelada\""}
   ],
@@ -50,6 +54,24 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
       "deal": "split"                 // split = vai pra UM aluno da equipe | team = todos veem
     }
   ],
+
+  // Campos opcionais por tipo de pista (a UI simula redes sociais):
+  //  "who": "id_pessoa"   autor/quem fala (depoimento, bilhete, registro). Substitui "from".
+  //  kind "mensagem" -> "app": "chat" e
+  //    "chat": {"group": "nome do grupo ou da pessoa",
+  //             "lines": [{"who": "id_pessoa ou nome solto", "text": "...", "time": "10h17"}]}
+  //    O "text" da pista vira um resumo de 1 linha, usado em listas.
+  //  kind "post" ->
+  //    "post": {"user": "@arroba", "who": "id_pessoa (opcional)", "caption": "...", "likes": 87,
+  //             "image": "descrição curta do que a foto mostra",
+  //             "comments": [{"user": "@x", "text": "..."}]}
+  //    O "text" da pista também vira resumo de 1 linha.
+  //  "title" curto (até 4 palavras). "time" opcional.
+  //  kind "depoimento" -> "dialogue": [{"text": "...", "expr": "...", "anim": "..."}]
+  //    2 a 4 falas (até 22 palavras cada) para a conversa 3D, com o MESMO conteúdo do "text".
+  //    O "text" continua como resumo.
+  //    expr: neutro | feliz | surpreso | bravo | desconfiado | triste | nervoso
+  //    anim: falando | pensando | nervoso | negando | apontando | dando_de_ombros | rindo
 
   "hotspots": [                       // objetos tocáveis na cena 3D que liberam pista para a equipe
     {"id": "mural", "object": "mural", "label": "Mural de avisos", "clue": "c_horario_ensaio"}
@@ -93,6 +115,11 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
 
 ## Regras de escrita
 
+- Público com pouca experiência em jogos: casos simples. 3 a 4 linhas exigidas (máx. 3 categorias),
+  2 tipos de linha (máx. 3), 4 a 5 pessoas, até 2 lugares e 2 fatos, 7 a 9 pistas com UMA informação cada,
+  1 ou 2 armadilhas. Briefing até 45 palavras, pista até 35.
+- Cada linha exigida aceita 2 pistas como prova sempre que possível, uma delas `team` ou hotspot,
+  para nenhuma equipe travar se um aluno faltar.
 - Pistas curtas, legíveis no celular. Pelo menos 2 hipóteses plausíveis no começo.
 - Pelo menos uma pista que chega depois (`t+...`) e muda a leitura.
 - Tudo deduzível só com as pistas, sem conhecimento externo. Nada pesado; tom leve.

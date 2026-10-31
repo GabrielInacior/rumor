@@ -18,14 +18,23 @@ func _ready() -> void:
 	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(t)
 	v.add_child(UI.label(UI.strip_emoji(str(c.get("tagline", ""))), 30, UI.PINK, "bold"))
-	var p := UI.panel(Color(UI.PAPER, 0.96), UI.INK)
-	text_l = UI.label("", 30, UI.INK, "type")
+	# a narração vem numa folha de caderno, como as anotações de um detetive
+	var p := Paper.make("notebook", true)
+	text_l = UI.label("", 29, Color("#1b2140"), "type")
+	text_l.add_theme_constant_override("line_spacing", 11)
 	p.add_child(text_l)
-	v.add_child(p)
+	var sc := ScrollContainer.new()
+	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	sc.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var pm := UI.margin(6, 14, 14)
+	pm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	pm.add_child(p)
+	sc.add_child(pm)
+	v.add_child(sc)
 	var goal := UI.label("Objetivo: " + str(c.get("goal", "")), 28, UI.YELLOW, "bold")
 	v.add_child(goal)
-	v.add_child(UI.spacer(0, true))
-	count_l = UI.title("", 120, UI.PAPER)
+	count_l = UI.title("", 110, UI.PAPER)
 	count_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(count_l)
 	full_text = UI.strip_emoji(str(c.get("briefing", "")))

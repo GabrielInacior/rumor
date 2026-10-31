@@ -6,13 +6,21 @@ extends SubViewportContainer
 
 signal hotspot_tapped(id: String, label: String)
 signal flavor_tapped(text: String)
+signal person_tapped(id: String)
 
 const TOON := preload("res://shaders/toon.gdshader")
 const OUTLINE := preload("res://shaders/outline.gdshader")
+const Character := preload("res://scripts/scene3d/character.gd")
+const PEOPLE_SPOTS := {
+	"corredor": [Vector3(0.9, 0, -3.6), Vector3(-1.1, 0, -6.6), Vector3(1.1, 0, -8.8)],
+	"biblioteca": [Vector3(-1.4, 0, -2.6), Vector3(0.4, 0, -5.4), Vector3(2.3, 0, -1.7)],
+	"teatro": [Vector3(-1.0, 0.9, -7.0), Vector3(1.9, 0.9, -7.3), Vector3(-3.5, 0, -2.6)],
+}
 
 var scene_id := "corredor"
 var hotspots: Array = []        # do caso: [{id, object, label}]
 var found := {}                 # hotspot id -> true
+var people: Array = []          # cartas de pessoa que aparecem na cena
 
 var vp: SubViewport
 var world: Node3D
@@ -44,10 +52,11 @@ func _ready() -> void:
 	_build()
 
 
-func setup(p_scene: String, p_hotspots: Array, p_found: Dictionary) -> void:
+func setup(p_scene: String, p_hotspots: Array, p_found: Dictionary, p_people: Array = []) -> void:
 	scene_id = p_scene
 	hotspots = p_hotspots
 	found = p_found
+	people = p_people
 	if world:
 		_build()
 
@@ -73,10 +82,10 @@ func _build() -> void:
 	e.background_color = Color("#0a1430")
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = Color("#2a3f78")
-	e.ambient_light_energy = 0.55
+	e.ambient_light_energy = 0.9
 	e.fog_enabled = true
 	e.fog_light_color = Color("#16244d")
-	e.fog_density = 0.035
+	e.fog_density = 0.025
 	env.environment = e
 	world.add_child(env)
 
@@ -91,6 +100,7 @@ func _build() -> void:
 		"teatro": _scene_teatro()
 		_: _scene_corredor()
 	_place_hotspots()
+	_place_people()
 
 
 func _mat(col: Color, emit := 0.0, emit_col := Color("#ffc83d"), outline := 0.025) -> ShaderMaterial:
@@ -244,6 +254,31 @@ func _place_hotspots() -> void:
 			light.light_energy = 0.4
 
 
+func _place_people() -> void:
+	var spots: Array = PEOPLE_SPOTS.get(scene_id, PEOPLE_SPOTS["corredor"])
+	for i in mini(people.size(), spots.size()):
+		var c: Dictionary = people[i]
+		var ch := Character.new()
+		world.add_child(ch)
+		ch.setup(c)
+		ch.position = spots[i]
+		# vira para a câmera, com um leve desvio para não ficar "posando"
+		var to_cam := cam.global_position - ch.global_position
+		ch.rotation.y = atan2(to_cam.x, to_cam.z) + randf_range(-0.35, 0.35)
+		var body := StaticBody3D.new()
+		var shape := CollisionShape3D.new()
+		var cap := CapsuleShape3D.new()
+		cap.radius = 0.4
+		cap.height = 1.9
+		shape.shape = cap
+		shape.position = Vector3(0, 0.95, 0)
+		body.add_child(shape)
+		ch.add_child(body)
+		_targets[body.get_instance_id()] = {"kind": "person", "id": c["id"], "mesh": null}
+		# luz amarela fraca de "holofote" para a pessoa ler bem no escuro
+		_light(spots[i] + Vector3(0.3, 2.0, 0.8), Color("#ffd99a"), 0.9, 2.6)
+
+
 # ------------------------------------------------------------------ cenas
 func _person(pos: Vector3, top: Color, hair: Color, face_y := 0.0) -> void:
 	# figura estilizada de fundo (silhueta), só para dar vida; não é tocável
@@ -307,8 +342,6 @@ func _scene_corredor() -> void:
 		"quadro_avisos": {"mesh": quadro}, "mural": {"mesh": mural}, "celular": {"mesh": cel},
 	}
 	_free_anchors = [{"mesh": banco}, {"pos": Vector3(-W + 0.6, 0.15, -1.0), "size": Vector3(0.3, 0.05, 0.25)}]
-	_person(Vector3(0.7, 0, -9.5), Color("#2f3d70"), Color("#1c1830"))
-	_light(Vector3(0.7, 1.4, -9.0), Color("#ffc83d"), 0.8, 1.8)
 	_moon(Vector3(-1.0, -0.6, 0.25), 1.15)
 	_camera(Vector3(-0.3, 1.55, 2.6), Vector3(0.1, 1.2, -4.5), 0.42)
 
@@ -362,7 +395,6 @@ func _scene_biblioteca() -> void:
 	_flavor(balcao, "Uma placa: \"Silêncio, por favor\". Alguém escreveu embaixo: \"tá ligado??\"")
 	_anchors = {"caderno_entrada": {"mesh": caderno}, "pasta_gremio": {"mesh": pasta}}
 	_free_anchors = [{"pos": Vector3(1.0, 0.82, -6.0), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-2.8, 0.1, -1.4), "size": Vector3(0.3, 0.15, 0.3)}]
-	_person(Vector3(-1.2, 0, -8.5), Color("#4f7a5a"), Color("#3a2a20"))
 	_moon(Vector3(0.3, -0.7, 1.0), 0.9)
 	_camera(Vector3(0.6, 1.9, 2.2), Vector3(0.3, 0.9, -3.8), 0.5)
 
@@ -409,7 +441,6 @@ func _scene_teatro() -> void:
 	_light(Vector3(-4.2, 2.0, -3.4), Color("#ffc380"), 1.2, 3.5)
 	_anchors = {"caixa_props": {"mesh": caixa}, "quadro_teatro": {"mesh": quadro}}
 	_free_anchors = [{"pos": Vector3(-1.4, 1.0, -6.6), "size": Vector3(0.4, 0.2, 0.3)}, {"pos": Vector3(2.4, 1.0, -7.0), "size": Vector3(0.3, 0.3, 0.3)}]
-	_person(Vector3(-2.0, 0.9, -8.2), Color("#a8873d"), Color("#1c1830"))
 	_moon(Vector3(0.6, -0.8, -0.4), 0.6)
 	_camera(Vector3(0.0, 2.6, 3.6), Vector3(-0.4, 1.0, -4.2), 0.55)
 
@@ -461,6 +492,9 @@ func _tap(pos: Vector2) -> void:
 		return
 	var d: Dictionary = _targets.get((hit["collider"] as Object).get_instance_id(), {})
 	if d.is_empty():
+		return
+	if d["kind"] == "person":
+		person_tapped.emit(str(d["id"]))
 		return
 	var mi: MeshInstance3D = d["mesh"]
 	var tw := create_tween()
