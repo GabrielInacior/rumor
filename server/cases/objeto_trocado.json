@@ -5,10 +5,28 @@
   "difficulty": 2,
   "duration_sec": 720,
   "scene": "teatro",
+  "locations": [
+    "teatro",
+    "corredor",
+    "quadra"
+  ],
   "scene_people": [
-    "gabriel",
-    "caio",
-    "sofia"
+    {
+      "id": "sofia",
+      "scene": "teatro"
+    },
+    {
+      "id": "jorge",
+      "scene": "teatro"
+    },
+    {
+      "id": "caio",
+      "scene": "corredor"
+    },
+    {
+      "id": "gabriel",
+      "scene": "quadra"
+    }
   ],
   "briefing": "Terça, 16h. O troféu da gincana sumiu do armário do grêmio e apareceu no depósito do teatro. O time do Gabriel perdeu a final, e a escola já decidiu: foi vingança. Será? Refaça o caminho do troféu, mão por mão.",
   "goal": "Descubra por quais mãos o troféu passou e quem levou para o depósito.",
@@ -50,7 +68,118 @@
             "anim": "nervoso"
           }
         ],
-        "mood": "nervoso"
+        "mood": "nervoso",
+        "tree": {
+          "start": "n1",
+          "nodes": {
+            "n1": {
+              "lines": [
+                {
+                  "text": "Se a Profa. Marta perguntar, eu tô procurando o troféu. Muito.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a ficha do armário",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_ficha",
+                  "unlock": "c_dep_caio"
+                },
+                {
+                  "text": "Cadê o troféu, Caio?",
+                  "kind": "neutra",
+                  "next": "n2"
+                },
+                {
+                  "text": "Você sumiu com o troféu!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "n2": {
+              "lines": [
+                {
+                  "text": "Se eu soubesse, não tava suando assim, né?",
+                  "expr": "nervoso",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a ficha do armário",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_ficha",
+                  "unlock": "c_dep_caio"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Emprestei pro Vini às 14h50, pra foto do anuário. Ele jurou devolver às 15h30.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                },
+                {
+                  "text": "Não devolveu. E meu celular morreu às 15h. Dia perfeito.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Seu celular já carregou?",
+                  "kind": "boa",
+                  "next": "msg",
+                  "unlock": "c_chat_vini"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "msg": {
+              "lines": [
+                {
+                  "text": "Peraí, ligou! Ih, o Vini mandou mensagem às 15h12. Olha isso.",
+                  "expr": "surpreso",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, Caio.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu?? Eu sou o presidente do grêmio! Sem prova, sem papo.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [],
+              "end": true,
+              "lock": 20
+            }
+          }
+        }
       }
     },
     {
@@ -96,7 +225,94 @@
             "anim": "apontando"
           }
         ],
-        "mood": "nervoso"
+        "mood": "nervoso",
+        "tree": {
+          "start": "n1",
+          "nodes": {
+            "n1": {
+              "lines": [
+                {
+                  "text": "Cuidado aí, isso é cenário! Não encosta na coroa!",
+                  "expr": "surpreso",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o post-it 'ACHEI!!!'",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_postit"
+                },
+                {
+                  "text": "Você tem a chave do depósito?",
+                  "kind": "neutra",
+                  "next": "n2"
+                },
+                {
+                  "text": "Você roubou o troféu da gincana!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "n2": {
+              "lines": [
+                {
+                  "text": "Tenho, sou eu que guardo os objetos da peça. Por quê?",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o post-it 'ACHEI!!!'",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_postit"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Meu post-it! Um menino me entregou isso na correria e eu achei que era o troféu do rei.",
+                  "expr": "surpreso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Era o da gincana?? Ai, gente. Os dois são dourados com alças!",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, Sofia.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Roubei?? Eu tô no ensaio desde as 15h! Sai do meu palco.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [],
+              "end": true,
+              "lock": 20
+            }
+          }
+        }
       }
     },
     {
@@ -119,7 +335,96 @@
             "anim": "dando_de_ombros"
           }
         ],
-        "mood": "bravo"
+        "mood": "bravo",
+        "tree": {
+          "start": "n1",
+          "nodes": {
+            "n1": {
+              "lines": [
+                {
+                  "text": "Vem me acusar também? Fica à vontade, todo mundo já veio.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a súmula do jogo",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_sumula",
+                  "unlock": "c_dep_gabriel"
+                },
+                {
+                  "text": "Como foi o jogo hoje?",
+                  "kind": "neutra",
+                  "next": "n2"
+                },
+                {
+                  "text": "Confessa a vingança, Gabriel!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "n2": {
+              "lines": [
+                {
+                  "text": "Foi bom. Bem melhor que a final da gincana, pelo menos.",
+                  "expr": "neutro",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a súmula do jogo",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_sumula",
+                  "unlock": "c_dep_gabriel"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Isso aí. Eu tava jogando handebol das 15h às 15h40, mano.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "O Prof. Ivo apitou tudo. Perdi a final, mas não perdi a cabeça.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, Gabriel.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Vingança? Que filme é esse? Tô fora.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [],
+              "end": true,
+              "lock": 20
+            }
+          }
+        }
       }
     },
     {
@@ -142,7 +447,89 @@
             "anim": "apontando"
           }
         ],
-        "mood": "neutro"
+        "mood": "neutro",
+        "tree": {
+          "start": "n1",
+          "nodes": {
+            "n1": {
+              "lines": [
+                {
+                  "text": "Eu só limpo, detetive. Mas eu vejo tudo, viu?",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a selfie do Vini",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_post_vini"
+                },
+                {
+                  "text": "O que o senhor viu hoje?",
+                  "kind": "neutra",
+                  "next": "n2"
+                },
+                {
+                  "text": "O senhor tá protegendo alguém?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "n2": {
+              "lines": [
+                {
+                  "text": "Um menino de moletom vermelho entregando uma coisa dourada pra Sofia. Umas 15h10.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a selfie do Vini",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_post_vini"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Esse moletom aí! E esse cabelo cacheado. Era esse menino, com certeza.",
+                  "expr": "surpreso",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Obrigado, Seu Jorge.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Protegendo? Eu protejo é o chão limpo. Licença.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [],
+              "end": true,
+              "lock": 20
+            }
+          }
+        }
       }
     },
     {
@@ -173,7 +560,7 @@
       "title": "Ficha do armário",
       "time": "14h50",
       "text": "Troféu da gincana, dourado, com alças. Retirado por Caio às 14h50. Motivo: emprestado pro Vini fotografar pro anuário.",
-      "release": "start",
+      "release": "hotspot",
       "deal": "team"
     },
     {
@@ -182,8 +569,8 @@
       "title": "Fala do Caio",
       "who": "caio",
       "text": "Emprestei o troféu pro Vini às 14h50, pra foto do anuário. Ele jurou devolver às 15h30. Não devolveu, e meu celular morreu às 15h.",
-      "release": "start",
-      "deal": "split",
+      "release": "interrogatorio",
+      "deal": "team",
       "dialogue": [
         {
           "text": "Eu emprestei o troféu pro Vini às 14h50, pra foto do anuário.",
@@ -224,8 +611,8 @@
           }
         ]
       },
-      "release": "start",
-      "deal": "split"
+      "release": "interrogatorio",
+      "deal": "team"
     },
     {
       "id": "c_boato",
@@ -257,7 +644,7 @@
       "kind": "registro",
       "title": "Súmula do jogo",
       "text": "Handebol na quadra, terça, das 15h às 15h40. Time vermelho, capitão Gabriel: em quadra do começo ao fim. Ass. Prof. Ivo",
-      "release": "start",
+      "release": "hotspot",
       "deal": "team"
     },
     {
@@ -266,8 +653,8 @@
       "title": "Fala do Gabriel",
       "who": "gabriel",
       "text": "Vingança? Eu tava jogando handebol na quadra das 15h às 15h40, mano. Pergunta pro Prof. Ivo. Perdi a final, mas não perdi a cabeça.",
-      "release": "start",
-      "deal": "split",
+      "release": "interrogatorio",
+      "deal": "team",
       "dialogue": [
         {
           "text": "Vingança? Eu tava jogando handebol na quadra das 15h às 15h40, mano.",
@@ -328,15 +715,31 @@
   "hotspots": [
     {
       "id": "hs_caixa",
+      "scene": "teatro",
       "object": "caixa_props",
       "label": "Caixa do depósito",
       "clue": "c_postit"
     },
     {
       "id": "hs_quadro",
+      "scene": "teatro",
       "object": "quadro_teatro",
       "label": "Quadro do teatro",
       "clue": "c_lista"
+    },
+    {
+      "id": "hs_armario",
+      "scene": "corredor",
+      "object": "armario_aberto",
+      "label": "Armário do grêmio",
+      "clue": "c_ficha"
+    },
+    {
+      "id": "hs_placar",
+      "scene": "quadra",
+      "object": "placar",
+      "label": "Súmula no placar",
+      "clue": "c_sumula"
     }
   ],
   "solution": {

@@ -21,13 +21,17 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
   "title": "O Rumor das 10h17",
   "tagline": "Uma mensagem inocente. Uma escola em pânico.",   // 1 linha, tom noir divertido
   "difficulty": 1,                    // 1 fácil, 2 médio, 3 difícil
-  "duration_sec": 900,
-  "scene": "corredor",                // id da cena 3D: corredor | biblioteca | teatro
-  "scene_people": ["caio", "duda"],   // 2 a 3 ids de pessoas que aparecem fisicamente na cena 3D
-  "briefing": "Texto curto (máx. ~60 palavras) lido na abertura. Voz de narrador noir.",
+  "duration_sec": 600,
+  // 3 cenas do caso. A primeira é onde o caso começa. Ids possíveis:
+  // corredor | biblioteca | teatro | sala_aula | cantina | patio | sala_professores | quadra
+  "locations": ["corredor", "sala_aula", "patio"],
+  "scene": "corredor",                // legado: sempre igual a locations[0]
+  // pessoas que aparecem fisicamente nas cenas: 1 a 2 por location (máx. 3). Cada uma tem talk.tree.
+  "scene_people": [{"id": "caio", "scene": "corredor"}, {"id": "duda", "scene": "patio"}],
+  "briefing": "Texto curto (máx. 45 palavras) lido na abertura. Voz de narrador noir.",
   "goal": "Descubra quem contou para quem e onde a história mudou.",   // 1 frase, fica fixa na tela
 
-  "link_types": [                     // SÓ os tipos que este caso usa (3 a 4, para não sobrecarregar)
+  "link_types": [                     // SÓ os tipos que este caso usa (2, máx. 3)
     {"id": "contou", "label": "contou para", "directed": true},
     {"id": "criou",  "label": "criou a versão", "directed": true}
   ],
@@ -37,7 +41,19 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
      "look": {"skin": "#c98d6b", "hair": "coque", "hair_color": "#3a2a20", "top": "#7a5a9e", "accessory": "oculos"},
      // talk: falas ao tocar na pessoa na cena 3D antes do depoimento (1 a 2, sem revelar nada)
      // e a expressão padrão do rosto (mesmos valores de expr do dialogue)
-     "talk": {"greet": [{"text": "Eu? Tô só passando. Juro.", "expr": "nervoso", "anim": "negando"}], "mood": "neutro"}},
+     "talk": {"greet": [{"text": "Eu? Tô só passando. Juro.", "expr": "nervoso", "anim": "negando"}], "mood": "neutro",
+       // tree: interrogatório (só para quem está em scene_people). Ver seção "Interrogatório".
+       "tree": {"start": "n1", "nodes": {
+         "n1": {"lines": [{"text": "Se for sobre a viagem, já falei mil vezes.", "expr": "desconfiado", "anim": "dando_de_ombros"}],
+                "choices": [
+                  {"text": "Mostrar o bilhete da Lúcia", "kind": "boa", "next": "conta",
+                   "requires": "c_bilhete", "unlock": "c_dep_caio"},
+                  {"text": "O que você sabe da viagem?", "kind": "neutra", "next": "n2"},
+                  {"text": "Foi você que inventou isso!", "kind": "ruim", "next": "bravo"}]},
+         "n2": {"lines": [...], "choices": [{"text": "Valeu, depois eu volto.", "kind": "neutra", "end": true}]},
+         "conta": {"lines": [...], "choices": [{"text": "Valeu, Caio.", "kind": "neutra", "end": true}]},
+         "bravo": {"lines": [{"text": "Sem prova? Tchau.", "expr": "bravo", "anim": "negando"}],
+                   "choices": [], "end": true, "lock": 20}}}}},
     {"id": "biblioteca", "kind": "lugar", "name": "Biblioteca"},
     {"id": "versao_cancelada", "kind": "fato", "name": "\"A viagem foi cancelada\""}
   ],
@@ -49,8 +65,9 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
       "title": "Grupo do grêmio, 10h17",
       "time": "10h17",                // opcional, mostrado na carta
       "from": "caio",                 // opcional, id de carta pessoa (autor)
-      "text": "Texto curto (máx. ~45 palavras). Mensagens podem usar \\n entre falas.",
-      "release": "start",             // start | "t+240" (segundos desde o início) | "hotspot"
+      "text": "Texto curto (máx. 35 palavras). Mensagens podem usar \\n entre falas.",
+      "release": "start",             // start | "t+240" (segundos desde o início) | "hotspot" | "interrogatorio"
+                                      // interrogatorio = liberada por uma escolha com "unlock" numa talk.tree
       "deal": "split"                 // split = vai pra UM aluno da equipe | team = todos veem
     }
   ],
@@ -73,8 +90,18 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
   //    expr: neutro | feliz | surpreso | bravo | desconfiado | triste | nervoso
   //    anim: falando | pensando | nervoso | negando | apontando | dando_de_ombros | rindo
 
-  "hotspots": [                       // objetos tocáveis na cena 3D que liberam pista para a equipe
-    {"id": "mural", "object": "mural", "label": "Mural de avisos", "clue": "c_horario_ensaio"}
+  // objetos tocáveis nas cenas que liberam pista para a equipe. 1 a 2 por location (3 a 5 no caso).
+  // "scene" = uma das locations. "object" = uma âncora daquela cena:
+  //  corredor: quadro_avisos, mural, celular, armario_aberto, lixeira
+  //  biblioteca: caderno_entrada, pasta_gremio, computador, estante, mesa_estudo
+  //  teatro: caixa_props, quadro_teatro, trono, arara_figurino, cortina
+  //  sala_aula: lousa, mesa_professor, carteira_fundo, mochila, janela
+  //  cantina: balcao, cardapio, bandeja, geladeira, mural_cantina
+  //  patio: banco_patio, arvore, bicicletario, lixeira_patio, poste
+  //  sala_professores: escaninho, cafeteira, mural_recados, computador_prof, armario_prof
+  //  quadra: arquibancada, placar, bolsa_esportiva, vestiario_porta, rede
+  "hotspots": [
+    {"id": "hs_quadro", "scene": "corredor", "object": "quadro_avisos", "label": "Quadro de avisos", "clue": "c_bilhete"}
   ],
 
   "solution": {
@@ -83,7 +110,7 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
       {"id": "cadeia", "label": "Como ela se espalhou"},
       {"id": "distorcao", "label": "Onde a história mudou"}
     ],
-    "edges": [                        // linhas EXIGIDAS (5 a 6 por caso)
+    "edges": [                        // linhas EXIGIDAS (3 a 4 por caso, máx. 3 categorias)
       {"from": "lucia", "to": "caio", "type": "contou", "category": "origem",
        "evidence": ["c_dep_caio", "c_bilhete_lucia"]}   // [] = não exige prova presa
     ],
@@ -99,6 +126,21 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
   }
 }
 ```
+
+## Interrogatório (talk.tree)
+
+- Árvore de 2 a 3 níveis. Cada nó tem `lines` (falas com expr/anim, até 22 palavras) e `choices` (2 a 3).
+- Escolha: `text` (fala do detetive, até 9 palavras), `kind` (`boa` | `neutra` | `ruim`), e então
+  `next` (id do próximo nó) OU `end: true` (encerra a conversa sem punição).
+  - `requires`: id de pista. A escolha só aparece se a equipe já tem essa pista (ex.: "Mostrar o print").
+  - `unlock`: id de pista com `release: "interrogatorio"`. Ao escolher, a pista vai para a equipe inteira
+    e a fala do nó de destino conta o conteúdo dela.
+- Escolha `ruim` (acusar sem prova, ser grosso) leva a um nó final: `"choices": [], "end": true, "lock": 20`.
+  A pessoa se fecha (expr bravo ou nervoso) e fica `lock` segundos sem conversa. Depois a conversa recomeça
+  do `start`, então a escolha boa continua disponível. Nenhum caminho trava a equipe para sempre.
+- Laço típico: achar pista na cena → mostrar para a pessoa (`requires`) → ela conta (`unlock`) → nova pista.
+- Toda pista com `release: "interrogatorio"` precisa de pelo menos um `unlock` alcançável, e toda linha
+  exigida precisa de pelo menos uma prova que não dependa de interrogatório (start team, t+ ou hotspot).
 
 ## Regras de validação (servidor)
 

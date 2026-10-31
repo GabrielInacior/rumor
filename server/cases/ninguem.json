@@ -5,10 +5,28 @@
   "difficulty": 1,
   "duration_sec": 720,
   "scene": "biblioteca",
+  "locations": [
+    "biblioteca",
+    "sala_aula",
+    "sala_professores"
+  ],
   "scene_people": [
-    "joana",
-    "lia",
-    "pedro"
+    {
+      "id": "joana",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "lia",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "pedro",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "rosa",
+      "scene": "sala_professores"
+    }
   ],
   "briefing": "Terça, 14h05. A conta anônima @ninguém vaza o segredo do grêmio: sexta tem pizza surpresa. O 2º ano já escolheu o culpado, sem prova nenhuma. Acusar é fácil. Descubra quem estava onde e quem teve chance de postar.",
   "goal": "Descubra quem é @ninguém e prove quem não poderia ser.",
@@ -45,7 +63,123 @@
             "anim": "apontando"
           }
         ],
-        "mood": "neutro"
+        "mood": "neutro",
+        "tree": {
+          "start": "n1",
+          "nodes": {
+            "n1": {
+              "lines": [
+                {
+                  "text": "Shhh. Biblioteca, né? Fala baixinho, detetive.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o caderno de entrada",
+                  "kind": "boa",
+                  "next": "n2",
+                  "requires": "c_caderno",
+                  "unlock": "c_dep_joana"
+                },
+                {
+                  "text": "Você conhece a @ninguém?",
+                  "kind": "neutra",
+                  "next": "n_nao"
+                },
+                {
+                  "text": "Confessa logo, você é a @ninguém!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "n_nao": {
+              "lines": [
+                {
+                  "text": "Conhecer, conhecer... todo mundo segue, né? Mas não sei quem é.",
+                  "expr": "nervoso",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o caderno de entrada",
+                  "kind": "boa",
+                  "next": "n2",
+                  "requires": "c_caderno",
+                  "unlock": "c_dep_joana"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "n2": {
+              "lines": [
+                {
+                  "text": "Tá, eu passei a tarde toda aqui, sozinha, cuidando da monitoria.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                },
+                {
+                  "text": "Mas que ninguém avisa nada pros alunos, isso é verdade, tá ligado??",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro do wifi",
+                  "kind": "boa",
+                  "next": "confessa",
+                  "requires": "c_wifi"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "confessa": {
+              "lines": [
+                {
+                  "text": "...O wifi da biblioteca. Tá. Fui eu.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Eu só queria que a escola percebesse que ninguém avisa os alunos de nada.",
+                  "expr": "triste",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Obrigado por contar, Joana.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Sem prova? Shhh pra você também. Biblioteca fechada pra detetive.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [],
+              "end": true,
+              "lock": 20
+            }
+          }
+        }
       }
     },
     {
@@ -68,7 +202,96 @@
             "anim": "dando_de_ombros"
           }
         ],
-        "mood": "desconfiado"
+        "mood": "desconfiado",
+        "tree": {
+          "start": "n1",
+          "nodes": {
+            "n1": {
+              "lines": [
+                {
+                  "text": "Se veio me acusar, entra na fila. Tá grande hoje.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o rabisco do seu caderno",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_rabisco_lia",
+                  "unlock": "c_dep_lia"
+                },
+                {
+                  "text": "Onde você tava às 14h05?",
+                  "kind": "neutra",
+                  "next": "n2"
+                },
+                {
+                  "text": "Seu 'tá ligado??' te entregou, Lia!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "n2": {
+              "lines": [
+                {
+                  "text": "Num lugar bem pior que a biblioteca. Adivinha.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o rabisco do seu caderno",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_rabisco_lia",
+                  "unlock": "c_dep_lia"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Sim, eu escrevo 'tá ligado??'. Metade da escola escreve, gente.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                },
+                {
+                  "text": "E eu tava na recuperação das 13h30 às 14h30. Sem celular! A Profa. Rosa recolheu.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, Lia.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Ah, pronto. Vai prender a escola inteira então. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [],
+              "end": true,
+              "lock": 20
+            }
+          }
+        }
       }
     },
     {
@@ -96,7 +319,96 @@
             "anim": "dando_de_ombros"
           }
         ],
-        "mood": "bravo"
+        "mood": "bravo",
+        "tree": {
+          "start": "n1",
+          "nodes": {
+            "n1": {
+              "lines": [
+                {
+                  "text": "Já sei, já sei. Todo mundo acha que fui eu.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar os comentários do post",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_post",
+                  "unlock": "c_dep_pedro"
+                },
+                {
+                  "text": "Por que acham que foi você?",
+                  "kind": "neutra",
+                  "next": "n2"
+                },
+                {
+                  "text": "Admite, Pedro. Foi você, né?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "n2": {
+              "lines": [
+                {
+                  "text": "Porque eu reclamo da escola. Reclamar é crime agora? Pelo menos traz um lanche.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar os comentários do post",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_post",
+                  "unlock": "c_dep_pedro"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "'Certeza que é o Pedro'? Valeu, Mari. Ótima amiga.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Eu tava na recuperação com a Lia, celular na caixa. Nem sabia de pizza nenhuma.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, Pedro.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Pronto, mais um. Vou reclamar disso também. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [],
+              "end": true,
+              "lock": 20
+            }
+          }
+        }
       }
     },
     {
@@ -119,7 +431,94 @@
             "anim": "falando"
           }
         ],
-        "mood": "neutro"
+        "mood": "neutro",
+        "tree": {
+          "start": "n1",
+          "nodes": {
+            "n1": {
+              "lines": [
+                {
+                  "text": "Se for dúvida de matemática, meu horário é quinta.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a ata da recuperação",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_ata"
+                },
+                {
+                  "text": "A senhora conhece a @ninguém?",
+                  "kind": "neutra",
+                  "next": "n2"
+                },
+                {
+                  "text": "A senhora deixou alunos usarem celular?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "n2": {
+              "lines": [
+                {
+                  "text": "Conheço. Apareceu até no grupo dos professores. Mas eu tava aplicando prova.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a ata da recuperação",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": "c_ata"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Lia e Pedro, das 13h30 às 14h30. Celulares na minha caixa o tempo todo.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Ninguém saiu. Nem pra beber água. Eu sou rígida, querido.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Obrigado, professora.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Celular? Na minha prova? Vai pra fora, detetive.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [],
+              "end": true,
+              "lock": 20
+            }
+          }
+        }
       }
     },
     {
@@ -165,24 +564,13 @@
       "deal": "team"
     },
     {
-      "id": "c_chat_lia",
-      "kind": "mensagem",
-      "app": "chat",
-      "title": "Grupo da sala",
-      "time": "13h20",
-      "text": "A Lia escreve 'tá ligado??' igualzinho à @ninguém.",
-      "chat": {
-        "group": "2º ano 📚",
-        "lines": [
-          {
-            "who": "lia",
-            "text": "recuperação de mat daqui a pouco, tá ligado?? 😩",
-            "time": "13h20"
-          }
-        ]
-      },
-      "release": "start",
-      "deal": "split"
+      "id": "c_rabisco_lia",
+      "kind": "bilhete",
+      "title": "Caderno da Lia",
+      "who": "lia",
+      "text": "Rabisco no caderno da Lia: 'recuperação de mat hoje, tá ligado?? 😩'. É o mesmo jeito de escrever da @ninguém.",
+      "release": "hotspot",
+      "deal": "team"
     },
     {
       "id": "c_ata",
@@ -190,7 +578,7 @@
       "title": "Ata da recuperação",
       "who": "rosa",
       "text": "Recuperação de matemática, 13h30 às 14h30. Alunos: Lia e Pedro. Celulares na caixa da professora o tempo todo. Ass. Profa. Rosa",
-      "release": "start",
+      "release": "hotspot",
       "deal": "team"
     },
     {
@@ -199,8 +587,8 @@
       "title": "Fala da Lia",
       "who": "lia",
       "text": "Eu tava na recuperação das 13h30 às 14h30, sem celular! E metade da escola escreve 'tá ligado', gente 🙄",
-      "release": "start",
-      "deal": "split",
+      "release": "interrogatorio",
+      "deal": "team",
       "dialogue": [
         {
           "text": "Eu?? Eu tava na recuperação de mat das 13h30 às 14h30.",
@@ -225,8 +613,8 @@
       "title": "Fala do Pedro",
       "who": "pedro",
       "text": "Só porque eu reclamo da escola? Eu tava na recuperação com a Lia, celular na caixa da Profa. Rosa. Nem sabia de pizza nenhuma.",
-      "release": "start",
-      "deal": "split",
+      "release": "interrogatorio",
+      "deal": "team",
       "dialogue": [
         {
           "text": "Só porque eu reclamo da escola, já virei o vilão?",
@@ -251,8 +639,8 @@
       "title": "Fala da Joana",
       "who": "joana",
       "text": "Passei a tarde toda na biblioteca, cuidando da monitoria. Não sei quem é @ninguém. Mas que ninguém avisa nada pros alunos, isso é verdade, tá ligado??",
-      "release": "start",
-      "deal": "split",
+      "release": "interrogatorio",
+      "deal": "team",
       "dialogue": [
         {
           "text": "Passei a tarde toda aqui na biblioteca, cuidando da monitoria.",
@@ -299,16 +687,32 @@
   ],
   "hotspots": [
     {
+      "id": "hs_caderno",
+      "scene": "biblioteca",
+      "object": "caderno_entrada",
+      "label": "Caderno de entrada",
+      "clue": "c_caderno"
+    },
+    {
       "id": "hs_pasta",
+      "scene": "biblioteca",
       "object": "pasta_gremio",
       "label": "Pasta na mesa",
       "clue": "c_pasta"
     },
     {
-      "id": "hs_caderno",
-      "object": "caderno_entrada",
-      "label": "Caderno de entrada",
-      "clue": "c_caderno"
+      "id": "hs_carteira",
+      "scene": "sala_aula",
+      "object": "carteira_fundo",
+      "label": "Carteira da Lia",
+      "clue": "c_rabisco_lia"
+    },
+    {
+      "id": "hs_computador",
+      "scene": "sala_professores",
+      "object": "computador_prof",
+      "label": "Computador da Profa. Rosa",
+      "clue": "c_ata"
     }
   ],
   "solution": {

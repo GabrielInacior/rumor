@@ -34,6 +34,21 @@ func _ready() -> void:
 	v.add_child(sc)
 	var goal := UI.label("Objetivo: " + str(c.get("goal", "")), 28, UI.YELLOW, "bold")
 	v.add_child(goal)
+	# como jogar em 3 passos, para quem nunca jogou nada parecido
+	var steps := UI.hbox(10)
+	for st in [["1", "EXPLORE", "Toque no que brilha nas cenas"], ["2", "CONVERSE", "Mostre pistas para as pessoas"], ["3", "LIGUE", "Monte o quadro e apresente"]]:
+		var p2 := PanelContainer.new()
+		p2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		p2.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.85), Color(UI.YELLOW, 0.6), 2, 16, 14))
+		var sv := UI.vbox(2)
+		var hh := UI.hbox(8)
+		hh.add_child(UI.title(st[0], 44, UI.YELLOW))
+		hh.add_child(UI.title(st[1], 32, UI.PAPER))
+		sv.add_child(hh)
+		sv.add_child(UI.label(st[2], 19, UI.MIST))
+		p2.add_child(sv)
+		steps.add_child(p2)
+	v.add_child(steps)
 	count_l = UI.title("", 110, UI.PAPER)
 	count_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(count_l)
