@@ -1,0 +1,15 @@
+{
+  "name": "rumor-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Servidor do RUMOR: salas, equipes, quadro compartilhado e validação das teorias",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

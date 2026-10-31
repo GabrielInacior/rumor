@@ -1,0 +1,203 @@
+{
+  "id": "rumor_1017",
+  "title": "O Rumor das 10h17",
+  "tagline": "Uma mensagem inocente. Uma escola em pânico.",
+  "difficulty": 1,
+  "duration_sec": 900,
+  "scene": "corredor",
+  "briefing": "Terça, 10h40. A escola inteira jura que a viagem de fim de ano foi cancelada. Tem choro no grupo do 2A, meme no story e gente desfazendo mala que nem tinha feito. Só que ninguém viu aviso oficial nenhum. Em algum ponto da linha, alguém mudou a história. Siga as mensagens, detetive.",
+  "goal": "Descubra quem contou para quem e onde a história mudou.",
+
+  "link_types": [
+    {"id": "contou", "label": "contou para", "directed": true},
+    {"id": "criou", "label": "criou a versão", "directed": true},
+    {"id": "estava", "label": "estava em", "directed": true}
+  ],
+
+  "cards": [
+    {"id": "lucia", "kind": "pessoa", "name": "Profa. Lúcia", "role": "organiza a viagem",
+     "look": {"skin": "#c98d6b", "hair": "coque", "hair_color": "#3a2a20", "top": "#7a5a9e", "accessory": "oculos"}},
+    {"id": "caio", "kind": "pessoa", "name": "Caio", "role": "presidente do grêmio",
+     "look": {"skin": "#8d5524", "hair": "raspado", "hair_color": "#1a1a1a", "top": "#2e7d32", "accessory": "bone"}},
+    {"id": "duda", "kind": "pessoa", "name": "Duda", "role": "do grêmio, baterista da banda",
+     "look": {"skin": "#f1c27d", "hair": "rabo", "hair_color": "#b5482a", "top": "#212121", "accessory": "fones"}},
+    {"id": "bia", "kind": "pessoa", "name": "Bia", "role": "aluna do 2A",
+     "look": {"skin": "#e0ac69", "hair": "cacheado", "hair_color": "#2b1d14", "top": "#e91e63", "accessory": "brinco"}},
+    {"id": "teo", "kind": "pessoa", "name": "Téo", "role": "está no grupo do 2A e do 2B",
+     "look": {"skin": "#ffdbac", "hair": "franja", "hair_color": "#d4a94f", "top": "#1565c0", "accessory": "nenhum"}},
+    {"id": "rafa", "kind": "pessoa", "name": "Rafa", "role": "rei dos memes do 2B",
+     "look": {"skin": "#5c3a21", "hair": "curto", "hair_color": "#0f0f0f", "top": "#ff9800", "accessory": "cachecol"}},
+    {"id": "corredor", "kind": "lugar", "name": "Corredor do 2º andar"},
+    {"id": "sala_musica", "kind": "lugar", "name": "Sala de música"},
+    {"id": "aviso_data", "kind": "fato", "name": "Aviso original: a viagem muda de data"},
+    {"id": "versao_cancelada", "kind": "fato", "name": "Versão: \"a viagem foi cancelada\""}
+  ],
+
+  "clues": [
+    {
+      "id": "c_bilhete_lucia",
+      "kind": "bilhete",
+      "title": "Bilhete no quadro de avisos",
+      "time": "09h55",
+      "from": "lucia",
+      "text": "Caio, como falei no corredor às 9h50: se a lista da viagem não fechar até sexta, a viagem MUDA DE DATA. Não cancela! Avisa o grêmio? Valeu. Profa. Lúcia",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_caio",
+      "kind": "depoimento",
+      "title": "Depoimento do Caio",
+      "from": "caio",
+      "text": "A Profa. Lúcia me parou no corredor antes do intervalo. Às 10h17 mandei o recado no grupo do grêmio, do jeitinho que ela falou. Cancelar? Nunca escrevi isso. Pode olhar meu celular, ué.",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_msg_gremio",
+      "kind": "mensagem",
+      "title": "Print do grupo do grêmio",
+      "time": "10h17",
+      "from": "caio",
+      "text": "Grupo Grêmio 2026 (Caio, Duda e mais 6)\nCaio: galera, recado da Profa. Lúcia 📢 se a lista da viagem não fechar até sexta...\nCaio: ...a viagem MUDA DE DATA. não é cancelamento, tá? sem pânico 🙏",
+      "release": "t+240",
+      "deal": "team"
+    },
+    {
+      "id": "c_notif_duda",
+      "kind": "objeto",
+      "title": "Celular esquecido no banco",
+      "time": "10h17",
+      "text": "Celular da Duda, esquecido no banco do corredor. Na tela: 'Grêmio 2026. Caio: galera, recado da Profa. Lúcia 📢 se a lista da viagem não fechar até sexta...' e o aviso '2 mensagens não lidas'. A conversa nunca foi aberta.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_duda",
+      "kind": "depoimento",
+      "title": "Depoimento da Duda",
+      "from": "duda",
+      "text": "Eu só repassei o que caiu no grupo do grêmio! Tava atrasada pro ensaio da banda, e a Bia nem tinha assinado a lista ainda. Avisei ela, pronto. Amiga faz isso.",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dm_duda_bia",
+      "kind": "mensagem",
+      "title": "DM da Duda para a Bia",
+      "time": "10h24",
+      "from": "duda",
+      "text": "Duda: BIAAA cancelaram a viagem 😬😬\nDuda: caiu agora no grupo do grêmio, coisa da lista e de sexta\nDuda: tô correndo pro ensaio, dps te falo",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dep_bia",
+      "kind": "depoimento",
+      "title": "Depoimento da Bia",
+      "from": "bia",
+      "text": "A Duda me mandou DM às 10h24 dizendo que cancelaram. Ela é do grêmio, né? Confiei. Às 10h31 avisei o grupo do 2A. Eu só copiei o que ela disse 😭",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_msg_2a",
+      "kind": "mensagem",
+      "title": "Grupo do 2A",
+      "time": "10h31",
+      "from": "bia",
+      "text": "Bia: GENTE A VIAGEM FOI CANCELADA 😭😭\nLéo: q??? fonte??\nBia: a Duda falou, ela é do grêmio\nTéo: mds",
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_msg_2b",
+      "kind": "mensagem",
+      "title": "Grupo do 2B",
+      "time": "10h35",
+      "from": "teo",
+      "text": "Téo: [encaminhada] Bia: GENTE A VIAGEM FOI CANCELADA 😭😭\nTéo: alguém confirma??\nRafa: kkkkk eu de mala pronta e tudo",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dep_teo",
+      "kind": "depoimento",
+      "title": "Depoimento do Téo",
+      "from": "teo",
+      "text": "Tô no grupo do 2A e do 2B porque troquei de turma. Vi a mensagem da Bia às 10h31 e encaminhei pro 2B. Só encaminhei, não mudei uma vírgula.",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_meme_rafa",
+      "kind": "post",
+      "title": "Story do Rafa",
+      "time": "10h40",
+      "from": "rafa",
+      "text": "Meme de um gato chorando com a legenda 'quando a viagem é cancelada'. 412 visualizações. Comentário mais curtido: 'foi o Rafa que começou isso né 👀'",
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_horario_ensaio",
+      "kind": "registro",
+      "title": "Mural do corredor",
+      "text": "Ensaio da banda: terça, 10h20 em ponto, sala de música. Bateria: Duda. Guitarra: Nina. Atrasou? Afina sozinho 🎸",
+      "release": "hotspot",
+      "deal": "team"
+    }
+  ],
+
+  "hotspots": [
+    {"id": "hs_quadro", "object": "quadro_avisos", "label": "Quadro de avisos", "clue": "c_bilhete_lucia"},
+    {"id": "hs_mural", "object": "mural", "label": "Mural da banda", "clue": "c_horario_ensaio"},
+    {"id": "hs_celular", "object": "celular", "label": "Celular esquecido no banco", "clue": "c_notif_duda"}
+  ],
+
+  "solution": {
+    "categories": [
+      {"id": "origem", "label": "De onde veio a informação"},
+      {"id": "cadeia", "label": "Como ela se espalhou"},
+      {"id": "distorcao", "label": "Onde a história mudou"},
+      {"id": "pressa", "label": "Por que a história mudou"}
+    ],
+    "edges": [
+      {"from": "lucia", "to": "caio", "type": "contou", "category": "origem",
+       "evidence": ["c_bilhete_lucia", "c_dep_caio", "c_msg_gremio"]},
+      {"from": "caio", "to": "duda", "type": "contou", "category": "cadeia",
+       "evidence": ["c_notif_duda", "c_msg_gremio", "c_dep_duda"]},
+      {"from": "duda", "to": "bia", "type": "contou", "category": "cadeia",
+       "evidence": ["c_dm_duda_bia", "c_dep_bia", "c_msg_2a"]},
+      {"from": "bia", "to": "teo", "type": "contou", "category": "cadeia",
+       "evidence": ["c_msg_2b", "c_dep_teo", "c_msg_2a"]},
+      {"from": "duda", "to": "versao_cancelada", "type": "criou", "category": "distorcao",
+       "evidence": ["c_dm_duda_bia", "c_notif_duda"]},
+      {"from": "duda", "to": "sala_musica", "type": "estava", "category": "pressa",
+       "evidence": ["c_horario_ensaio", "c_dep_duda"]}
+    ],
+    "traps": [
+      {"from": "rafa", "to": "versao_cancelada", "type": "criou", "category": "distorcao"},
+      {"from": "caio", "to": "versao_cancelada", "type": "criou", "category": "distorcao"},
+      {"from": "lucia", "to": "versao_cancelada", "type": "criou", "category": "distorcao"}
+    ]
+  },
+
+  "reveal": {
+    "timeline": [
+      {"time": "09h50", "text": "A Profa. Lúcia avisa o Caio no corredor: se a lista não fechar, a viagem muda de data."},
+      {"time": "10h17", "text": "Caio manda o recado certinho no grupo do grêmio, em duas mensagens."},
+      {"time": "10h20", "text": "Duda, correndo pro ensaio, lê só a notificação da primeira mensagem."},
+      {"time": "10h24", "text": "Duda manda DM pra Bia: 'cancelaram a viagem'. A história muda aqui."},
+      {"time": "10h31", "text": "Bia avisa o grupo do 2A."},
+      {"time": "10h35", "text": "Téo encaminha pro grupo do 2B."},
+      {"time": "10h40", "text": "Rafa posta o meme. A escola acha que foi ele."}
+    ],
+    "explanation": "O aviso era 'muda de data'. A Duda viu só a notificação da primeira mensagem do Caio, que parava em 'até sexta...', e completou o resto na pressa do ensaio. O print do grupo do grêmio vira o jogo: o Caio escreveu 'não é cancelamento', e o celular da Duda mostra que ela nunca abriu a conversa.",
+    "refuted": [
+      "Rafa não começou nada: o meme dele é das 10h40, depois da Bia e do Téo.",
+      "Caio passou o recado certinho: o print mostra 'MUDA DE DATA, não é cancelamento'.",
+      "Bia e Téo só repassaram, sem mudar a versão que receberam."
+    ]
+  }
+}

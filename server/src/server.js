@@ -1,0 +1,180 @@
+'use strict';
+// Servidor do RUMOR: entrega o jogo exportado (pasta public/) e roda as salas por WebSocket em /ws.
+// Um único processo, sem banco: a sala vive na memória enquanto a aula acontece.
+const fs = require('fs');
+const http = require('http');
+const os = require('os');
+const path = require('path');
+const zlib = require('zlib');
+const { WebSocketServer } = require('ws');
+const { Room } = require('./room');
+
+const PORT = Number(process.env.PORT) || 8080;
+const PUBLIC = process.env.RUMOR_PUBLIC || path.join(__dirname, '..', 'public');
+const CASES_DIR = process.env.RUMOR_CASES || path.join(__dirname, '..', 'cases');
+
+function loadCases() {
+  const map = new Map();
+  if (!fs.existsSync(CASES_DIR)) return map;
+  for (const f of fs.readdirSync(CASES_DIR).filter((x) => x.endsWith('.json')).sort()) {
+    try {
+      const c = JSON.parse(fs.readFileSync(path.join(CASES_DIR, f), 'utf8'));
+      map.set(c.id, c);
+    } catch (e) {
+      console.error(`[casos] ${f} inválido: ${e.message}`);
+    }
+  }
+  return map;
+}
+
+const cases = loadCases();
+const rooms = new Map();
+
+const MIME = {
+  '.html': 'text/html; charset=utf-8', '.js': 'application/javascript', '.wasm': 'application/wasm',
+  '.pck': 'application/octet-stream', '.png': 'image/png', '.svg': 'image/svg+xml', '.json': 'application/json',
+  '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json', '.css': 'text/css',
+};
+
+const server = http.createServer((req, res) => {
+  const url = new URL(req.url, 'http://x');
+  if (url.pathname === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ ok: true, rooms: rooms.size, cases: [...cases.keys()] }));
+    return;
+  }
+  let rel = decodeURIComponent(url.pathname);
+  if (rel === '/') rel = '/index.html';
+  const file = path.normalize(path.join(PUBLIC, rel));
+  if (!file.startsWith(path.normalize(PUBLIC))) { res.writeHead(403); res.end(); return; }
+  fs.stat(file, (err, st) => {
+    if (err || !st.isFile()) { res.writeHead(404); res.end('não encontrado'); return; }
+    const ext = path.extname(file).toLowerCase();
+    const headers = {
+      'Content-Type': MIME[ext] || 'application/octet-stream',
+      // HTML sempre fresco (pega build novo); o resto pode ficar em cache curto
+      'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=300',
+    };
+    // wasm/pck/js comprimidos: o Wi-Fi da escola agradece (o motor tem ~35 MB)
+    const gz = file + '.gz';
+    if (/\bgzip\b/.test(req.headers['accept-encoding'] || '') && ['.wasm', '.pck', '.js'].includes(ext) && fs.existsSync(gz)) {
+      headers['Content-Encoding'] = 'gzip';
+      res.writeHead(200, headers);
+      fs.createReadStream(gz).pipe(res);
+      return;
+    }
+    res.writeHead(200, headers);
+    fs.createReadStream(file).pipe(res);
+  });
+});
+
+const wss = new WebSocketServer({ server, path: '/ws', maxPayload: 64 * 1024 });
+
+function send(sock, obj) {
+  if (sock && sock.readyState === 1) sock.send(JSON.stringify(obj));
+}
+
+function newCode() {
+  for (let i = 0; i < 1000; i++) {
+    const c = String(Math.floor(1000 + Math.random() * 9000));
+    if (!rooms.has(c)) return c;
+  }
+  throw new Error('sem códigos livres');
+}
+
+wss.on('connection', (sock) => {
+  sock.isAlive = true;
+  sock.on('pong', () => { sock.isAlive = true; });
+  sock.on('message', (data) => {
+    let msg;
+    try { msg = JSON.parse(data.toString()); } catch { return; }
+    if (!msg || typeof msg.t !== 'string') return;
+    try {
+      handle(sock, msg);
+    } catch (e) {
+      console.error('[ws] erro tratando', msg.t, e);
+    }
+  });
+  sock.on('close', () => { if (sock.room) sock.room.drop(sock); });
+});
+
+function handle(sock, msg) {
+  if (msg.t === 'ping') { send(sock, { t: 'pong', now: Date.now() }); return; }
+  if (msg.t === 'host_create') {
+    if (cases.size === 0) { send(sock, { t: 'error', msg: 'Nenhum caso instalado no servidor.' }); return; }
+    const room = new Room(newCode(), cases, send);
+    rooms.set(room.code, room);
+    room.attachHost(sock);
+    send(sock, { t: 'hosted', code: room.code, hostSecret: room.hostSecret });
+    room.broadcast();
+    return;
+  }
+  if (msg.t === 'host_resume') {
+    const room = rooms.get(String(msg.code));
+    if (!room || room.hostSecret !== msg.hostSecret) { send(sock, { t: 'resume_failed' }); return; }
+    room.attachHost(sock);
+    send(sock, { t: 'hosted', code: room.code, hostSecret: room.hostSecret });
+    if (room.phase !== 'lobby') send(sock, { t: 'case', case: require('./room').publicCase(room.caseData) });
+    if (room.phase === 'reveal') send(sock, { t: 'reveal', reveal: room.revealData() });
+    room.broadcast();
+    return;
+  }
+  if (msg.t === 'join') {
+    const room = rooms.get(String(msg.code));
+    if (!room) { send(sock, { t: 'error', msg: 'Sala não encontrada. Confira o código.' }); return; }
+    const r = room.join(sock, msg.name);
+    if (r.error) { send(sock, { t: 'error', msg: r.error }); return; }
+    send(sock, { t: 'joined', code: room.code, pid: r.player.id, secret: r.player.secret, name: r.player.name });
+    if (room.phase !== 'lobby') send(sock, { t: 'case', case: require('./room').publicCase(room.caseData) });
+    room.broadcast();
+    return;
+  }
+  if (msg.t === 'resume') {
+    const room = rooms.get(String(msg.code));
+    if (!room || !room.resume(sock, msg.pid, msg.secret)) { send(sock, { t: 'resume_failed' }); return; }
+    const p = room.players.get(msg.pid);
+    send(sock, { t: 'joined', code: room.code, pid: p.id, secret: p.secret, name: p.name });
+    if (room.phase !== 'lobby') send(sock, { t: 'case', case: require('./room').publicCase(room.caseData) });
+    if (room.phase === 'reveal') send(sock, { t: 'reveal', reveal: room.revealData() });
+    room.broadcast();
+    return;
+  }
+  const room = sock.room;
+  if (!room) return;
+  if (msg.t.startsWith('host_')) {
+    if (sock.role === 'host') room.hostCmd(msg);
+    return;
+  }
+  if (sock.role === 'player') room.playerCmd(sock, msg);
+}
+
+// relógio das salas + limpeza de conexões mortas (celular que apagou a tela) e salas velhas
+setInterval(() => {
+  const now = Date.now();
+  for (const [code, room] of rooms) {
+    room.tick(now);
+    if (now - room.touched > 4 * 3600 * 1000) rooms.delete(code);
+  }
+}, 500);
+setInterval(() => {
+  for (const s of wss.clients) {
+    if (!s.isAlive) { s.terminate(); continue; }
+    s.isAlive = false;
+    s.ping();
+  }
+}, 15000);
+
+function lanAddresses() {
+  return Object.values(os.networkInterfaces()).flat()
+    .filter((i) => i && i.family === 'IPv4' && !i.internal).map((i) => i.address);
+}
+
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`RUMOR no ar. Casos: ${[...cases.keys()].join(', ') || '(nenhum)'}`);
+    console.log(`  Neste computador: http://localhost:${PORT}`);
+    for (const ip of lanAddresses()) console.log(`  Na rede da escola: http://${ip}:${PORT}`);
+  });
+}
+
+module.exports = { server, rooms, cases };

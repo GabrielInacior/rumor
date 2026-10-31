@@ -8,3 +8,6 @@ build/
 # python
 __pycache__/
 *.pyc
+node_modules/
+server/public/*
+!server/public/.gitkeep
