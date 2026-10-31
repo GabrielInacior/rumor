@@ -103,6 +103,25 @@ func _build_truth(r: Dictionary) -> Control:
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(v)
 	var rv: Dictionary = r.get("reveal", {})
+	if r.get("culprit") != null:
+		# cartaz de "procurado" do culpado, o grande momento da revelação
+		var cp := Net.card_by_id(str(r["culprit"]))
+		var poster := Paper.make("polaroid", true)
+		var ph := UI.hbox(18)
+		var tr := TextureRect.new()
+		tr.texture = UI.portrait(str(r["culprit"]))
+		tr.custom_minimum_size = Vector2(180, 225)
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		ph.add_child(tr)
+		var pv := UI.vbox(4)
+		pv.add_child(UI.title("FOI ELE(A)", 40, UI.RED))
+		pv.add_child(UI.title(UI.strip_emoji(str(cp.get("name", "?"))).to_upper(), 64, UI.INK))
+		pv.add_child(UI.label(str(cp.get("role", "")), 22, Color(UI.INK, 0.7)))
+		ph.add_child(pv)
+		poster.add_child(ph)
+		v.add_child(poster)
+		UI.pop_in(poster, 0.2)
 	var exp := UI.panel(Color(UI.PAPER, 0.96), UI.INK)
 	exp.add_child(UI.label(UI.strip_emoji(str(rv.get("explanation", ""))), 28, UI.INK, "type"))
 	v.add_child(exp)

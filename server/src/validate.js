@@ -16,7 +16,7 @@ function linkMatches(link, edge, linkTypes) {
  * @returns {{correct:boolean, score:number, categories:Array<{id,label,status,found,total}>}}
  *   status: "ok" | "falta_prova" | "incompleto" | "errado"
  */
-function validateBoard(caseData, board) {
+function validateBoard(caseData, board, culprit) {
   const sol = caseData.solution;
   const links = board.links || [];
   const cats = sol.categories.map((c) => ({
@@ -46,6 +46,13 @@ function validateBoard(caseData, board) {
     }
   }
 
+  // apontar o culpado: categoria extra quando o caso tem culpado definido
+  const culpritCat = [];
+  if (sol.culprit) {
+    const ok = culprit === sol.culprit;
+    if (ok) score += 150;
+    culpritCat.push({ id: 'culpado', label: sol.culprit_question || 'Quem é o responsável', status: culprit ? (ok ? 'ok' : 'errado') : 'incompleto', found: ok ? 1 : 0, total: 1 });
+  }
   let correct = true;
   const categories = cats.map((c) => {
     let status = 'ok';
@@ -56,7 +63,8 @@ function validateBoard(caseData, board) {
     // "found" de cada categoria é exibido como progresso; não revela QUAL linha falta.
     return { id: c.id, label: c.label, status, found: c.proved, total: c.total };
   });
-  return { correct, score: Math.max(0, score), categories };
+  for (const c of culpritCat) if (c.status !== 'ok') correct = false;
+  return { correct, score: Math.max(0, score), categories: [...categories, ...culpritCat] };
 }
 
 module.exports = { validateBoard };

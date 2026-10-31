@@ -40,8 +40,69 @@ func open_tree(p_card: Dictionary, p_tree: Dictionary, p_team_clues: Array) -> v
 	tree = p_tree
 	team_clues = p_team_clues
 	subtitle = "INTERROGATÓRIO"
+	flags = (Net.state.get("flags", {}) as Dictionary).duplicate()
+	items = (Net.state.get("items", []) as Array).duplicate()
+	# a equipe compartilha a história com cada pessoa: a entrada depende do que os colegas já fizeram
 	node_id = str(tree.get("start", ""))
-	lines = _node().get("lines", [])
+	for e in tree.get("entries", []):
+		if _cond_ok(e):
+			node_id = str(e.get("node", node_id))
+			break
+	_enter_node()
+
+
+var flags: Dictionary = {}
+var items: Array = []
+
+
+func _cond_ok(d: Dictionary) -> bool:
+	for f in d.get("if", []):
+		if not flags.has(f):
+			return false
+	for f in d.get("ifnot", []):
+		if flags.has(f):
+			return false
+	for r in d.get("requires", []) if d.get("requires") is Array else ([d["requires"]] if str(d.get("requires", "")) != "" else []):
+		if not team_clues.has(r) and not items.has(r):
+			return false
+	return true
+
+
+func _enter_node() -> void:
+	var node := _node()
+	lines = node.get("lines", [])
+	idx = -1
+	if node.is_empty():
+		return
+	# efeitos valem para a equipe toda; o servidor guarda, aqui só antecipa para esta conversa
+	for f in node.get("sets", []):
+		if not flags.has(f):
+			flags[f] = Net.my_name
+	if str(node.get("take_item", "")) != "":
+		items.erase(node["take_item"])
+		Sfx.play("card_pin")
+	if str(node.get("give_item", "")) != "":
+		items.append(node["give_item"])
+	Net.send({"t": "talk_node", "person": str(card.get("id", "")), "node": node_id})
+	if str(node.get("unlock", "")) != "":
+		unlocked.emit(str(card.get("id", "")), node_id)
+	if float(node.get("lock", 0)) > 0.0:
+		locked.emit(str(card.get("id", "")), float(node["lock"]))
+
+
+## "{por:flag}" vira o codinome de quem da equipe conseguiu aquela flag
+func _fill(text: String) -> String:
+	var out := text
+	var i := out.find("{por:")
+	while i >= 0:
+		var j := out.find("}", i)
+		if j < 0:
+			break
+		var f := out.substr(i + 5, j - i - 5)
+		var who := str(flags.get(f, "alguém da sua equipe"))
+		out = out.substr(0, i) + who + out.substr(j + 1)
+		i = out.find("{por:")
+	return out
 
 
 func _node() -> Dictionary:
@@ -179,11 +240,16 @@ func _show_choices() -> bool:
 	UI.clear(choices_box)
 	choices_box.add_child(UI.title("O QUE VOCÊ FAZ?", 40, UI.YELLOW))
 	for ch_d in list:
-		var req := str(ch_d.get("requires", ""))
-		if req != "" and not team_clues.has(req):
+		if not _cond_ok(ch_d):
 			continue
-		var evidence := req != ""
-		var b := UI.button(("MOSTRAR PISTA:  " if evidence else "") + UI.strip_emoji(str(ch_d.get("text", ""))), "primary" if evidence else "ghost", 92)
+		var reqs: Variant = ch_d.get("requires", [])
+		var evidence: bool = (reqs is Array and not (reqs as Array).is_empty()) or (reqs is String and reqs != "")
+		var gives_item := false
+		for r in (reqs if reqs is Array else [reqs]):
+			if items.has(r):
+				gives_item = true
+		var prefix := ("ENTREGAR:  " if gives_item else "MOSTRAR PISTA:  ") if evidence else ""
+		var b := UI.button(prefix + UI.strip_emoji(str(ch_d.get("text", ""))), "primary" if evidence else "ghost", 92)
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.add_theme_font_override("font", UI.font("bold"))
 		b.add_theme_font_size_override("font_size", 27)
@@ -208,16 +274,10 @@ func _choose(ch_d: Dictionary) -> void:
 	node_id = str(ch_d.get("next", ""))
 	choices_box.visible = false
 	bubble_ref.visible = true
-	var node := _node()
-	if node.is_empty():
+	if _node().is_empty():
 		_finish()
 		return
-	lines = node.get("lines", [])
-	idx = -1
-	if str(node.get("unlock", "")) != "":
-		unlocked.emit(str(card.get("id", "")), node_id)
-	if float(node.get("lock", ch_d.get("lock", 0))) > 0.0:
-		locked.emit(str(card.get("id", "")), float(node.get("lock", ch_d.get("lock", 0))))
+	_enter_node()
 	_next()
 
 
@@ -241,7 +301,7 @@ func _next() -> void:
 			queue_free())
 		return
 	var l: Dictionary = lines[idx]
-	_full = UI.strip_emoji(str(l.get("text", "")))
+	_full = _fill(UI.strip_emoji(str(l.get("text", ""))))
 	_shown = 0.0
 	ch.set_expression(str(l.get("expr", "neutro")))
 	ch.play(str(l.get("anim", "falando")))

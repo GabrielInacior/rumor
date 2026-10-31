@@ -47,6 +47,8 @@ class Room {
         ...p,
         board: { cards: [], links: [], seq: 0 },
         found: new Set(),
+        flags: {},          // flag -> codinome de quem conseguiu (reações compartilhadas pela equipe)
+        items: new Set(),   // mochila da equipe (objetos de troca)
         lockUntil: 0,
         lastResult: null,
         bestScore: 0,
@@ -210,7 +212,7 @@ class Room {
     // equipes sem entrega ainda são avaliadas pelo quadro atual, para o placar final
     for (const team of this.teams) {
       if (!team.solvedAt) {
-        const r = validateBoard(this.caseData, team.board);
+        const r = validateBoard(this.caseData, team.board, team.lastCulprit);
         team.bestScore = Math.max(team.bestScore, r.score);
         team.finalResult = r;
       }
@@ -224,6 +226,7 @@ class Room {
     const c = this.caseData;
     return {
       reveal: c.reveal,
+      culprit: c.solution.culprit || null,
       edges: c.solution.edges,
       categories: c.solution.categories,
       ranking: this.ranking(),
@@ -268,11 +271,40 @@ class Room {
 
     if (msg.t === 'hotspot') {
       const hs = (this.caseData.hotspots || []).find((h) => h.id === msg.id);
-      if (hs && !team.found.has(hs.clue)) {
+      if (hs && hs.item && !team.flags['hs:' + hs.id]) {
+        team.flags['hs:' + hs.id] = p.name;
+        team.items.add(hs.item);
+        const it = (this.caseData.items || []).find((x) => x.id === hs.item);
+        this.emitEvent({ k: 'item', team: team.id, by: p.name, id: hs.id, label: it ? it.name : hs.label }, team.id);
+        this.broadcastTeam(team);
+        return;
+      }
+      if (hs && hs.clue && !team.found.has(hs.clue)) {
         team.found.add(hs.clue);
         this.emitEvent({ k: 'hotspot', team: team.id, by: p.name, id: hs.id, label: hs.label }, team.id);
         this.broadcastTeam(team);
       }
+      return;
+    }
+    if (msg.t === 'talk_node') {
+      // a equipe chegou num nó da conversa: aplica flags, itens e pista (estado compartilhado)
+      const card = this.caseData.cards.find((c) => c.id === msg.person);
+      const node = card && card.talk && card.talk.tree && card.talk.tree.nodes ? card.talk.tree.nodes[msg.node] : null;
+      if (!node) return;
+      let changed = false;
+      for (const f of node.sets || []) {
+        if (!team.flags[f]) { team.flags[f] = p.name; changed = true; }
+      }
+      if (node.take_item && team.items.has(node.take_item)) { team.items.delete(node.take_item); changed = true; }
+      if (node.give_item && !team.items.has(node.give_item)) { team.items.add(node.give_item); changed = true; }
+      if (node.unlock && !team.found.has(node.unlock)) {
+        team.found.add(node.unlock);
+        this.released.add(node.unlock);
+        const clue = this.caseData.clues.find((c) => c.id === node.unlock);
+        this.emitEvent({ k: 'interrogated', team: team.id, by: p.name, person: card.name, clue: node.unlock, title: clue ? clue.title : '' }, team.id);
+        changed = true;
+      }
+      if (changed) this.broadcastTeam(team);
       return;
     }
     if (msg.t === 'interrogate') {
@@ -296,7 +328,8 @@ class Room {
     if (msg.t === 'submit') {
       const now = Date.now();
       if (team.solvedAt || now < team.lockUntil) return;
-      const r = validateBoard(this.caseData, team.board);
+      team.lastCulprit = msg.culprit || null;
+      const r = validateBoard(this.caseData, team.board, team.lastCulprit);
       team.submissions += 1;
       team.lastResult = { ...r, by: p.name, at: now };
       team.bestScore = Math.max(team.bestScore, r.score);
@@ -438,7 +471,9 @@ class Room {
       s.clues = this.caseData.clues.filter((c) => vis.has(c.id));
       s.mine = [...p.clues];
       s.board = { cards: team.board.cards, links: team.board.links };
-      s.hotspots = (this.caseData.hotspots || []).filter((h) => team.found.has(h.clue)).map((h) => h.id);
+      s.hotspots = (this.caseData.hotspots || []).filter((h) => (h.clue && team.found.has(h.clue)) || team.flags['hs:' + h.id]).map((h) => h.id);
+      s.flags = team.flags;
+      s.items = [...team.items];
       s.lockUntil = team.lockUntil;
       s.lastResult = team.lastResult;
       s.solved = !!team.solvedAt;
@@ -480,6 +515,8 @@ function publicCase(c) {
     clue_count: clues.length,
     hotspots: (hotspots || []).map((h) => ({ id: h.id, object: h.object, label: h.label })),
     categories: solution.categories.map((x) => ({ id: x.id, label: x.label })),
+    has_culprit: !!solution.culprit,
+    culprit_question: solution.culprit_question || 'Quem é o responsável?',
   };
 }
 

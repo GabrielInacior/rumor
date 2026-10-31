@@ -14,6 +14,10 @@ const ANCHORS := {
 	"patio": ["banco_patio", "arvore", "bicicletario", "lixeira_patio", "poste"],
 	"sala_professores": ["escaninho", "cafeteira", "mural_recados", "computador_prof", "armario_prof"],
 	"quadra": ["arquibancada", "placar", "bolsa_esportiva", "vestiario_porta", "rede"],
+	"sala_diretor": ["mesa_diretor", "gaveta", "quadro_fotos", "telefone", "cofre"],
+	"deposito": ["caixa_achados", "prateleira", "vassoura", "caixa_fusiveis", "porta_fundos"],
+	"laboratorio": ["bancada", "microscopio", "armario_vidros", "quadro_tabela", "pia"],
+	"sala_musica": ["piano", "bateria", "estante_partituras", "armario_instrumentos", "quadro_horarios"],
 	"fachada": [],
 }
 
@@ -85,15 +89,17 @@ func _count(n: Node) -> Array:
 
 
 func _sheet(shots: Array[Image]) -> void:
-	# grade 3x3 de miniaturas 360x640
-	var w := 360
-	var h := 640
-	var sheet := Image.create(w * 3 + 8 * 4, h * 3 + 8 * 4, false, Image.FORMAT_RGB8)
+	# grade 5 colunas de miniaturas 288x512
+	var w := 288
+	var h := 512
+	var cols := 5
+	var rows := int(ceil(shots.size() / float(cols)))
+	var sheet := Image.create(w * cols + 8 * (cols + 1), h * rows + 8 * (rows + 1), false, Image.FORMAT_RGB8)
 	sheet.fill(Color("#05070f"))
 	for i in shots.size():
 		var im: Image = shots[i].duplicate()
 		im.convert(Image.FORMAT_RGB8)
 		im.resize(w, h, Image.INTERPOLATE_BILINEAR)
-		sheet.blit_rect(im, Rect2i(0, 0, w, h), Vector2i(8 + (i % 3) * (w + 8), 8 + (i / 3) * (h + 8)))
+		sheet.blit_rect(im, Rect2i(0, 0, w, h), Vector2i(8 + (i % cols) * (w + 8), 8 + (i / cols) * (h + 8)))
 	sheet.save_png(SHEET)
 	print("SHEET saved")

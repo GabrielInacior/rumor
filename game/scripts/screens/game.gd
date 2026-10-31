@@ -34,9 +34,11 @@ var locations: Array = []
 var loc := ""
 var loc_strip: HBoxContainer
 var person_locks := {}
+var chosen_culprit := ""
 const LOC_NAMES := {
 	"corredor": "Corredor", "biblioteca": "Biblioteca", "teatro": "Teatro", "sala_aula": "Sala de aula",
 	"cantina": "Cantina", "patio": "Pátio", "sala_professores": "Sala dos profs", "quadra": "Quadra",
+	"sala_diretor": "Diretoria", "deposito": "Depósito", "laboratorio": "Laboratório", "sala_musica": "Sala de música",
 }
 
 
@@ -217,8 +219,6 @@ func _talk_to(pid: String) -> void:
 		tv.open_tree(card, tree, ids)
 		add_child(UI.full(tv))
 		scene3d.set_process(false)
-		tv.unlocked.connect(func(person: String, node: String) -> void:
-			Net.send({"t": "interrogate", "person": person, "node": node}))
 		tv.locked.connect(func(person: String, secs: float) -> void:
 			person_locks[person] = Time.get_ticks_msec() + secs * 1000.0)
 		tv.finished.connect(func() -> void: scene3d.set_process(tab == "cena"))
@@ -259,7 +259,7 @@ func _on_hotspot(id: String, label: String) -> void:
 			hs = h
 	Net.send({"t": "hotspot", "id": id})
 	scene3d.mark_found(id)
-	_narrate("%s. A pista foi para as PISTAS da equipe." % label, true)
+	_narrate("%s. Guardado com a equipe: veja em PISTAS." % label, true)
 
 
 # ================================================================== PISTAS
@@ -293,6 +293,28 @@ func _refresh_clues() -> void:
 		if am != bm:
 			return am
 		return str(a.get("time", "")) < str(b.get("time", "")))
+	# mochila: objetos de troca que a equipe carrega (pegos nas cenas ou ganhos em conversa)
+	var items: Array = Net.state.get("items", [])
+	if not items.is_empty():
+		clue_list.add_child(UI.title("MOCHILA DA EQUIPE", 34, UI.YELLOW))
+		var flow := HFlowContainer.new()
+		flow.add_theme_constant_override("h_separation", 12)
+		flow.add_theme_constant_override("v_separation", 12)
+		for iid in items:
+			var it := {}
+			for x in Net.case_data.get("items", []):
+				if x["id"] == iid:
+					it = x
+			var tag := Paper.make("sticky")
+			tag.custom_minimum_size = Vector2(300, 0)
+			var tv := UI.vbox(2)
+			tv.add_child(UI.label(UI.strip_emoji(str(it.get("name", iid))), 28, UI.INK, "marker"))
+			tv.add_child(UI.label(UI.strip_emoji(str(it.get("desc", ""))), 19, Color(UI.INK, 0.75)))
+			tag.add_child(tv)
+			flow.add_child(tag)
+		clue_list.add_child(flow)
+		clue_list.add_child(UI.label("Ofereça numa conversa: alguém pode querer trocar por informação.", 20, UI.MIST))
+		clue_list.add_child(UI.title("PISTAS", 34, UI.YELLOW))
 	for c in sorted:
 		clue_list.add_child(_clue_row(c, mine.has(c["id"]), on_board.has("c:" + str(c["id"]))))
 	if clues.is_empty():
@@ -755,8 +777,38 @@ func _open_submit() -> void:
 		v.add_child(UI.label("·  " + str(cat["label"]), 28, UI.YELLOW, "bold"))
 	v.add_child(UI.label("Cada fio importante precisa de uma PROVA presa nele. Se errar, a equipe espera %d segundos para tentar de novo." % int(Net.state.get("settings", {}).get("penaltySec", 45)), 24, UI.MIST))
 	var go := UI.button("APRESENTAR AGORA", "primary", 110)
+	if Net.case_data.get("has_culprit", false):
+		# o momento alto: a equipe aponta o culpado, carta por carta
+		v.add_child(UI.title(str(Net.case_data.get("culprit_question", "Quem é o responsável?")).to_upper(), 44, UI.PINK))
+		var grid := GridContainer.new()
+		grid.columns = 3
+		grid.add_theme_constant_override("h_separation", 12)
+		grid.add_theme_constant_override("v_separation", 12)
+		var btns := []
+		for c in Net.case_data.get("cards", []):
+			if c["kind"] != "pessoa":
+				continue
+			var b := _palette_item(c, false)
+			b.toggle_mode = true
+			b.add_theme_stylebox_override("pressed", UI.box(UI.PINK, UI.INK, 0, 8, 8))
+			btns.append(b)
+			var cid := str(c["id"])
+			b.pressed.connect(func() -> void:
+				chosen_culprit = cid
+				for o in btns:
+					(o as Button).button_pressed = o == b
+				Sfx.play("card_pin")
+				go.disabled = false
+				go.text = "ACUSAR %s E APRESENTAR" % _name_of(cid).to_upper())
+			if b.pressed.get_connections().size() > 0:
+				pass
+			grid.add_child(b)
+		v.add_child(grid)
+		go.disabled = chosen_culprit == ""
+		if chosen_culprit != "":
+			go.text = "ACUSAR %s E APRESENTAR" % _name_of(chosen_culprit).to_upper()
 	go.pressed.connect(func() -> void:
-		Net.send({"t": "submit"})
+		Net.send({"t": "submit", "culprit": chosen_culprit})
 		Sfx.play("submit_stamp")
 		_close_sheet())
 	v.add_child(go)
