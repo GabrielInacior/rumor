@@ -59,6 +59,8 @@ func _ready() -> void:
 	Net.connected.connect(func() -> void: get_node("Conn").visible = false)
 	Net.disconnected.connect(func() -> void: get_node("Conn").visible = Net.role != "")
 	resized.connect(_on_resize)
+	get_window().size_changed.connect(_apply_scale)
+	_apply_scale()
 	_on_resize()
 
 	if Net.has_saved_session():
@@ -114,8 +116,40 @@ func _dev_hooks() -> void:
 			img.save_png(shot_dir.path_join(what + ".png")))
 
 
+## Celular em pé usa a base 720x1280; tela deitada (computador, projetor, tablet deitado) usa 1600x900,
+## senão tudo encolheria pela altura e ficaria minúsculo no telão.
+func _apply_scale() -> void:
+	var win := get_window()
+	var s := win.size
+	var want := Vector2i(1600, 900) if s.x > s.y * 1.05 else Vector2i(720, 1280)
+	if win.content_scale_size != want:
+		win.content_scale_size = want
+
+
+func is_wide() -> bool:
+	return size.x > size.y * 1.05
+
+
 func _on_resize() -> void:
 	(backdrop.material as ShaderMaterial).set_shader_parameter("px_size", size)
+	_fit_column()
+
+
+## Telas de leitura viram uma coluna central na tela larga (o quadro e a cena usam a largura toda).
+func _fit_column() -> void:
+	if current == null:
+		return
+	var narrow := current_kind in ["join", "lobby", "briefing", "reveal"] and is_wide()
+	if narrow:
+		current.anchor_left = 0.5
+		current.anchor_right = 0.5
+		current.offset_left = -480
+		current.offset_right = 480
+	else:
+		current.anchor_left = 0.0
+		current.anchor_right = 1.0
+		current.offset_left = 0
+		current.offset_right = 0
 
 
 func go_join() -> void:
@@ -165,6 +199,7 @@ func _swap(kind: String) -> void:
 	scr.set_meta("main", self)
 	holder.add_child(UI.full(scr))
 	current = scr
+	_fit_column()
 	if scr.has_method("refresh"):
 		scr.refresh()
 	scr.modulate.a = 0.0
@@ -188,6 +223,10 @@ func _on_event(evt: Dictionary) -> void:
 			Sfx.play("hotspot_found")
 			if Net.role == "player":
 				toast("%s achou: %s" % [evt.get("by", "Alguém"), evt.get("label", "uma pista")], UI.YELLOW)
+		"interrogated":
+			Sfx.play("clue_new")
+			if Net.role == "player":
+				toast("%s fez %s abrir o jogo: %s" % [evt.get("by", "Alguém"), evt.get("person", "alguém"), UI.strip_emoji(str(evt.get("title", "")))], UI.YELLOW)
 		"wrong":
 			Sfx.play("wrong")
 		"solved":

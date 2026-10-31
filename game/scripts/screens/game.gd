@@ -30,6 +30,14 @@ var new_badge := 0
 var last_result_at := 0.0
 var _urgent_played := false
 var _last_sec := -1
+var locations: Array = []
+var loc := ""
+var loc_strip: HBoxContainer
+var person_locks := {}
+const LOC_NAMES := {
+	"corredor": "Corredor", "biblioteca": "Biblioteca", "teatro": "Teatro", "sala_aula": "Sala de aula",
+	"cantina": "Cantina", "patio": "Pátio", "sala_professores": "Sala dos profs", "quadra": "Quadra",
+}
 
 
 func _ready() -> void:
@@ -93,19 +101,25 @@ func _build_scene_page() -> Control:
 	scene3d = CaseScene.new()
 	page.add_child(UI.full(scene3d))
 	var found := {}
-	var ppl := []
-	for pid in Net.case_data.get("scene_people", []):
-		var pc := Net.card_by_id(str(pid))
-		if not pc.is_empty():
-			ppl.append(pc)
-	scene3d.setup(str(Net.case_data.get("scene", "corredor")), Net.case_data.get("hotspots", []), found, ppl)
+	locations = Net.case_data.get("locations", [])
+	if locations.is_empty():
+		locations = [str(Net.case_data.get("scene", "corredor"))]
 	scene3d.person_tapped.connect(_talk_to)
+	# faixa de lugares: trocar de cena é tocar no nome do lugar
+	var strip_sc := ScrollContainer.new()
+	strip_sc.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	strip_sc.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	strip_sc.offset_left = 12; strip_sc.offset_right = -12; strip_sc.offset_top = 12; strip_sc.offset_bottom = 92
+	loc_strip = UI.hbox(10)
+	strip_sc.add_child(loc_strip)
+	page.add_child(strip_sc)
+	_load_location(str(locations[0]))
 	scene3d.hotspot_tapped.connect(_on_hotspot)
 	scene3d.flavor_tapped.connect(func(t: String) -> void: _narrate(t, false))
 	var hint := UI.label("Arraste para olhar em volta. Toque no que brilha.", 22, UI.PAPER, "bold")
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	hint.offset_top = 14
+	hint.offset_top = 104
 	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hint.add_theme_color_override("font_outline_color", UI.NIGHT)
 	hint.add_theme_constant_override("outline_size", 8)
@@ -124,6 +138,57 @@ func _build_scene_page() -> Control:
 	return page
 
 
+func _load_location(l: String) -> void:
+	loc = l
+	var hs := []
+	for h in Net.case_data.get("hotspots", []):
+		if str(h.get("scene", locations[0])) == l:
+			hs.append(h)
+	var ppl := []
+	for e in Net.case_data.get("scene_people", []):
+		var pid := ""
+		var where := str(locations[0])
+		if e is Dictionary:
+			pid = str(e.get("id", ""))
+			where = str(e.get("scene", where))
+		else:
+			pid = str(e)
+		if where == l:
+			var pc := Net.card_by_id(pid)
+			if not pc.is_empty():
+				ppl.append(pc)
+	var found := {}
+	for hid in Net.state.get("hotspots", []):
+		found[str(hid)] = true
+	scene3d.setup(l, hs, found, ppl)
+	_refresh_loc_strip()
+	Sfx.play("paper_flip", -8.0)
+
+
+## Cada lugar mostra quantas coisas brilhantes ainda faltam ali: guia quem joga pouco sem dar a resposta.
+func _refresh_loc_strip() -> void:
+	if loc_strip == null:
+		return
+	UI.clear(loc_strip)
+	var found: Array = Net.state.get("hotspots", [])
+	for l in locations:
+		var left := 0
+		for h in Net.case_data.get("hotspots", []):
+			if str(h.get("scene", locations[0])) == str(l) and not found.has(h["id"]):
+				left += 1
+		var on: bool = str(l) == loc
+		var b := UI.button(str(LOC_NAMES.get(str(l), str(l))).to_upper() + ("  •%d" % left if left > 0 else ""), "ghost", 72)
+		b.add_theme_font_override("font", UI.font("title"))
+		b.add_theme_font_size_override("font_size", 30)
+		b.custom_minimum_size.x = 200
+		b.add_theme_stylebox_override("normal", UI.box(UI.YELLOW if on else Color(UI.NIGHT, 0.85), UI.YELLOW.darkened(0.3), 0 if on else 2, 16, 18))
+		b.add_theme_color_override("font_color", UI.INK if on else UI.PAPER)
+		b.pressed.connect(func() -> void:
+			if str(l) != loc:
+				_load_location(str(l)))
+		loc_strip.add_child(b)
+
+
 func _narrate(text: String, important: bool) -> void:
 	narr_l.text = text
 	narr_panel.visible = true
@@ -139,6 +204,25 @@ func _narrate(text: String, important: bool) -> void:
 ## (alguém precisa ter achado ou recebido); antes disso, a pessoa desconversa.
 func _talk_to(pid: String) -> void:
 	var card := Net.card_by_id(pid)
+	var lock_left := (float(person_locks.get(pid, 0)) - Time.get_ticks_msec()) / 1000.0
+	if lock_left > 0:
+		get_meta("main").toast("%s não quer falar agora. Tente de novo em %ds." % [_name_of(pid), int(ceil(lock_left))], UI.PINK)
+		return
+	var tree: Dictionary = card.get("talk", {}).get("tree", {})
+	if not tree.is_empty():
+		var ids := []
+		for c in Net.state.get("clues", []):
+			ids.append(c["id"])
+		var tv := TalkView.new()
+		tv.open_tree(card, tree, ids)
+		add_child(UI.full(tv))
+		scene3d.set_process(false)
+		tv.unlocked.connect(func(person: String, node: String) -> void:
+			Net.send({"t": "interrogate", "person": person, "node": node}))
+		tv.locked.connect(func(person: String, secs: float) -> void:
+			person_locks[person] = Time.get_ticks_msec() + secs * 1000.0)
+		tv.finished.connect(func() -> void: scene3d.set_process(tab == "cena"))
+		return
 	for c in Net.state.get("clues", []):
 		if str(c.get("kind", "")) == "depoimento" and str(c.get("who", c.get("from", ""))) == pid:
 			_open_talk(card, _dialogue_of(c), "DEPOIMENTO")
@@ -721,7 +805,9 @@ func _open_sheet(content: Control) -> void:
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", UI.box(Color(UI.NAVY, 0.98), UI.YELLOW, 3, 28, 26))
 	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	panel.offset_left = 10; panel.offset_right = -10; panel.offset_bottom = -10
+	# na tela larga o painel vira uma folha central, não uma faixa de ponta a ponta
+	var side := maxf(10.0, (size.x - 860.0) / 2.0)
+	panel.offset_left = side; panel.offset_right = -side; panel.offset_bottom = -10
 	panel.offset_top = -minf(size.y * 0.82, 1080)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -788,6 +874,7 @@ func refresh() -> void:
 	# hotspots já achados pela equipe ficam apagados na cena
 	for hid in Net.state.get("hotspots", []):
 		scene3d.mark_found(str(hid))
+	_refresh_loc_strip()
 	var lr: Variant = Net.state.get("lastResult")
 	if lr is Dictionary and float(lr.get("at", 0)) > last_result_at:
 		var first := last_result_at == 0.0 and Time.get_ticks_msec() < 3000

@@ -275,6 +275,19 @@ class Room {
       }
       return;
     }
+    if (msg.t === 'interrogate') {
+      // a fala de um nó do interrogatório libera uma pista para a equipe inteira
+      const card = this.caseData.cards.find((c) => c.id === msg.person);
+      const node = card && card.talk && card.talk.tree && card.talk.tree.nodes ? card.talk.tree.nodes[msg.node] : null;
+      if (node && node.unlock && !team.found.has(node.unlock)) {
+        team.found.add(node.unlock);
+        this.released.add(node.unlock);
+        const clue = this.caseData.clues.find((c) => c.id === node.unlock);
+        this.emitEvent({ k: 'interrogated', team: team.id, by: p.name, person: card.name, clue: node.unlock, title: clue ? clue.title : '' }, team.id);
+        this.broadcastTeam(team);
+      }
+      return;
+    }
     if (msg.t === 'board') {
       const ok = this.applyBoardOp(team, p, msg.op || {});
       if (ok) this.broadcastTeam(team, msg.op && msg.op.k === 'move' ? sock : null);

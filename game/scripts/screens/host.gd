@@ -103,7 +103,10 @@ func _build_lobby() -> void:
 	cs.add_child(lobby_cases)
 	right.add_child(cs)
 	var tc := UI.hbox(12)
-	tc.add_child(UI.label("Equipes:", 30, UI.PAPER, "bold"))
+	var tl := UI.label("Equipes", 30, UI.PAPER, "bold")
+	tl.autowrap_mode = TextServer.AUTOWRAP_OFF
+	tl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	tc.add_child(tl)
 	var minus := UI.button("-", "ghost", 80)
 	minus.custom_minimum_size.x = 90
 	minus.pressed.connect(func() -> void: Net.send({"t": "host_settings", "teamCount": int(Net.state["settings"]["teamCount"]) - 1}))
@@ -138,7 +141,7 @@ func _refresh_lobby() -> void:
 	lobby_count.text = "%d detetive%s na sala" % [total, "" if total == 1 else "s"]
 	var cnt := find_child("TeamCount", true, false) as Label
 	if cnt:
-		cnt.text = str(st.get("settings", {}).get("teamCount", 3))
+		cnt.text = str(int(st.get("settings", {}).get("teamCount", 3)))
 	var start := find_child("Start", true, false) as Button
 	if start:
 		start.disabled = total == 0

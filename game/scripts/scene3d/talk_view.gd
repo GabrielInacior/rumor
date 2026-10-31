@@ -3,6 +3,8 @@ extends Control
 ## quadrinho, com a expressão e o gesto de cada fala. Toque em qualquer lugar para avançar.
 
 signal finished
+signal unlocked(person: String, node: String)
+signal locked(person: String, seconds: float)
 
 const Character := preload("res://scripts/scene3d/character.gd")
 
@@ -18,12 +20,32 @@ var tag_l: Label
 var _full := ""
 var _shown := 0.0
 var _vp: SubViewport
+var tree: Dictionary = {}
+var node_id := ""
+var team_clues: Array = []
+var choices_box: VBoxContainer
+var bubble_ref: PanelContainer
 
 
 func open(p_card: Dictionary, p_lines: Array, p_subtitle := "") -> void:
 	card = p_card
 	lines = p_lines
 	subtitle = p_subtitle
+
+
+## Interrogatório: percorre a árvore de decisão do personagem. As escolhas que exigem uma pista
+## só aparecem quando a equipe já tem essa pista (mostrar o print, a foto...).
+func open_tree(p_card: Dictionary, p_tree: Dictionary, p_team_clues: Array) -> void:
+	card = p_card
+	tree = p_tree
+	team_clues = p_team_clues
+	subtitle = "INTERROGATÓRIO"
+	node_id = str(tree.get("start", ""))
+	lines = _node().get("lines", [])
+
+
+func _node() -> Dictionary:
+	return tree.get("nodes", {}).get(node_id, {})
 
 
 func _ready() -> void:
@@ -72,6 +94,13 @@ func _ready() -> void:
 	bv.add_child(hint_l)
 	bubble.add_child(bv)
 	add_child(bubble)
+	bubble_ref = bubble
+	choices_box = UI.vbox(12)
+	choices_box.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	choices_box.offset_left = 22; choices_box.offset_right = -22; choices_box.offset_bottom = -30
+	choices_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	choices_box.visible = false
+	add_child(choices_box)
 	var tail := Tail.new()
 	tail.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	tail.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
@@ -142,9 +171,69 @@ func _build_set() -> void:
 	cam.look_at(Vector3(0.0, 1.42, 0), Vector3.UP)
 
 
+func _show_choices() -> bool:
+	var node := _node()
+	var list: Array = node.get("choices", [])
+	if tree.is_empty() or list.is_empty() or node.get("end", false):
+		return false
+	UI.clear(choices_box)
+	choices_box.add_child(UI.title("O QUE VOCÊ FAZ?", 40, UI.YELLOW))
+	for ch_d in list:
+		var req := str(ch_d.get("requires", ""))
+		if req != "" and not team_clues.has(req):
+			continue
+		var evidence := req != ""
+		var b := UI.button(("MOSTRAR PISTA:  " if evidence else "") + UI.strip_emoji(str(ch_d.get("text", ""))), "primary" if evidence else "ghost", 92)
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.add_theme_font_override("font", UI.font("bold"))
+		b.add_theme_font_size_override("font_size", 27)
+		if not evidence:
+			b.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.92), UI.MIST.darkened(0.2), 2, 20))
+		b.pressed.connect(_choose.bind(ch_d))
+		choices_box.add_child(b)
+	var bye := UI.button("Encerrar conversa", "ghost", 76)
+	bye.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.92), UI.BLUE, 2, 20))
+	bye.pressed.connect(func() -> void:
+		node_id = ""
+		_finish())
+	choices_box.add_child(bye)
+	choices_box.visible = true
+	bubble_ref.visible = false
+	return true
+
+
+func _choose(ch_d: Dictionary) -> void:
+	var kind := str(ch_d.get("kind", "neutra"))
+	Sfx.play("wrong" if kind == "ruim" else ("hotspot_found" if kind == "boa" else "ui_tap"), -6.0)
+	node_id = str(ch_d.get("next", ""))
+	choices_box.visible = false
+	bubble_ref.visible = true
+	var node := _node()
+	if node.is_empty():
+		_finish()
+		return
+	lines = node.get("lines", [])
+	idx = -1
+	if str(node.get("unlock", "")) != "":
+		unlocked.emit(str(card.get("id", "")), node_id)
+	if float(node.get("lock", ch_d.get("lock", 0))) > 0.0:
+		locked.emit(str(card.get("id", "")), float(node.get("lock", ch_d.get("lock", 0))))
+	_next()
+
+
+func _finish() -> void:
+	var tw := create_tween()
+	tw.tween_property(self, "modulate:a", 0.0, 0.2)
+	tw.tween_callback(func() -> void:
+		finished.emit()
+		queue_free())
+
+
 func _next() -> void:
 	idx += 1
 	if idx >= lines.size():
+		if _show_choices():
+			return
 		var tw := create_tween()
 		tw.tween_property(self, "modulate:a", 0.0, 0.2)
 		tw.tween_callback(func() -> void:
@@ -157,7 +246,8 @@ func _next() -> void:
 	ch.set_expression(str(l.get("expr", "neutro")))
 	ch.play(str(l.get("anim", "falando")))
 	ch.set_talking(true)
-	hint_l.text = "toque para continuar" if idx < lines.size() - 1 else "toque para fechar"
+	var more: bool = idx < lines.size() - 1 or (not tree.is_empty() and not _node().get("end", false) and not (_node().get("choices", []) as Array).is_empty())
+	hint_l.text = "toque para continuar" if more else "toque para fechar"
 	Sfx.play("paper_flip", -14.0, 1.3)
 
 
@@ -173,6 +263,8 @@ func _process(dt: float) -> void:
 
 
 func _gui_input(e: InputEvent) -> void:
+	if choices_box and choices_box.visible:
+		return
 	if e is InputEventMouseButton and (e as InputEventMouseButton).pressed and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		accept_event()
 		if _shown < _full.length():
