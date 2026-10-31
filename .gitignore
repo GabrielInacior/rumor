@@ -1,0 +1,10 @@
+# Godot
+.godot/
+*.import
+export/
+build/
+# esboços do companheiro visual
+.superpowers/
+# python
+__pycache__/
+*.pyc
