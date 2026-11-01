@@ -1434,7 +1434,11 @@
           "c_lousa",
           "c_dep_caique",
           "c_confissao"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "davi",
@@ -1445,7 +1449,11 @@
           "c_registro_bib",
           "c_ocorrencia",
           "c_dep_davi"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "bento",
@@ -1454,7 +1462,8 @@
         "category": "denuncia",
         "evidence": [
           "c_rede",
-          "c_dep_joana"
+          "c_dep_joana",
+          "c_denuncia"
         ]
       }
     ],
@@ -1586,7 +1595,7 @@
       "No laboratório, a prova foi impressa pela monitoria e o bilhete 'valeu pela cópia, B.' liga a Mel ao Bento.",
       "Na biblioteca, o registro da monitoria dá o álibi do Davi; a Joana viu o Bento digitando às 12h47.",
       "No corredor, o comprovante do saque; com a figurinha, o Caíque conta que viu o Bento saindo da sala às 12h44.",
-      "O registro da rede (chega com o tempo) mostra o aparelho 'Galaxy-do-Bento'. Mostrar a ele, provar no quadro os 4 objetivos secundários e apontá-lo. Não esperem confissão completa: o quadro é a prova."
+      "O registro da rede (chega com o tempo) mostra o aparelho 'Galaxy-do-Bento'. Mostrar a ele, provar no quadro os 4 objetivos secundários e apontá-lo. Não esperem confissão completa: o quadro é a prova. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {

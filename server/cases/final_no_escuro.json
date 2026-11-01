@@ -2351,8 +2351,14 @@
           "c_bala",
           "c_porta",
           "c_bolsa_marta",
-          "c_dep_gabi"
-        ]
+          "c_dep_gabi",
+          "c_ordem",
+          "c_dep_jorge"
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "marta",
@@ -2373,7 +2379,13 @@
         "evidence": [
           "c_audio",
           "c_caixinha",
-          "c_dep_enzo_verdade"
+          "c_dep_enzo_verdade",
+          "c_log_luz",
+          "c_dep_iris",
+          "c_kit_enzo"
+        ],
+        "alt_types": [
+          "g_mentiu_sobre"
         ]
       },
       {
@@ -2385,7 +2397,11 @@
           "c_comanda",
           "c_chat_danca",
           "c_dep_kevin"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "iris",
@@ -2396,7 +2412,11 @@
           "c_log_luz",
           "c_story_iris",
           "c_dep_iris"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "jorge",
@@ -2406,7 +2426,11 @@
         "evidence": [
           "c_balde",
           "c_dep_jorge"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -2591,7 +2615,7 @@
       "Sala de música: o armário do Enzo não tem bala nenhuma, e o quadro diz que as balas são distribuídas pela Profa. Marta. A Gabi viu a Marta sair pelos fundos às 20h10.",
       "Sala dos professores: as notas mostram o motivo, e a bolsa da Marta tem as chaves do zelador. O Hélio conta que revelou o playback a ela.",
       "Pistas só de um aluno (DM da Marta à filha, grupo da dança) ligam a Marta à Juju.",
-      "Provar no quadro os 5 objetivos secundários e apontar a Profa. Marta. Não esperem confissão completa: o quadro é a prova."
+      "Provar no quadro os 5 objetivos secundários e apontar a Profa. Marta. Não esperem confissão completa: o quadro é a prova. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -2664,7 +2688,7 @@
       {
         "clue": "c_log_luz",
         "where": "Teatro: tocar em 'Mesa de luz'",
-        "proves": "Prova a linha: Íris estava em Teatro (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
+        "proves": "Prova a linha: Enzo inventou O álibi da voz no camarim (objetivo: Qual álibi era falso); Íris estava em Teatro (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
       },
       {
         "clue": "c_bala",
@@ -2684,7 +2708,7 @@
       {
         "clue": "c_ordem",
         "where": "Sala de música: tocar em 'Quadro de horários'",
-        "proves": "Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta estava em Depósito (objetivo: Quem foi ao disjuntor). Aponta para Profa. Marta."
       },
       {
         "clue": "c_comanda",
@@ -2714,12 +2738,12 @@
       {
         "clue": "c_dep_iris",
         "where": "mostrar 'Mesa de luz' para Íris",
-        "proves": "Prova a linha: Íris estava em Teatro (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
+        "proves": "Prova a linha: Enzo inventou O álibi da voz no camarim (objetivo: Qual álibi era falso); Íris estava em Teatro (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
       },
       {
         "clue": "c_dep_jorge",
         "where": "mostrar 'Aviso no balde' para Seu Jorge",
-        "proves": "Prova a linha: Profa. Marta pegou As chaves do zelador (objetivo: Quem pegou as chaves do zelador); Seu Jorge estava em Corredor (objetivo: Onde o zelador estava às 20h12)."
+        "proves": "Prova a linha: Profa. Marta estava em Depósito (objetivo: Quem foi ao disjuntor); Profa. Marta pegou As chaves do zelador (objetivo: Quem pegou as chaves do zelador); Seu Jorge estava em Corredor (objetivo: Onde o zelador estava às 20h12)."
       },
       {
         "clue": "c_dep_enzo",

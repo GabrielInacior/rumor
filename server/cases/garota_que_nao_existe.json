@@ -1943,7 +1943,7 @@
       },
       {
         "id": "vaga",
-        "label": "Quem ganhou a vaga no gol"
+        "label": "Quem jogou no gol na semifinal"
       }
     ],
     "edges": [
@@ -1955,7 +1955,13 @@
         "evidence": [
           "c_redacao",
           "c_prancheta",
-          "c_computador"
+          "c_computador",
+          "c_dm_pedro",
+          "c_campeonato",
+          "c_dep_ivo",
+          "c_dep_ana",
+          "c_redacao_lista",
+          "c_dep_mel"
         ]
       },
       {
@@ -1979,7 +1985,11 @@
           "c_computador",
           "c_dep_nanda",
           "c_confissao"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "gabriel",
@@ -1989,8 +1999,13 @@
         "evidence": [
           "c_shopping",
           "c_chat_time",
-          "c_dm_gabriel"
-        ]
+          "c_dm_gabriel",
+          "c_dep_gabriel"
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "leo",
@@ -2000,7 +2015,11 @@
         "evidence": [
           "c_sumula",
           "c_chat_time"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -2152,7 +2171,7 @@
       "Na cantina, o cartaz do campeonato mostra a dupla Kevin e Léo online toda noite às 23h.",
       "A investigação do jornal (cerca de 4 min 30 s) liga as fotos à prima do Kevin: ele vira o suspeito.",
       "Na biblioteca, a reserva e o histórico do computador põem o Léo no Instagram às 14h10.",
-      "Provar no quadro os 5 objetivos secundários e apontar o Léo; o Kevin entra como quem entregou as fotos. Não esperem confissão completa: o quadro é a prova."
+      "Provar no quadro os 5 objetivos secundários e apontar o Léo; o Kevin entra como quem entregou as fotos. Não esperem confissão completa: o quadro é a prova. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -2220,7 +2239,7 @@
       {
         "clue": "c_sumula",
         "where": "Quadra: tocar em 'Súmula'",
-        "proves": "Prova a linha: Léo estava em Gol da semifinal (objetivo: Quem ganhou a vaga no gol)."
+        "proves": "Prova a linha: Léo estava em Gol da semifinal (objetivo: Quem jogou no gol na semifinal)."
       },
       {
         "clue": "c_prancheta",
@@ -2235,7 +2254,7 @@
       {
         "clue": "c_campeonato",
         "where": "Cantina: tocar em 'Cartaz do campeonato'",
-        "proves": "Prova a linha: Kevin entregou as fotos para Léo (objetivo: De onde vieram as fotos). Aponta para Léo."
+        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio (objetivo: Quem criou a Luiza); Kevin entregou as fotos para Léo (objetivo: De onde vieram as fotos). Aponta para Léo."
       },
       {
         "clue": "c_computador",

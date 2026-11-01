@@ -109,7 +109,9 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
     "categories": [{"id": "cadeia", "label": "Por onde o recado passou"}],
     "edges": [                                      // 3 a 4 linhas exigidas
       {"from": "caio", "to": "duda", "type": "contou", "category": "cadeia",
-       "evidence": ["c_celular", "c_print_gremio"]}  // qualquer UMA delas presa vale
+       "evidence": ["c_celular", "c_print_gremio"],  // TODAS as pistas que sustentam o fio (2 a 4, às vezes mais); qualquer uma vale
+       "alt_types": ["g_esteve"],     // opcional: outros tipos (do caso ou g_*) que dizem a mesma coisa neste fio
+       "any_direction": true}         // opcional: aceita as cartas em qualquer ordem (use quando a ordem não muda o sentido)
     ],
     // PANORAMA: ligações NÃO obrigatórias que completam a história (não valem nota; aparecem no quadro oficial da
     // revelação e no guia). Mesmo formato dos edges, evidence opcional. Multi 6 a 12, solo 4 a 8. Pode usar os tipos

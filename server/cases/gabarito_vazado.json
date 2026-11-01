@@ -1918,7 +1918,9 @@
         "evidence": [
           "c_log_impressora",
           "c_foto_gabarito",
-          "c_email"
+          "c_email",
+          "c_escala",
+          "c_dep_rosa"
         ]
       },
       {
@@ -1929,7 +1931,9 @@
         "evidence": [
           "c_dm_fantasma",
           "c_email",
-          "c_dep_pedro"
+          "c_dep_pedro",
+          "c_dep_mari",
+          "c_dep_kaua"
         ]
       },
       {
@@ -1940,7 +1944,8 @@
         "evidence": [
           "c_comprovante",
           "c_celular_pedro",
-          "c_dep_kaua"
+          "c_dep_kaua",
+          "c_grupo"
         ]
       },
       {
@@ -1953,7 +1958,11 @@
           "c_log_impressora",
           "c_dep_rosa",
           "c_confissao"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "lia",
@@ -1963,7 +1972,11 @@
         "evidence": [
           "c_registro_bib",
           "c_dep_lia"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -2111,7 +2124,7 @@
       "Na foto impressa, a bandeja da impressora da coordenação e o chaveiro de videogame.",
       "Na coordenação, a impressora registra nico.ajudante às 13h48 e a escala mostra o Nico sozinho. Na biblioteca, o álibi da Lia.",
       "O recado da coordenação (cerca de 4 min 30 s) liga o e-mail do @fantasma ao Nico.",
-      "Provar no quadro os 4 objetivos secundários e apontar o Nico. Não esperem confissão completa: o quadro é a prova."
+      "Provar no quadro os 4 objetivos secundários e apontar o Nico. Não esperem confissão completa: o quadro é a prova. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -2179,7 +2192,7 @@
       {
         "clue": "c_escala",
         "where": "Sala dos professores: tocar em 'Escala'",
-        "proves": "Prova a linha: Nico estava em Coordenação (objetivo: Quem tirou o gabarito da coordenação)."
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final (objetivo: Quem tirou o gabarito da coordenação); Nico estava em Coordenação (objetivo: Quem tirou o gabarito da coordenação)."
       },
       {
         "clue": "c_celular_pedro",
@@ -2219,7 +2232,7 @@
       {
         "clue": "c_dep_rosa",
         "where": "mostrar 'Impressora da coordenação' para Profa. Rosa",
-        "proves": "Prova a linha: Nico estava em Coordenação (objetivo: Quem tirou o gabarito da coordenação)."
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final (objetivo: Quem tirou o gabarito da coordenação); Nico estava em Coordenação (objetivo: Quem tirou o gabarito da coordenação)."
       },
       {
         "clue": "c_dep_lia",
@@ -2229,7 +2242,7 @@
       {
         "clue": "c_dep_kaua",
         "where": "conversar com Kauã ('De quem você comprou?'); ou mostrar 'Mochila do Kauã' para Kauã",
-        "proves": "Prova a linha: Pedro repassou o gabarito para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
+        "proves": "Prova a linha: Nico repassou o gabarito para Pedro (objetivo: Quem passou o gabarito ao vendedor); Pedro repassou o gabarito para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
       },
       {
         "clue": "c_dep_mari",

@@ -759,7 +759,8 @@
         "category": "autoria",
         "evidence": [
           "c_bolsa",
-          "c_armario"
+          "c_armario",
+          "c_treino"
         ]
       },
       {
@@ -769,7 +770,11 @@
         "category": "alibi",
         "evidence": [
           "c_treino"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -862,7 +867,7 @@
       "Na quadra, a chamada mostra a Duda no treino desde as 7h e a Lu chegando só 7h25.",
       "Na bolsa da Lu estão a revista recortada e a cola de morango.",
       "A ficha do técnico (chega com o tempo) mostra o motivo: a Lu seria a titular.",
-      "Provar no quadro os 2 objetivos secundários e apontar a Lu."
+      "Provar no quadro os 2 objetivos secundários e apontar a Lu. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -910,7 +915,7 @@
       {
         "clue": "c_treino",
         "where": "Quadra: tocar em 'Chamada no placar'",
-        "proves": "Prova a linha: Duda estava em Quadra (objetivo: Onde a capitã estava às 7h10)."
+        "proves": "Prova a linha: Lu escreveu Os bilhetes ameaçadores (objetivo: Quem escreveu os bilhetes); Duda estava em Quadra (objetivo: Onde a capitã estava às 7h10)."
       },
       {
         "clue": "c_ficha",

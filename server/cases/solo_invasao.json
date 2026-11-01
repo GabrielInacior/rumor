@@ -1262,8 +1262,14 @@
         "evidence": [
           "c_alarme",
           "c_codigos",
-          "c_story_theo"
-        ]
+          "c_story_theo",
+          "c_vidro",
+          "c_dep_theo"
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "jorge",
@@ -1273,7 +1279,11 @@
         "evidence": [
           "c_ronda",
           "c_dep_jorge"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -1396,7 +1406,7 @@
       "Na diretoria, o painel mostra o alarme desligado com o código 07 e a gaveta diz que o 07 é da Profa. Ana.",
       "No corredor, o livro da ronda dá o álibi do Seu Jorge; com as chaves devolvidas, ele fala do carro prata.",
       "O story do Theo mostra alguém DENTRO do laboratório às 2h04, e o anúncio do cursinho (chega com o tempo) mostra o motivo.",
-      "Mostrar o alarme e os códigos à Profa. Ana, provar no quadro os 3 objetivos secundários e apontá-la."
+      "Mostrar o alarme e os códigos à Profa. Ana, provar no quadro os 3 objetivos secundários e apontá-la. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {

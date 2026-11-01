@@ -1892,7 +1892,10 @@
         "category": "fraude",
         "evidence": [
           "c_bloco",
-          "c_lousa"
+          "c_lousa",
+          "c_comanda",
+          "c_dep_kaua",
+          "c_chat_azul"
         ]
       },
       {
@@ -1914,8 +1917,13 @@
         "evidence": [
           "c_comanda",
           "c_dep_kaua",
-          "c_confissao"
-        ]
+          "c_confissao",
+          "c_urna"
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "kaua",
@@ -1926,7 +1934,11 @@
           "c_comanda",
           "c_urna",
           "c_dep_kaua"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "rui",
@@ -1936,7 +1948,11 @@
         "evidence": [
           "c_cartaz",
           "c_dep_rui"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -2080,7 +2096,7 @@
       "Na sala do grêmio, a mochila do Téo tem o bloco com 14 folhas faltando, e a lousa diz 'PLANO B: ANULAR'.",
       "No pátio, o cartaz do comício dá o álibi do Rui.",
       "O relatório do lacre (cerca de 4 min) aponta o armário do grêmio. Mostrar ao Caio: ele emprestou a chave.",
-      "Provar no quadro os 3 objetivos secundários e apontar o Téo. Não esperem confissão completa: o quadro é a prova."
+      "Provar no quadro os 3 objetivos secundários e apontar o Téo. Não esperem confissão completa: o quadro é a prova. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -2118,7 +2134,7 @@
       {
         "clue": "c_chat_azul",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Caio entregou a chave para Téo (objetivo: Quem deu a chave do lacre)."
+        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas (objetivo: Quem colocou as cédulas falsas); Caio entregou a chave para Téo (objetivo: Quem deu a chave do lacre)."
       },
       {
         "clue": "c_dm_rui",
@@ -2138,7 +2154,7 @@
       {
         "clue": "c_urna",
         "where": "Biblioteca: tocar em 'Mesa da urna'",
-        "proves": "Prova a linha: Kauã estava em Cantina (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
+        "proves": "Prova a linha: Téo estava em Biblioteca (urna) (objetivo: Quem colocou as cédulas falsas); Kauã estava em Cantina (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
       },
       {
         "clue": "c_bloco",
@@ -2163,7 +2179,7 @@
       {
         "clue": "c_comanda",
         "where": "Cantina: tocar em 'Balcão'",
-        "proves": "Prova a linha: Téo estava em Biblioteca (urna) (objetivo: Quem colocou as cédulas falsas); Kauã estava em Cantina (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
+        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas (objetivo: Quem colocou as cédulas falsas); Téo estava em Biblioteca (urna) (objetivo: Quem colocou as cédulas falsas); Kauã estava em Cantina (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
       },
       {
         "clue": "c_cartaz",
@@ -2178,7 +2194,7 @@
       {
         "clue": "c_dep_kaua",
         "where": "mostrar 'Comanda da cantina' para Kauã; ou trocar 'Barra de chocolate' com Kauã",
-        "proves": "Prova a linha: Téo estava em Biblioteca (urna) (objetivo: Quem colocou as cédulas falsas); Kauã estava em Cantina (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
+        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas (objetivo: Quem colocou as cédulas falsas); Téo estava em Biblioteca (urna) (objetivo: Quem colocou as cédulas falsas); Kauã estava em Cantina (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
       },
       {
         "clue": "c_dep_caio",

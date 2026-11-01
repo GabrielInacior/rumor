@@ -296,6 +296,12 @@ def check(p):
         keys.add(k)
         for x in e.get("evidence", []):
             if x not in clues: err.append("evidence " + x)
+    GENT = {"g_estava_com", "g_viu", "g_mentiu", "g_mentiu_sobre", "g_acobertou", "g_alibi", "g_brigou", "g_amigo", "g_sabia", "g_motivo", "g_nao_fez", "g_esteve", "g_aconteceu"}
+    for e in sol["edges"]:
+        for at in e.get("alt_types", []):
+            if at not in lts and at not in GENT: err.append("alt_types desconhecido %s em %s>%s" % (at, e["from"], e["to"]))
+        if "any_direction" in e and not isinstance(e["any_direction"], bool): err.append("any_direction não é booleano")
+        if len(set(e["evidence"])) != len(e["evidence"]): err.append("prova repetida no fio %s>%s" % (e["from"], e["to"]))
     for e in sol["edges"]:
         ev = e["evidence"]
         if not any(x in worst for x in ev): err.append("edge sem prova no pior caminho %s>%s" % (e["from"], e["to"]))

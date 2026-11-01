@@ -2028,7 +2028,10 @@
         "category": "cofre",
         "evidence": [
           "c_log_cofre",
-          "c_rascunho"
+          "c_rascunho",
+          "c_ata",
+          "c_dep_jorge",
+          "c_dm_bia_lari"
         ]
       },
       {
@@ -2051,7 +2054,11 @@
           "c_ata",
           "c_dep_jorge",
           "c_confissao"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "caio",
@@ -2062,7 +2069,11 @@
           "c_ata",
           "c_chat_formatura",
           "c_dep_caio"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "rafa",
@@ -2072,8 +2083,13 @@
         "evidence": [
           "c_camera",
           "c_armario_cel",
-          "c_dep_rafa"
-        ]
+          "c_dep_rafa",
+          "c_chat_rafa"
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -2230,7 +2246,7 @@
       "Na biblioteca, a impressora mostra 'obrigado_caio.docx' do usuário lari.gremio às 17h40; na mesa, o rascunho do rombo.",
       "As pistas só de um aluno (DM da Bia, aviso da auditoria) mostram o motivo: alguém da equipe precisa contar.",
       "O relatório do cofre (por volta dos 4 min) mostra a abertura às 17h52 com o código da tesouraria.",
-      "Mostrar o relatório e a impressão à Lari, provar no quadro os 3 objetivos secundários e apontá-la. Não esperem confissão completa: o quadro é a prova."
+      "Mostrar o relatório e a impressão à Lari, provar no quadro os 3 objetivos secundários e apontá-la. Não esperem confissão completa: o quadro é a prova. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -2273,7 +2289,7 @@
       {
         "clue": "c_dm_bia_lari",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Aponta para Lari."
+        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura (objetivo: Quem abriu o cofre e quando). Aponta para Lari."
       },
       {
         "clue": "c_chat_rafa",
@@ -2308,7 +2324,7 @@
       {
         "clue": "c_ata",
         "where": "Cantina: tocar em 'Ata no mural'",
-        "proves": "Prova a linha: Lari estava em Sala do diretor (objetivo: Quem abriu o cofre e quando); Caio estava em Cantina (objetivo: Onde o Caio e o Rafa estavam)."
+        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura (objetivo: Quem abriu o cofre e quando); Lari estava em Sala do diretor (objetivo: Quem abriu o cofre e quando); Caio estava em Cantina (objetivo: Onde o Caio e o Rafa estavam)."
       },
       {
         "clue": "c_impressora",
@@ -2338,7 +2354,7 @@
       {
         "clue": "c_dep_jorge",
         "where": "trocar 'Chaves reserva do zelador' com Seu Jorge",
-        "proves": "Prova a linha: Lari estava em Sala do diretor (objetivo: Quem abriu o cofre e quando)."
+        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura (objetivo: Quem abriu o cofre e quando); Lari estava em Sala do diretor (objetivo: Quem abriu o cofre e quando)."
       },
       {
         "clue": "c_dep_bia",

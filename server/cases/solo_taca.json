@@ -1514,7 +1514,10 @@
         "evidence": [
           "c_chave_log",
           "c_cartao",
-          "c_antiquario"
+          "c_antiquario",
+          "c_livro_jorge",
+          "c_dep_nanda",
+          "c_dep_jorge"
         ]
       },
       {
@@ -1538,7 +1541,11 @@
           "c_livro_jorge",
           "c_dep_nanda",
           "c_confissao"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "marta",
@@ -1664,7 +1671,7 @@
       "O Prof. Nogueira conta que a peça não tem taça: a encomenda era mentira.",
       "Na diretoria, o caderno da chave mostra a Marta na sexta às 18h; no depósito, o livro do zelador confirma que ela o liberou.",
       "No escaninho da vice, o cartão do antiquário. O post do antiquário (chega com o tempo) mostra a taça com o amassado.",
-      "Mostrar o caderno e o post à Marta, provar no quadro os 4 objetivos secundários e apontá-la. Não esperem confissão completa: o quadro é a prova."
+      "Mostrar o caderno e o post à Marta, provar no quadro os 4 objetivos secundários e apontá-la. Não esperem confissão completa: o quadro é a prova. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -1737,7 +1744,7 @@
       {
         "clue": "c_livro_jorge",
         "where": "Depósito: tocar em 'Livro do plantão'",
-        "proves": "Prova a linha: Profa. Marta estava em Sala do diretor (objetivo: Onde a vice estava sexta às 18h). Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata) (objetivo: Quem levou a taça verdadeira); Profa. Marta estava em Sala do diretor (objetivo: Onde a vice estava sexta às 18h). Aponta para Profa. Marta."
       },
       {
         "clue": "c_antiquario",
@@ -1757,7 +1764,7 @@
       {
         "clue": "c_dep_nanda",
         "where": "trocar 'Barra de chocolate' com Nanda",
-        "proves": "Prova a linha: Profa. Marta estava em Sala do diretor (objetivo: Onde a vice estava sexta às 18h)."
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata) (objetivo: Quem levou a taça verdadeira); Profa. Marta estava em Sala do diretor (objetivo: Onde a vice estava sexta às 18h)."
       },
       {
         "clue": "c_dep_jorge",

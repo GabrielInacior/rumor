@@ -1205,7 +1205,9 @@
         "evidence": [
           "c_papel",
           "c_anuncio",
-          "c_confissao"
+          "c_confissao",
+          "c_dep_pedro",
+          "c_comanda"
         ]
       },
       {
@@ -1216,7 +1218,11 @@
         "evidence": [
           "c_lista",
           "c_dep_pedro"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "pedro",
@@ -1226,7 +1232,11 @@
         "evidence": [
           "c_comanda",
           "c_dep_pedro"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -1354,7 +1364,7 @@
       "No armário do Gui, o papel com o segredo 0408.",
       "Na cantina, a comanda põe o Pedro lá às 9h46; com chocolate, ele conta que viu o Gui no vestiário.",
       "O anúncio (chega com o tempo) mostra o celular com o adesivo do Gabriel. Apontar o Gui.",
-      "Provar no quadro os 3 objetivos secundários e apontar o Gui."
+      "Provar no quadro os 3 objetivos secundários e apontar o Gui. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -1407,7 +1417,7 @@
       {
         "clue": "c_comanda",
         "where": "Cantina: tocar em 'Balcão'",
-        "proves": "Prova a linha: Pedro estava em Cantina (objetivo: Onde o Pedro estava quando saiu da aula)."
+        "proves": "Prova a linha: Gui pegou O celular do Gabriel (objetivo: Quem pegou o celular); Pedro estava em Cantina (objetivo: Onde o Pedro estava quando saiu da aula)."
       },
       {
         "clue": "c_anuncio",
@@ -1422,7 +1432,7 @@
       {
         "clue": "c_dep_pedro",
         "where": "mostrar 'Comanda da cantina' para Pedro; ou trocar 'Barra de chocolate' com Pedro",
-        "proves": "Prova a linha: Gui estava em Quadra e vestiário (objetivo: Quem estava no vestiário às 9h41); Pedro estava em Cantina (objetivo: Onde o Pedro estava quando saiu da aula). Aponta para Gui."
+        "proves": "Prova a linha: Gui pegou O celular do Gabriel (objetivo: Quem pegou o celular); Gui estava em Quadra e vestiário (objetivo: Quem estava no vestiário às 9h41); Pedro estava em Cantina (objetivo: Onde o Pedro estava quando saiu da aula). Aponta para Gui."
       },
       {
         "clue": "c_confissao",

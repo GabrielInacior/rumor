@@ -1739,7 +1739,10 @@
         "category": "conta",
         "evidence": [
           "c_coord_log",
-          "c_escala_troca"
+          "c_escala_troca",
+          "c_comanda",
+          "c_senha",
+          "c_dep_joana"
         ]
       },
       {
@@ -1752,6 +1755,9 @@
           "c_bilhete_kevin",
           "c_dep_kevin",
           "c_confissao"
+        ],
+        "alt_types": [
+          "g_sabia"
         ]
       },
       {
@@ -1762,8 +1768,13 @@
         "evidence": [
           "c_escala_troca",
           "c_comanda",
-          "c_dep_joana"
-        ]
+          "c_dep_joana",
+          "c_coord_log"
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "joana",
@@ -1773,7 +1784,11 @@
         "evidence": [
           "c_atestado",
           "c_dep_joana"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "lia",
@@ -1783,7 +1798,11 @@
         "evidence": [
           "c_chamada_aula",
           "c_dep_lia"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -1941,7 +1960,7 @@
       "Na biblioteca, a senha num post-it explica como ele entrou na conta.",
       "No corredor, os achados com celulares e diário abertos (responsável: Caíque); na quadra, o bilhete 'C.' na bolsa do Kevin.",
       "Na cantina, o Caíque perguntou sobre o wifi às 14h. O Pedro (com chocolate) admite o Pix para 'C. Monteiro'.",
-      "Provar no quadro os 4 objetivos secundários e apontar o Caíque. Não esperem confissão completa: o quadro é a prova."
+      "Provar no quadro os 4 objetivos secundários e apontar o Caíque. Não esperem confissão completa: o quadro é a prova. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -2029,17 +2048,17 @@
       {
         "clue": "c_comanda",
         "where": "Cantina: tocar em 'Balcão'",
-        "proves": "Prova a linha: Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém). Aponta para Caíque."
+        "proves": "Prova a linha: Caíque postou como @ninguém (objetivo: Quem postou como @ninguém); Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém). Aponta para Caíque."
       },
       {
         "clue": "c_coord_log",
         "where": "Chega sozinha aos 5 min",
-        "proves": "Prova a linha: Caíque postou como @ninguém (objetivo: Quem postou como @ninguém). Aponta para Caíque."
+        "proves": "Prova a linha: Caíque postou como @ninguém (objetivo: Quem postou como @ninguém); Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém). Aponta para Caíque."
       },
       {
         "clue": "c_dep_joana",
         "where": "mostrar 'Atestado arquivado' para Joana",
-        "proves": "Prova a linha: Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém); Joana estava em Consultório do dentista (objetivo: Onde a Joana estava às 14h05)."
+        "proves": "Prova a linha: Caíque postou como @ninguém (objetivo: Quem postou como @ninguém); Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém); Joana estava em Consultório do dentista (objetivo: Onde a Joana estava às 14h05)."
       },
       {
         "clue": "c_dep_kevin",

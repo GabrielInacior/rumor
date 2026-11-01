@@ -974,8 +974,13 @@
         "evidence": [
           "c_pegada",
           "c_livro",
-          "c_dep_jorge"
-        ]
+          "c_dep_jorge",
+          "c_tenis"
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       },
       {
         "from": "kevin",
@@ -985,7 +990,11 @@
         "evidence": [
           "c_live_kevin",
           "c_dep_kevin"
-        ]
+        ],
+        "alt_types": [
+          "g_esteve"
+        ],
+        "any_direction": true
       }
     ],
     "traps": [
@@ -1080,7 +1089,7 @@
       "Na sala dos professores, a ocorrência de sexta mostra o motivo do Thiago.",
       "Nos achados, o tênis de raio com tinta tem o nome do Thiago.",
       "A live do Kevin (chega com o tempo) mostra que ele estava na praça.",
-      "Mostrar o tênis ao Thiago, provar no quadro os 2 objetivos secundários e apontá-lo."
+      "Mostrar o tênis ao Thiago, provar no quadro os 2 objetivos secundários e apontá-lo. Cada fio aceita várias provas: qualquer pista listada para ele no mapa de pistas serve."
     ],
     "pacing": [
       {
@@ -1133,7 +1142,7 @@
       {
         "clue": "c_tenis",
         "where": "Sala dos professores: tocar em 'Achados e perdidos'",
-        "proves": "Prova a linha: Thiago pichou O muro do pátio (objetivo: Quem pichou o muro). Aponta para Thiago."
+        "proves": "Prova a linha: Thiago pichou O muro do pátio (objetivo: Quem pichou o muro); Thiago estava em Depósito (objetivo: Quem pichou o muro). Aponta para Thiago."
       },
       {
         "clue": "c_live_kevin",
