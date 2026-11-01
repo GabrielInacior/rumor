@@ -48,9 +48,7 @@ func _input(e: InputEvent) -> void:
 		elif t.index == _touch_id:
 			_touch_id = -1
 			_down = false
-			if _dragging:
-				_dragging = false
-				sc.get_viewport().set_input_as_handled()
+			_dragging = false
 	elif e is InputEventScreenDrag and _down:
 		var d := e as InputEventScreenDrag
 		if d.index != _touch_id:
@@ -62,11 +60,9 @@ func _input(e: InputEvent) -> void:
 			var dy := p.y - _last.y
 			sc.scroll_vertical = int(sc.scroll_vertical - dy)
 			_vel = -dy / maxf(get_process_delta_time(), 0.008)
-			sc.get_viewport().set_input_as_handled()
 		_last = p
-	elif _dragging and (e is InputEventMouseMotion or e is InputEventMouseButton):
-		# o toque também gera mouse emulado: durante o arrasto ele não chega nos botões
-		sc.get_viewport().set_input_as_handled()
+	# nada é "engolido": a interface continua vendo o toque inteiro (soltar o dedo sempre chega),
+	# e um botão não dispara depois de arrastar porque o dedo saiu de cima dele
 
 
 func _process(dt: float) -> void:

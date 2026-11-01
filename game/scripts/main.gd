@@ -310,6 +310,38 @@ func _teacher_note(text: String) -> void:
 	create_tween().tween_property(note, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
+## Vigia de texto vertical: a cada 0,4 s confere TODO texto que quebra linha; se ele ficou
+## espremido (menos de ~3 letras de largura) e vira coluna de letras, deixa de quebrar.
+## Pega o problema em qualquer tela, inclusive casos que só acontecem no celular.
+var _watch_t := 0.0
+
+
+func _process(dt: float) -> void:
+	_watch_vertical_text(dt)
+
+
+func _watch_vertical_text(dt: float) -> void:
+	_watch_t += dt
+	if _watch_t < 0.4:
+		return
+	_watch_t = 0.0
+	_scan_labels(self)
+
+
+func _scan_labels(n: Node) -> void:
+	for c in n.get_children():
+		if c is Label:
+			var l := c as Label
+			if l.autowrap_mode != TextServer.AUTOWRAP_OFF and l.is_visible_in_tree() and l.text.length() > 3:
+				var fs := l.get_theme_font_size("font_size")
+				if l.size.x > 0.0 and l.size.x < fs * 2.2:
+					l.autowrap_mode = TextServer.AUTOWRAP_OFF
+					l.clip_text = true
+		elif c is CanvasItem and not (c as CanvasItem).visible:
+			continue
+		_scan_labels(c)
+
+
 func toast(text: String, color := UI.YELLOW) -> void:
 	var p := PanelContainer.new()
 	p.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.95), color, 3, 18, 14))

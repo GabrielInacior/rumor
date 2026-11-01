@@ -703,6 +703,15 @@ func _build_board_page() -> Control:
 	board.link_dropped.connect(func(a: String, b: String) -> void:
 		Sfx.play("string_stretch")
 		_open_relation_picker(a, b))
+	# quais cartas acendem no modo ligar (há algum tipo de ligação entre os dois tipos de carta?)
+	board.link_ok = func(a_ref: String, b_ref: String) -> bool:
+		var ka := _kind_of(a_ref.substr(2))
+		var kb := _kind_of(b_ref.substr(2))
+		for lt in Net.case_data.get("link_types", []):
+			var pr := _pairs_of(lt)
+			if pr.has(ka + ">" + kb) or pr.has(kb + ">" + ka):
+				return true
+		return false
 	board.evidence_dropped.connect(func(link_id: String, clue_id: String) -> void:
 		Net.board_op({"k": "attach", "id": link_id, "clue": clue_id})
 		Sfx.play("card_pin")

@@ -418,8 +418,17 @@ func _build_game() -> void:
 	var wide := _wide()
 	var m := UI.margin(28 if wide else 18, 22, 18)
 	body.add_child(UI.full(m))
+	var outer := UI.vbox(10)
+	m.add_child(outer)
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.name = "PageScroll"
+	page_scroll = scroll
+	outer.add_child(scroll)
 	var v := UI.vbox(12)
-	m.add_child(v)
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(v)
 	var top := UI.hbox(16)
 	timer_l = UI.title("0:00", 96 if wide else 68, UI.YELLOW)
 	top.add_child(timer_l)
@@ -447,19 +456,13 @@ func _build_game() -> void:
 		tabs.add_child(b)
 		tab_btns[k[0]] = b
 	v.add_child(tabs)
-	var scroll := ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.name = "PageScroll"
-	page_scroll = scroll
 	# enquanto o dedo rola, a tela não se refaz (senão a rolagem trava ou pula)
 	scroll.get_v_scroll_bar().value_changed.connect(func(_v: float) -> void: _touch_scroll())
 	scroll.gui_input.connect(func(_e: InputEvent) -> void: _touch_scroll())
 	page_box = UI.vbox(12)
 	page_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(page_box)
+	v.add_child(page_box)
 	_touch = TouchScroll.attach(scroll)
-	v.add_child(scroll)
 	# controles numa fileira só (rótulos curtos): sobra mais tela para a lista
 	var ctrl := UI.hbox(8)
 	for spec in [["DICA", "ghost", "hint"], ["PISTA", "ghost", "rel"], ["ENCERRAR", "danger", "end"]]:
@@ -473,7 +476,7 @@ func _build_game() -> void:
 			"more": b.pressed.connect(func() -> void: Net.send({"t": "host_add_time"}))
 			"end": b.pressed.connect(func() -> void: Net.send({"t": "host_end"}))
 		ctrl.add_child(b)
-	v.add_child(ctrl)
+	outer.add_child(ctrl)
 
 
 var page_scroll: ScrollContainer

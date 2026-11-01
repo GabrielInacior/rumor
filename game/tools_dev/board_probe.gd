@@ -42,6 +42,14 @@ func _ready() -> void:
 	g._update_action_bar()
 	g.board.queue_redraw()
 	await _shot("p04_pessoa_selecionada")
+	g.board.link_from = "p:lari"
+	g.board.selected_ref = ""
+	g.link_banner.visible = true
+	await _shot("p04b_modo_ligar_pessoa")
+	g.board.link_from = "p:sala_diretor"
+	await _shot("p04c_modo_ligar_lugar")
+	g.board.link_from = ""
+	g.link_banner.visible = false
 	g._open_relation_picker("lari", "caio")
 	await _shot("p05_ligar_pessoa_pessoa")
 	g._close_sheet()

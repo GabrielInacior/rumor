@@ -25,6 +25,8 @@ var selected_ref := ""
 var selected_link := ""
 var link_from := ""          # carta de origem enquanto escolhe o destino
 var highlight_refs: Array = []
+## (origem, destino) -> pode ligar? Definido pela tela do jogo (tipos de ligação do caso + gerais).
+var link_ok: Callable
 var zoom := 0.55
 var offset := Vector2(40, 40)
 
@@ -437,6 +439,35 @@ func _draw() -> void:
 		var lp := _link_points(l)
 		if lp.size() > 10:
 			_draw_link_tag(l, lp, l["id"] == selected_link, "proofs")
+	# MODO LIGAR: o quadro apaga e só ficam acesas as cartas que podem ser ligadas à origem;
+	# a carta de origem pulsa (fica claro de onde sai o fio)
+	var src := link_from
+	if src == "" and _dragging and _press_card != "" and not _press_card.begins_with("c:"):
+		src = _press_card
+	if src != "" and link_ok.is_valid() and not _card(src).is_empty():
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		draw_rect(Rect2(Vector2.ZERO, size), Color(0.02, 0.04, 0.1, 0.66))
+		draw_set_transform(offset, 0.0, Vector2(zoom, zoom))
+		var glow := 0.55 + 0.35 * sin(_t * 4.0)
+		for c in cards:
+			var ref: String = c["ref"]
+			if ref == src or ref.begins_with("c:"):
+				continue
+			if link_ok.call(src, ref):
+				var rr := _card_rect(c)
+				draw_rect(rr.grow(12), Color(UI.YELLOW, glow * 0.35))
+				_draw_card(c)
+				draw_set_transform(offset, 0.0, Vector2(zoom, zoom))
+				draw_rect(rr.grow(9), Color(UI.YELLOW, glow), false, 5.0)
+		var sc := _card(src)
+		if not (_dragging and src == _press_card):
+			_draw_card(sc)
+			draw_set_transform(offset, 0.0, Vector2(zoom, zoom))
+		var sr := _card_rect(sc)
+		for k in 2:
+			var ph := fmod(_t * 1.2 + k * 0.5, 1.0)
+			draw_arc(sr.get_center(), sr.size.length() * 0.5 + ph * 70.0, 0.0, TAU, 48, Color(UI.YELLOW, 1.0 - ph), 6.0)
+		draw_rect(sr.grow(10), UI.YELLOW, false, 6.0)
 	if _dragging and _drop_card != "":
 		var dr := _card_rect(_card(_drop_card))
 		draw_rect(dr.grow(10), Color(UI.YELLOW, 0.25 + 0.15 * sin(_t * 8.0)), false, 6.0)
