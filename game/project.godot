@@ -3,6 +3,8 @@ config_version=5
 
 [application]
 
+config/icon="res://assets/icon.png"
+
 config/name="RUMOR"
 config/description="Jogo de detetive multiplayer para a sala de aula."
 run/main_scene="res://scenes/main.tscn"
