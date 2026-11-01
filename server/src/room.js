@@ -12,7 +12,8 @@ const TEAM_PRESETS = [
   { id: 't5', name: 'Faísca', color: '#ff9a4d' },
   { id: 't6', name: 'Luar', color: '#8ef0b5' },
 ];
-const BRIEFING_SEC = 12;
+const BRIEFING_SEC = 30;   // tempo para ler a abertura com calma
+const TIME_BONUS = 1.5;    // por padrão, 50% a mais que o tempo escrito no caso
 const MAX_CARDS = 70;
 const MAX_LINKS = 70;
 const LINK_COLORS = ['vermelho', 'amarelo', 'azul', 'verde', 'rosa'];
@@ -27,7 +28,7 @@ class Room {
     this.hostSecret = token();
     this.hostSock = null;
     this.phase = 'lobby';        // lobby | briefing | playing | reveal
-    this.settings = { caseId: [...cases.keys()][0], teamCount: 3, penaltySec: 45, durationSec: null };
+    this.settings = { caseId: [...cases.keys()][0], teamCount: 3, penaltySec: 45, durationSec: null, extraMin: 0 };
     this.players = new Map();    // pid -> {id,name,teamId,secret,sock,clues:Set}
     this.teams = [];
     this.makeTeams();
@@ -36,6 +37,17 @@ class Room {
     this.startedAt = 0;
     this.released = new Set();
     this.solvedOrder = [];
+    this.feed = [];   // registro de ações para o professor acompanhar a turma
+  }
+
+  // registra uma ação (só o professor recebe). who = codinome; team = id da equipe
+  log(teamId, who, text, kind = 'acao') {
+    this.feed.push({ at: Date.now(), team: teamId || null, who: who || null, text, kind });
+    if (this.feed.length > 300) this.feed.splice(0, this.feed.length - 300);
+    if (who) {
+      const p = [...this.players.values()].find((x) => x.name === who);
+      if (p) { p.lastAction = Date.now(); p.actions = (p.actions || 0) + 1; }
+    }
   }
 
   get caseData() { return this.cases.get(this.settings.caseId); }
@@ -89,6 +101,7 @@ class Room {
     this.autoTeam(p);
     sock.room = this; sock.role = 'player'; sock.pid = p.id;
     this.emitEvent({ k: 'join', name: p.name });
+    this.log(p.teamId, p.name, `${p.name} entrou na sala`, 'sala');
     this.touch();
     return { player: p };
   }
@@ -129,6 +142,8 @@ class Room {
         for (const p of this.players.values()) if (!p.teamId) this.autoTeam(p);
       }
       if (msg.penaltySec != null) this.settings.penaltySec = Math.max(0, Math.min(180, msg.penaltySec | 0));
+      if (msg.caseId) this.settings.extraMin = 0;
+      if (msg.extraMin != null) this.settings.extraMin = Math.max(-10, Math.min(30, msg.extraMin | 0));
     } else if (t === 'host_kick') {
       const p = this.players.get(msg.pid);
       if (p) { this.players.delete(p.id); this.syncTeamRosters(); if (p.sock) this.send(p.sock, { t: 'kicked' }); }
@@ -139,6 +154,11 @@ class Room {
       const list = [...this.players.values()].sort(() => Math.random() - 0.5);
       list.forEach((p, i) => { p.teamId = this.teams[i % this.teams.length].id; });
       this.syncTeamRosters();
+    } else if (t === 'host_hint' && typeof msg.text === 'string' && msg.text.trim()) {
+      const text = msg.text.trim().slice(0, 160);
+      const target = this.teams.find((x) => x.id === msg.team);
+      this.emitEvent({ k: 'hint', text, team: target ? target.id : null }, target ? target.id : undefined);
+      this.log(target ? target.id : null, null, `Professor mandou dica${target ? ' para ' + target.name : ' para todos'}: "${text}"`, 'dica');
     } else if (t === 'host_start' && this.phase === 'lobby') {
       this.startRound();
     } else if (t === 'host_release' && this.phase === 'playing') {
@@ -157,7 +177,9 @@ class Room {
 
   startRound() {
     const c = this.caseData;
-    this.settings.durationSec = c.duration_sec || 900;
+    this.feed = [];
+    for (const p of this.players.values()) { p.lastAction = Date.now(); p.actions = 0; }
+    this.settings.durationSec = this.durationFor(c);
     this.makeTeams();
     for (const p of this.players.values()) { p.clues = new Set(); if (!p.teamId) this.autoTeam(p); }
     this.released = new Set();
@@ -166,6 +188,12 @@ class Room {
     this.phaseEndsAt = Date.now() + BRIEFING_SEC * 1000;
     for (const p of this.players.values()) if (p.sock) this.send(p.sock, { t: 'case', case: publicCase(c) });
     if (this.hostSock) this.send(this.hostSock, { t: 'case', case: publicCase(c) });
+  }
+
+  // duração padrão generosa (alunos pouco gamers) arredondada em minutos, mais o ajuste do professor
+  durationFor(c) {
+    const base = Math.round(((c.duration_sec || 900) * TIME_BONUS) / 60);
+    return Math.max(5, base + (this.settings.extraMin || 0)) * 60;
   }
 
   beginPlaying() {
@@ -205,7 +233,10 @@ class Room {
         team.found.add(clue.id);
       }
     }
-    if (!silent) this.emitEvent({ k: 'clue_new', clue: clue.id, title: clue.title });
+    if (!silent) {
+      this.emitEvent({ k: 'clue_new', clue: clue.id, title: clue.title });
+      this.log(null, null, `Nova pista liberada para todas as equipes: ${clue.title}`, 'sistema');
+    }
   }
 
   toReveal() {
@@ -263,7 +294,11 @@ class Room {
     if (!p) return;
     this.touch();
     if (msg.t === 'pick_team' && this.phase === 'lobby') {
-      if (this.teams.find((t) => t.id === msg.team)) { p.teamId = msg.team; this.syncTeamRosters(); }
+      const nt = this.teams.find((t) => t.id === msg.team);
+      if (nt) {
+        p.teamId = msg.team; this.syncTeamRosters();
+        this.log(p.teamId, p.name, `${p.name} entrou na equipe ${nt.name}`, 'sala');
+      }
       this.broadcast();
       return;
     }
@@ -277,12 +312,14 @@ class Room {
         team.items.add(hs.item);
         const it = (this.caseData.items || []).find((x) => x.id === hs.item);
         this.emitEvent({ k: 'item', team: team.id, by: p.name, id: hs.id, label: it ? it.name : hs.label }, team.id);
+        this.log(team.id, p.name, `${p.name} pegou ${it ? it.name : 'um objeto'} (${hs.label})`, 'cena');
         this.broadcastTeam(team);
         return;
       }
       if (hs && hs.clue && !team.found.has(hs.clue)) {
         team.found.add(hs.clue);
         this.emitEvent({ k: 'hotspot', team: team.id, by: p.name, id: hs.id, label: hs.label }, team.id);
+        this.log(team.id, p.name, `${p.name} achou uma pista: ${hs.label}`, 'cena');
         this.broadcastTeam(team);
       }
       return;
@@ -293,6 +330,11 @@ class Room {
       const node = card && card.talk && card.talk.tree && card.talk.tree.nodes ? card.talk.tree.nodes[msg.node] : null;
       if (!node) return;
       let changed = false;
+      p.lastAction = Date.now();
+      if (!team.flags['talk:' + card.id + ':' + p.name]) {
+        team.flags['talk:' + card.id + ':' + p.name] = p.name;
+        this.log(team.id, p.name, `${p.name} começou a interrogar ${card.name}`, 'conversa');
+      }
       for (const f of node.sets || []) {
         if (!team.flags[f]) { team.flags[f] = p.name; changed = true; }
       }
@@ -303,8 +345,11 @@ class Room {
         this.released.add(node.unlock);
         const clue = this.caseData.clues.find((c) => c.id === node.unlock);
         this.emitEvent({ k: 'interrogated', team: team.id, by: p.name, person: card.name, clue: node.unlock, title: clue ? clue.title : '' }, team.id);
+        this.log(team.id, p.name, `${p.name} fez ${card.name} contar: ${clue ? clue.title : 'uma pista'}`, 'conversa');
         changed = true;
       }
+      if (node.take_item) this.log(team.id, p.name, `${p.name} trocou um objeto com ${card.name}`, 'conversa');
+      if ((node.lock || 0) > 0) this.log(team.id, p.name, `${card.name} se fechou com ${p.name} (escolha ruim)`, 'alerta');
       if (changed) this.broadcastTeam(team);
       return;
     }
@@ -323,6 +368,7 @@ class Room {
     }
     if (msg.t === 'board') {
       const ok = this.applyBoardOp(team, p, msg.op || {});
+      if (ok) this.logBoard(team, p, msg.op || {});
       if (ok) this.broadcastTeam(team, msg.op && msg.op.k === 'move' ? sock : null);
       return;
     }
@@ -334,6 +380,9 @@ class Room {
       team.submissions += 1;
       team.lastResult = { ...r, by: p.name, at: now };
       team.bestScore = Math.max(team.bestScore, r.score);
+      const cn = (this.caseData.cards.find((c) => c.id === team.lastCulprit) || {}).name;
+      const okParts = r.categories.filter((c) => c.status === 'ok').length;
+      this.log(team.id, p.name, `${p.name} apresentou a teoria${cn ? ' acusando ' + cn : ''}: ${r.correct ? 'CERTA' : okParts + ' de ' + r.categories.length + ' partes certas'}`, r.correct ? 'acerto' : 'teoria');
       if (r.correct) {
         team.solvedAt = now;
         this.solvedOrder.push(team.id);
@@ -345,6 +394,22 @@ class Room {
       }
       this.broadcast();
     }
+  }
+
+  logBoard(team, p, op) {
+    const nm = (id) => { const c = this.caseData.cards.find((x) => x.id === id); return c ? c.name : id; };
+    const refName = (ref) => {
+      const r = String(ref || '');
+      if (r.startsWith('c:')) { const c = this.caseData.clues.find((x) => x.id === r.slice(2)); return c ? c.title : 'pista'; }
+      return nm(r.slice(2));
+    };
+    const lt = (id) => (this.caseData.link_types.find((t) => t.id === id) || {}).label || id;
+    if (op.k === 'pin') this.log(team.id, p.name, `${p.name} fixou ${refName(op.ref)} no quadro`, 'quadro');
+    else if (op.k === 'unpin') this.log(team.id, p.name, `${p.name} tirou ${refName(op.ref)} do quadro`, 'quadro');
+    else if (op.k === 'link') this.log(team.id, p.name, `${p.name} ligou ${nm(op.a)} ${lt(op.type)} ${nm(op.b)}`, 'quadro');
+    else if (op.k === 'unlink') this.log(team.id, p.name, `${p.name} cortou um fio`, 'quadro');
+    else if (op.k === 'attach' && op.clue) this.log(team.id, p.name, `${p.name} prendeu uma prova num fio`, 'quadro');
+    else if (op.k === 'move') p.lastAction = Date.now();
   }
 
   visibleClues(team, p) {
@@ -491,8 +556,29 @@ class Room {
 
   hostState() {
     const s = { t: 'state', ...this.common(), host: true };
+    s.feed = this.feed.slice(-120);
+    if (this.phase !== 'lobby') {
+      const total = this.caseData.clues.length;
+      const now = Date.now();
+      s.insight = Object.fromEntries(this.teams.map((t) => {
+        const r = validateBoard(this.caseData, t.board, t.lastCulprit);
+        const cats = r.categories.filter((c) => c.id !== 'culpado');
+        const edgesOk = cats.reduce((a, c) => a + c.found, 0);
+        const edgesTotal = cats.reduce((a, c) => a + c.total, 0);
+        const clues = this.visibleClues(t, null);
+        for (const pid of t.players) { const pl = this.players.get(pid); if (pl) for (const c of pl.clues) clues.add(c); }
+        return [t.id, {
+          edgesOk, edgesTotal, cluesFound: clues.size, cluesTotal: total, items: t.items.size,
+          lockLeft: Math.max(0, Math.round((t.lockUntil - now) / 1000)),
+          members: t.players.map((pid) => {
+            const pl = this.players.get(pid);
+            return { name: pl.name, online: !!pl.sock, idleSec: Math.round((now - (pl.lastAction || now)) / 1000), actions: pl.actions || 0 };
+          }),
+        }];
+      }));
+    }
     s.cases = [...this.cases.values()].map((c) => ({
-      id: c.id, title: c.title, tagline: c.tagline, difficulty: c.difficulty, duration_sec: c.duration_sec,
+      id: c.id, title: c.title, tagline: c.tagline, difficulty: c.difficulty, duration_sec: this.durationFor(c),
     }));
     if (this.phase !== 'lobby') {
       s.clues = this.caseData.clues;

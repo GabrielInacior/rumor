@@ -124,14 +124,20 @@ func _build() -> void:
 	_free_anchors = []
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
-	e.background_mode = Environment.BG_COLOR
-	e.background_color = Color("#0a1430")
+	# céu pintado (panorama): aparece pelas janelas dos interiores e no alto das cenas externas.
+	# Luz ambiente e reflexo NÃO vêm do céu (cor fixa e desligado): o panorama só é desenhado no
+	# fundo, uma leitura de textura por pixel de céu, sem gerar mapa de radiância caro no celular.
+	e.background_mode = Environment.BG_SKY
+	e.sky = _sky_for(scene_id)
+	e.background_energy_multiplier = 1.0
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	e.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
 	e.ambient_light_color = Color("#2a3f78")
 	e.ambient_light_energy = 1.35
 	e.fog_enabled = true
 	e.fog_light_color = Color("#16244d")
 	e.fog_density = 0.025
+	e.fog_sky_affect = 0.25
 	# exposição mais alta: tela de celular com brilho baixo engolia a metade de baixo da cena
 	e.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	e.tonemap_exposure = 1.5
@@ -175,8 +181,30 @@ func _build() -> void:
 			_flavor(a["mesh"], str(a["say"]))
 
 
-func _mat(col: Color, emit := 0.0, emit_col := Color("#ffc83d"), outline := 0.025) -> ShaderMaterial:
-	var key := "%s|%.2f|%s|%.3f" % [col.to_html(), emit, emit_col.to_html(), outline]
+## Céu da cena: noite de lua limpa ou nublado de chuva (os dois pintados, ver tools/art/gen_sky.py).
+## Um Sky por variação, compartilhado entre as cenas (static), para não reenviar a textura.
+static var _skies := {}
+
+
+func _sky_for(id: String) -> Sky:
+	var which := "chuva" if id in SKY_RAIN else "lua"
+	if _skies.has(which):
+		return _skies[which]
+	var pm := PanoramaSkyMaterial.new()
+	pm.panorama = SKY_TEX[which]
+	# o tonemap da cena sobe a exposição para o celular; o céu compensa para manter a pintura
+	pm.energy_multiplier = 0.62
+	pm.filter = true
+	var s := Sky.new()
+	s.sky_material = pm
+	s.radiance_size = Sky.RADIANCE_SIZE_32
+	s.process_mode = Sky.PROCESS_MODE_QUALITY
+	_skies[which] = s
+	return s
+
+
+func _mat(col: Color, emit := 0.0, emit_col := Color("#ffc83d"), outline := 0.025, kind := "") -> ShaderMaterial:
+	var key := "%s|%.2f|%s|%.3f|%s" % [col.to_html(), emit, emit_col.to_html(), outline, kind]
 	if _mats.has(key):
 		return _mats[key]
 	var m := ShaderMaterial.new()
@@ -184,6 +212,15 @@ func _mat(col: Color, emit := 0.0, emit_col := Color("#ffc83d"), outline := 0.02
 	m.set_shader_parameter("albedo", col)
 	m.set_shader_parameter("emission_energy", emit)
 	m.set_shader_parameter("emission_color", emit_col)
+	# pincelada de tela em toda superfície do cenário (o personagem fica com o ruído próprio)
+	m.set_shader_parameter("brush_tex", TEX["brush"])
+	m.set_shader_parameter("brush_amount", 0.3 if emit < 0.05 else 0.12)
+	if kind != "" and TEX_KIND.has(kind):
+		var k: Array = TEX_KIND[kind]
+		m.set_shader_parameter("use_tex", true)
+		m.set_shader_parameter("albedo_tex", TEX[k[0]])
+		m.set_shader_parameter("tex_scale", k[1])
+		m.set_shader_parameter("tex_strength", k[2])
 	if outline > 0.0:
 		var o := ShaderMaterial.new()
 		o.shader = OUTLINE
@@ -193,15 +230,99 @@ func _mat(col: Color, emit := 0.0, emit_col := Color("#ffc83d"), outline := 0.02
 	return m
 
 
-func _box(pos: Vector3, sz: Vector3, col: Color, rot_y := 0.0, emit := 0.0, outline := 0.025, emit_col := Color("#ffc83d")) -> MeshInstance3D:
+# ------------------------------------------------------------------ texturas automáticas
+## Classifica a superfície pela forma, posição e cor, para que cada cena ganhe textura pintada sem
+## precisar marcar peça por peça. Onde a regra erra, a cena passa o tipo à mão (ou "none").
+const TEX := {
+	"brush": preload("res://assets/textures/brush.png"),
+	"plaster": preload("res://assets/textures/plaster.png"),
+	"tile": preload("res://assets/textures/tile.png"),
+	"wood_planks": preload("res://assets/textures/wood_planks.png"),
+	"wood_grain": preload("res://assets/textures/wood_grain.png"),
+	"court": preload("res://assets/textures/court.png"),
+	"metal": preload("res://assets/textures/metal.png"),
+	"fabric": preload("res://assets/textures/fabric.png"),
+	"concrete": preload("res://assets/textures/concrete.png"),
+	"brick": preload("res://assets/textures/brick.png"),
+}
+const SKY_TEX := {
+	"lua": preload("res://assets/textures/sky_lua.png"),
+	"chuva": preload("res://assets/textures/sky_chuva.png"),
+}
+const SKY_RAIN := ["corredor", "sala_aula", "cantina", "sala_professores", "quadra", "deposito"]
+## tipo -> [textura, repetições por metro, força]
+const TEX_KIND := {
+	"tile": ["tile", 0.5, 0.9],
+	"planks": ["wood_planks", 0.5, 1.0],
+	"wood": ["wood_grain", 0.9, 0.9],
+	"court": ["court", 0.32, 1.0],
+	"plaster": ["plaster", 0.45, 0.85],
+	"ceiling": ["plaster", 0.3, 0.6],
+	"brick": ["brick", 0.5, 1.0],
+	"metal": ["metal", 0.8, 0.85],
+	"fabric": ["fabric", 1.3, 0.9],
+	"carpet": ["fabric", 0.6, 0.8],
+	"concrete": ["concrete", 0.25, 1.0],
+}
+const FLOOR_KIND := {
+	"corredor": "tile", "biblioteca": "planks", "teatro": "planks", "sala_aula": "tile", "cantina": "tile",
+	"patio": "concrete", "sala_professores": "tile", "quadra": "court", "sala_diretor": "planks",
+	"deposito": "concrete", "laboratorio": "tile", "sala_musica": "planks", "fachada": "concrete",
+}
+var _force_kind := ""   # tipo forçado para um trecho de montagem (ex.: a fileira de armários)
+
+
+func _classify(pos: Vector3, sz: Vector3, col: Color, emit: float) -> String:
+	if emit > 0.05:
+		return ""
+	if _force_kind != "":
+		return _force_kind
+	var mx := maxf(sz.x, maxf(sz.y, sz.z))
+	if mx < 0.35:
+		return ""   # detalhe pequeno demais: fica só com a pincelada
+	var area_xz := sz.x * sz.z
+	# piso: placa fina, larga, no chão
+	if sz.y <= 0.12 and pos.y < 0.05 and area_xz >= 4.0:
+		return FLOOR_KIND.get(scene_id, "tile")
+	# tapete/carpete: lâmina no chão, larga nos dois sentidos
+	if sz.y <= 0.03 and pos.y < 0.05 and area_xz >= 0.9 and minf(sz.x, sz.z) >= 0.4:
+		return "carpet"
+	# teto
+	if sz.y <= 0.15 and pos.y > 2.4 and area_xz >= 4.0:
+		return "ceiling"
+	# parede: cor de parede, fina e comprida
+	if col in WALL_COLS and minf(sz.x, sz.z) <= 0.5 and maxf(sz.x, sz.z) >= 1.0 and sz.y >= 0.3:
+		return "plaster"
+	if col in METAL_COLS:
+		return "metal"
+	if col in FABRIC_COLS and mx >= 0.5:
+		return "fabric"
+	# madeira: marrom (matiz laranja, saturado o bastante, nem claro nem preto)
+	if col.h > 0.03 and col.h < 0.13 and col.s > 0.3 and col.v > 0.18 and col.v < 0.75:
+		return "wood"
+	return ""
+
+
+func _box(pos: Vector3, sz: Vector3, col: Color, rot_y := 0.0, emit := 0.0, outline := 0.025, emit_col := Color("#ffc83d"), kind := "auto") -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	var bm := BoxMesh.new()
 	bm.size = sz
 	mi.mesh = bm
-	mi.material_override = _mat(col, emit, emit_col, outline)
+	var k := _classify(pos, sz, col, emit) if kind == "auto" else ("" if kind == "none" else kind)
+	mi.material_override = _mat(col, emit, emit_col, outline, k)
 	mi.position = pos
 	mi.rotation.y = rot_y
 	world.add_child(mi)
+	return mi
+
+
+## troca o tipo de textura de uma peça já criada (ajuste manual onde a regra automática erra)
+func _kind(mi: MeshInstance3D, kind: String) -> MeshInstance3D:
+	var m := mi.material_override as ShaderMaterial
+	var col: Color = m.get_shader_parameter("albedo")
+	var o := m.next_pass as ShaderMaterial
+	var w: float = o.get_shader_parameter("width") if o else 0.0
+	mi.material_override = _mat(col, m.get_shader_parameter("emission_energy"), m.get_shader_parameter("emission_color"), w, "" if kind == "none" else kind)
 	return mi
 
 
@@ -214,7 +335,14 @@ func _cyl(pos: Vector3, r: float, h: float, col: Color, r_top := -1.0, emit := 0
 	cm.radial_segments = 12
 	cm.rings = 1
 	mi.mesh = cm
-	mi.material_override = _mat(col, emit)
+	# cilindro: só a regra de cor (tronco = madeira, poste/lixeira = metal); piso/parede não se aplicam
+	var k := ""
+	if emit < 0.05 and maxf(h, r * 2.0) >= 0.35:
+		if col in METAL_COLS:
+			k = "metal"
+		elif col.h > 0.03 and col.h < 0.13 and col.s > 0.3 and col.v > 0.12 and col.v < 0.75:
+			k = "wood"
+	mi.material_override = _mat(col, emit, Color("#ffc83d"), 0.025, k)
 	mi.position = pos
 	world.add_child(mi)
 	return mi
@@ -305,7 +433,8 @@ func _place_hotspots() -> void:
 		var mi: MeshInstance3D = a.get("mesh") if a.has("mesh") else _box(a["pos"], a["size"], Color("#e8e2cc"), 0.0, 0.25)
 		_target(mi, "hotspot", {"id": h["id"], "label": h["label"]})
 		var lpos: Vector3 = mi.global_position if mi.is_inside_tree() else mi.position
-		var light := _light(lpos + Vector3(0, 0.6, 0.4), Color("#ffc83d"), 1.6, 2.6)
+		# luz da pista: curta e amarela (o anel já chama o olho; luz forte demais "lavava" a parede)
+		var light := _light(lpos + Vector3(0, 0.5, 0.45), Color("#ffc83d"), 1.0, 1.8)
 		var ring := MeshInstance3D.new()
 		var tm := TorusMesh.new()
 		tm.inner_radius = 0.16
@@ -347,8 +476,16 @@ func _place_people() -> void:
 		body.add_child(shape)
 		ch.add_child(body)
 		_targets[body.get_instance_id()] = {"kind": "person", "id": c["id"], "mesh": null}
-		# luz amarela fraca de "holofote" para a pessoa ler bem no escuro
-		_light(spots[i] + Vector3(0.3, 2.0, 0.8), Color("#ffd99a"), 0.9, 2.6)
+	# uma luz só de "câmera" (preenchimento quente vindo do olhar do jogador) no lugar de uma luz por
+	# pessoa: as pessoas leem bem no escuro e a cena economiza até 2 luzes no celular
+	var fill := SpotLight3D.new()
+	fill.light_color = Color("#ffd9a8")
+	fill.light_energy = 0.75
+	fill.spot_range = 14.0
+	fill.spot_angle = 30.0
+	fill.spot_attenuation = 0.6
+	fill.position = Vector3(0, 0.25, 0)
+	cam.add_child(fill)
 
 
 # ------------------------------------------------------------------ peças extras das cenas
@@ -375,6 +512,9 @@ const METAL_D := Color("#4a5580")
 const BOARD := Color("#1e3a2e")
 const LEAF := Color("#24425a")
 const TEAL := Color("#3d6a8a")
+const WALL_COLS := [WALL, WALL_L, WALL_M, Color("#3a4a7a")]
+const METAL_COLS := [METAL, METAL_D, Color("#3a4250"), Color("#7a8298"), Color("#c9d2e8")]
+const FABRIC_COLS := [RED_D, Color("#94485f"), Color("#5e3a4e"), Color("#6e4a5a"), Color("#6b2a3e"), Color("#3a2a32")]
 const BOOK_COLS := [Color("#6b4a8a"), Color("#3d6a8a"), Color("#8a3d4f"), Color("#4f7a5a"), Color("#a8873d"), Color("#2e3b6b"), Color("#c9bfa6"), Color("#55608f")]
 
 var _env: Environment
@@ -470,11 +610,13 @@ func _text(pos: Vector3, txt: String, line_h: float, col: Color, font := "marker
 func _mm(items: Array) -> MultiMeshInstance3D:
 	if _mm_shader == null:
 		_mm_shader = Shader.new()
-		_mm_shader.code = TOON.code.replace("ALBEDO = albedo.rgb *", "ALBEDO = albedo.rgb * COLOR.rgb *")
+		_mm_shader.code = TOON.code.replace("vec3 col = albedo.rgb;", "vec3 col = albedo.rgb * COLOR.rgb;")
 	if _mm_material == null:
 		_mm_material = ShaderMaterial.new()
 		_mm_material.shader = _mm_shader
 		_mm_material.set_shader_parameter("albedo", Color.WHITE)
+		_mm_material.set_shader_parameter("brush_tex", TEX["brush"])
+		_mm_material.set_shader_parameter("brush_amount", 0.3)
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = true
@@ -568,12 +710,10 @@ func _win_wall(along_x: bool, at: float, a0: float, a1: float, h: float, sill: f
 				var pdepth := -out * 1.25
 				var ppos := Vector3(pc, 0.008, at + pdepth) if along_x else Vector3(at + pdepth, 0.008, pc)
 				var psz := Vector3(ww * 0.45, 0.004, 1.1) if along_x else Vector3(1.1, 0.004, ww * 0.45)
-				_flat(ppos, psz, Color("#7d9be0"), 0.0, 0.18, Color("#7d9be0"))
+				_flat(ppos, psz, Color("#5d78c0"), 0.0, 0.05, Color("#7d9be0"))
 	if a1 - cursor > 0.02:
 		_wpiece(along_x, at, (cursor + a1) * 0.5, (sill + head) * 0.5, a1 - cursor, head - sill, th, col)
-	# céu lá fora: um painel aceso longe da parede e a chuva entre os dois
-	var sky_pos := Vector3(mid, h * 0.5, at + out * 2.2) if along_x else Vector3(at + out * 2.2, h * 0.5, mid)
-	_flat(sky_pos, Vector3(length + 4, h + 4, 0.1) if along_x else Vector3(0.1, h + 4, length + 4), SKY, 0.0, 1.5, SKY)
+	# lá fora é o céu pintado do ambiente (panorama); só a chuva fica entre a janela e o céu
 	if rain:
 		var rc := Vector3(mid, h * 0.5, at + out * 1.0) if along_x else Vector3(at + out * 1.0, h * 0.5, mid)
 		_rain(rc, Vector3(length, h + 1.0, 1.2) if along_x else Vector3(1.2, h + 1.0, length), int(length * 14))
@@ -1191,9 +1331,8 @@ func _scene_cantina() -> void:
 
 func _scene_patio() -> void:
 	_sky(Color("#070e26"), Color("#24386e"), 0.8, Color("#101c40"), 0.03)
+	# piso de concreto: as juntas entre placas já vêm pintadas na textura
 	_flat(Vector3(0, -0.05, -6), Vector3(26, 0.1, 26), Color("#3a4a7a"))
-	for i in 7:
-		_flat(Vector3(0, 0.002, 2.0 - i * 2.4), Vector3(26, 0.004, 0.04), Color("#2e3c6a"))
 	# prédio da escola ao fundo: janelas apagadas, uma acesa
 	_flat(Vector3(0, 3.5, -13), Vector3(20, 7, 0.4), WALL)
 	_flat(Vector3(0, 7.1, -12.9), Vector3(20.4, 0.25, 0.7), WALL_L)
@@ -1206,7 +1345,6 @@ func _scene_patio() -> void:
 	_flat(Vector3(2.0, 4.8, -12.7), Vector3(0.05, 1.3, 0.03), INK)
 	_flat(Vector3(2.0, 4.95, -12.7), Vector3(1.1, 0.05, 0.03), INK)
 	_flavor(janela_acesa, "Uma janela acesa no segundo andar. Alguém ainda está lá dentro. Ou esqueceram a luz.")
-	_moon_disc(Vector3(-3.6, 12.5, -24.0), 1.1)
 	# muros laterais
 	_flat(Vector3(-6.5, 1.2, -5), Vector3(0.3, 2.4, 16), WALL_M)
 	_flat(Vector3(6.5, 1.2, -5), Vector3(0.3, 2.4, 16), WALL_M)
@@ -1941,10 +2079,7 @@ func _scene_fachada() -> void:
 	_puddle(Vector3(-2.0, 0, 2.2), Vector2(1.3, 0.7), YEL, 0.1)
 	_puddle(Vector3(1.4, 0, 3.6), Vector2(1.0, 0.5), Color("#9fb8ff"))
 	_puddle(Vector3(3.0, 0, 1.6), Vector2(0.8, 0.4), YEL, 0.0)
-	_moon_disc(Vector3(-2.2, 21.0, -26.0), 1.4)
-	# morros/prédios distantes atrás da escola
-	for b in [[-12, 4, 6], [-6, 3, 5], [9, 5, 6], [14, 3.5, 5]]:
-		_flat(Vector3(b[0], b[1] * 0.5 + 1.0, -16), Vector3(b[2], b[1] + 2, 0.5), Color("#141e44"))
+	# lua, nuvens e a cidade distante agora estão no céu pintado (sky_lua.png)
 	_rain(Vector3(0, 4.5, -1.5), Vector3(13, 9, 7), 380)
 	_anchors = {}
 	_free_anchors = []

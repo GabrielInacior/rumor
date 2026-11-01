@@ -59,6 +59,21 @@ func _ready() -> void:
 	tag.add_theme_constant_override("outline_size", 10)
 	tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(tag)
+	# selo do professor: "carimbo" de papel com fita, como nas pistas do jogo
+	var seal_row := CenterContainer.new()
+	var seal := Paper.make("card", true)
+	seal.rotation = -0.04
+	var sv := UI.vbox(0)
+	var s1 := UI.label("UMA INVESTIGAÇÃO DO", 20, Color(UI.INK, 0.7), "type")
+	s1.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sv.add_child(s1)
+	var s2 := UI.title("PROF. AILSON", 64, UI.RED)
+	s2.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sv.add_child(s2)
+	seal.add_child(sv)
+	seal_row.add_child(seal)
+	v.add_child(seal_row)
+	seal.pivot_offset = Vector2(150, 50)
 	var sub := UI.label("Mistérios em equipe para a sala de aula", 24, UI.MIST)
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(sub)

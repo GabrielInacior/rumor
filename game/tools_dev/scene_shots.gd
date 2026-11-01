@@ -55,8 +55,23 @@ func _ready() -> void:
 		for a in anchors:
 			if not cs._anchors.has(a) or not cs._anchors[a].has("mesh"):
 				missing.append(a)
+		# enquadramento: âncora (ou pessoa) cujo centro cai fora da tela do celular em pé
+		var off := []
+		var vs: Vector2 = cs.vp.size
+		for a in cs._anchors:
+			var mi = cs._anchors[a].get("mesh")
+			if mi is Node3D:
+				var sp: Vector2 = cs.cam.unproject_position((mi as Node3D).global_position)
+				if sp.x < 0 or sp.y < 0 or sp.x > vs.x or sp.y > vs.y or cs.cam.is_position_behind((mi as Node3D).global_position):
+					off.append("%s(%d,%d)" % [a, sp.x, sp.y])
+		for i in mini(ppl.size(), cs.PEOPLE_SPOTS[id].size()):
+			var hp: Vector3 = cs.PEOPLE_SPOTS[id][i] + Vector3(0, 1.0, 0)
+			var sp2: Vector2 = cs.cam.unproject_position(hp)
+			if sp2.x < 0 or sp2.y < 0 or sp2.x > vs.x or sp2.y > vs.y:
+				off.append("pessoa%d(%d,%d)" % [i, sp2.x, sp2.y])
+		print("FRAME %s fora=%s" % [id, off])
 		var counts := _count(cs.world)
-		print("SHOT %s size=%s meshes=%d omni_spot=%d dir=%d flavors=%d missing=%s" % [id, img.get_size(), counts[0], counts[1], counts[2], _flavors(cs), missing])
+		print("SHOT %s size=%s meshes=%d char_meshes=%d omni_spot=%d dir=%d flavors=%d missing=%s" % [id, img.get_size(), counts[0], counts[3], counts[1], counts[2], _flavors(cs), missing])
 		cs.queue_free()
 		await get_tree().process_frame
 	if only == "" and OS.get_environment("SHOT_SUFFIX") == "":
@@ -72,20 +87,26 @@ func _flavors(cs) -> int:
 	return n
 
 
-func _count(n: Node) -> Array:
+## [malhas visíveis do cenário, luzes omni/spot, direcionais, malhas visíveis de personagens]
+func _count(n: Node, in_char := false) -> Array:
 	var m := 0
 	var l := 0
 	var d := 0
+	var ch := 0
 	for c in n.get_children():
-		if c is MeshInstance3D:
-			m += 1
+		var is_char := in_char or (c.get_script() != null and (c.get_script() as Script).resource_path.ends_with("character.gd"))
+		if c is GeometryInstance3D and (c as Node3D).is_visible_in_tree() and (c is MeshInstance3D or c is MultiMeshInstance3D):
+			if is_char:
+				ch += 1
+			else:
+				m += 1
 		elif c is DirectionalLight3D:
 			d += 1
-		elif c is Light3D:
+		elif c is Light3D and (c as Light3D).visible:
 			l += 1
-		var sub := _count(c)
-		m += sub[0]; l += sub[1]; d += sub[2]
-	return [m, l, d]
+		var sub := _count(c, is_char)
+		m += sub[0]; l += sub[1]; d += sub[2]; ch += sub[3]
+	return [m, l, d, ch]
 
 
 func _sheet(shots: Array[Image]) -> void:

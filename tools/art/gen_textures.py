@@ -62,9 +62,12 @@ class Canvas:
         """Uma pincelada: faixa com cerdas (listras ao longo do traço), ponta que começa cheia e termina
         seca (as cerdas vão falhando), borda levemente irregular e cor variando de cerda em cerda."""
         rng = self.rng
-        r = int(max(length, width) * 0.5 + 4)
-        ys, xs = np.mgrid[-r:r + 1, -r:r + 1].astype(float)
         ca, sa = math.cos(ang), math.sin(ang)
+        # caixa justa em volta do traço girado (traço comprido e fino não paga um quadrado inteiro)
+        bend = abs(curve) * width + 4
+        rx = int(abs(length * 0.5 * ca) + abs(width * 0.5 * sa) + bend)
+        ry = int(abs(length * 0.5 * sa) + abs(width * 0.5 * ca) + bend)
+        ys, xs = np.mgrid[-ry:ry + 1, -rx:rx + 1].astype(float)
         u = xs * ca + ys * sa
         v = -xs * sa + ys * ca
         if curve:
@@ -92,8 +95,8 @@ class Canvas:
             return
         col = np.array(col, float)
         colpix = col[None, None, :] * (1.0 + (bv[..., None] - 0.5) * jitter * 2.0)
-        rows = (int(round(y)) + np.arange(-r, r + 1)) % self.n
-        cols = (int(round(x)) + np.arange(-r, r + 1)) % self.w
+        rows = (int(round(y)) + np.arange(-ry, ry + 1)) % self.n
+        cols = (int(round(x)) + np.arange(-rx, rx + 1)) % self.w
         ix = np.ix_(rows, cols)
         sub = self.c[ix]
         a3 = a[..., None]
@@ -154,16 +157,16 @@ def finish(c, contrast=1.0, sat=0.6):
 
 def kuwahara_wrap(img, r=2):
     """Filtro de Kuwahara periódico: achata microvariação em manchas de tinta (cara de óleo/guache)."""
-    n = img.shape[0]
+    n, wd = img.shape[0], img.shape[1]
     pad = np.pad(img, ((r, r), (r, r), (0, 0)), mode="wrap")
     lum = pad @ np.array([0.3, 0.59, 0.11])
 
     def box(a, ox, oy):
         # média numa janela (r+1)x(r+1) com o canto deslocado
-        acc = np.zeros((n, n) + a.shape[2:])
+        acc = np.zeros((n, wd) + a.shape[2:])
         for dy in range(r + 1):
             for dx in range(r + 1):
-                acc += a[r + oy + dy - r: r + oy + dy - r + n, r + ox + dx - r: r + ox + dx - r + n]
+                acc += a[oy + dy: oy + dy + n, ox + dx: ox + dx + wd]
         return acc / (r + 1) ** 2
 
     best = None

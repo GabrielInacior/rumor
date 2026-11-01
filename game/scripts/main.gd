@@ -233,6 +233,10 @@ func _on_event(evt: Dictionary) -> void:
 			Sfx.play("hotspot_found")
 			if Net.role == "player":
 				toast("%s pegou: %s (foi para a mochila)" % [evt.get("by", "Alguém"), UI.strip_emoji(str(evt.get("label", "")))], UI.YELLOW)
+		"hint":
+			Sfx.play("phone_buzz")
+			if Net.role == "player":
+				toast("DICA DO PROF. AILSON: " + str(evt.get("text", "")), UI.PAPER)
 		"interrogated":
 			Sfx.play("clue_new")
 			if Net.role == "player":

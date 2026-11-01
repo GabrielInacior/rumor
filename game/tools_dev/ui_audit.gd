@@ -112,6 +112,23 @@ func _host_state(phase: String) -> Dictionary:
 		s["cases"].append({"id": c["id"], "title": c["title"], "tagline": c["tagline"], "difficulty": c["difficulty"], "duration_sec": c["duration_sec"]})
 	s["clues"] = full_case["clues"]
 	s["boards"] = {"t1": s["board"], "t2": s["board"], "t3": {"cards": [], "links": []}}
+	var feed := []
+	var now := Time.get_unix_time_from_system() * 1000.0
+	var acts := [["t1", "Corvo", "Corvo achou uma pista: Quadro de avisos", "cena"], ["t2", "Sombra", "Sombra fez Caio contar: Depoimento do Caio", "conversa"],
+		["t1", "Lince", "Lince ligou Caio contou para Duda", "quadro"], ["t3", "Lupa", "Caio se fechou com Lupa (escolha ruim)", "alerta"],
+		["t2", "Faro", "Faro apresentou a teoria acusando Duda: CERTA", "acerto"], [null, null, "Nova pista liberada para todas as equipes: Print do grêmio", "sistema"],
+		["t3", "Trench", "Trench pegou Carregador de celular (Mochila)", "cena"], [null, null, "Professor mandou dica para todos: \"Conversem!\"", "dica"]]
+	for i in acts.size():
+		feed.append({"at": now - (acts.size() - i) * 40000.0, "team": acts[i][0], "who": acts[i][1], "text": acts[i][2], "kind": acts[i][3]})
+	s["feed"] = feed
+	s["insight"] = {}
+	for t in s["teams"]:
+		var mem := []
+		var k := 0
+		for pl in t["players"]:
+			mem.append({"name": pl["name"], "online": k != 3, "idleSec": [12, 95, 260, 30, 400][k % 5], "actions": 5 + k})
+			k += 1
+		s["insight"][t["id"]] = {"edgesOk": 1 + k % 3, "edgesTotal": 3, "cluesFound": 4 + k, "cluesTotal": 8, "items": k % 2, "lockLeft": 30 if t["id"] == "t3" else 0, "members": mem}
 	for t in s["teams"]:
 		t["progress"] = [{"label": "Por onde passou", "status": "ok"}, {"label": "Quem espalhou", "status": "incompleto"}, {"label": "Culpado", "status": "errado"}]
 	return s
@@ -208,6 +225,16 @@ func _run() -> void:
 	await _shot("18_prof_lobby")
 	_apply("host", _host_state("playing"))
 	await _shot("19_prof_rodada")
+	main.current.game_tab = "aovivo"
+	main.current._feed_len = -1
+	main.current._refresh_game()
+	await _shot("19b_prof_aovivo")
+	main.current.game_tab = "quadros"
+	main.current._refresh_game()
+	await _wait(3.0)
+	await _shot("19c_prof_quadros")
+	main.current._open_hint("t1")
+	await _shot("19d_prof_dica")
 	# --- revelação
 	Net.reveal_data = {"reveal": full_case["reveal"], "culprit": full_case["solution"].get("culprit"), "edges": full_case["solution"]["edges"],
 		"categories": full_case["solution"]["categories"], "ranking": [

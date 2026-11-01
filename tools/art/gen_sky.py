@@ -96,11 +96,11 @@ class Sky:
             cv.c[y, :, :] = self.sky_color(0, y, halo=False)
         for _ in range(n):
             # mais pinceladas perto do horizonte, onde a câmera olha
-            e = 90 - (rng.random() ** 1.6) * 95
+            e = 72 - (rng.random() ** 1.6) * 76   # acima de 72 graus ninguém olha: fica o fundo
             y = y_of(e)
             x = rng.random() * W
             col = self.sky_color(x, y, rng.normal(0, 1.6)) * (1 + rng.normal(0, 0.025))
-            ln = rng.uniform(60, 240) / max(0.35, math.cos(math.radians(min(abs(e), 80))))
+            ln = min(360.0, rng.uniform(60, 240) / max(0.35, math.cos(math.radians(min(abs(e), 80)))))
             cv.stroke(x, y, rng.normal(0, 0.04), ln, rng.uniform(8, 22), col, rng.uniform(0.6, 0.9), 0.6, 0.6, 0.05)
 
     def cloud(self, u, e, length_deg, height_deg, body, rim, belly, density=1.0, lit_side=None):

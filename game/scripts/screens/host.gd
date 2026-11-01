@@ -82,6 +82,7 @@ func _build_lobby() -> void:
 	var left := UI.vbox(12)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	outer.add_child(left)
+	left.add_child(UI.label("PROF. AILSON  ·  sala de investigação", 24, UI.PINK, "bold"))
 	left.add_child(UI.label("Entrem em  " + _host_url() + "  e digitem:", 26, UI.MIST, "bold"))
 	left.add_child(UI.title("SALA " + Net.code, 150 if wide else 120, UI.YELLOW))
 	lobby_count = UI.label("", 28, UI.PAPER, "bold")
@@ -124,6 +125,20 @@ func _build_lobby() -> void:
 	shuffle.pressed.connect(func() -> void: Net.send({"t": "host_shuffle"}))
 	tc.add_child(shuffle)
 	right.add_child(tc)
+	var tm := UI.hbox(12)
+	var tml := UI.label("Tempo", 30, UI.PAPER, "bold")
+	tml.autowrap_mode = TextServer.AUTOWRAP_OFF
+	tml.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	tm.add_child(tml)
+	var tminus := UI.button("-5 min", "ghost", 80)
+	tminus.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tminus.pressed.connect(func() -> void: Net.send({"t": "host_settings", "extraMin": int(Net.state["settings"].get("extraMin", 0)) - 5}))
+	tm.add_child(tminus)
+	var tplus := UI.button("+5 min", "ghost", 80)
+	tplus.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tplus.pressed.connect(func() -> void: Net.send({"t": "host_settings", "extraMin": int(Net.state["settings"].get("extraMin", 0)) + 5}))
+	tm.add_child(tplus)
+	right.add_child(tm)
 
 	var start := UI.button("COMEÇAR O CASO", "primary", 116)
 	start.add_theme_font_size_override("font_size", 52)
@@ -204,115 +219,355 @@ func _refresh_lobby() -> void:
 
 
 # ================================================================== RODADA
+## Três abas para o professor não ficar alheio: EQUIPES (progresso real e quem está parado),
+## AO VIVO (tudo que os alunos fazem, em tempo real) e QUADROS (miniaturas dos quadros).
+var game_tab := "equipes"
+var tab_btns := {}
+var feed_filter := ""
+var page_box: VBoxContainer
+var _feed_len := -1
+
+
 func _build_game() -> void:
 	UI.clear(body)
-	var m := UI.margin(30, 26, 24)
+	var wide := _wide()
+	var m := UI.margin(28 if wide else 18, 22, 18)
 	body.add_child(UI.full(m))
-	var v := UI.vbox(16)
+	var v := UI.vbox(12)
 	m.add_child(v)
-	var top: BoxContainer = UI.hbox(24) if _wide() else UI.vbox(4)
-	timer_l = UI.title("0:00", 130 if _wide() else 100, UI.YELLOW)
+	var top := UI.hbox(16)
+	timer_l = UI.title("0:00", 110 if wide else 88, UI.YELLOW)
 	top.add_child(timer_l)
-	var tv := UI.vbox(2)
+	var tv := UI.vbox(0)
 	tv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tv.add_child(UI.label("SALA %s" % Net.code, 26, UI.MIST, "bold"))
-	var tt := UI.title(str(Net.case_data.get("title", "")).to_upper(), 60, UI.PAPER)
+	tv.add_child(UI.label("SALA %s  ·  PROF. AILSON" % Net.code, 22, UI.MIST, "bold"))
+	var tt := UI.title(str(Net.case_data.get("title", "")).to_upper(), 46 if wide else 38, UI.PAPER)
 	tt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tv.add_child(tt)
-	var goal := UI.label(str(Net.case_data.get("goal", "")), 26, UI.YELLOW)
-	tv.add_child(goal)
 	top.add_child(tv)
 	v.add_child(top)
-
+	var tabs := UI.hbox(8)
+	for k in [["equipes", "EQUIPES"], ["aovivo", "AO VIVO"], ["quadros", "QUADROS"]]:
+		var b := UI.button(k[1], "ghost", 76)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_override("font", UI.font("title"))
+		b.add_theme_font_size_override("font_size", 32)
+		b.pressed.connect(func() -> void:
+			game_tab = k[0]
+			_feed_len = -1
+			_refresh_game())
+		tabs.add_child(b)
+		tab_btns[k[0]] = b
+	v.add_child(tabs)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	var grid := GridContainer.new()
-	grid.columns = 3 if _wide() else 1
-	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.add_theme_constant_override("h_separation", 16)
-	grid.add_theme_constant_override("v_separation", 16)
-	teams_box = grid
-	scroll.add_child(grid)
+	scroll.name = "PageScroll"
+	page_box = UI.vbox(12)
+	page_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(page_box)
 	v.add_child(scroll)
-
 	var ctrl := GridContainer.new()
-	(ctrl as GridContainer).columns = 3 if _wide() else 2
-	ctrl.add_theme_constant_override("h_separation", 12)
-	ctrl.add_theme_constant_override("v_separation", 12)
-	var rel := UI.button("Liberar pista", "ghost")
+	ctrl.columns = 4 if wide else 2
+	ctrl.add_theme_constant_override("h_separation", 10)
+	ctrl.add_theme_constant_override("v_separation", 10)
+	var hint := UI.button("Dica para todos", "ghost", 76)
+	hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hint.pressed.connect(func() -> void: _open_hint(""))
+	ctrl.add_child(hint)
+	var rel := UI.button("Liberar pista", "ghost", 76)
 	rel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rel.pressed.connect(func() -> void: Net.send({"t": "host_release"}))
 	ctrl.add_child(rel)
-	var more := UI.button("+1 minuto", "ghost")
+	var more := UI.button("+1 minuto", "ghost", 76)
 	more.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	more.pressed.connect(func() -> void: Net.send({"t": "host_add_time"}))
 	ctrl.add_child(more)
-	var end := UI.button("ENCERRAR E REVELAR", "danger")
+	var end := UI.button("ENCERRAR", "danger", 76)
 	end.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	end.pressed.connect(func() -> void: Net.send({"t": "host_end"}))
+	ctrl.add_child(end)
 	v.add_child(ctrl)
-	if _wide():
-		ctrl.add_child(end)
-	else:
-		v.add_child(end)
 
 
 func _refresh_game() -> void:
 	var st := Net.state
+	for k in tab_btns:
+		var on: bool = k == game_tab
+		(tab_btns[k] as Button).add_theme_stylebox_override("normal", UI.box(UI.YELLOW if on else Color(UI.NIGHT, 0.8), UI.YELLOW.darkened(0.4), 0 if on else 2, 16))
+		(tab_btns[k] as Button).add_theme_color_override("font_color", UI.INK if on else UI.PAPER)
 	if str(st.get("phase", "")) == "briefing":
 		timer_l.text = "%ds" % Net.seconds_left()
-	UI.clear(teams_box)
-	for t in st.get("teams", []):
-		teams_box.add_child(_team_card(t))
+	if game_tab == "aovivo":
+		var feed: Array = st.get("feed", [])
+		if feed.size() == _feed_len:
+			return
+		_feed_len = feed.size()
+	UI.clear(page_box)
+	match game_tab:
+		"equipes":
+			for t in st.get("teams", []):
+				page_box.add_child(_team_card(t))
+		"aovivo":
+			_build_feed()
+		"quadros":
+			var grid := GridContainer.new()
+			grid.columns = 3 if _wide() else 1
+			grid.add_theme_constant_override("h_separation", 12)
+			grid.add_theme_constant_override("v_separation", 12)
+			grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			for t in st.get("teams", []):
+				grid.add_child(_board_thumb(t))
+			page_box.add_child(grid)
 	if viewer_team != "" and viewer_board:
 		var b: Dictionary = st.get("boards", {}).get(viewer_team, {})
 		viewer_board.set_data(b.get("cards", []), b.get("links", []))
 
 
+func _bar(label: String, val: int, total: int, col: Color) -> Control:
+	var v := UI.vbox(4)
+	var h := UI.hbox(8)
+	var l := UI.label(label, 21, UI.MIST, "bold")
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	h.add_child(l)
+	var n := UI.label("%d/%d" % [val, total], 21, col, "bold")
+	n.autowrap_mode = TextServer.AUTOWRAP_OFF
+	h.add_child(n)
+	v.add_child(h)
+	var pb := ProgressBar.new()
+	pb.show_percentage = false
+	pb.max_value = maxi(1, total)
+	pb.value = val
+	pb.custom_minimum_size.y = 14
+	pb.add_theme_stylebox_override("background", UI.box(Color(0, 0, 0, 0.4), Color.TRANSPARENT, 0, 7, 0))
+	pb.add_theme_stylebox_override("fill", UI.box(col, Color.TRANSPARENT, 0, 7, 0))
+	v.add_child(pb)
+	return v
+
+
 func _team_card(t: Dictionary) -> Control:
 	var col := Color(str(t["color"]))
+	var ins: Dictionary = Net.state.get("insight", {}).get(t["id"], {})
 	var p := PanelContainer.new()
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	p.add_theme_stylebox_override("panel", UI.box(Color(col, 0.08), col, 3, 20, 20))
-	var v := UI.vbox(8)
+	p.add_theme_stylebox_override("panel", UI.box(Color(col, 0.08), col, 3, 20, 18))
+	var v := UI.vbox(10)
 	var h := UI.hbox(10)
-	var name := UI.title(str(t["name"]).to_upper(), 50, col)
+	var name := UI.title(str(t["name"]).to_upper(), 46, col)
 	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(name)
 	if t.get("solved", false):
 		var stamp := PanelContainer.new()
-		stamp.add_theme_stylebox_override("panel", UI.box(Color(UI.GREEN, 0.15), UI.GREEN, 4, 6, 12))
-		stamp.add_child(UI.title("RESOLVIDO %dº" % int(t.get("place", 1)), 34, UI.GREEN))
+		stamp.add_theme_stylebox_override("panel", UI.box(Color(UI.GREEN, 0.15), UI.GREEN, 4, 6, 10))
+		stamp.add_child(UI.title("RESOLVIDO %dº" % int(t.get("place", 1)), 30, UI.GREEN))
 		h.add_child(stamp)
+	elif int(ins.get("lockLeft", 0)) > 0:
+		var lk := PanelContainer.new()
+		lk.add_theme_stylebox_override("panel", UI.box(Color(UI.PINK, 0.15), UI.PINK, 2, 6, 10))
+		lk.add_child(UI.label("errou, espera %ds" % int(ins["lockLeft"]), 20, UI.PINK, "bold"))
+		h.add_child(lk)
 	v.add_child(h)
-	var names := []
-	for pl in t["players"]:
-		names.append(str(pl["name"]))
-	v.add_child(UI.label(", ".join(names) if names.size() else "sem alunos", 22, UI.MIST))
-	v.add_child(UI.label("%d cartas · %d fios · %d teoria%s" % [int(t["cards"]), int(t["links"]), int(t["submissions"]), "" if int(t["submissions"]) == 1 else "s"], 26, UI.PAPER, "bold"))
+	# progresso real (só o professor vê): pistas reunidas e ligações certas no quadro agora
+	v.add_child(_bar("Pistas reunidas", int(ins.get("cluesFound", 0)), int(ins.get("cluesTotal", 1)), UI.SKY))
+	v.add_child(_bar("Ligações certas no quadro (agora)", int(ins.get("edgesOk", 0)), int(ins.get("edgesTotal", 1)), UI.GREEN))
+	v.add_child(UI.label("%d cartas · %d fios · %d teoria%s · %d objeto%s na mochila" % [int(t["cards"]), int(t["links"]), int(t["submissions"]), "" if int(t["submissions"]) == 1 else "s", int(ins.get("items", 0)), "" if int(ins.get("items", 0)) == 1 else "s"], 20, UI.PAPER))
+	# alunos: ativo (verde), pensando (amarelo), parado ou fora (cinza/vermelho)
+	var flow := HFlowContainer.new()
+	flow.add_theme_constant_override("h_separation", 8)
+	flow.add_theme_constant_override("v_separation", 8)
+	for mbr in ins.get("members", []):
+		var idle := int(mbr.get("idleSec", 0))
+		var dot := UI.GREEN if idle < 60 else (UI.YELLOW if idle < 180 else UI.RED)
+		if not mbr.get("online", true):
+			dot = UI.MIST.darkened(0.4)
+		var chip := PanelContainer.new()
+		chip.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.85), dot, 2, 26, 12))
+		var txt := str(mbr["name"])
+		if not mbr.get("online", true):
+			txt += "  fora"
+		elif idle >= 180:
+			txt += "  parado %dmin" % (idle / 60)
+		var cl := UI.label(txt, 20, UI.PAPER, "bold")
+		cl.autowrap_mode = TextServer.AUTOWRAP_OFF
+		chip.add_child(cl)
+		flow.add_child(chip)
+	v.add_child(flow)
 	var prog: Variant = t.get("progress")
 	if prog is Array:
-		var row := UI.hbox(8)
+		var pf := HFlowContainer.new()
+		pf.add_theme_constant_override("h_separation", 8)
+		pf.add_theme_constant_override("v_separation", 8)
+		var ltl := UI.label("Última teoria:", 19, UI.MIST)
+		ltl.autowrap_mode = TextServer.AUTOWRAP_OFF
+		pf.add_child(ltl)
 		for cat in prog:
 			var ok: bool = cat["status"] == "ok"
 			var c2 := UI.GREEN if ok else (UI.RED if cat["status"] == "errado" else UI.YELLOW)
-			var chip := PanelContainer.new()
-			chip.add_theme_stylebox_override("panel", UI.box(Color(c2, 0.2), c2, 2, 10, 8))
+			var chip2 := PanelContainer.new()
+			chip2.add_theme_stylebox_override("panel", UI.box(Color(c2, 0.2), c2, 2, 10, 8))
 			var chl := UI.label(str(cat["label"]), 18, c2, "bold")
 			chl.autowrap_mode = TextServer.AUTOWRAP_OFF
-			chip.add_child(chl)
-			row.add_child(chip)
-		var flow := HFlowContainer.new()
-		for ch in row.get_children():
-			row.remove_child(ch)
-			flow.add_child(ch)
-		v.add_child(flow)
-	var see := UI.button("Ver quadro ao vivo", "ghost", 72)
+			chip2.add_child(chl)
+			pf.add_child(chip2)
+		v.add_child(pf)
+	var row := UI.hbox(10)
+	var see := UI.button("Ver quadro", "ghost", 70)
+	see.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	see.pressed.connect(func() -> void: _open_viewer(t))
-	v.add_child(see)
+	row.add_child(see)
+	var tip := UI.button("Mandar dica", "ghost", 70)
+	tip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tip.pressed.connect(func() -> void: _open_hint(str(t["id"])))
+	row.add_child(tip)
+	var log := UI.button("Ações", "ghost", 70)
+	log.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	log.pressed.connect(func() -> void:
+		feed_filter = str(t["id"])
+		game_tab = "aovivo"
+		_feed_len = -1
+		_refresh_game())
+	row.add_child(log)
+	v.add_child(row)
 	p.add_child(v)
 	return p
+
+
+const FEED_COLORS := {"cena": Color("#ffc83d"), "conversa": Color("#6fd3ff"), "quadro": Color("#b9a3ff"), "teoria": Color("#ff9a4d"),
+	"acerto": Color("#8ef0b5"), "alerta": Color("#ff6fae"), "dica": Color("#ffffff"), "sistema": Color("#a9bdf0"), "sala": Color("#a9bdf0")}
+
+
+func _build_feed() -> void:
+	var st := Net.state
+	var chips := HFlowContainer.new()
+	chips.add_theme_constant_override("h_separation", 8)
+	chips.add_theme_constant_override("v_separation", 8)
+	var opts := [["", "TODAS", UI.PAPER]]
+	for t in st.get("teams", []):
+		opts.append([str(t["id"]), str(t["name"]).to_upper(), Color(str(t["color"]))])
+	for o in opts:
+		var on: bool = feed_filter == o[0]
+		var b := UI.button(o[1], "ghost", 60)
+		b.add_theme_font_override("font", UI.font("title"))
+		b.add_theme_font_size_override("font_size", 26)
+		b.custom_minimum_size.x = 140
+		b.add_theme_stylebox_override("normal", UI.box(o[2] if on else Color(UI.NIGHT, 0.8), o[2], 2, 14))
+		b.add_theme_color_override("font_color", UI.INK if on else o[2])
+		b.pressed.connect(func() -> void:
+			feed_filter = o[0]
+			_feed_len = -1
+			_refresh_game())
+		chips.add_child(b)
+	page_box.add_child(chips)
+	var team_by := {}
+	for t in st.get("teams", []):
+		team_by[t["id"]] = t
+	var feed: Array = st.get("feed", [])
+	var shown := 0
+	for i in range(feed.size() - 1, -1, -1):
+		var e: Dictionary = feed[i]
+		if feed_filter != "" and e.get("team") != feed_filter and e.get("team") != null:
+			continue
+		var t: Dictionary = team_by.get(e.get("team"), {})
+		var tcol := Color(str(t.get("color", "#a9bdf0")))
+		var row := PanelContainer.new()
+		row.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.75), Color.TRANSPARENT, 0, 12, 12))
+		var h := UI.hbox(10)
+		var bar := ColorRect.new()
+		bar.color = FEED_COLORS.get(str(e.get("kind", "")), UI.MIST)
+		bar.custom_minimum_size = Vector2(6, 0)
+		h.add_child(bar)
+		var vv := UI.vbox(2)
+		vv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var ago := int((Net.server_now_ms() - float(e.get("at", 0))) / 1000.0)
+		var meta := ("há %ds" % ago) if ago < 60 else ("há %dmin" % (ago / 60))
+		if not t.is_empty():
+			meta = str(t["name"]).to_upper() + "  ·  " + meta
+		var ml := UI.label(meta, 17, tcol, "bold")
+		ml.autowrap_mode = TextServer.AUTOWRAP_OFF
+		vv.add_child(ml)
+		vv.add_child(UI.label(UI.strip_emoji(str(e.get("text", ""))), 23, UI.PAPER))
+		h.add_child(vv)
+		row.add_child(h)
+		page_box.add_child(row)
+		shown += 1
+		if shown >= 80:
+			break
+	if shown == 0:
+		page_box.add_child(UI.label("Nada ainda. As ações dos alunos aparecem aqui em tempo real.", 24, UI.MIST, "type"))
+
+
+func _board_thumb(t: Dictionary) -> Control:
+	var col := Color(str(t["color"]))
+	var p := PanelContainer.new()
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	p.add_theme_stylebox_override("panel", UI.box(Color(col, 0.08), col, 3, 18, 12))
+	var v := UI.vbox(8)
+	var h := UI.hbox(8)
+	var n := UI.title(str(t["name"]).to_upper(), 36, col)
+	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(n)
+	var open := UI.button("Abrir", "ghost", 60)
+	open.custom_minimum_size.x = 140
+	open.pressed.connect(func() -> void: _open_viewer(t))
+	h.add_child(open)
+	v.add_child(h)
+	var bv := BoardView.new()
+	bv.readonly = true
+	bv.custom_minimum_size = Vector2(0, 360)
+	var b: Dictionary = Net.state.get("boards", {}).get(t["id"], {})
+	bv.set_data(b.get("cards", []), b.get("links", []))
+	v.add_child(bv)
+	bv.call_deferred("fit")
+	p.add_child(v)
+	return p
+
+
+## dica do professor: frases prontas (sem precisar digitar no celular) ou texto livre
+func _open_hint(team_id: String) -> void:
+	UI.clear(viewer_layer)
+	var bg := ColorRect.new()
+	bg.color = Color(0, 0, 0, 0.6)
+	bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	bg.gui_input.connect(func(e: InputEvent) -> void:
+		if e is InputEventMouseButton and (e as InputEventMouseButton).pressed:
+			UI.clear(viewer_layer))
+	viewer_layer.add_child(UI.full(bg))
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", UI.box(Color(UI.NAVY, 0.98), UI.YELLOW, 3, 26, 24))
+	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	var side := maxf(12.0, (size.x - 860.0) / 2.0)
+	panel.offset_left = side; panel.offset_right = -side; panel.offset_bottom = -12
+	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	var v := UI.vbox(12)
+	var tname := "TODAS AS EQUIPES"
+	for t in Net.state.get("teams", []):
+		if t["id"] == team_id:
+			tname = "EQUIPE " + str(t["name"]).to_upper()
+	v.add_child(UI.title("DICA PARA " + tname, 40, UI.YELLOW))
+	for txt in ["Já olharam TODOS os lugares da escola? Troquem de cena no topo.", "Mostrem uma pista para quem vocês interrogaram. Algumas pessoas só falam assim.",
+			"Prendam uma PROVA em cada fio importante do quadro.", "Conversem! Cada um tem pistas que só ele vê.", "Desconfiem do óbvio. Quem ganha com a confusão?"]:
+		var b := UI.button(txt, "ghost", 80)
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.add_theme_font_size_override("font_size", 23)
+		b.pressed.connect(func() -> void:
+			Net.send({"t": "host_hint", "team": team_id, "text": txt})
+			UI.clear(viewer_layer))
+		v.add_child(b)
+	var le := LineEdit.new()
+	le.placeholder_text = "Ou escreva a sua dica..."
+	le.custom_minimum_size.y = 76
+	le.add_theme_font_size_override("font_size", 26)
+	le.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.9), UI.SKY, 2, 14))
+	v.add_child(le)
+	var send := UI.button("MANDAR", "primary", 90)
+	send.pressed.connect(func() -> void:
+		if le.text.strip_edges() != "":
+			Net.send({"t": "host_hint", "team": team_id, "text": le.text})
+		UI.clear(viewer_layer))
+	v.add_child(send)
+	panel.add_child(v)
+	viewer_layer.add_child(panel)
 
 
 func _open_viewer(t: Dictionary) -> void:
@@ -353,6 +608,9 @@ func _process(_dt: float) -> void:
 		timer_l.text = UI.fmt_time(s)
 		if s != _last_sec:
 			_last_sec = s
+			if s % 5 == 0 and game_tab != "quadros":
+				_feed_len = -1
+				_refresh_game()
 			timer_l.add_theme_color_override("font_color", UI.RED if s <= 60 and s % 2 == 0 else UI.YELLOW)
 			if s <= 10 and s > 0:
 				Sfx.play("timer_urgent", -6.0)
