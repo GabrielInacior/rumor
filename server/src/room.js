@@ -620,9 +620,18 @@ class Room {
 
 // O que o aluno pode saber do caso: tudo menos a solução e a revelação.
 function publicCase(c) {
-  const { solution, reveal, clues, hotspots, ...rest } = c;
+  const { solution, reveal, clues, hotspots, teacher_guide, ...rest } = c;
+  // para cada tipo de ligação, só QUE tipos de carta ela liga (pessoa→lugar...), sem revelar quais cartas
+  const kindOf = Object.fromEntries(c.cards.map((x) => [x.id, x.kind]));
+  const pairs = {};
+  for (const e of [...(solution.edges || []), ...(solution.traps || [])]) {
+    const k = `${kindOf[e.from]}>${kindOf[e.to]}`;
+    (pairs[e.type] = pairs[e.type] || new Set()).add(k);
+  }
+  const link_types = (c.link_types || []).map((lt) => ({ ...lt, pairs: pairs[lt.id] ? [...pairs[lt.id]] : [] }));
   return {
     ...rest,
+    link_types,
     clue_count: clues.length,
     hotspots: (hotspots || []).map((h) => ({ id: h.id, object: h.object, label: h.label })),
     categories: solution.categories.map((x) => ({ id: x.id, label: x.label })),

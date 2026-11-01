@@ -770,30 +770,70 @@ func _color_row(selected: String, on_pick: Callable) -> Control:
 	return row
 
 
+## Frases sempre fazem sentido: a ordem é escolhida pelo TIPO das cartas (pessoa antes de lugar
+## ou fato) e só aparecem as ligações que existem para aquele par neste caso.
+func _kind_of(id: String) -> String:
+	return str(Net.card_by_id(id).get("kind", "fato"))
+
+
+func _pairs_of(lt: Dictionary) -> Array:
+	var p: Array = lt.get("pairs", [])
+	if not p.is_empty():
+		return p
+	# caso sem regra no servidor: deduz pelo rótulo ("estava em" liga pessoa a lugar)
+	var lbl := str(lt.get("label", "")).to_lower()
+	if lbl.ends_with(" em") or lbl.ends_with(" no") or lbl.ends_with(" na"):
+		return ["pessoa>lugar"]
+	if lbl.ends_with(" para") or lbl.begins_with("viu"):
+		return ["pessoa>pessoa"]
+	return ["pessoa>fato", "pessoa>pessoa"]
+
+
 func _open_relation_picker(a: String, b: String) -> void:
+	var ka := _kind_of(a)
+	var kb := _kind_of(b)
+	var options := []   # [from, to, link_type]
+	for lt in Net.case_data.get("link_types", []):
+		var pairs := _pairs_of(lt)
+		if pairs.has(ka + ">" + kb):
+			options.append([a, b, lt])
+		elif pairs.has(kb + ">" + ka):
+			options.append([b, a, lt])
 	var v := UI.vbox(14)
 	v.add_child(UI.title("QUE LIGAÇÃO É ESSA?", 46, UI.YELLOW))
-	v.add_child(UI.label("O fio sai de %s e vai até %s." % [_name_of(a), _name_of(b)], 24, UI.MIST))
+	if options.is_empty():
+		v.add_child(UI.label("%s e %s não se ligam diretamente neste caso." % [_name_of(a), _name_of(b)], 26, UI.PAPER, "bold"))
+		v.add_child(UI.label("Dica: ligue PESSOAS a outras pessoas, a LUGARES ou a FATOS.", 22, UI.MIST))
+		var ok := UI.button("ENTENDI", "primary", 90)
+		ok.pressed.connect(_close_sheet)
+		v.add_child(ok)
+		_open_sheet(v)
+		return
 	v.add_child(UI.label("Cor do fio", 22, UI.PAPER, "bold"))
 	v.add_child(_color_row(link_color, func(cname: String) -> void:
 		link_color = cname
 		_close_sheet()
 		_open_relation_picker(a, b)))
-	for lt in Net.case_data.get("link_types", []):
-		var btn := UI.button("%s  %s  %s" % [_name_of(a), str(lt["label"]).to_upper(), _name_of(b)], "ghost", 96)
+	for op in options:
+		var lt: Dictionary = op[2]
+		var f: String = op[0]
+		var t: String = op[1]
+		var btn := UI.button("%s  %s  %s" % [_name_of(f), str(lt["label"]).to_upper(), _name_of(t)], "ghost", 96)
 		btn.add_theme_font_override("font", UI.font("bold"))
 		btn.add_theme_font_size_override("font_size", 26)
 		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		btn.pressed.connect(func() -> void:
-			Net.board_op({"k": "link", "a": a, "b": b, "type": lt["id"], "color": link_color})
+			Net.board_op({"k": "link", "a": f, "b": t, "type": lt["id"], "color": link_color})
 			Sfx.play("string_connect")
 			_close_sheet())
 		v.add_child(btn)
-	var swap := UI.button("Inverter: começar por %s" % _name_of(b), "ghost", 76)
-	swap.pressed.connect(func() -> void:
-		_close_sheet()
-		_open_relation_picker(b, a))
-	v.add_child(swap)
+	# inverter só faz sentido entre cartas do mesmo tipo (ex.: quem contou para quem)
+	if ka == kb:
+		var swap := UI.button("Inverter: começar por %s" % _name_of(b), "ghost", 76)
+		swap.pressed.connect(func() -> void:
+			_close_sheet()
+			_open_relation_picker(b, a))
+		v.add_child(swap)
 	_open_sheet(v)
 
 
@@ -835,6 +875,7 @@ func _on_link_tapped(id: String) -> void:
 	row.add_child(retype)
 	var flip := UI.button("Inverter", "ghost")
 	flip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	flip.visible = _kind_of(str(l["a"])) == _kind_of(str(l["b"]))
 	flip.pressed.connect(func() -> void:
 		Net.board_op({"k": "flip", "id": id})
 		Sfx.play("string_stretch")
@@ -855,6 +896,8 @@ func _open_retype(l: Dictionary) -> void:
 	var v := UI.vbox(14)
 	v.add_child(UI.title("MUDAR O TIPO", 44, UI.YELLOW))
 	for lt in Net.case_data.get("link_types", []):
+		if not _pairs_of(lt).has(_kind_of(str(l["a"])) + ">" + _kind_of(str(l["b"]))):
+			continue
 		var btn := UI.button("%s  %s  %s" % [_name_of(l["a"]), str(lt["label"]).to_upper(), _name_of(l["b"])], "ghost", 92)
 		btn.add_theme_font_size_override("font_size", 26)
 		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

@@ -221,6 +221,17 @@ func _run() -> void:
 	g._open_relation_picker(str(Net.state["board"]["links"][0]["a"]), str(Net.state["board"]["links"][0]["b"]))
 	await _shot("13_tipo_ligacao")
 	g._close_sheet()
+	var place := ""
+	var someone := ""
+	for c in full_case["cards"]:
+		if c["kind"] == "lugar" and place == "":
+			place = str(c["id"])
+		if c["kind"] == "pessoa" and someone == "":
+			someone = str(c["id"])
+	if place != "":
+		g._open_relation_picker(place, someone)
+		await _shot("13b_lugar_pessoa")
+	g._close_sheet()
 	g._open_submit()
 	await _shot("14_apresentar")
 	g._close_sheet()
