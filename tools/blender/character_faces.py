@@ -35,6 +35,7 @@ SWEAT = (150, 196, 255, 255)
 BLUSH = (232, 92, 92, 255)
 W = 22                     # traço base (em px do desenho 4x)
 LIP = (184, 92, 104, 255)  # lábio feminino: rosa discreto
+ADULT = False              # adulto: olho menor e mais baixo, íris menor, olheira, vinco do sorriso
 FEM = False                # variante feminina: olho amendoado com cílios, sobrancelha fina, lábio com cor
 
 EYE_NAMES = ["neutro", "feliz", "surpreso", "bravo", "desconfiado", "triste", "nervoso", "piscando"]
@@ -142,6 +143,10 @@ def eye(img, cx, cy, rx, ry, top=None, bottom=None, look=(0.0, 0.08), iris=0.62,
     top/bottom: pares de pontos RELATIVOS (fração de rx, ry) para recortar a pálpebra."""
     d = ImageDraw.Draw(img)
     outer = -1 if (cx % CELL) < CELL / 2 else 1
+    if ADULT:
+        ry *= 0.80
+        cy += ry * 0.12
+        iris *= 0.86
     if FEM:
         rx, ry = rx * 1.07, ry * 0.93
         poly = []
@@ -188,6 +193,13 @@ def eye(img, cx, cy, rx, ry, top=None, bottom=None, look=(0.0, 0.08), iris=0.62,
         taper(d, upper, W * 0.9, W * lid_w * (1.35 if FEM else 1.0))
         if FEM:
             lashes(d, upper[-1], outer, rx)
+    if ADULT:
+        # olheira e vinco da pálpebra: o que mais 'envelhece' o rosto pintado
+        bag = quad_curve((cx - rx * 0.75, cy + ry * 1.18), (cx, cy + ry * 1.48), (cx + rx * 0.75, cy + ry * 1.18), 12)
+        taper(d, bag, W * 0.25, W * 0.5)
+        if not tiny:
+            crease = quad_curve((cx - rx * 0.8, cy - ry * 1.12), (cx, cy - ry * 1.42), (cx + rx * 0.8, cy - ry * 1.12), 12)
+            taper(d, crease, W * 0.2, W * 0.45)
 
 
 def lashes(d, p, outer, rx):
@@ -227,6 +239,9 @@ def brow(d, p0, p1, p2, w0=W * 1.9, w1=W * 0.9):
     if FEM:   # sobrancelha mais fina e arqueada
         w0, w1 = w0 * 0.55, w1 * 0.5
         p1 = (p1[0], p1[1] - 10)
+    if ADULT and not FEM:   # sobrancelha adulta: mais grossa e reta
+        w0, w1 = w0 * 1.15, w1 * 1.3
+        p1 = (p1[0], (p1[1] * 2 + (p0[1] + p2[1]) / 2) / 3)
     taper(d, quad_curve(p0, p1, p2), w0, w1)
 
 
@@ -375,6 +390,10 @@ def corner(d, x, y, dx, dy):
 def draw_mouth(img, ox, oy, kind):
     d = ImageDraw.Draw(img)
     cx, cy = ox + CELL / 2, oy + CELL * 0.52
+    if ADULT:   # vinco do sorriso (nariz -> canto da boca)
+        for sg in (-1, 1):
+            taper(d, quad_curve((cx + sg * 128, cy - 120), (cx + sg * 168, cy - 70), (cx + sg * 160, cy - 16), 10),
+                  W * 0.25, W * 0.55)
     if kind == "neutra":
         pts = quad_curve((cx - 105, cy + 2), (cx + 10, cy + 18), (cx + 100, cy - 6))
         if FEM:
@@ -477,7 +496,7 @@ def contact_sheet(eyes, mouth, path):
     ft = font(34)
     y = 14
     for title, atlas, names in (("OLHOS  eyes_atlas.png", eyes, EYE_NAMES), ("BOCA  mouth_atlas.png", mouth, MOUTH_NAMES)):
-        d.text((pad, y), title.replace(".png", "_f.png") if FEM else title, font=ft, fill=(255, 200, 61, 255))
+        d.text((pad, y), title.replace(".png", ("_adult" if ADULT else "") + ("_f" if FEM else "") + ".png"), font=ft, fill=(255, 200, 61, 255))
         y += 50
         for i, n in enumerate(names):
             c, r = i % 4, i // 4
@@ -499,14 +518,15 @@ def cmd_atlas():
     global FEM
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(DOCS, exist_ok=True)
-    for fem, suf in ((False, ""), (True, "_f")):
-        FEM = fem
+    global ADULT
+    for adult, fem, suf in ((False, False, ""), (False, True, "_f"), (True, False, "_adult"), (True, True, "_adult_f")):
+        FEM, ADULT = fem, adult
         eyes = build_atlas(draw_eyes, EYE_NAMES)
         mouth = build_atlas(draw_mouth, MOUTH_NAMES)
         eyes.save(os.path.join(OUT, "eyes_atlas%s.png" % suf))
         mouth.save(os.path.join(OUT, "mouth_atlas%s.png" % suf))
         contact_sheet(eyes, mouth, os.path.join(DOCS, "expressoes_folha%s.png" % suf))
-    FEM = False
+    FEM, ADULT = False, False
     print("atlas ok")
 
 
