@@ -26,6 +26,8 @@ var submit_btn: Button
 var action_bar: HBoxContainer
 var link_banner: PanelContainer
 var guide: PanelContainer
+var scene_hint: Control
+var _guide_closed := false
 var guide_l: Label
 var _guide_done_at := 0
 var sheet_layer: Control
@@ -164,25 +166,38 @@ func _build_scene_page() -> Control:
 	page.add_child(strip_sc)
 	_load_location(str(locations[0]))
 	scene3d.hotspot_tapped.connect(_on_hotspot)
+	scene3d.looked_around.connect(func() -> void:
+		if is_instance_valid(scene_hint):
+			scene_hint.visible = false)
 	scene3d.flavor_tapped.connect(func(t: String) -> void: _narrate(t, false))
-	var hint := UI.label("Arraste para olhar em volta. Toque no que brilha.", 22, UI.PAPER, "bold")
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var hint := PanelContainer.new()
+	hint.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.7), Color.TRANSPARENT, 0, 14, 8))
+	var hh := UI.hbox(8)
+	var hl := UI.label("Arraste para olhar em volta. Toque no que brilha.", 22, UI.PAPER, "bold")
+	hl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hh.add_child(hl)
+	hh.add_child(UI.close_x(func() -> void: hint.visible = false, UI.PAPER, 44.0))
+	hint.add_child(hh)
 	hint.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	hint.offset_top = 104
-	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hint.add_theme_color_override("font_outline_color", UI.NIGHT)
-	hint.add_theme_constant_override("outline_size", 8)
+	hint.offset_left = 40; hint.offset_right = -40; hint.offset_top = 100
 	page.add_child(hint)
+	scene_hint = hint
 	# caixa de narração amarela, estilo quadrinho
 	narr_panel = PanelContainer.new()
 	narr_panel.add_theme_stylebox_override("panel", UI.box(UI.YELLOW, UI.INK, 4, 4, 22))
 	narr_l = UI.label("", 28, UI.INK, "type")
-	narr_panel.add_child(narr_l)
+	narr_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var nh := UI.hbox(10)
+	nh.add_child(narr_l)
+	nh.add_child(UI.close_x(func() -> void: narr_panel.visible = false, UI.INK, 48.0))
+	narr_panel.add_child(nh)
 	narr_panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	narr_panel.offset_left = 22; narr_panel.offset_right = -22; narr_panel.offset_bottom = -22
 	narr_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	narr_panel.visible = false
-	narr_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	narr_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 	page.add_child(narr_panel)
 	return page
 
@@ -706,7 +721,13 @@ func _build_board_page() -> Control:
 	guide = PanelContainer.new()
 	guide.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.88), Color(UI.YELLOW, 0.7), 2, 16, 16))
 	guide_l = UI.label("", 24, UI.PAPER, "bold")
-	guide.add_child(guide_l)
+	guide_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var gh := UI.hbox(10)
+	gh.add_child(guide_l)
+	gh.add_child(UI.close_x(func() -> void:
+		_guide_closed = true
+		guide.visible = false, UI.PAPER, 46.0))
+	guide.add_child(gh)
 	guide.mouse_filter = Control.MOUSE_FILTER_STOP
 	guide_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# tocar na faixa de dica abre o guia ilustrado de novo
@@ -845,6 +866,19 @@ func _update_action_bar() -> void:
 			Sfx.play("string_stretch")
 			_update_action_bar())
 		action_bar.add_child(link)
+		if _kind_of(ref.substr(2)) == "pessoa":
+			var mark := UI.button("MARCAR", "ghost", 88)
+			mark.custom_minimum_size.x = 150
+			mark.pressed.connect(func() -> void: _open_tag_picker(ref))
+			action_bar.add_child(mark)
+		else:
+			# lugar ou acontecimento: ligar várias pessoas de uma vez
+			var inv := UI.button("ENVOLVER PESSOAS", "ghost", 88)
+			inv.custom_minimum_size.x = 250
+			inv.add_theme_font_override("font", UI.font("title"))
+			inv.add_theme_font_size_override("font_size", 28)
+			inv.pressed.connect(func() -> void: _open_involve(ref.substr(2)))
+			action_bar.add_child(inv)
 	else:
 		var see := UI.button("LER", "ghost", 88)
 		see.custom_minimum_size.x = 130
@@ -863,6 +897,132 @@ func _update_action_bar() -> void:
 		board.selected_ref = ""
 		_update_action_bar())
 	action_bar.add_child(rm)
+
+
+## Lugar ou acontecimento: escolhe a ligação e marca várias pessoas; os fios saem de uma vez.
+## Quem ainda não está no quadro entra sozinho, perto da carta.
+func _open_involve(target: String, chosen_type := "") -> void:
+	var kt := _kind_of(target)
+	var types := []
+	for lt in Net.case_data.get("link_types", []):
+		if _pairs_of(lt).has("pessoa>" + kt):
+			types.append(lt)
+	var v := UI.vbox(14)
+	v.add_child(UI.title("QUEM ESTÁ ENVOLVIDO EM %s?" % _name_of(target).to_upper(), 40, UI.YELLOW))
+	if types.is_empty():
+		v.add_child(UI.label("Não há ligação de pessoas com esta carta.", 24, UI.PAPER))
+		_open_sheet(v)
+		return
+	var cur: Dictionary = types[0]
+	for lt in types:
+		if str(lt["id"]) == chosen_type:
+			cur = lt
+	v.add_child(UI.label("1. QUE LIGAÇÃO?", 18, UI.YELLOW, "type"))
+	var tf := HFlowContainer.new()
+	tf.add_theme_constant_override("h_separation", 8)
+	tf.add_theme_constant_override("v_separation", 8)
+	for lt in types:
+		var on: bool = lt == cur
+		var tb := UI.button(str(lt["label"]).to_upper(), "primary" if on else "ghost", 64)
+		tb.add_theme_font_override("font", UI.font("title"))
+		tb.add_theme_font_size_override("font_size", 24)
+		var tid := str(lt["id"])
+		tb.pressed.connect(func() -> void:
+			_close_sheet()
+			_open_involve(target, tid))
+		tf.add_child(tb)
+	v.add_child(tf)
+	v.add_child(UI.label("2. MARQUE AS PESSOAS  ·  cada uma %s %s" % [str(cur["label"]).to_upper(), _name_of(target).to_upper()], 18, UI.YELLOW, "type"))
+	var picked := {}
+	var existing := {}
+	for l in Net.state.get("board", {}).get("links", []):
+		if str(l["b"]) == target and str(l["type"]) == str(cur["id"]):
+			existing[str(l["a"])] = true
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 10)
+	grid.add_theme_constant_override("v_separation", 10)
+	var go := UI.button("ESCOLHA AS PESSOAS", "primary", 96)
+	go.disabled = true
+	for c in Net.case_data.get("cards", []):
+		if c["kind"] != "pessoa":
+			continue
+		var pid := str(c["id"])
+		var b := _palette_item(c, false)
+		b.toggle_mode = true
+		b.add_theme_stylebox_override("pressed", UI.box(UI.YELLOW, UI.INK, 0, 8, 8))
+		if existing.has(pid):
+			b.disabled = true
+			b.tooltip_text = "já ligado"
+		b.toggled.connect(func(on: bool) -> void:
+			if on:
+				picked[pid] = true
+			else:
+				picked.erase(pid)
+			go.disabled = picked.is_empty()
+			go.text = "LIGAR %d PESSOA%s" % [picked.size(), "" if picked.size() == 1 else "S"] if not picked.is_empty() else "ESCOLHA AS PESSOAS")
+		grid.add_child(b)
+	v.add_child(grid)
+	go.pressed.connect(func() -> void:
+		var tcard := {}
+		for c in Net.state.get("board", {}).get("cards", []):
+			if str(c["ref"]) == "p:" + target:
+				tcard = c
+		var cx := float(tcard.get("x", 0.5))
+		var cy := float(tcard.get("y", 0.5))
+		var k := 0
+		var pinned := _pinned_refs()
+		for pid in picked:
+			if not pinned.has("p:" + pid):
+				var ang := TAU * float(k) / maxf(1.0, float(picked.size()))
+				Net.board_op({"k": "pin", "ref": "p:" + pid, "x": clampf(cx + cos(ang) * 0.22, 0.05, 0.95), "y": clampf(cy + sin(ang) * 0.22, 0.05, 0.95)})
+			Net.board_op({"k": "link", "a": pid, "b": target, "type": cur["id"], "color": link_color})
+			k += 1
+		Sfx.play("string_connect")
+		_close_sheet()
+		get_meta("main").toast("%d fio%s ligado%s a %s." % [picked.size(), "" if picked.size() == 1 else "s", "" if picked.size() == 1 else "s", _name_of(target)], UI.GREEN))
+	v.add_child(go)
+	_open_sheet(v)
+
+
+const TAGS := [["inocente", "INOCENTE", "#2f8f55"], ["suspeito", "SUSPEITO", "#d39b1f"], ["mentiu", "MENTIU", "#c42c3f"], ["alibi", "TEM ÁLIBI", "#2f6fb0"]]
+
+
+## Etiquetas na carta da pessoa: o que a equipe acha dela (carimbo no quadro, vale para todos).
+func _open_tag_picker(ref: String) -> void:
+	var v := UI.vbox(14)
+	v.add_child(UI.title("MARCAR %s" % _name_of(ref.substr(2)).to_upper(), 44, UI.YELLOW))
+	v.add_child(UI.label("O carimbo fica na carta para toda a equipe ver. Use para separar quem já foi descartado de quem ainda é suspeito.", 21, UI.MIST))
+	var cur := ""
+	for c in Net.state.get("board", {}).get("cards", []):
+		if c["ref"] == ref:
+			cur = str(c.get("tag", "")) if c.get("tag") != null else ""
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 12)
+	grid.add_theme_constant_override("v_separation", 12)
+	for t in TAGS:
+		var col := Color(str(t[2]))
+		var b := UI.button(str(t[1]), "ghost", 90)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_override("font", UI.font("title"))
+		b.add_theme_font_size_override("font_size", 32)
+		b.add_theme_color_override("font_color", UI.PAPER if cur == t[0] else col.lightened(0.3))
+		b.add_theme_stylebox_override("normal", UI.box(col if cur == t[0] else Color(col, 0.15), col, 3, 12))
+		var tag: String = t[0]
+		b.pressed.connect(func() -> void:
+			Net.board_op({"k": "tag", "ref": ref, "tag": tag})
+			Sfx.play("submit_stamp")
+			_close_sheet())
+		grid.add_child(b)
+	v.add_child(grid)
+	if cur != "":
+		var clear := UI.button("TIRAR A MARCA", "ghost", 76)
+		clear.pressed.connect(func() -> void:
+			Net.board_op({"k": "tag", "ref": ref, "tag": null})
+			_close_sheet())
+		v.add_child(clear)
+	_open_sheet(v)
 
 
 func _name_of(id: String) -> String:
@@ -936,19 +1096,39 @@ func _open_relation_picker(a: String, b: String) -> void:
 		link_color = cname
 		_close_sheet()
 		_open_relation_picker(a, b)))
-	for op in options:
+	var own := options.filter(func(o: Array) -> bool: return not bool((o[2] as Dictionary).get("generic", false)))
+	var gen := options.filter(func(o: Array) -> bool: return bool((o[2] as Dictionary).get("generic", false)))
+	var make := func(op: Array) -> void:
+		Net.board_op({"k": "link", "a": op[0], "b": op[1], "type": op[2]["id"], "color": link_color})
+		Sfx.play("string_connect")
+		_close_sheet()
+	if not own.is_empty():
+		v.add_child(UI.label("LIGAÇÕES DO CASO", 18, UI.YELLOW, "type"))
+	for op in own:
 		var lt: Dictionary = op[2]
-		var f: String = op[0]
-		var t: String = op[1]
-		var btn := UI.button("%s  %s  %s" % [_name_of(f), str(lt["label"]).to_upper(), _name_of(t)], "ghost", 96)
+		var btn := UI.button("%s  %s  %s" % [_name_of(op[0]), str(lt["label"]).to_upper(), _name_of(op[1])], "ghost", 96)
 		btn.add_theme_font_override("font", UI.font("bold"))
 		btn.add_theme_font_size_override("font_size", 26)
 		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		btn.pressed.connect(func() -> void:
-			Net.board_op({"k": "link", "a": f, "b": t, "type": lt["id"], "color": link_color})
-			Sfx.play("string_connect")
-			_close_sheet())
+		btn.pressed.connect(make.bind(op))
 		v.add_child(btn)
+	if not gen.is_empty():
+		# ligações gerais: para montar o panorama (quem estava com quem, quem mentiu, quem é inocente)
+		v.add_child(UI.label("OUTRAS LIGAÇÕES  ·  %s  ___  %s" % [_name_of(gen[0][0]).to_upper(), _name_of(gen[0][1]).to_upper()], 18, UI.YELLOW, "type"))
+		var grid := GridContainer.new()
+		grid.columns = 2
+		grid.add_theme_constant_override("h_separation", 10)
+		grid.add_theme_constant_override("v_separation", 10)
+		for op in gen:
+			var lt: Dictionary = op[2]
+			var gb := UI.button(str(lt["label"]).to_upper(), "ghost", 76)
+			gb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			gb.add_theme_font_override("font", UI.font("title"))
+			gb.add_theme_font_size_override("font_size", 26)
+			gb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			gb.pressed.connect(make.bind(op))
+			grid.add_child(gb)
+		v.add_child(grid)
 	# inverter só faz sentido entre cartas do mesmo tipo (ex.: quem contou para quem)
 	if ka == kb:
 		var swap := UI.button("Inverter: começar por %s" % _name_of(b), "ghost", 76)
@@ -980,7 +1160,7 @@ func _on_link_tapped(id: String) -> void:
 	# provas presas neste fio (até 3): cada uma com o que diz e um botão para tirar
 	var plist: Array = BoardView.proofs_of(l)
 	if not plist.is_empty():
-		v.add_child(UI.label("PROVAS NESTE FIO (%d de 3)" % plist.size(), 20, UI.YELLOW, "type"))
+		v.add_child(UI.label("PROVAS NESTE FIO (%d)" % plist.size(), 20, UI.YELLOW, "type"))
 		for pid in plist:
 			var pc := Net.clue_by_id(str(pid))
 			var prow := UI.hbox(10)
@@ -1007,7 +1187,7 @@ func _on_link_tapped(id: String) -> void:
 	v.add_child(_color_row(str(l.get("color", "vermelho")), func(cname: String) -> void:
 		Net.board_op({"k": "recolor", "id": id, "color": cname})
 		_close_sheet()))
-	var prove := UI.button("PRENDER UMA PROVA" if plist.is_empty() else ("PRENDER OUTRA PROVA" if plist.size() < 3 else "PRENDER OUTRA (a mais antiga volta ao quadro)"), "primary")
+	var prove := UI.button("PRENDER UMA PROVA" if plist.is_empty() else "PRENDER OUTRA PROVA", "primary")
 	prove.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	prove.pressed.connect(func() -> void: _open_evidence_picker(id))
 	v.add_child(prove)
@@ -1066,7 +1246,7 @@ func _open_link_picker_for_clue(clue_id: String) -> void:
 		var txt := "%s  %s  %s" % [_name_of(l["a"]), Net.link_label(l["type"]).to_upper(), _name_of(l["b"])]
 		var np := BoardView.proofs_of(l).size()
 		if np > 0:
-			txt += "   (%d prova%s%s)" % [np, "" if np == 1 else "s", ": a mais antiga volta ao quadro" if np >= 3 else ""]
+			txt += "   (%d prova%s)" % [np, "" if np == 1 else "s"]
 		var b := UI.button(txt, "ghost", 84)
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.add_theme_font_size_override("font_size", 24)
@@ -1461,6 +1641,7 @@ func _show_result(r: Dictionary) -> void:
 # ================================================================== painéis
 func _open_sheet(content: Control) -> void:
 	_close_sheet()
+	UI.fix_vertical_text.call_deferred(content)
 	var dim := ColorRect.new()
 	dim.color = Color(0, 0, 0, 0.55)
 	dim.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -1661,7 +1842,7 @@ func _update_guide() -> void:
 	if txt != "":
 		txt += "   (toque para ver como)"
 	guide_l.text = txt
-	guide.visible = txt != "" and not link_banner.visible
+	guide.visible = txt != "" and not link_banner.visible and not _guide_closed
 
 
 func _update_submit() -> void:
@@ -1678,11 +1859,9 @@ func _update_submit() -> void:
 func _process(_dt: float) -> void:
 	if _clue_pending and tab == "pistas" and Time.get_ticks_msec() >= _clue_busy_until:
 		_refresh_clues()
-	var s := Net.seconds_left()
+	# cronômetro: quanto tempo a equipe está investigando (sem limite)
+	var s := Net.seconds_elapsed()
 	timer_l.text = UI.fmt_time(s)
 	if s != _last_sec:
 		_last_sec = s
-		if s <= 60 and s > 0:
-			timer_l.add_theme_color_override("font_color", UI.RED if s % 2 == 0 else UI.YELLOW)
-			Sfx.play("timer_urgent" if s <= 10 else "timer_tick", -10.0)
 		_update_submit()

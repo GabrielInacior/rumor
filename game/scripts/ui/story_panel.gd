@@ -121,6 +121,26 @@ static func story(links: Array, culprit := "") -> Control:
 	hv.add_child(UI.label("Esta é a VERSÃO DE VOCÊS, montada no quadro. Pode estar certa ou errada. Leiam como uma história: faz sentido do começo ao fim? A prova de cada cena mostra mesmo aquilo?", 20, UI.INK))
 	head.add_child(hv)
 	v.add_child(head)
+	# elenco: o que a equipe marcou em cada pessoa (inocente, suspeito, mentiu, tem álibi)
+	var groups := {"suspeito": [], "mentiu": [], "alibi": [], "inocente": []}
+	for c in Net.state.get("board", {}).get("cards", []):
+		var tg = c.get("tag")
+		if tg != null and groups.has(str(tg)):
+			groups[str(tg)].append(UI.strip_emoji(str(Net.card_by_id(str(c["ref"]).substr(2)).get("name", ""))))
+	var any := false
+	for k in groups:
+		if not (groups[k] as Array).is_empty():
+			any = true
+	if any:
+		var cast := Paper.make("notebook")
+		var cv := UI.vbox(4)
+		cv.add_child(UI.label("O ELENCO SEGUNDO VOCÊS", 18, Color(UI.INK, 0.6), "type"))
+		for k in [["suspeito", "Suspeitos", "#a87a10"], ["mentiu", "Mentiram", "#c42c3f"], ["alibi", "Têm álibi", "#2f6fb0"], ["inocente", "Inocentes", "#2f8f55"]]:
+			var names: Array = groups[k[0]]
+			if not names.is_empty():
+				cv.add_child(UI.label("%s: %s" % [k[1], ", ".join(names)], 22, Color(str(k[2])), "bold"))
+		cast.add_child(cv)
+		v.add_child(cast)
 	if links.is_empty():
 		v.add_child(UI.label("O quadro ainda não tem fios. Ligue as cartas e a história aparece aqui.", 24, UI.PAPER, "type"))
 		return v

@@ -7,6 +7,8 @@ extends SubViewportContainer
 signal hotspot_tapped(id: String, label: String)
 signal flavor_tapped(text: String)
 signal person_tapped(id: String)
+signal looked_around   # primeiro arrasto da câmera (a dica "arraste para olhar" pode sumir)
+var _looked := false
 
 const TOON := preload("res://shaders/toon.gdshader")
 const OUTLINE := preload("res://shaders/outline.gdshader")
@@ -2529,6 +2531,9 @@ func _gui_input(e: InputEvent) -> void:
 		var dy := -mm.relative.x * sens
 		var dp := -mm.relative.y * sens * 0.7
 		_yaw = clampf(_yaw + dy, -_yaw_limit, _yaw_limit)
+		if not _looked:
+			_looked = true
+			looked_around.emit()
 		_pitch = clampf(_pitch + dp, PITCH_MIN, PITCH_MAX)
 		var dt := maxf(get_process_delta_time(), 0.001)
 		_vel = _vel.lerp(Vector2(dy, dp) / dt, 0.35)

@@ -113,6 +113,14 @@ func server_now_ms() -> float:
 	return Time.get_unix_time_from_system() * 1000.0 + clock_offset_ms
 
 
+## Segundos desde o começo da investigação (o relógio conta para cima, sem limite).
+func seconds_elapsed() -> int:
+	var st := float(state.get("startedAt", 0))
+	if st <= 0.0:
+		return 0
+	return maxi(0, int((server_now_ms() - st) / 1000.0))
+
+
 func seconds_left() -> int:
 	var ends := float(state.get("endsAt", 0))
 	if ends <= 0.0:

@@ -150,9 +150,7 @@ func _build_lobby() -> void:
 		func() -> void: Net.send({"t": "host_settings", "teamCount": int(Net.state["settings"]["teamCount"]) - 1}),
 		func() -> void: Net.send({"t": "host_settings", "teamCount": int(Net.state["settings"]["teamCount"]) + 1}),
 		"Sortear", func() -> void: Net.send({"t": "host_shuffle"})))
-	row.add_child(_stepper("TEMPO", "TimeLabel",
-		func() -> void: Net.send({"t": "host_settings", "extraMin": int(Net.state["settings"].get("extraMin", 0)) - 5}),
-		func() -> void: Net.send({"t": "host_settings", "extraMin": int(Net.state["settings"].get("extraMin", 0)) + 5})))
+
 	lobby_teams = GridContainer.new()
 	(lobby_teams as GridContainer).columns = 3 if wide else 2
 	lobby_teams.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -259,6 +257,7 @@ func _open_case_picker() -> void:
 	var lst := UI.vbox(10)
 	lst.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	sc.add_child(lst)
+	TouchScroll.attach(sc)
 	var sel := str(Net.state.get("settings", {}).get("caseId", ""))
 	var cases: Array = (Net.state.get("cases", []) as Array).duplicate()
 	cases.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.get("difficulty", 1)) < int(b.get("difficulty", 1)))
@@ -294,7 +293,7 @@ func _open_case_picker() -> void:
 		tg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		tg.max_lines_visible = 2
 		tv.add_child(tg)
-		var meta := UI.label("%s  ·  %d min  ·  %d envolvidos  ·  %d lugares" % [_diff_name(d), int(c.get("duration_sec", 900)) / 60,
+		var meta := UI.label("%s  ·  ~%d min  ·  %d envolvidos  ·  %d lugares" % [_diff_name(d), int(c.get("duration_sec", 900)) / 60,
 			int(c.get("people", 0)), int(c.get("places", 0))], 19, [Color("#2f6b3a"), Color("#8a6a1a"), Color("#c42c3f")][clampi(d, 1, 3) - 1], "bold")
 		meta.autowrap_mode = TextServer.AUTOWRAP_OFF
 		meta.clip_text = true
@@ -459,10 +458,11 @@ func _build_game() -> void:
 	page_box = UI.vbox(12)
 	page_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(page_box)
+	_touch = TouchScroll.attach(scroll)
 	v.add_child(scroll)
 	# controles numa fileira só (rótulos curtos): sobra mais tela para a lista
 	var ctrl := UI.hbox(8)
-	for spec in [["DICA", "ghost", "hint"], ["PISTA", "ghost", "rel"], ["+1 MIN", "ghost", "more"], ["ENCERRAR", "danger", "end"]]:
+	for spec in [["DICA", "ghost", "hint"], ["PISTA", "ghost", "rel"], ["ENCERRAR", "danger", "end"]]:
 		var b := UI.button(spec[0], spec[1], 64)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.add_theme_font_override("font", UI.font("title"))
@@ -477,6 +477,7 @@ func _build_game() -> void:
 
 
 var page_scroll: ScrollContainer
+var _touch: TouchScroll
 var _guide_dirty := true
 var _busy_until := 0
 var _pending := false
@@ -487,6 +488,8 @@ func _touch_scroll() -> void:
 
 
 func _refresh_game() -> void:
+	if _touch and _touch.busy():
+		_busy_until = Time.get_ticks_msec() + 900
 	if page_scroll and Time.get_ticks_msec() < _busy_until:
 		_pending = true
 		return
@@ -1135,6 +1138,7 @@ func _open_guide_overlay() -> void:
 	sc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	v.add_child(sc)
+	TouchScroll.attach(sc)
 	var fill := func() -> void:
 		if not is_instance_valid(sc):
 			return
@@ -1183,15 +1187,12 @@ func _process(_dt: float) -> void:
 	if _pending and Time.get_ticks_msec() >= _busy_until and phase_built == "game":
 		_refresh_game()
 	if phase_built == "game" and timer_l and str(Net.state.get("phase", "")) == "playing":
-		var s := Net.seconds_left()
+		var s := Net.seconds_elapsed()
 		timer_l.text = UI.fmt_time(s)
 		if s != _last_sec:
 			_last_sec = s
 			if s % 5 == 0 and game_tab != "quadros":
 				_feed_len = -1
 				_refresh_game()
-			timer_l.add_theme_color_override("font_color", UI.RED if s <= 60 and s % 2 == 0 else UI.YELLOW)
-			if s <= 10 and s > 0:
-				Sfx.play("timer_urgent", -6.0)
 	elif phase_built == "game" and timer_l:
 		timer_l.text = ("%ds" % Net.seconds_left()) if Net.state.get("countdown", false) else "PRONTOS?"

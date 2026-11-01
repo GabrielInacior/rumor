@@ -70,7 +70,7 @@ static func build(g: Dictionary) -> Control:
 		ov.add_child(_bullet(str(k), "%s  (%d fio%s)" % [str(cat["label"]), n_edges, "" if n_edges == 1 else "s"]))
 	ov.add_child(UI.label("COMO TERMINAR", 20, UI.PINK, "bold"))
 	ov.add_child(_para("A equipe toca em ENTREGAR O CASO, aponta o culpado e todos votam. Um voto contra cancela e a equipe continua investigando. Depois de entregue, o quadro fecha e a equipe vê os próprios resultados enquanto espera as outras."))
-	ov.add_child(_para("Placar: primeiro quem acertou o culpado; depois quem provou mais partes; no empate, quem entregou antes. Se o tempo acabar, vale o quadro que a equipe tiver. A revelação aparece quando todas entregam ou quando a partida for encerrada no botão ENCERRAR."))
+	ov.add_child(_para("Placar: primeiro quem acertou o culpado; depois quem provou mais partes; no empate, quem entregou antes. Não há tempo limite: o relógio só mostra há quanto tempo a turma investiga. A revelação aparece quando todas as equipes entregam ou quando o caso é encerrado no botão ENCERRAR (aí vale o quadro que cada equipe tiver)."))
 	ov.add_child(_para("No modo solo, o aluno confirma a entrega sozinho."))
 	v.add_child(_section("OBJETIVOS E COMO TERMINAR", ov, true))
 

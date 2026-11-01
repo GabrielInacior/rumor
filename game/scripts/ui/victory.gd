@@ -107,7 +107,7 @@ func _make_card(sz: Vector2) -> Control:
 	st.count = stars
 	st.custom_minimum_size = Vector2(0, 70 * k)
 	v.add_child(st)
-	var tl := UI.title(("em " + UI.fmt_time(time_sec)) if solved and time_sec > 0 else (obj_line if obj_line != "" else "tempo esgotado"), int(48 * k), UI.YELLOW)
+	var tl := UI.title(("em " + UI.fmt_time(time_sec)) if solved and time_sec > 0 else (obj_line if obj_line != "" else "caso encerrado"), int(48 * k), UI.YELLOW)
 	tl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(tl)
 	if place > 0 and not Net.state.get("solo", false):

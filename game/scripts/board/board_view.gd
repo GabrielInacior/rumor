@@ -244,8 +244,11 @@ func _evidence_ids() -> Dictionary:
 func _evidence_rect(l: Dictionary, i := 0) -> Rect2:
 	var k := _knot(l)
 	var n := maxi(1, proofs_of(l).size())
-	var off := float(i) - float(n - 1) / 2.0
-	var c := k + Vector2(off * 118.0, 51.0 + absf(off) * 26.0)
+	# fileiras de até 4 cartas (muitas provas = rede em várias fileiras, sem limite)
+	var row := i / 4
+	var in_row := mini(4, n - row * 4)
+	var off := float(i % 4) - float(in_row - 1) / 2.0
+	var c := k + Vector2(off * 118.0, 51.0 + row * 104.0 + absf(off) * 20.0)
 	return Rect2(c - Vector2(66, 45), Vector2(132, 90))
 
 
@@ -568,6 +571,20 @@ func _draw_card(c: Dictionary) -> void:
 				_draw_silhouette(ph, card)
 			var nm := str(card.get("name", "?"))
 			draw_string(f_m, Vector2(lr.position.x + 8, lr.end.y - 18), nm, HORIZONTAL_ALIGNMENT_CENTER, lr.size.x - 16, _fit_size(f_m, nm, lr.size.x - 16, 30), UI.INK)
+			# carimbo da equipe sobre a foto: INOCENTE, SUSPEITO, MENTIU, TEM ÁLIBI
+			var tg = c.get("tag")
+			if tg != null and str(tg) != "":
+				var info: Array = {"inocente": ["INOCENTE", Color("#2f8f55")], "suspeito": ["SUSPEITO", Color("#d39b1f")],
+					"mentiu": ["MENTIU", Color("#c42c3f")], "alibi": ["TEM ÁLIBI", Color("#2f6fb0")]}.get(str(tg), ["?", UI.MIST])
+				var ft := UI.font("title")
+				var fs := 30
+				var tw := ft.get_string_size(str(info[0]), HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+				draw_set_transform(offset + (r.get_center() + Vector2(0, -10)) * zoom, tilt - 0.22, Vector2(zoom, zoom))
+				var sr := Rect2(Vector2(-tw / 2.0 - 10, -fs * 0.62), Vector2(tw + 20, fs + 6))
+				draw_rect(sr, Color(UI.PAPER, 0.85))
+				draw_rect(sr, info[1], false, 4.0)
+				draw_string(ft, Vector2(-tw / 2.0, fs * 0.36), str(info[0]), HORIZONTAL_ALIGNMENT_LEFT, -1, fs, info[1])
+				draw_set_transform(offset + r.get_center() * zoom, tilt, Vector2(zoom, zoom))
 		"lugar", "fato":
 			# polaroide: foto em cima (cena 3D do lugar ou objeto do fato), legenda à mão embaixo
 			var card := Net.card_by_id(ref.substr(2))

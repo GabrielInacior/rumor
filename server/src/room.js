@@ -1,5 +1,32 @@
 'use strict';
-const MAX_PROOFS = 3;
+// sem limite prático de provas por fio (a carta da prova sempre pode voltar ao quadro)
+const MAX_PROOFS = 50;
+// ligações gerais, disponíveis em todos os casos, para o aluno montar o panorama completo
+// (quem estava com quem, quem mentiu, quem é inocente...). Não contam na correção oficial,
+// a não ser que o caso use o mesmo id na solução.
+const GENERIC_LINKS = [
+  { id: 'g_estava_com', label: 'estava com', directed: false, pairs: ['pessoa>pessoa'] },
+  { id: 'g_viu', label: 'viu', directed: true, pairs: ['pessoa>pessoa', 'pessoa>fato'] },
+  { id: 'g_mentiu', label: 'mentiu para', directed: true, pairs: ['pessoa>pessoa'] },
+  { id: 'g_mentiu_sobre', label: 'mentiu sobre', directed: true, pairs: ['pessoa>fato'] },
+  { id: 'g_acobertou', label: 'acobertou', directed: true, pairs: ['pessoa>pessoa'] },
+  { id: 'g_alibi', label: 'é o álibi de', directed: true, pairs: ['pessoa>pessoa'] },
+  { id: 'g_brigou', label: 'brigou com', directed: false, pairs: ['pessoa>pessoa'] },
+  { id: 'g_amigo', label: 'é amigo(a) de', directed: false, pairs: ['pessoa>pessoa'] },
+  { id: 'g_sabia', label: 'sabia de', directed: true, pairs: ['pessoa>fato'] },
+  { id: 'g_motivo', label: 'tinha motivo para', directed: true, pairs: ['pessoa>fato'] },
+  { id: 'g_nao_fez', label: 'não fez', directed: true, pairs: ['pessoa>fato'] },
+  { id: 'g_esteve', label: 'esteve em', directed: true, pairs: ['pessoa>lugar'] },
+  { id: 'g_aconteceu', label: 'aconteceu em', directed: true, pairs: ['fato>lugar'] },
+];
+const CARD_TAGS = ['inocente', 'suspeito', 'mentiu', 'alibi'];
+
+/** Tipos de ligação do caso + gerais (sem repetir um rótulo que o caso já tem). */
+function allLinkTypes(c) {
+  const own = c.link_types || [];
+  const labels = new Set(own.map((t) => String(t.label).toLowerCase()));
+  return [...own, ...GENERIC_LINKS.filter((g) => !labels.has(g.label) && !own.some((t) => t.id === g.id))];
+}
 // provas de um fio (compatível com quadros antigos que tinham só "evidence")
 function proofsOf(l) { return Array.isArray(l.proofs) ? [...l.proofs] : (l.evidence ? [l.evidence] : []); }
 // Uma sala de aula: professor (host), equipes, alunos, quadro compartilhado por equipe.
@@ -258,7 +285,8 @@ class Room {
   beginPlaying() {
     this.phase = 'playing';
     this.startedAt = Date.now();
-    this.phaseEndsAt = this.startedAt + this.settings.durationSec * 1000;
+    // sem tempo limite: o relógio só conta quanto tempo passou (desempate pelo tempo de entrega)
+    this.phaseEndsAt = 0;
     for (const clue of this.caseData.clues) {
       if (clue.release === 'start') this.releaseClue(clue, true);
     }
@@ -367,7 +395,7 @@ class Room {
       if (!this.released.has(x.clue.id) && elapsed >= x.at) { this.releaseClue(x.clue, false); changed = true; }
     }
     for (const t of this.teams) if (t.vote && now - t.vote.at > 90000) { t.vote = null; changed = true; }
-    if (now >= this.phaseEndsAt) { this.toReveal(); changed = true; }
+    if (this.phaseEndsAt && now >= this.phaseEndsAt) { this.toReveal(); changed = true; }
     if (changed) this.broadcast();
   }
 
@@ -532,6 +560,15 @@ class Room {
     this.broadcast();
   }
 
+  /** Devolve a carta de uma prova ao quadro, perto do fio (se ela ainda não estiver lá). */
+  returnToBoard(b, l, clueId, p, i) {
+    if (!clueId || b.cards.some((x) => x.ref === 'c:' + clueId)) return;
+    const clamp = (v) => Math.max(0.02, Math.min(0.98, v));
+    const ca = b.cards.find((x) => x.ref === 'p:' + l.a) || { x: 0.5, y: 0.5 };
+    const cb = b.cards.find((x) => x.ref === 'p:' + l.b) || { x: 0.5, y: 0.5 };
+    b.cards.push({ ref: 'c:' + clueId, x: clamp((ca.x + cb.x) / 2 + 0.1 + i * 0.06), y: clamp((ca.y + cb.y) / 2 + 0.18), by: p.name });
+  }
+
   logBoard(team, p, op) {
     const nm = (id) => { const c = this.caseData.cards.find((x) => x.id === id); return c ? c.name : id; };
     const refName = (ref) => {
@@ -545,6 +582,8 @@ class Room {
     else if (op.k === 'link') this.log(team.id, p.name, `${p.name} ligou ${nm(op.a)} ${lt(op.type)} ${nm(op.b)}`, 'quadro');
     else if (op.k === 'unlink') this.log(team.id, p.name, `${p.name} cortou um fio`, 'quadro');
     else if (op.k === 'attach' && op.clue) this.log(team.id, p.name, `${p.name} prendeu uma prova num fio`, 'quadro');
+    else if (op.k === 'detach') this.log(team.id, p.name, `${p.name} tirou uma prova de um fio (voltou para o quadro)`, 'quadro');
+    else if (op.k === 'tag') this.log(team.id, p.name, op.tag ? `${p.name} marcou ${refName(op.ref)} como ${({ inocente: 'INOCENTE', suspeito: 'SUSPEITO', mentiu: 'MENTIU', alibi: 'TEM ÁLIBI' })[op.tag]}` : `${p.name} tirou a marca de ${refName(op.ref)}`, 'quadro');
     else if (op.k === 'move') p.lastAction = Date.now();
   }
 
@@ -583,8 +622,10 @@ class Room {
         const i = b.cards.findIndex((x) => x.ref === op.ref);
         if (i < 0) return false;
         b.cards.splice(i, 1);
-        b.links = b.links.filter((l) => l.a !== op.ref.slice(2) || !op.ref.startsWith('p:'))
-          .filter((l) => l.b !== op.ref.slice(2) || !op.ref.startsWith('p:'));
+        // fios que saem junto com a carta devolvem as provas deles ao quadro (nada some)
+        const gone = op.ref.startsWith('p:') ? b.links.filter((l) => l.a === op.ref.slice(2) || l.b === op.ref.slice(2)) : [];
+        for (const gl of gone) proofsOf(gl).forEach((x, k) => this.returnToBoard(b, gl, x, p, k));
+        b.links = b.links.filter((l) => !gone.includes(l));
         if (op.ref.startsWith('c:')) {
           const cid = op.ref.slice(2);
           for (const l of b.links) { l.proofs = proofsOf(l).filter((x) => x !== cid); l.evidence = l.proofs[0] || null; }
@@ -595,7 +636,7 @@ class Room {
         const a = String(op.a || ''); const bb = String(op.b || '');
         if (a === bb || b.links.length >= MAX_LINKS) return false;
         if (!b.cards.some((x) => x.ref === 'p:' + a) || !b.cards.some((x) => x.ref === 'p:' + bb)) return false;
-        if (!c.link_types.some((t) => t.id === op.type)) return false;
+        if (!allLinkTypes(c).some((t) => t.id === op.type)) return false;
         if (b.links.some((l) => l.a === a && l.b === bb && l.type === op.type)) return false;
         b.seq += 1;
         const color = LINK_COLORS.includes(op.color) ? op.color : 'vermelho';
@@ -610,7 +651,7 @@ class Room {
       }
       case 'retype': {
         const l = b.links.find((x) => x.id === op.id);
-        if (!l || !c.link_types.some((t) => t.id === op.type)) return false;
+        if (!l || !allLinkTypes(c).some((t) => t.id === op.type)) return false;
         l.type = op.type;
         return true;
       }
@@ -629,20 +670,16 @@ class Room {
         // um fio guarda até 3 provas (a rede de provas); a 4ª entra no lugar da mais antiga
         const l = b.links.find((x) => x.id === op.id);
         if (!l) return false;
-        if (op.clue == null) { l.proofs = []; l.evidence = null; return true; }
+        if (op.clue == null) {
+          proofsOf(l).forEach((x, i) => this.returnToBoard(b, l, x, p, i));
+          l.proofs = []; l.evidence = null; return true;
+        }
         if (!this.visibleClues(team, p).has(op.clue)) return false;
         const list = proofsOf(l);
         if (list.includes(op.clue)) return false;
         list.push(op.clue);
         // passou de 3: a prova mais antiga sai do fio e VOLTA para o quadro (perto do fio)
-        while (list.length > MAX_PROOFS) {
-          const out = list.shift();
-          if (!b.cards.some((x) => x.ref === 'c:' + out)) {
-            const ca = b.cards.find((x) => x.ref === 'p:' + l.a) || { x: 0.5, y: 0.5 };
-            const cb = b.cards.find((x) => x.ref === 'p:' + l.b) || { x: 0.5, y: 0.5 };
-            b.cards.push({ ref: 'c:' + out, x: clamp((ca.x + cb.x) / 2 + 0.12), y: clamp((ca.y + cb.y) / 2 + 0.16), by: p.name });
-          }
-        }
+        while (list.length > MAX_PROOFS) this.returnToBoard(b, l, list.shift(), p, 0);
         l.proofs = list;
         l.evidence = list[0];
         // a carta da pista sai do quadro e vai para o fio (não fica cópia solta)
@@ -650,13 +687,23 @@ class Room {
         return true;
       }
       case 'detach': {
+        // tirar a prova do fio: a carta VOLTA para o quadro (perto do fio), nunca some
         const l = b.links.find((x) => x.id === op.id);
         if (!l) return false;
         const list = proofsOf(l);
         const n = list.length;
         l.proofs = list.filter((x) => x !== op.clue);
         l.evidence = l.proofs[0] || null;
+        if (l.proofs.length !== n) this.returnToBoard(b, l, op.clue, p, 0);
         return l.proofs.length !== n;
+      }
+      case 'tag': {
+        // etiqueta na carta da pessoa (INOCENTE, SUSPEITO, MENTIU, TEM ÁLIBI) ou null para tirar
+        const card = b.cards.find((x) => x.ref === op.ref);
+        if (!card) return false;
+        if (op.tag != null && !CARD_TAGS.includes(op.tag)) return false;
+        card.tag = op.tag || null;
+        return true;
       }
       default:
         return false;
@@ -793,7 +840,8 @@ function publicCase(c) {
     const k = `${kindOf[e.from]}>${kindOf[e.to]}`;
     (pairs[e.type] = pairs[e.type] || new Set()).add(k);
   }
-  const link_types = (c.link_types || []).map((lt) => ({ ...lt, pairs: pairs[lt.id] ? [...pairs[lt.id]] : [] }));
+  const link_types = allLinkTypes(c).map((lt) => ({ ...lt, generic: lt.id.startsWith('g_'),
+    pairs: lt.pairs ? lt.pairs : (pairs[lt.id] ? [...pairs[lt.id]] : []) }));
   return {
     ...rest,
     link_types,
@@ -805,4 +853,4 @@ function publicCase(c) {
   };
 }
 
-module.exports = { Room, publicCase, TEAM_PRESETS };
+module.exports = { Room, publicCase, TEAM_PRESETS, allLinkTypes, GENERIC_LINKS };

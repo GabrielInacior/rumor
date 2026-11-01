@@ -207,6 +207,8 @@ func _route() -> void:
 		_swap(kind)
 	elif current and current.has_method("refresh"):
 		current.refresh()
+	if current:
+		UI.fix_vertical_text.call_deferred(current)
 
 
 func _swap(kind: String) -> void:
@@ -290,7 +292,13 @@ func _teacher_note(text: String) -> void:
 	note.custom_minimum_size = Vector2(minf(size.x - 60, 620), 0)
 	note.rotation = -0.02
 	var v := UI.vbox(14)
-	v.add_child(UI.title("MENSAGEM DO PROF. AILSON", 40, UI.RED))
+	var th := UI.hbox(10)
+	var tt := UI.title("MENSAGEM DO PROF. AILSON", 40, UI.RED)
+	tt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	th.add_child(tt)
+	th.add_child(UI.close_x(func() -> void: layer.queue_free(), UI.INK, 50.0))
+	v.add_child(th)
 	v.add_child(UI.label(UI.strip_emoji(text), 32, UI.INK, "marker"))
 	var ok := UI.button("ENTENDI", "primary", 86)
 	ok.pressed.connect(func() -> void: layer.queue_free())
@@ -304,15 +312,21 @@ func _teacher_note(text: String) -> void:
 
 func toast(text: String, color := UI.YELLOW) -> void:
 	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.95), color, 3, 18, 20))
+	p.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.95), color, 3, 18, 14))
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var ph := UI.hbox(10)
+	ph.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var l := UI.label(text, 26, UI.PAPER, "bold")
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	p.add_child(l)
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ph.add_child(l)
+	p.add_child(ph)
 	var m := UI.margin(24, 0, 0)
 	m.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	m.add_child(p)
 	toast_box.add_child(m)
+	ph.add_child(UI.close_x(func() -> void: if is_instance_valid(m): m.queue_free(), UI.PAPER, 48.0))
 	p.modulate.a = 0.0
 	var tw := create_tween()
 	# avisos ficam bastante tempo e somem devagar (o aluno pode estar conversando com a equipe)

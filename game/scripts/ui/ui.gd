@@ -206,6 +206,25 @@ static func render_scale(tree: SceneTree) -> float:
 	return clampf(f, 1.0, 2.0)
 
 
+## Botão X redondo para fechar avisos, dicas e mensagens (todo aviso tem um).
+static func close_x(on_close: Callable, col := PAPER, side := 54.0) -> Button:
+	var b := Button.new()
+	b.text = "X"
+	b.focus_mode = Control.FOCUS_NONE
+	b.custom_minimum_size = Vector2(side, side)
+	b.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	b.add_theme_font_override("font", font("title"))
+	b.add_theme_font_size_override("font_size", int(side * 0.55))
+	b.add_theme_color_override("font_color", col)
+	b.add_theme_color_override("font_hover_color", YELLOW)
+	b.add_theme_stylebox_override("normal", box(Color(0, 0, 0, 0.35), Color(col, 0.6), 2, int(side / 2.0), 0))
+	b.add_theme_stylebox_override("hover", box(Color(0, 0, 0, 0.5), YELLOW, 2, int(side / 2.0), 0))
+	b.add_theme_stylebox_override("pressed", box(Color(YELLOW, 0.3), YELLOW, 2, int(side / 2.0), 0))
+	b.tooltip_text = "Fechar"
+	b.pressed.connect(on_close)
+	return b
+
+
 ## Janela de confirmação por cima de tudo (sair do caso, fechar a sala...). Toque fora cancela.
 static func confirm(host: Node, title_text: String, body: String, yes_text: String, on_yes: Callable, no_text := "CONTINUAR AQUI") -> void:
 	var layer := CanvasLayer.new()
@@ -294,8 +313,26 @@ static func pop_in(c: Control, delay := 0.0) -> void:
 
 ## Dentro de uma rolagem, painéis e botões não podem "segurar" o dedo, senão a lista não rola
 ## no celular. PASS deixa o toque chegar ao ScrollContainer e os botões continuam funcionando.
+## Texto com quebra automática numa fila (HFlow/HBox) sem largura própria vira coluna de letras no
+## navegador do celular: nessas filas o texto fica numa linha só.
+static func _fix_label(par: Node, c: Node) -> void:
+	if c is Label and (c as Label).autowrap_mode != TextServer.AUTOWRAP_OFF:
+		var lab := c as Label
+		if (par is HFlowContainer) or (par is HBoxContainer and not (lab.size_flags_horizontal & Control.SIZE_EXPAND)):
+			if lab.custom_minimum_size.x <= 0.0:
+				lab.autowrap_mode = TextServer.AUTOWRAP_OFF
+
+
+## Varre a árvore e conserta só o texto (não mexe em toque/rolagem).
+static func fix_vertical_text(n: Node) -> void:
+	for c in n.get_children():
+		_fix_label(n, c)
+		fix_vertical_text(c)
+
+
 static func scroll_friendly(n: Node) -> void:
 	for c in n.get_children():
+		_fix_label(n, c)
 		if c is Control:
 			var ctl := c as Control
 			if ctl is LineEdit or ctl is TextEdit or ctl is ScrollContainer or ctl is SubViewportContainer or ctl.get_class() == "Control" and ctl.has_method("fit"):

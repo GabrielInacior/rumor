@@ -47,7 +47,7 @@ func _build() -> void:
 	tg.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tg.set_meta("wrap", true)
 	add_child(tg)
-	var info := UI.label("%s  ·  %d ENVOLVIDOS  ·  %d MIN" % [str(data.get("place", "Escola")).to_upper(), int(data.get("people", 0)),
+	var info := UI.label("%s  ·  %d ENVOLVIDOS  ·  ~%d MIN" % [str(data.get("place", "Escola")).to_upper(), int(data.get("people", 0)),
 		int(data.get("duration_sec", 600)) / 60], 19, Color(INK, 0.7), "type")
 	info.autowrap_mode = TextServer.AUTOWRAP_OFF
 	info.clip_text = true
