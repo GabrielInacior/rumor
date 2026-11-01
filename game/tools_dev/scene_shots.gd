@@ -37,10 +37,11 @@ func _ready() -> void:
 			hs.append({"id": "h%d" % i, "object": anchors[i], "label": anchors[i]})
 		var ppl := []
 		if id != "fachada":
-			ppl = [{"id": "a", "look": {"top": "#c84a5e", "hair_color": "#2a1a14"}},
-				{"id": "b", "look": {"top": "#4e8a6a", "hair_color": "#e0b040", "skin": "#8a5a3e"}},
-				{"id": "c", "look": {"top": "#6a5aa8", "hair_color": "#1c1830"}}]
+			ppl = [{"id": "a", "name": "Bia", "look": {"top": "#c84a5e", "hair_color": "#2a1a14"}},
+				{"id": "b", "name": "Caio", "look": {"top": "#4e8a6a", "hair_color": "#e0b040", "skin": "#8a5a3e"}},
+				{"id": "c", "name": "Duda", "look": {"top": "#6a5aa8", "hair_color": "#1c1830"}}]
 		cs.setup(id, hs, {}, ppl)
+		cs.set_talked("c", true)   # mostra os dois estados do balão na mesma captura
 		cs.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		add_child(cs)
 		if id == "fachada":

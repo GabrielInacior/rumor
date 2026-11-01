@@ -115,6 +115,7 @@ func _build() -> void:
 	for c in world.get_children():
 		c.queue_free()
 	_targets.clear()
+	_talkers.clear()
 	_glows.clear()
 	_mats.clear()
 	_rains.clear()
@@ -132,8 +133,8 @@ func _build() -> void:
 	e.background_energy_multiplier = 1.0
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
-	e.ambient_light_color = Color("#2a3f78")
-	e.ambient_light_energy = 1.45
+	e.ambient_light_color = Color("#3a5290")
+	e.ambient_light_energy = 1.5
 	e.fog_enabled = true
 	e.fog_light_color = Color("#16244d")
 	e.fog_density = 0.025
@@ -168,6 +169,8 @@ func _build() -> void:
 	_place_hotspots()
 	_place_people()
 	_auto_frame()
+	for d in DUST.get(scene_id, []):
+		_dust(d[0], d[1], d[2] if d.size() > 2 else Color("#ffd99a"))
 	# figurantes: rodinhas conversando e gente passando (não tocáveis)
 	var life := AmbientLife.new()
 	world.add_child(life)
@@ -267,6 +270,20 @@ const TEX_KIND := {
 	"carpet": ["fabric", 0.6, 0.8],
 	"concrete": ["concrete", 0.25, 1.0],
 }
+## poeira na luz: [centro, tamanho da caixa, cor]
+const DUST := {
+	"corredor": [[Vector3(0, 1.6, -13.2), Vector3(2.0, 2.2, 2.0)], [Vector3(-0.8, 2.0, -4.6), Vector3(1.6, 1.4, 1.2)]],
+	"biblioteca": [[Vector3(0.4, 1.4, -3.6), Vector3(1.6, 1.2, 1.4)], [Vector3(0.4, 1.8, -10.4), Vector3(2.4, 2.4, 1.4), Color("#bcd0ff")]],
+	"teatro": [[Vector3(0.7, 3.0, -6.4), Vector3(1.2, 4.4, 1.6)]],
+	"sala_aula": [[Vector3(-2.6, 1.6, -3.0), Vector3(1.4, 1.6, 4.0), Color("#bcd0ff")], [Vector3(2.6, 1.3, -0.6), Vector3(1.0, 1.6, 1.0)]],
+	"cantina": [[Vector3(-0.4, 1.7, -6.0), Vector3(2.8, 1.2, 1.0)]],
+	"sala_professores": [[Vector3(-2.6, 1.7, -3.8), Vector3(1.4, 1.4, 2.0), Color("#bcd0ff")], [Vector3(2.6, 1.4, -3.2), Vector3(0.8, 0.8, 1.0)]],
+	"quadra": [[Vector3(-3.0, 3.6, -6.0), Vector3(2.0, 5.0, 2.0), Color("#dfe8ff")]],
+	"sala_diretor": [[Vector3(-0.8, 1.4, -4.3), Vector3(1.0, 1.0, 0.8)], [Vector3(2.2, 1.6, -3.6), Vector3(1.2, 1.6, 1.6), Color("#bcd0ff")]],
+	"deposito": [[Vector3(0.1, 1.2, -3.0), Vector3(1.6, 2.0, 1.6)]],
+	"laboratorio": [[Vector3(-0.6, 1.4, -4.9), Vector3(1.0, 1.0, 1.0)]],
+	"sala_musica": [[Vector3(-0.6, 1.5, -4.4), Vector3(2.0, 1.6, 1.6)]],
+}
 const FLOOR_KIND := {
 	"corredor": "tile", "biblioteca": "planks", "teatro": "planks", "sala_aula": "tile", "cantina": "tile",
 	"patio": "concrete", "sala_professores": "tile", "quadra": "court", "sala_diretor": "planks",
@@ -312,6 +329,11 @@ func _box(pos: Vector3, sz: Vector3, col: Color, rot_y := 0.0, emit := 0.0, outl
 	bm.size = sz
 	mi.mesh = bm
 	var k := _classify(pos, sz, col, emit) if kind == "auto" else ("" if kind == "none" else kind)
+	if k == "ceiling":
+		# teto: nenhuma luz da cena bate nele de frente e ele virava uma faixa preta no alto da tela;
+		# um brilho próprio bem fraco devolve a pincelada do reboco sem acender o teto
+		emit = 0.14
+		emit_col = col
 	mi.material_override = _mat(col, emit, emit_col, outline, k)
 	mi.position = pos
 	mi.rotation.y = rot_y
@@ -370,8 +392,11 @@ func _light(pos: Vector3, col: Color, energy: float, rng: float) -> OmniLight3D:
 	var l := OmniLight3D.new()
 	l.position = pos
 	l.light_color = col
-	l.light_energy = energy
-	l.omni_range = rng
+	# luz quente (lâmpada, abajur, porta acesa) ganha força e alcance: é o contraponto amarelo ao
+	# azul da noite, e o que faz o celular com brilho baixo ainda ler chão e paredes
+	var warm := col.r > col.b + 0.1
+	l.light_energy = energy * (1.4 if warm else 1.1)
+	l.omni_range = rng * (1.2 if warm else 1.0)
 	l.omni_attenuation = 1.2
 	world.add_child(l)
 	return l
@@ -380,7 +405,7 @@ func _light(pos: Vector3, col: Color, energy: float, rng: float) -> OmniLight3D:
 func _moon(dir: Vector3, energy := 1.1) -> void:
 	var s := DirectionalLight3D.new()
 	s.light_color = Color("#9fb8ff")
-	s.light_energy = energy
+	s.light_energy = energy * 1.25
 	s.shadow_enabled = true
 	s.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	s.directional_shadow_max_distance = 22.0
@@ -534,16 +559,119 @@ func _place_people() -> void:
 		body.add_child(shape)
 		ch.add_child(body)
 		_targets[body.get_instance_id()] = {"kind": "person", "id": c["id"], "mesh": null}
+		_talk_marks(str(c["id"]), spots[i], UI.strip_emoji(str(c.get("name", ""))).strip_edges())
 	# uma luz só de "câmera" (preenchimento quente vindo do olhar do jogador) no lugar de uma luz por
 	# pessoa: as pessoas leem bem no escuro e a cena economiza até 2 luzes no celular
 	var fill := SpotLight3D.new()
 	fill.light_color = Color("#ffd9a8")
-	fill.light_energy = 1.5
+	fill.light_energy = 1.8
 	fill.spot_range = 14.0
 	fill.spot_angle = 30.0
 	fill.spot_attenuation = 0.6
 	fill.position = Vector3(0, 0.25, 0)
 	cam.add_child(fill)
+
+
+# ------------------------------------------------------------------ marcas de quem dá para conversar
+## Sobre cada pessoa do caso (não nos figurantes): balão de fala com "..." balançando, o nome em
+## letra de cartaz e um anel amarelo pulsando no chão. Tudo billboard/aditivo, sem luz nova:
+## 2 sprites + 1 rótulo por pessoa. set_talked() troca o balão pelo check cinza de "já conversou".
+const BUBBLE_TALK := preload("res://assets/textures/bubble_talk.png")
+const BUBBLE_DONE := preload("res://assets/textures/bubble_done.png")
+const RING_FLOOR := preload("res://assets/textures/ring_floor.png")
+const AURA_TEX := preload("res://assets/textures/aura.png")
+const AURA_ON := Color(1.0, 0.8, 0.3, 0.24)   # sutil: baixa opacidade, nunca estoura
+var _talkers := {}              # id -> {bubble, ring, name, base, talked, phase}
+var _talked_ids := {}           # lembra o estado entre remontagens da cena
+
+
+func set_talked(id: String, talked: bool) -> void:
+	if talked:
+		_talked_ids[id] = true
+	else:
+		_talked_ids.erase(id)
+	if _talkers.has(id):
+		_apply_talked(_talkers[id], talked)
+
+
+func _apply_talked(t: Dictionary, talked: bool) -> void:
+	t["talked"] = talked
+	var b: Sprite3D = t["bubble"]
+	b.texture = BUBBLE_DONE if talked else BUBBLE_TALK
+	b.pixel_size = (0.0019 if talked else 0.0026)
+	(t["ring"] as Sprite3D).visible = not talked
+	# aura: só existe enquanto a equipe nunca falou com a pessoa; depois some de vez
+	(t["aura"] as Node3D).visible = not talked
+
+
+func _talk_marks(id: String, foot: Vector3, nm: String) -> void:
+	var b := Sprite3D.new()
+	b.texture = BUBBLE_TALK
+	b.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	b.shaded = false
+	b.alpha_cut = SpriteBase3D.ALPHA_CUT_DISABLED
+	b.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	b.pixel_size = 0.0026
+	b.position = foot + Vector3(0.15, 2.15, 0)
+	b.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	world.add_child(b)
+	var r := Sprite3D.new()
+	r.texture = RING_FLOOR
+	r.shaded = false
+	r.axis = Vector3.AXIS_Y
+	r.pixel_size = 0.0042
+	r.modulate = Color(1, 1, 1, 0.75)
+	r.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	r.position = foot + Vector3(0, 0.02, 0)
+	r.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	world.add_child(r)
+	var l: Label3D = null
+	if nm != "":
+		l = _text(foot + Vector3(0.15, 2.58, 0), nm.to_upper(), 0.24, Color("#ffe9a8"), "bebas", 0.0, 7)
+		l.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		l.outline_modulate = Color("#060c1f")
+		l.shaded = false
+		l.fixed_size = false
+	# aura de quadrinho atrás do corpo: um quad billboard aditivo, empurrado para trás da pessoa
+	# (do ponto de vista da câmera) para contornar a silhueta sem cobrir o rosto
+	var am := StandardMaterial3D.new()
+	am.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	am.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	am.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	am.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	am.albedo_texture = AURA_TEX
+	am.albedo_color = AURA_ON
+	am.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	var qm := QuadMesh.new()
+	qm.size = Vector2(1.15, 2.3)
+	var away := foot - cam.global_position
+	away.y = 0.0
+	var aura := _mesh(qm, foot + Vector3(0, 1.02, 0) + away.normalized() * 0.12, am)
+	aura.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var t := {"bubble": b, "ring": r, "name": l, "base": b.position.y, "talked": false, "phase": randf() * TAU,
+		"aura": aura, "aura_mat": am}
+	_talkers[id] = t
+	_apply_talked(t, _talked_ids.has(id))
+
+
+func _animate_talkers() -> void:
+	for id in _talkers:
+		var t: Dictionary = _talkers[id]
+		var b: Sprite3D = t["bubble"]
+		var ph: float = t["phase"]
+		# balão sobe e desce devagar e inclina um tiquinho, como quem está pensando no que dizer
+		b.position.y = float(t["base"]) + sin(_t * 1.8 + ph) * 0.04
+		b.rotation.z = sin(_t * 1.1 + ph) * 0.06
+		if not t["talked"]:
+			# respiração lenta e pequena (±15% da opacidade, ciclo de ~5 s)
+			var am: StandardMaterial3D = t["aura_mat"]
+			am.albedo_color.a = AURA_ON.a * (1.0 + 0.15 * sin(_t * 1.25 + ph))
+		var r: Sprite3D = t["ring"]
+		if r.visible:
+			var k := 0.5 + 0.5 * sin(_t * 2.6 + ph)
+			r.modulate.a = 0.45 + 0.4 * k
+			var s := 1.0 + 0.08 * k
+			r.scale = Vector3(s, s, s)
 
 
 # ------------------------------------------------------------------ peças extras das cenas
@@ -554,7 +682,7 @@ const INK := Color("#111a33")
 const WALL := Color("#3d4a85")
 const WALL_L := Color("#6d7fb0")
 const WALL_M := Color("#4c5c94")
-const CEIL := Color("#2a3866")
+const CEIL := Color("#3a4a80")
 const WOOD := Color("#7a5a3e")
 const WOOD_D := Color("#5a3d2a")
 const WOOD_DD := Color("#3b2a20")
@@ -595,8 +723,8 @@ func set_showcase(on: bool) -> void:
 
 func _sky(bg: Color, ambient: Color, ambient_energy: float, fog: Color, fog_density: float) -> void:
 	_env.background_color = bg
-	_env.ambient_light_color = ambient
-	_env.ambient_light_energy = ambient_energy
+	_env.ambient_light_color = ambient.lerp(Color("#3a5290"), 0.4)
+	_env.ambient_light_energy = ambient_energy * 1.3
 	_env.fog_light_color = fog
 	_env.fog_density = fog_density
 
@@ -762,13 +890,7 @@ func _win_wall(along_x: bool, at: float, a0: float, a1: float, h: float, sill: f
 		else:
 			ledge = _box(Vector3(at + lin, sill + 0.02, c), Vector3(0.2, 0.05, ww + 0.1), WALL_L, 0.0, 0.0, 0.012)
 		ledges.append(ledge)
-		if sill < 2.0:
-			for half in [-1.0, 1.0]:
-				var pc: float = c + half * ww * 0.25
-				var pdepth := -out * 1.25
-				var ppos := Vector3(pc, 0.008, at + pdepth) if along_x else Vector3(at + pdepth, 0.008, pc)
-				var psz := Vector3(ww * 0.45, 0.004, 1.1) if along_x else Vector3(1.1, 0.004, ww * 0.45)
-				_flat(ppos, psz, Color("#5d78c0"), 0.0, 0.05, Color("#7d9be0"))
+		# (as manchas de luar no chão agora vêm da sombra real da lua passando pela janela)
 	if a1 - cursor > 0.02:
 		_wpiece(along_x, at, (cursor + a1) * 0.5, (sill + head) * 0.5, a1 - cursor, head - sill, th, col)
 	# lá fora é o céu pintado do ambiente (panorama); só a chuva fica entre a janela e o céu
@@ -834,6 +956,50 @@ func _beam(from: Vector3, to: Vector3, r_from: float, r_to: float, col: Color, a
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.basis = Basis(Quaternion(Vector3.UP, (from - to).normalized()))
 	return mi
+
+
+## poeira flutuando na luz: partículas de CPU (uma malha, um draw call), pontinhos aditivos que
+## sobem e descem devagar dentro de uma caixa. Dá ar ao facho e "respira" a cena parada.
+var _dust_mat: StandardMaterial3D
+
+
+func _dust(center: Vector3, size: Vector3, col := Color("#ffd99a"), amount := 36) -> CPUParticles3D:
+	if _dust_mat == null:
+		_dust_mat = StandardMaterial3D.new()
+		_dust_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_dust_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_dust_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		_dust_mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+		_dust_mat.vertex_color_use_as_albedo = true
+		_dust_mat.no_depth_test = false
+	var p := CPUParticles3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(0.022, 0.022)
+	q.material = _dust_mat
+	p.mesh = q
+	p.amount = amount
+	p.lifetime = 7.0
+	p.preprocess = 7.0
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	p.emission_box_extents = size * 0.5
+	p.direction = Vector3(0.2, 1, 0)
+	p.spread = 180.0
+	p.gravity = Vector3(0, -0.006, 0)
+	p.initial_velocity_min = 0.01
+	p.initial_velocity_max = 0.05
+	p.scale_amount_min = 0.6
+	p.scale_amount_max = 1.6
+	# acende e apaga ao longo da vida (some e reaparece em vez de "estourar")
+	var g := Gradient.new()
+	g.set_color(0, Color(col.r, col.g, col.b, 0.0))
+	g.set_color(1, Color(col.r, col.g, col.b, 0.0))
+	g.add_point(0.3, Color(col.r, col.g, col.b, 0.55))
+	g.add_point(0.7, Color(col.r, col.g, col.b, 0.45))
+	p.color_ramp = g
+	p.position = center
+	p.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	world.add_child(p)
+	return p
 
 
 ## poça: mancha escura com o reflexo esticado da luz mais próxima (reflexo falso, custo zero)
@@ -1026,7 +1192,7 @@ func _scene_biblioteca() -> void:
 	# tapete gasto no meio
 	_flat(Vector3(0.2, 0.005, -4.6), Vector3(2.6, 0.01, 4.4), Color("#5e3a4e"))
 	_flat(Vector3(0.2, 0.01, -4.6), Vector3(2.3, 0.01, 4.1), Color("#6e4a5a"))
-	_flat(Vector3(0, 3.6, -5), Vector3(10, 0.1, 14), Color("#241f45"))
+	_flat(Vector3(0, 3.6, -5), Vector3(10, 0.1, 14), CEIL)
 	_flat(Vector3(-5, 1.8, -5), Vector3(0.1, 3.6, 14), WALL)
 	_flat(Vector3(5, 1.8, -5), Vector3(0.1, 3.6, 14), WALL)
 	# parede do fundo: janelão no meio, estantes altas dos dois lados
@@ -1666,7 +1832,7 @@ func _scene_sala_diretor() -> void:
 	_flat(Vector3(0, -0.05, -2.5), Vector3(6, 0.1, 9), Color("#4a3a52"))
 	_flat(Vector3(0, 0.006, -3.6), Vector3(3.4, 0.01, 2.6), RED_D)
 	_flat(Vector3(0, 0.01, -3.6), Vector3(3.1, 0.01, 2.3), Color("#6b2a3e"))
-	_flat(Vector3(0, 3.0, -2.5), Vector3(6, 0.1, 9), Color("#241f45"))
+	_flat(Vector3(0, 3.0, -2.5), Vector3(6, 0.1, 9), CEIL)
 	_flat(Vector3(0, 1.5, -6.55), Vector3(6, 3.0, 0.1), Color("#3a4a7a"))
 	_flat(Vector3(0, 0.5, -6.48), Vector3(6, 1.0, 0.04), WOOD_D)   # lambri
 	_flat(Vector3(0, 1.0, -6.45), Vector3(6, 0.05, 0.06), WOOD)
@@ -2170,6 +2336,7 @@ func _process(dt: float) -> void:
 		(f["mat"] as ShaderMaterial).set_shader_parameter("emission_energy", float(f["emit"]) * k)
 	for s in _spinners:
 		(s["node"] as Node3D).rotation.y += dt * float(s["speed"])
+	_animate_talkers()
 	if _showcase:
 		# vitrine do menu: deriva lenta em yaw e pitch, como quem passeia na frente da escola
 		_yaw = sin(_t * 0.11) * _yaw_limit

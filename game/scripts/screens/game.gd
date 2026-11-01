@@ -141,6 +141,16 @@ func _build_scene_page() -> Control:
 	return page
 
 
+## A aura e o balão de "novo" somem para quem ESTE jogador já interrogou (cada aluno vê os seus).
+func _apply_talked() -> void:
+	if not scene3d.has_method("set_talked"):
+		return
+	for f in (Net.state.get("flags", {}) as Dictionary).keys():
+		var parts := str(f).split(":")
+		if parts.size() >= 3 and parts[0] == "talk" and parts[2] == Net.my_name:
+			scene3d.call("set_talked", parts[1], true)
+
+
 func _load_location(l: String) -> void:
 	loc = l
 	var hs := []
@@ -164,6 +174,7 @@ func _load_location(l: String) -> void:
 	for hid in Net.state.get("hotspots", []):
 		found[str(hid)] = true
 	scene3d.setup(l, hs, found, ppl)
+	_apply_talked()
 	_refresh_loc_strip()
 	Sfx.play("paper_flip", -8.0)
 
@@ -222,7 +233,10 @@ func _talk_to(pid: String) -> void:
 		scene3d.set_process(false)
 		tv.locked.connect(func(person: String, secs: float) -> void:
 			person_locks[person] = Time.get_ticks_msec() + secs * 1000.0)
-		tv.finished.connect(func() -> void: scene3d.set_process(tab == "cena"))
+		tv.finished.connect(func() -> void:
+			scene3d.set_process(tab == "cena")
+			if scene3d.has_method("set_talked"):
+				scene3d.call("set_talked", pid, true))
 		return
 	for c in Net.state.get("clues", []):
 		if str(c.get("kind", "")) == "depoimento" and str(c.get("who", c.get("from", ""))) == pid:
@@ -250,7 +264,10 @@ func _open_talk(card: Dictionary, lines: Array, subtitle: String) -> void:
 	tv.open(card, lines, subtitle)
 	add_child(UI.full(tv))
 	scene3d.set_process(false)
-	tv.finished.connect(func() -> void: scene3d.set_process(tab == "cena"))
+	tv.finished.connect(func() -> void:
+		scene3d.set_process(tab == "cena")
+		if scene3d.has_method("set_talked"):
+			scene3d.call("set_talked", str(card.get("id", "")), true))
 
 
 func _on_hotspot(id: String, label: String) -> void:
@@ -992,11 +1009,7 @@ func refresh() -> void:
 	# hotspots já achados pela equipe ficam apagados na cena
 	for hid in Net.state.get("hotspots", []):
 		scene3d.mark_found(str(hid))
-	# quem a equipe já interrogou ganha o sinal de "já conversou" na cena
-	if scene3d.has_method("set_talked"):
-		for f in (Net.state.get("flags", {}) as Dictionary).keys():
-			if str(f).begins_with("talk:"):
-				scene3d.call("set_talked", str(f).split(":")[1], true)
+	_apply_talked()
 	_refresh_loc_strip()
 	var lr: Variant = Net.state.get("lastResult")
 	if lr is Dictionary and float(lr.get("at", 0)) > last_result_at:
