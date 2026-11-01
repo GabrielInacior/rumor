@@ -7,6 +7,7 @@ const BoardView := preload("res://scripts/board/board_view.gd")
 const CaseScene := preload("res://scripts/scene3d/case_scene.gd")
 const TalkView := preload("res://scripts/scene3d/talk_view.gd")
 const ItemView := preload("res://scripts/ui/item_view.gd")
+const TutorialIcon := preload("res://scripts/ui/tutorial_icon.gd")
 
 var timer_l: Label
 var team_l: Label
@@ -314,22 +315,24 @@ func _refresh_clues() -> void:
 	# mochila: objetos de troca que a equipe carrega (pegos nas cenas ou ganhos em conversa)
 	var items: Array = Net.state.get("items", [])
 	# mochila da equipe: a mochila gira em 3D e cada objeto aparece como modelo low-poly
+	# mochila compacta: uma faixa só, com a mochila 3D pequena e os objetos em miniatura
 	var bag := PanelContainer.new()
-	bag.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.75), Color(UI.YELLOW, 0.5), 2, 22, 16))
-	var bh := UI.hbox(14)
+	bag.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.75), Color(UI.YELLOW, 0.4), 2, 18, 10))
+	var bh := UI.hbox(10)
 	var iv := ItemView.new()
 	iv.kind = "mochila"
-	iv.custom_minimum_size = Vector2(150, 150)
+	iv.custom_minimum_size = Vector2(80, 80)
 	bh.add_child(iv)
-	var bv := UI.vbox(6)
+	var bv := UI.vbox(4)
 	bv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bv.add_child(UI.title("MOCHILA DA EQUIPE", 38, UI.YELLOW))
+	var bt := UI.title("MOCHILA" + ("" if items.is_empty() else "  (%d)" % items.size()), 30, UI.YELLOW)
+	bv.add_child(bt)
 	if items.is_empty():
-		bv.add_child(UI.label("Vazia por enquanto. Objetos achados nas cenas vêm parar aqui e podem ser trocados por informação numa conversa.", 21, UI.MIST))
+		bv.add_child(UI.label("Vazia. Objetos achados nas cenas vêm para cá.", 19, UI.MIST))
 	else:
 		var flow := HFlowContainer.new()
-		flow.add_theme_constant_override("h_separation", 10)
-		flow.add_theme_constant_override("v_separation", 10)
+		flow.add_theme_constant_override("h_separation", 8)
+		flow.add_theme_constant_override("v_separation", 8)
 		for iid in items:
 			var it := {}
 			for x in Net.case_data.get("items", []):
@@ -337,7 +340,6 @@ func _refresh_clues() -> void:
 					it = x
 			flow.add_child(_item_card(it if not it.is_empty() else {"id": iid, "name": iid}))
 		bv.add_child(flow)
-		bv.add_child(UI.label("Ofereça numa conversa: alguém pode querer trocar por informação.", 19, UI.MIST))
 	bh.add_child(bv)
 	bag.add_child(bh)
 	clue_list.add_child(bag)
@@ -346,6 +348,7 @@ func _refresh_clues() -> void:
 		clue_list.add_child(_clue_row(c, mine.has(c["id"]), on_board.has("c:" + str(c["id"]))))
 	if clues.is_empty():
 		clue_list.add_child(UI.label("Nenhuma pista ainda. Explore a CENA!", 28, UI.MIST, "type"))
+	UI.scroll_friendly(clue_list)
 
 
 func _clue_row(c: Dictionary, mine: bool, pinned: bool) -> Control:
@@ -404,11 +407,12 @@ func _clue_row(c: Dictionary, mine: bool, pinned: bool) -> Control:
 
 
 func _item_card(it: Dictionary) -> Control:
-	var p := Paper.make("polaroid")
-	p.custom_minimum_size = Vector2(200, 0)
-	var v := UI.vbox(4)
+	# miniatura: foto do objeto 3D com o nome embaixo (toque longo mostra a descrição)
+	var p := Paper.make("card")
+	p.custom_minimum_size = Vector2(128, 0)
+	var v := UI.vbox(2)
 	var tr := TextureRect.new()
-	tr.custom_minimum_size = Vector2(176, 132)
+	tr.custom_minimum_size = Vector2(104, 70)
 	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	var key := "item:" + ItemModels.kind_for(it)
@@ -418,9 +422,10 @@ func _item_card(it: Dictionary) -> Control:
 			if k == key and is_instance_valid(tr):
 				tr.texture = Snap.get_tex(key), CONNECT_ONE_SHOT)
 	v.add_child(tr)
-	var n := UI.label(UI.strip_emoji(str(it.get("name", ""))), 22, UI.INK, "marker")
+	var n := UI.label(UI.strip_emoji(str(it.get("name", ""))), 17, UI.INK, "marker")
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	n.custom_minimum_size.x = 176
+	n.custom_minimum_size.x = 104
+	n.max_lines_visible = 2
 	v.add_child(n)
 	p.add_child(v)
 	p.tooltip_text = str(it.get("desc", ""))
@@ -501,6 +506,14 @@ func _build_board_page() -> Control:
 		board.queue_redraw()
 		_update_action_bar())
 	board.card_moved.connect(func(ref: String, p: Vector2) -> void: Net.board_op({"k": "move", "ref": ref, "x": p.x, "y": p.y}))
+	# atalhos de arrastar: pessoa até pessoa = ligar; pista até fio = prender a prova
+	board.link_dropped.connect(func(a: String, b: String) -> void:
+		Sfx.play("string_stretch")
+		_open_relation_picker(a, b))
+	board.evidence_dropped.connect(func(link_id: String, clue_id: String) -> void:
+		Net.board_op({"k": "attach", "id": link_id, "clue": clue_id})
+		Sfx.play("card_pin")
+		get_meta("main").toast("Prova presa no fio!", UI.GREEN))
 
 	var topbar := UI.hbox(12)
 	topbar.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
@@ -958,6 +971,7 @@ func _open_sheet(content: Control) -> void:
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(content)
+	UI.scroll_friendly(content)
 	frame.add_child(scroll)
 	panel.add_child(frame)
 	sheet_layer.add_child(panel)
@@ -975,7 +989,44 @@ func _close_sheet() -> void:
 	UI.clear(sheet_layer)
 
 
+var _board_tutorial_shown := false
+
+
+## Guia de 3 passos desenhado, na primeira vez que o aluno abre o quadro.
+func _board_tutorial() -> void:
+	_board_tutorial_shown = true
+	var v := UI.vbox(16)
+	v.add_child(UI.title("COMO MONTAR O QUADRO", 50, UI.YELLOW))
+	var steps := [
+		["1", "FIXE", "Toque em + FIXAR e coloque pessoas, lugares e fatos no quadro.", "pessoa"],
+		["2", "LIGUE", "Arraste uma carta até outra. Escolha o que uma fez com a outra.", "fio"],
+		["3", "PROVE", "Arraste a pista até o fio. Ela fica presa nele como PROVA.", "prova"],
+	]
+	for st in steps:
+		var row := Paper.make("card")
+		var h := UI.hbox(16)
+		var ill := TutorialIcon.new()
+		ill.kind = st[3]
+		ill.custom_minimum_size = Vector2(150, 110)
+		h.add_child(ill)
+		var sv := UI.vbox(2)
+		sv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var t := UI.title(st[0] + "  " + st[1], 42, UI.RED)
+		sv.add_child(t)
+		sv.add_child(UI.label(st[2], 24, UI.INK, "bold"))
+		h.add_child(sv)
+		row.add_child(h)
+		v.add_child(row)
+	v.add_child(UI.label("Depois, aponte o culpado e toque em APRESENTAR TEORIA. O quadro inteiro é a teoria da equipe.", 23, UI.PAPER))
+	var ok := UI.button("ENTENDI", "primary", 100)
+	ok.pressed.connect(_close_sheet)
+	v.add_child(ok)
+	_open_sheet(v)
+
+
 func _set_tab(k: String) -> void:
+	if k == "quadro" and not _board_tutorial_shown and (Net.state.get("board", {}).get("links", []) as Array).is_empty():
+		_board_tutorial.call_deferred()
 	tab = k
 	for key in pages:
 		(pages[key] as Control).visible = key == k
@@ -1050,9 +1101,9 @@ func _update_guide() -> void:
 	if people < 2:
 		txt = "PASSO 1 de 3   Toque em + FIXAR e coloque no quadro as pessoas do caso."
 	elif links.is_empty():
-		txt = "PASSO 2 de 3   Toque numa pessoa e depois em LIGAR COM FIO."
+		txt = "PASSO 2 de 3   ARRASTE uma pessoa até outra para ligar com um fio."
 	elif proved == 0:
-		txt = "PASSO 3 de 3   Toque no nó vermelho do fio e prenda uma PROVA."
+		txt = "PASSO 3 de 3   ARRASTE uma pista até o fio para prender a PROVA."
 	elif Net.state.get("lastResult") == null:
 		txt = "Isso! Liguem o resto da história e toquem em APRESENTAR TEORIA."
 	guide_l.text = txt

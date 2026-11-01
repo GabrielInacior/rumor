@@ -81,7 +81,8 @@ func _render_item(kind: String) -> Texture2D:
 
 func _render_scene(scene_id: String) -> Texture2D:
 	var cs := CaseScene.new()
-	cs.position = Vector2(-4000, -4000)
+	cs.position = Vector2(0, 0)
+	cs.modulate.a = 0.0
 	cs.size = Vector2(SIZE)
 	cs.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var layer := CanvasLayer.new()
@@ -89,6 +90,9 @@ func _render_scene(scene_id: String) -> Texture2D:
 	add_child(layer)
 	layer.add_child(cs)
 	cs.setup(scene_id, [], {}, [])
+	# fora da tela o SubViewport não atualiza sozinho: força o render para tirar a foto
+	cs.vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	cs.vp.size = SIZE
 	return await _grab(cs.vp, layer)
 
 

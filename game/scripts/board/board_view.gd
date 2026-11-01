@@ -8,8 +8,10 @@ signal card_tapped(ref: String)
 signal link_tapped(id: String)
 signal empty_tapped
 signal card_moved(ref: String, pos: Vector2)   # pos normalizada 0..1
+signal link_dropped(a: String, b: String)       # arrastou uma carta até outra: quer ligar
+signal evidence_dropped(link_id: String, clue_id: String)  # arrastou uma pista até um fio
 
-const BOARD := Vector2(1500, 1500)
+const BOARD := Vector2(1200, 1200)
 const SIZES := {
 	"pessoa": Vector2(176, 228), "lugar": Vector2(230, 200), "fato": Vector2(236, 210), "pista": Vector2(216, 146),
 }
@@ -32,6 +34,9 @@ var _press_card := ""
 var _dragging := false
 var _panning := false
 var _drag_card_off := Vector2.ZERO
+var _drag_orig := Vector2.ZERO
+var _drop_link := ""     # fio sob a pista arrastada (alvo de prova)
+var _drop_card := ""     # carta sob a carta arrastada (alvo de ligação)
 var _touches := {}
 var _pinch_d := 0.0
 var _pinch_zoom := 1.0
@@ -163,8 +168,12 @@ func to_board(screen: Vector2) -> Vector2:
 	return (screen - offset) / zoom
 
 
-func _hit_card(bp: Vector2) -> String:
+func _hit_card(bp: Vector2, except := "") -> String:
+	var ev := _evidence_ids()
 	for i in range(cards.size() - 1, -1, -1):
+		var ref: String = cards[i]["ref"]
+		if ref == except or (ref.begins_with("c:") and ev.has(ref.substr(2))):
+			continue
 		if _card_rect(cards[i]).grow(6).has_point(bp):
 			return cards[i]["ref"]
 	return ""
@@ -174,11 +183,42 @@ func _hit_link(bp: Vector2) -> String:
 	var best := ""
 	var bd := 46.0 / maxf(zoom, 0.4)
 	for l in links:
+		# a prova pendurada também conta como o fio (é onde o dedo vai)
+		if l.get("evidence") != null and _evidence_rect(l).grow(8).has_point(bp):
+			return l["id"]
 		var d := _knot(l).distance_to(bp)
 		if d < bd:
 			bd = d
 			best = l["id"]
 	return best
+
+
+## fio mais perto do ponto (distância ao traçado), para soltar uma pista em cima dele
+func _link_near(bp: Vector2) -> String:
+	var best := ""
+	var bd := 56.0 / maxf(zoom, 0.4)
+	for l in links:
+		var pts := _link_points(l)
+		for i in pts.size() - 1:
+			var d := Geometry2D.get_closest_point_to_segment(bp, pts[i], pts[i + 1]).distance_to(bp)
+			if d < bd:
+				bd = d
+				best = l["id"]
+	return best
+
+
+func _evidence_ids() -> Dictionary:
+	var out := {}
+	for l in links:
+		if l.get("evidence") != null:
+			out[str(l["evidence"])] = l["id"]
+	return out
+
+
+func _evidence_rect(l: Dictionary) -> Rect2:
+	# selo compacto encaixado no nó do fio (não atrapalha a organização do quadro)
+	var k := _knot(l)
+	return Rect2(k + Vector2(-38, -2), Vector2(76, 50))
 
 
 # ------------------------------------------------------------------ entrada
@@ -224,6 +264,8 @@ func _gui_input(e: InputEvent) -> void:
 				_press_card = _hit_card(bp)
 				if _press_card != "":
 					_drag_card_off = _center(_press_card) - bp
+					var pc := _card(_press_card)
+					_drag_orig = Vector2(pc["x"], pc["y"])
 			else:
 				_release(mb.position)
 		accept_event()
@@ -243,6 +285,16 @@ func _gui_input(e: InputEvent) -> void:
 			# a carta arrastada vai para cima das outras
 			cards.erase(c)
 			cards.append(c)
+			# alvo de soltar: pista sobre fio = prender prova; carta sobre carta = ligar
+			var tp := to_board(mm.position)
+			_drop_link = ""
+			_drop_card = ""
+			if _press_card.begins_with("c:"):
+				_drop_link = _link_near(tp)
+			else:
+				var other := _hit_card(tp, _press_card)
+				if other != "" and not other.begins_with("c:"):
+					_drop_card = other
 			queue_redraw()
 		elif _panning:
 			offset += mm.relative
@@ -263,6 +315,20 @@ func _release(pos: Vector2) -> void:
 	if _dragging:
 		_dragging = false
 		var c := _card(_press_card)
+		if _drop_link != "" or _drop_card != "":
+			# soltou em cima de um alvo: a carta volta para onde estava e a ação acontece
+			c["x"] = _drag_orig.x
+			c["y"] = _drag_orig.y
+			var dl := _drop_link
+			var dc := _drop_card
+			_drop_link = ""
+			_drop_card = ""
+			queue_redraw()
+			if dl != "":
+				evidence_dropped.emit(dl, _press_card.substr(2))
+			else:
+				link_dropped.emit(_press_card.substr(2), dc.substr(2))
+			return
 		Sfx.play("card_drop", -4.0)
 		card_moved.emit(_press_card, Vector2(c["x"], c["y"]))
 		return
@@ -320,19 +386,42 @@ func _draw() -> void:
 		draw_polyline(pts, Color(0, 0, 0, 0.35), 10.0 if sel else 9.0, true)
 		if sel:
 			draw_polyline(pts, Color.WHITE, 9.0, true)
+		if _dragging and _press_card.begins_with("c:"):
+			# arrastando uma pista: todos os fios viram alvo; o mais perto brilha forte
+			var hot: bool = l["id"] == _drop_link
+			draw_polyline(pts, Color(UI.YELLOW, 0.9 if hot else 0.35), 16.0 if hot else 11.0, true)
 		draw_polyline(pts, lc, 6.0 if sel else 5.0, true)
 		draw_polyline(pts, Color(1, 1, 1, 0.25), 1.5, true)
 		_draw_link_tag(l, pts, sel)
 
-	# carta de origem piscando enquanto escolhe destino
+	# cartas soltas (as pistas presas num fio aparecem penduradas nele, não soltas)
+	var ev := _evidence_ids()
 	for c in cards:
+		var ref: String = c["ref"]
+		if ref.begins_with("c:") and ev.has(ref.substr(2)) and not (_dragging and ref == _press_card):
+			continue
 		_draw_card(c)
+	if _dragging and _drop_card != "":
+		var dr := _card_rect(_card(_drop_card))
+		draw_rect(dr.grow(10), Color(UI.YELLOW, 0.25 + 0.15 * sin(_t * 8.0)), false, 6.0)
+		_badge(dr.position + Vector2(dr.size.x / 2.0, -26), "SOLTE PARA LIGAR")
+	if _dragging and _drop_link != "":
+		_badge(_knot(_link(_drop_link)) + Vector2(0, -70), "SOLTE PARA PRENDER A PROVA")
 
 	if link_from != "":
 		var a := _center(link_from)
 		var pulse := 0.5 + 0.5 * sin(_t * 6.0)
 		draw_circle(a, 30 + pulse * 10, Color(UI.YELLOW, 0.25))
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+
+func _badge(center: Vector2, text: String) -> void:
+	var f := UI.font("title")
+	var w := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 26).x + 28
+	var r := Rect2(center - Vector2(w / 2.0, 20), Vector2(w, 40))
+	draw_rect(Rect2(r.position + Vector2(3, 4), r.size), Color(0, 0, 0, 0.4))
+	draw_rect(r, UI.YELLOW)
+	draw_string(f, r.position + Vector2(14, 30), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 26, UI.INK)
 
 
 func _draw_link_tag(l: Dictionary, pts: PackedVector2Array, sel: bool) -> void:
@@ -352,11 +441,22 @@ func _draw_link_tag(l: Dictionary, pts: PackedVector2Array, sel: bool) -> void:
 	draw_string(f, r.position + Vector2(11, 25), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, UI.INK)
 	# prova presa no fio: bilhetinho amarelo com clipe
 	if l.get("evidence") != null:
-		var e := Rect2(k + Vector2(-26, 2), Vector2(52, 40))
-		draw_rect(Rect2(e.position + Vector2(3, 3), e.size), Color(0, 0, 0, 0.3))
-		draw_rect(e, UI.YELLOW)
-		draw_string(UI.font("title"), e.position + Vector2(6, 30), "PROVA", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, UI.INK)
-		draw_rect(Rect2(e.position + Vector2(20, -8), Vector2(8, 18)), Color("#c8ccd8"))
+		# selo de prova: mini foto do tipo da pista + "PROVA", preso por um clipe no nó
+		var clue := Net.clue_by_id(str(l["evidence"]))
+		var e := _evidence_rect(l)
+		var col := UI.clue_color(str(clue.get("kind", "")))
+		draw_rect(Rect2(e.position + Vector2(3, 4), e.size), Color(0, 0, 0, 0.35))
+		draw_rect(e, UI.PAPER if not sel else Color("#fff6d6"))
+		draw_rect(Rect2(e.position, Vector2(e.size.x, 6)), col)
+		var ik: String = {"mensagem": "mensagem", "post": "celular", "depoimento": "microfone", "registro": "prancheta",
+			"bilhete": "papel", "objeto": "caixa"}.get(str(clue.get("kind", "")), "papel")
+		var itex: Texture2D = Snap.get_tex("item:" + ik)
+		var ir := Rect2(e.position + Vector2(4, 9), Vector2(30, 24))
+		if itex:
+			draw_texture_rect(itex, ir, false)
+		draw_string(UI.font("title"), e.position + Vector2(36, 28), "OK", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, UI.GREEN.darkened(0.35))
+		draw_string(UI.font("title"), e.position + Vector2(5, 46), "PROVA", HORIZONTAL_ALIGNMENT_CENTER, e.size.x - 10, 15, UI.INK)
+		draw_rect(Rect2(e.position + Vector2(e.size.x / 2.0 - 4, -9), Vector2(8, 15)), Color("#c8ccd8"))
 	else:
 		draw_circle(k + Vector2(0, 14), 9, Color(UI.PAPER, 0.85))
 		draw_circle(k + Vector2(0, 14), 5, UI.RED)

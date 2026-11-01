@@ -216,6 +216,8 @@ func _refresh_lobby() -> void:
 		b.add_child(v)
 		b.pressed.connect(func() -> void: Net.send({"t": "host_settings", "caseId": c["id"]}))
 		lobby_cases.add_child(b)
+	UI.scroll_friendly(lobby_cases)
+	UI.scroll_friendly(lobby_teams)
 
 
 # ================================================================== RODADA
@@ -319,6 +321,7 @@ func _refresh_game() -> void:
 			for t in st.get("teams", []):
 				grid.add_child(_board_thumb(t))
 			page_box.add_child(grid)
+	UI.scroll_friendly(page_box)
 	if viewer_team != "" and viewer_board:
 		var b: Dictionary = st.get("boards", {}).get(viewer_team, {})
 		viewer_board.set_data(b.get("cards", []), b.get("links", []))
@@ -523,8 +526,9 @@ func _board_thumb(t: Dictionary) -> Control:
 	return p
 
 
-## dica do professor: frases prontas (sem precisar digitar no celular) ou texto livre
-func _open_hint(team_id: String) -> void:
+## Mensagem do professor: primeiro ele DIGITA (o campo já vem focado); se quiser, abre as sugestões
+## escritas para este caso, da mais sutil para a mais forte.
+func _open_hint(team_id: String, show_suggestions := false) -> void:
 	UI.clear(viewer_layer)
 	var bg := ColorRect.new()
 	bg.color = Color(0, 0, 0, 0.6)
@@ -534,40 +538,87 @@ func _open_hint(team_id: String) -> void:
 			UI.clear(viewer_layer))
 	viewer_layer.add_child(UI.full(bg))
 	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", UI.box(Color(UI.NAVY, 0.98), UI.YELLOW, 3, 26, 24))
-	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	panel.add_theme_stylebox_override("panel", UI.box(Color(UI.NAVY, 0.99), UI.YELLOW, 3, 26, 22))
+	# fica no TOPO: no celular o teclado virtual cobre a metade de baixo da tela
+	panel.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	var side := maxf(12.0, (size.x - 860.0) / 2.0)
-	panel.offset_left = side; panel.offset_right = -side; panel.offset_bottom = -12
-	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	panel.offset_left = side; panel.offset_right = -side; panel.offset_top = 16
 	var v := UI.vbox(12)
 	var tname := "TODAS AS EQUIPES"
 	for t in Net.state.get("teams", []):
 		if t["id"] == team_id:
 			tname = "EQUIPE " + str(t["name"]).to_upper()
-	v.add_child(UI.title("DICA PARA " + tname, 40, UI.YELLOW))
-	for txt in ["Já olharam TODOS os lugares da escola? Troquem de cena no topo.", "Mostrem uma pista para quem vocês interrogaram. Algumas pessoas só falam assim.",
-			"Prendam uma PROVA em cada fio importante do quadro.", "Conversem! Cada um tem pistas que só ele vê.", "Desconfiem do óbvio. Quem ganha com a confusão?"]:
-		var b := UI.button(txt, "ghost", 80)
-		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		b.add_theme_font_size_override("font_size", 23)
-		b.pressed.connect(func() -> void:
-			Net.send({"t": "host_hint", "team": team_id, "text": txt})
-			UI.clear(viewer_layer))
-		v.add_child(b)
+	var hh := UI.hbox(10)
+	var title := UI.title("MENSAGEM PARA " + tname, 36, UI.YELLOW)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hh.add_child(title)
+	var close := UI.button("FECHAR", "ghost", 64)
+	close.custom_minimum_size.x = 150
+	close.pressed.connect(func() -> void: UI.clear(viewer_layer))
+	hh.add_child(close)
+	v.add_child(hh)
 	var le := LineEdit.new()
-	le.placeholder_text = "Ou escreva a sua dica..."
-	le.custom_minimum_size.y = 76
-	le.add_theme_font_size_override("font_size", 26)
-	le.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.9), UI.SKY, 2, 14))
+	le.placeholder_text = "Escreva sua mensagem ou dica..."
+	le.custom_minimum_size.y = 84
+	le.max_length = 160
+	le.virtual_keyboard_enabled = true
+	le.add_theme_font_override("font", UI.font("bold"))
+	le.add_theme_font_size_override("font_size", 28)
+	le.add_theme_color_override("font_color", UI.PAPER)
+	le.add_theme_color_override("font_placeholder_color", Color(UI.MIST, 0.6))
+	le.add_theme_color_override("caret_color", UI.YELLOW)
+	le.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.95), UI.SKY, 2, 14, 18))
+	le.add_theme_stylebox_override("focus", UI.box(Color(UI.NIGHT, 0.95), UI.YELLOW, 3, 14, 18))
 	v.add_child(le)
-	var send := UI.button("MANDAR", "primary", 90)
-	send.pressed.connect(func() -> void:
-		if le.text.strip_edges() != "":
-			Net.send({"t": "host_hint", "team": team_id, "text": le.text})
-		UI.clear(viewer_layer))
-	v.add_child(send)
+	var send_fn := func() -> void:
+		var txt := le.text.strip_edges()
+		if txt == "":
+			return
+		Net.send({"t": "host_hint", "team": team_id, "text": txt})
+		Sfx.play("phone_buzz")
+		get_meta("main").toast("Mensagem enviada para " + tname.to_lower(), UI.GREEN)
+		UI.clear(viewer_layer)
+	le.text_submitted.connect(func(_t: String) -> void: send_fn.call())
+	var row := UI.hbox(10)
+	var sug := UI.button("Sugestões de dica", "ghost", 84)
+	sug.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sug.pressed.connect(func() -> void: _open_hint(team_id, not show_suggestions))
+	row.add_child(sug)
+	var send := UI.button("ENVIAR", "primary", 84)
+	send.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	send.pressed.connect(send_fn)
+	row.add_child(send)
+	v.add_child(row)
+	if show_suggestions:
+		v.add_child(UI.label("Toque numa sugestão para colocar no campo. Da mais sutil para a mais forte.", 21, UI.MIST))
+		var hints: Array = Net.case_data.get("hints", [])
+		if hints.is_empty():
+			hints = ["Já olharam todos os lugares da escola? Troquem de cena no topo.", "Mostrem uma pista para quem vocês interrogaram.",
+				"Prendam uma prova em cada fio importante.", "Conversem: cada um tem pistas que só ele vê."]
+		var sc := ScrollContainer.new()
+		sc.custom_minimum_size.y = minf(520.0, size.y * 0.45)
+		sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		var lv := UI.vbox(8)
+		lv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var n := 0
+		for h in hints:
+			n += 1
+			var b := UI.button("%d.  %s" % [n, UI.strip_emoji(str(h))], "ghost", 76)
+			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			b.add_theme_font_size_override("font_size", 22)
+			b.pressed.connect(func() -> void:
+				le.text = UI.strip_emoji(str(h))
+				le.caret_column = le.text.length()
+				le.grab_focus())
+			lv.add_child(b)
+		sc.add_child(lv)
+		UI.scroll_friendly(lv)
+		v.add_child(sc)
 	panel.add_child(v)
 	viewer_layer.add_child(panel)
+	le.grab_focus.call_deferred()
 
 
 func _open_viewer(t: Dictionary) -> void:

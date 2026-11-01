@@ -216,3 +216,16 @@ static func pop_in(c: Control, delay := 0.0) -> void:
 	var tw := c.create_tween()
 	tw.tween_interval(delay)
 	tw.tween_property(c, "modulate:a", 1.0, 0.25)
+
+
+## Dentro de uma rolagem, painéis e botões não podem "segurar" o dedo, senão a lista não rola
+## no celular. PASS deixa o toque chegar ao ScrollContainer e os botões continuam funcionando.
+static func scroll_friendly(n: Node) -> void:
+	for c in n.get_children():
+		if c is Control:
+			var ctl := c as Control
+			if ctl is LineEdit or ctl is TextEdit or ctl is ScrollContainer or ctl is SubViewportContainer or ctl.get_class() == "Control" and ctl.has_method("fit"):
+				pass
+			elif ctl.mouse_filter == Control.MOUSE_FILTER_STOP:
+				ctl.mouse_filter = Control.MOUSE_FILTER_PASS
+		scroll_friendly(c)

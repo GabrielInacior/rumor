@@ -90,3 +90,4 @@ func refresh() -> void:
 				Sfx.play("card_pin")
 				Net.send({"t": "pick_team", "team": t["id"]}))
 		list.add_child(card)
+	UI.scroll_friendly(list)

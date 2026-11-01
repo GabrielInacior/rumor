@@ -49,9 +49,10 @@ func _build() -> void:
 		row.alignment = BoxContainer.ALIGNMENT_CENTER
 		for i in 4:
 			var p := PanelContainer.new()
-			p.custom_minimum_size = Vector2(130, 160)
+			# tela deitada (PC) tem pouca altura: quadrados e teclas menores para caber tudo
+			p.custom_minimum_size = Vector2(110, 120) if _wide() else Vector2(130, 160)
 			p.add_theme_stylebox_override("panel", UI.box(UI.NIGHT, UI.YELLOW, 4, 18))
-			var l := UI.title("", 120, UI.YELLOW)
+			var l := UI.title("", 90 if _wide() else 120, UI.YELLOW)
 			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 			p.add_child(l)
@@ -64,7 +65,7 @@ func _build() -> void:
 		grid.add_theme_constant_override("h_separation", 16)
 		grid.add_theme_constant_override("v_separation", 16)
 		for k in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "<", "0", "OK"]:
-			var b := UI.button(k, "primary" if k == "OK" else "ghost", 110)
+			var b := UI.button(k, "primary" if k == "OK" else "ghost", 66 if _wide() else 110)
 			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			b.add_theme_font_override("font", UI.font("title"))
 			b.add_theme_font_size_override("font_size", 60)
@@ -96,6 +97,11 @@ func _build() -> void:
 			grid.add_child(b)
 		scroll.add_child(grid)
 		body.add_child(scroll)
+
+
+func _wide() -> bool:
+	var vs := get_viewport_rect().size
+	return vs.x > vs.y * 1.05
 
 
 func _key(k: String) -> void:
