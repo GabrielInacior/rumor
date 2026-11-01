@@ -421,7 +421,15 @@ func _draw_card(c: Dictionary) -> void:
 			draw_rect(lr, UI.PAPER)
 			draw_rect(Rect2(lr.position, Vector2(lr.size.x, 30)), col)
 			draw_string(UI.font("title"), lr.position + Vector2(10, 24), UI.clue_tag(str(clue.get("kind", ""))) + ("  " + str(clue.get("time", "")) if clue.get("time", "") != "" else ""), HORIZONTAL_ALIGNMENT_LEFT, lr.size.x - 16, 23, UI.INK)
-			draw_multiline_string(f_t, lr.position + Vector2(10, 56), UI.strip_emoji(str(clue.get("title", "Pista"))), HORIZONTAL_ALIGNMENT_LEFT, lr.size.x - 20, 20, 3, UI.INK)
+			# mini foto 3D do tipo da pista, no canto (leitura de relance)
+			var ik: String = {"mensagem": "mensagem", "post": "celular", "depoimento": "microfone", "registro": "prancheta",
+				"bilhete": "papel", "objeto": "caixa"}.get(str(clue.get("kind", "")), "papel")
+			var itex: Texture2D = Snap.get_tex("item:" + ik)
+			var ir := Rect2(lr.end.x - 66, lr.position.y + 38, 58, 44)
+			if itex:
+				draw_texture_rect(itex, ir, false)
+				draw_rect(ir, Color(0, 0, 0, 0.25), false, 2.0)
+			draw_multiline_string(f_t, lr.position + Vector2(10, 56), UI.strip_emoji(str(clue.get("title", "Pista"))), HORIZONTAL_ALIGNMENT_LEFT, lr.size.x - 84, 20, 4, UI.INK)
 	# tachinha
 	var pin := Vector2(0, lr.position.y + 6)
 	draw_circle(pin + Vector2(2, 3), 11, Color(0, 0, 0, 0.35))
