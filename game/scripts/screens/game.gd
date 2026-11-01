@@ -27,6 +27,7 @@ var action_bar: HBoxContainer
 var link_banner: PanelContainer
 var guide: PanelContainer
 var guide_l: Label
+var _guide_done_at := 0
 var sheet_layer: Control
 var seen_clues := {}
 var new_badge := 0
@@ -613,10 +614,16 @@ func _build_board_page() -> Control:
 	add.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add.pressed.connect(_open_palette)
 	topbar.add_child(add)
+	var org := UI.button("ORGANIZAR", "ghost", 84)
+	org.custom_minimum_size.x = 170
+	org.add_theme_font_override("font", UI.font("title"))
+	org.add_theme_font_size_override("font_size", 30)
+	org.pressed.connect(_organize_board)
+	topbar.add_child(org)
 	var fit := UI.button("ENQUADRAR", "ghost", 84)
-	fit.custom_minimum_size.x = 200
+	fit.custom_minimum_size.x = 170
 	fit.add_theme_font_override("font", UI.font("title"))
-	fit.add_theme_font_size_override("font_size", 32)
+	fit.add_theme_font_size_override("font_size", 30)
 	fit.pressed.connect(func() -> void: board.fit())
 	topbar.add_child(fit)
 	page.add_child(topbar)
@@ -625,8 +632,12 @@ func _build_board_page() -> Control:
 	guide.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.88), Color(UI.YELLOW, 0.7), 2, 16, 16))
 	guide_l = UI.label("", 24, UI.PAPER, "bold")
 	guide.add_child(guide_l)
-	guide.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	guide.mouse_filter = Control.MOUSE_FILTER_STOP
 	guide_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# tocar na faixa de dica abre o guia ilustrado de novo
+	guide.gui_input.connect(func(e: InputEvent) -> void:
+		if e is InputEventMouseButton and (e as InputEventMouseButton).pressed:
+			_board_tutorial())
 	guide.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	guide.offset_left = 16; guide.offset_right = -16; guide.offset_top = 112
 	page.add_child(guide)
@@ -714,9 +725,14 @@ func _update_action_bar() -> void:
 		action_bar.add_child(link)
 	else:
 		var see := UI.button("LER", "ghost", 88)
-		see.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		see.custom_minimum_size.x = 130
 		see.pressed.connect(func() -> void: _open_clue(Net.clue_by_id(ref.substr(2))))
 		action_bar.add_child(see)
+		var att := UI.button("PRENDER NUM FIO", "primary", 88)
+		att.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		att.add_theme_font_size_override("font_size", 32)
+		att.pressed.connect(func() -> void: _open_link_picker_for_clue(ref.substr(2)))
+		action_bar.add_child(att)
 	var rm := UI.button("TIRAR", "danger", 88)
 	rm.custom_minimum_size.x = 170
 	rm.pressed.connect(func() -> void:
@@ -848,6 +864,76 @@ func _open_retype(l: Dictionary) -> void:
 			_close_sheet())
 		v.add_child(btn)
 	_open_sheet(v)
+
+
+## Caminho sem arrastar: escolhe em qual fio prender esta pista
+func _open_link_picker_for_clue(clue_id: String) -> void:
+	var links: Array = Net.state.get("board", {}).get("links", [])
+	var v := UI.vbox(12)
+	v.add_child(UI.title("PRENDER EM QUAL FIO?", 44, UI.YELLOW))
+	v.add_child(UI.label("A pista \"%s\" vai ficar presa no fio como prova." % UI.strip_emoji(str(Net.clue_by_id(clue_id).get("title", ""))), 22, UI.MIST))
+	if links.is_empty():
+		v.add_child(UI.label("Ainda não há fios. Primeiro ligue duas cartas (arraste uma até a outra).", 24, UI.PAPER))
+	for l in links:
+		var txt := "%s  %s  %s" % [_name_of(l["a"]), Net.link_label(l["type"]).to_upper(), _name_of(l["b"])]
+		if l.get("evidence") != null:
+			txt += "   (já tem prova: trocar)"
+		var b := UI.button(txt, "ghost", 84)
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.add_theme_font_size_override("font_size", 24)
+		var lid: String = l["id"]
+		b.pressed.connect(func() -> void:
+			Net.board_op({"k": "attach", "id": lid, "clue": clue_id})
+			Sfx.play("card_pin")
+			board.selected_ref = ""
+			_update_action_bar()
+			_close_sheet()
+			get_meta("main").toast("Prova presa no fio!", UI.GREEN))
+		v.add_child(b)
+	_open_sheet(v)
+
+
+## Organiza o quadro: pessoas num círculo, lugares e fatos no meio, pistas soltas embaixo
+func _organize_board() -> void:
+	var cards: Array = Net.state.get("board", {}).get("cards", [])
+	var people := []
+	var mids := []
+	var loose := []
+	var ev := {}
+	for l in Net.state.get("board", {}).get("links", []):
+		if l.get("evidence") != null:
+			ev[str(l["evidence"])] = true
+	for c in cards:
+		var ref: String = c["ref"]
+		if ref.begins_with("c:"):
+			if not ev.has(ref.substr(2)):
+				loose.append(ref)
+		elif str(Net.card_by_id(ref.substr(2)).get("kind", "")) == "pessoa":
+			people.append(ref)
+		else:
+			mids.append(ref)
+	var moves := []
+	for i in people.size():
+		var a := TAU * i / maxf(1, people.size()) - PI / 2.0
+		moves.append([people[i], Vector2(0.5 + cos(a) * 0.36, 0.44 + sin(a) * 0.32)])
+	for i in mids.size():
+		var a2 := TAU * i / maxf(1, mids.size()) + PI / 4.0
+		var r := 0.0 if mids.size() == 1 else 0.14
+		moves.append([mids[i], Vector2(0.5 + cos(a2) * r, 0.44 + sin(a2) * r)])
+	for i in loose.size():
+		moves.append([loose[i], Vector2(0.12 + (i % 5) * 0.19, 0.86 + (i / 5) * 0.08)])
+	for mv in moves:
+		var p: Vector2 = mv[1]
+		Net.board_op({"k": "move", "ref": mv[0], "x": clampf(p.x, 0.06, 0.94), "y": clampf(p.y, 0.06, 0.94)})
+	# atualiza na hora localmente (o servidor confirma)
+	for c in cards:
+		for mv in moves:
+			if mv[0] == c["ref"]:
+				c["x"] = (mv[1] as Vector2).x
+				c["y"] = (mv[1] as Vector2).y
+	board.set_data(cards, Net.state.get("board", {}).get("links", []))
+	board.call_deferred("fit")
+	Sfx.play("card_drop")
 
 
 func _open_evidence_picker(link_id: String) -> void:
@@ -1202,6 +1288,13 @@ func _update_guide() -> void:
 		txt = "PASSO 3 de 3   ARRASTE uma pista até o fio para prender a PROVA."
 	elif Net.state.get("lastResult") == null:
 		txt = "Isso! Liguem o resto da história e toquem em APRESENTAR TEORIA."
+		# a última dica fica só alguns segundos: depois o quadro ganha o espaço todo
+		if _guide_done_at == 0:
+			_guide_done_at = Time.get_ticks_msec()
+		elif Time.get_ticks_msec() - _guide_done_at > 9000:
+			txt = ""
+	if txt != "":
+		txt += "   (toque para ver como)"
 	guide_l.text = txt
 	guide.visible = txt != "" and not link_banner.visible
 

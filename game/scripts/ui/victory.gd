@@ -77,17 +77,17 @@ func _make_card(sz: Vector2) -> Control:
 	bg.position = Vector2(8, 8) * k
 	bg.size = sz - Vector2(16, 16) * k
 	card.add_child(bg)
-	var v := UI.vbox(int(12 * k))
-	v.position = Vector2(36, 34) * k
-	v.size = sz - Vector2(72, 68) * k
+	var v := UI.vbox(int(6 * k))
+	v.position = Vector2(30, 24) * k
+	v.size = sz - Vector2(60, 48) * k
 	card.add_child(v)
-	var logo := UI.title("RUMOR", int(96 * k), UI.YELLOW)
+	var logo := UI.title("RUMOR", int(80 * k), UI.YELLOW)
 	logo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	logo.add_theme_color_override("font_shadow_color", Color(UI.PINK, 0.8))
 	logo.add_theme_constant_override("shadow_offset_x", int(5 * k))
 	logo.add_theme_constant_override("shadow_offset_y", int(3 * k))
 	v.add_child(logo)
-	var head := UI.title("CASO RESOLVIDO!" if solved else "CASO ENCERRADO", int(64 * k), UI.GREEN if solved else UI.PAPER)
+	var head := UI.title("CASO RESOLVIDO!" if solved else "CASO ENCERRADO", int(56 * k), UI.GREEN if solved else UI.PAPER)
 	head.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(head)
 	var t := UI.label(case_title.to_upper(), int(30 * k), UI.PAPER, "type")
@@ -96,9 +96,9 @@ func _make_card(sz: Vector2) -> Control:
 	# estrelas desenhadas
 	var st := Stars.new()
 	st.count = stars
-	st.custom_minimum_size = Vector2(0, 90 * k)
+	st.custom_minimum_size = Vector2(0, 70 * k)
 	v.add_child(st)
-	var tl := UI.title(("em " + UI.fmt_time(time_sec)) if solved and time_sec > 0 else "tempo esgotado", int(56 * k), UI.YELLOW)
+	var tl := UI.title(("em " + UI.fmt_time(time_sec)) if solved and time_sec > 0 else "tempo esgotado", int(48 * k), UI.YELLOW)
 	tl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(tl)
 	if place > 0 and not Net.state.get("solo", false):
@@ -106,24 +106,26 @@ func _make_card(sz: Vector2) -> Control:
 		pl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		v.add_child(pl)
 	if culprit_id != "":
-		var row := HBoxContainer.new()
-		row.alignment = BoxContainer.ALIGNMENT_CENTER
-		row.add_theme_constant_override("separation", int(16 * k))
+		# culpado empilhado e centralizado (nada de texto lado a lado que possa cortar)
+		var cbox := UI.vbox(int(4 * k))
+		cbox.alignment = BoxContainer.ALIGNMENT_CENTER
 		var tex := UI.portrait(culprit_id)
 		if tex:
 			var tr := TextureRect.new()
 			tr.texture = tex
-			tr.custom_minimum_size = Vector2(110, 138) * k
+			tr.custom_minimum_size = Vector2(0, 120 * k)
 			tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			row.add_child(tr)
-		var cv := UI.vbox(0)
-		var cl := UI.label("O CULPADO ERA", int(22 * k), UI.MIST, "type")
+			cbox.add_child(tr)
+		var cl := UI.label("O CULPADO ERA", int(24 * k), UI.MIST, "type")
 		cl.autowrap_mode = TextServer.AUTOWRAP_OFF
-		cv.add_child(cl)
-		cv.add_child(UI.title(str(Net.card_by_id(culprit_id).get("name", "?")).to_upper(), int(52 * k), UI.RED))
-		row.add_child(cv)
-		v.add_child(row)
+		cl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cbox.add_child(cl)
+		var cn := UI.title(str(Net.card_by_id(culprit_id).get("name", "?")).to_upper(), int(48 * k), UI.RED)
+		cn.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		cbox.add_child(cn)
+		v.add_child(cbox)
 	var sp := Control.new()
 	sp.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(sp)

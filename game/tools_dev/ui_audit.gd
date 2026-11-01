@@ -89,6 +89,7 @@ func _player_state(phase: String) -> Dictionary:
 	for j in mini(2, e.size()):
 		links.append({"id": "l%d" % j, "a": e[j]["from"], "b": e[j]["to"], "type": e[j]["type"], "evidence": clues[0]["id"] if j == 0 else null, "color": ["vermelho", "azul"][j % 2], "by": "Corvo"})
 	cards.append({"ref": "c:" + str(clues[0]["id"]), "x": 0.5, "y": 0.12, "by": "Coruja"})
+	cards.append({"ref": "c:" + str(clues[1]["id"]), "x": 0.2, "y": 0.9, "by": "Coruja"})
 	var items := []
 	for it in full_case.get("items", []).slice(0, 2):
 		items.append(it["id"])
@@ -193,6 +194,21 @@ func _run() -> void:
 	g.board.offset = g.board.size / 2.0 - kp * g.board.zoom
 	g.board.queue_redraw()
 	await _shot("09b_quadro_zoom")
+	g._organize_board()
+	await _wait(0.6)
+	await _shot("09c_organizado")
+	g.board.selected_ref = "c:" + str(Net.state["clues"][1]["id"])
+	g._update_action_bar()
+	g.board.queue_redraw()
+	await _shot("09d_pista_selecionada")
+	g._open_link_picker_for_clue(str(Net.state["clues"][1]["id"]))
+	await _shot("09e_prender_em_fio")
+	g._close_sheet()
+	g.board.selected_ref = ""
+	g._update_action_bar()
+	g._board_tutorial()
+	await _shot("09f_tutorial_quadro")
+	g._close_sheet()
 	g.board.selected_ref = str(Net.state["board"]["cards"][0]["ref"])
 	g._update_action_bar()
 	await _shot("10_quadro_selecionado")
