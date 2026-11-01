@@ -977,6 +977,24 @@
       "kind": "fato",
       "name": "O microscópio digital",
       "icon": "computador"
+    },
+    {
+      "id": "cursinho",
+      "kind": "fato",
+      "name": "O cursinho particular da Profa. Ana",
+      "icon": "livro"
+    },
+    {
+      "id": "seguro",
+      "kind": "fato",
+      "name": "O dinheiro do seguro",
+      "icon": "caixa"
+    },
+    {
+      "id": "janela",
+      "kind": "fato",
+      "name": "A janela quebrada por dentro",
+      "icon": "cartaz"
     }
   ],
   "items": [
@@ -1271,6 +1289,64 @@
         "type": "estava",
         "category": "noite"
       }
+    ],
+    "panorama": [
+      {
+        "from": "ana",
+        "to": "seguro",
+        "type": "g_motivo",
+        "evidence": [
+          "c_cursinho"
+        ]
+      },
+      {
+        "from": "ana",
+        "to": "otavio",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_alerta"
+        ]
+      },
+      {
+        "from": "ana",
+        "to": "microscopio",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_ficha_lab"
+        ]
+      },
+      {
+        "from": "janela",
+        "to": "laboratorio",
+        "type": "g_aconteceu",
+        "evidence": [
+          "c_vidro"
+        ]
+      },
+      {
+        "from": "jorge",
+        "to": "microscopio",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_ronda"
+        ]
+      },
+      {
+        "from": "theo",
+        "to": "ana",
+        "type": "g_viu",
+        "evidence": [
+          "c_story_theo"
+        ]
+      },
+      {
+        "from": "lari",
+        "to": "microscopio",
+        "type": "g_sabia",
+        "evidence": [
+          "c_dep_lari"
+        ]
+      }
     ]
   },
   "hints": [
@@ -1411,6 +1487,14 @@
         "proves": "Aponta para Profa. Ana."
       }
     ],
+    "panorama_story": [
+      "Sexta, 16h: Ana tira o microscópio 'para manutenção'. Ele já estava quebrado no cursinho dela.",
+      "Sexta, 16h30: Lari nota o armário vazio.",
+      "2h00: Um carro prata entra pela rua de trás.",
+      "2h03: Ana desliga o alarme com o código 07 e quebra a janela por dentro.",
+      "2h09: Ela religa o alarme e sai sem pressa.",
+      "No quadro oficial: a professora tirou o microscópio na sexta, encenou a invasão no domingo e mentiu ao diretor."
+    ],
     "red_herrings": [
       "O zelador 'não viu nada': estava na guarita, gravado pela câmera."
     ],
@@ -1438,6 +1522,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

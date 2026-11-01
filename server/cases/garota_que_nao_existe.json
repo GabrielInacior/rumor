@@ -1510,13 +1510,31 @@
     {
       "id": "quadra",
       "kind": "lugar",
-      "name": "Quadra"
+      "name": "Gol da semifinal"
     },
     {
       "id": "luiza",
       "kind": "fato",
       "name": "O perfil @luiza.intercambio",
       "icon": "celular"
+    },
+    {
+      "id": "jogada7",
+      "kind": "fato",
+      "name": "A jogada 7",
+      "icon": "prancheta"
+    },
+    {
+      "id": "fotos_prima",
+      "kind": "fato",
+      "name": "As fotos da prima de Lisboa",
+      "icon": "camera"
+    },
+    {
+      "id": "suspensao",
+      "kind": "fato",
+      "name": "A suspensão dos titulares",
+      "icon": "papel"
     }
   ],
   "items": [
@@ -1998,6 +2016,88 @@
         "type": "criou",
         "category": "perfil"
       }
+    ],
+    "panorama": [
+      {
+        "from": "leo",
+        "to": "jogada7",
+        "type": "g_sabia",
+        "evidence": [
+          "c_prancheta"
+        ]
+      },
+      {
+        "from": "leo",
+        "to": "suspensao",
+        "type": "g_motivo",
+        "evidence": [
+          "c_sumula"
+        ]
+      },
+      {
+        "from": "kevin",
+        "to": "leo",
+        "type": "g_amigo",
+        "evidence": [
+          "c_campeonato"
+        ]
+      },
+      {
+        "from": "leo",
+        "to": "gabriel",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_dm_gabriel"
+        ]
+      },
+      {
+        "from": "leo",
+        "to": "pedro",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_dm_pedro"
+        ]
+      },
+      {
+        "from": "mel",
+        "to": "luiza",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_dep_mel"
+        ]
+      },
+      {
+        "from": "kevin",
+        "to": "fotos_prima",
+        "type": "g_sabia",
+        "evidence": [
+          "c_busca"
+        ]
+      },
+      {
+        "from": "gabriel",
+        "to": "ivo",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_shopping"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "gabriel",
+        "type": "g_estava_com",
+        "evidence": [
+          "c_shopping"
+        ]
+      },
+      {
+        "from": "kaua",
+        "to": "gabriel",
+        "type": "g_estava_com",
+        "evidence": [
+          "c_shopping"
+        ]
+      }
     ]
   },
   "hints": [
@@ -2120,7 +2220,7 @@
       {
         "clue": "c_sumula",
         "where": "Quadra: tocar em 'Súmula'",
-        "proves": "Prova a linha: Léo estava em Quadra (objetivo: Quem ganhou a vaga no gol)."
+        "proves": "Prova a linha: Léo estava em Gol da semifinal (objetivo: Quem ganhou a vaga no gol)."
       },
       {
         "clue": "c_prancheta",
@@ -2193,6 +2293,15 @@
         "proves": "Lista do reforço de redação: o Léo é o único com 'excessão' marcado."
       }
     ],
+    "panorama_story": [
+      "3 semanas atrás: Kevin passa ao Léo as fotos da prima de Lisboa. Nasce a @luiza.intercambio.",
+      "Sexta: O técnico explica a 'jogada 7' no vestiário. O Léo está lá.",
+      "Véspera, 23h: A Luiza marca com três titulares às 17h e pergunta da jogada 7.",
+      "14h10: Léo usa o computador da biblioteca com o Instagram aberto.",
+      "17h00: Gabriel, Pedro e Kauã esperam no shopping. Faltam ao treino.",
+      "19h00: Suspensos. Léo escreve: 'deixa comigo no gol'.",
+      "No quadro oficial: o reserva criou a Luiza com as fotos que o amigo Kevin deu, enganou três titulares e estreou no gol."
+    ],
     "red_herrings": [
       "As fotos são da prima do Kevin, mas ele não criou o perfil.",
       "As fotos parecem editadas, mas a Mel só fez um filtro a pedido."
@@ -2221,6 +2330,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

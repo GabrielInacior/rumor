@@ -56,7 +56,7 @@
     },
     {
       "id": "entregou",
-      "label": "entregou para",
+      "label": "entregou a prova para",
       "directed": true
     },
     {
@@ -1121,6 +1121,24 @@
       "kind": "fato",
       "name": "A denúncia anônima das 12h47",
       "icon": "mensagem"
+    },
+    {
+      "id": "bolsa_intercambio",
+      "kind": "fato",
+      "name": "A bolsa de intercâmbio",
+      "icon": "trofeu"
+    },
+    {
+      "id": "dinheiro",
+      "kind": "fato",
+      "name": "Os R$ 300 em notas novas",
+      "icon": "caixa"
+    },
+    {
+      "id": "monitoria",
+      "kind": "fato",
+      "name": "A monitoria paga do Davi",
+      "icon": "livro"
     }
   ],
   "items": [
@@ -1453,6 +1471,64 @@
         "type": "estava",
         "category": "plantou"
       }
+    ],
+    "panorama": [
+      {
+        "from": "bento",
+        "to": "bolsa_intercambio",
+        "type": "g_motivo",
+        "evidence": [
+          "c_ranking"
+        ]
+      },
+      {
+        "from": "dinheiro",
+        "to": "sala_aula",
+        "type": "g_aconteceu",
+        "evidence": [
+          "c_mochila"
+        ]
+      },
+      {
+        "from": "joana",
+        "to": "davi",
+        "type": "g_alibi",
+        "evidence": [
+          "c_registro_bib"
+        ]
+      },
+      {
+        "from": "caique",
+        "to": "bento",
+        "type": "g_viu",
+        "evidence": [
+          "c_dep_caique"
+        ]
+      },
+      {
+        "from": "mel",
+        "to": "bento",
+        "type": "g_acobertou",
+        "evidence": [
+          "c_dep_mel"
+        ]
+      },
+      {
+        "from": "davi",
+        "to": "monitoria",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_dep_davi"
+        ]
+      },
+      {
+        "from": "joana",
+        "to": "bento",
+        "type": "g_viu",
+        "evidence": [
+          "c_dep_joana"
+        ]
+      }
     ]
   },
   "hints": [
@@ -1573,12 +1649,12 @@
       {
         "clue": "c_impressora",
         "where": "Laboratório: tocar em 'Computador da bancada'",
-        "proves": "Prova a linha: Mel entregou para Bento (objetivo: Quem passou a prova para o Bento)."
+        "proves": "Prova a linha: Mel entregou a prova para Bento (objetivo: Quem passou a prova para o Bento)."
       },
       {
         "clue": "c_bilhete_mel",
         "where": "Laboratório: tocar em 'Armário de vidros'",
-        "proves": "Prova a linha: Mel entregou para Bento (objetivo: Quem passou a prova para o Bento). Aponta para Bento."
+        "proves": "Prova a linha: Mel entregou a prova para Bento (objetivo: Quem passou a prova para o Bento). Aponta para Bento."
       },
       {
         "clue": "c_registro_bib",
@@ -1603,7 +1679,7 @@
       {
         "clue": "c_dep_mel",
         "where": "mostrar 'Bilhete no armário' para Mel; ou trocar 'Barra de chocolate' com Mel",
-        "proves": "Prova a linha: Mel entregou para Bento (objetivo: Quem passou a prova para o Bento)."
+        "proves": "Prova a linha: Mel entregou a prova para Bento (objetivo: Quem passou a prova para o Bento)."
       },
       {
         "clue": "c_dep_joana",
@@ -1618,8 +1694,18 @@
       {
         "clue": "c_confissao",
         "where": "mostrar 'Rede da biblioteca' para Bento",
-        "proves": "Prova a linha: Mel entregou para Bento (objetivo: Quem passou a prova para o Bento); Bento estava em Sala do Davi (objetivo: Quem ficou sozinho com a mochila)."
+        "proves": "Prova a linha: Mel entregou a prova para Bento (objetivo: Quem passou a prova para o Bento); Bento estava em Sala do Davi (objetivo: Quem ficou sozinho com a mochila)."
       }
+    ],
+    "panorama_story": [
+      "Quinta, 17h10: Mel imprime a prova para o Bento por cinquenta reais.",
+      "Quinta, 18h02: Bento saca trezentos reais em notas novas.",
+      "12h10: Davi começa a monitoria na biblioteca.",
+      "12h15: Bento fica sozinho na sala do Davi e planta a prova e o dinheiro.",
+      "12h44: Bento sai da sala com a sacola vazia.",
+      "12h47: Na biblioteca, Bento manda a denúncia anônima do celular.",
+      "13h00: A coordenação abre a mochila.",
+      "No quadro oficial: o Bento comprou a prova, plantou tudo e denunciou; o Davi escondia só a monitoria paga."
     ],
     "red_herrings": [
       "A Mel imprimiu a prova, mas não plantou nem denunciou.",
@@ -1649,6 +1735,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

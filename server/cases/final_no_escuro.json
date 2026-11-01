@@ -1878,8 +1878,32 @@
     {
       "id": "alibi_audio",
       "kind": "fato",
-      "name": "A voz no camarim",
+      "name": "O álibi da voz no camarim",
       "icon": "microfone"
+    },
+    {
+      "id": "bolsa_premio",
+      "kind": "fato",
+      "name": "A bolsa de R$ 5 mil",
+      "icon": "trofeu"
+    },
+    {
+      "id": "playback",
+      "kind": "fato",
+      "name": "O playback do Enzo",
+      "icon": "microfone"
+    },
+    {
+      "id": "apagao",
+      "kind": "fato",
+      "name": "O apagão das 20h12",
+      "icon": "relogio"
+    },
+    {
+      "id": "bilhete",
+      "kind": "fato",
+      "name": "O bilhete 'quem canta de mentira'",
+      "icon": "carta"
     }
   ],
   "items": [
@@ -2404,6 +2428,105 @@
         "type": "estava",
         "category": "disjuntor"
       }
+    ],
+    "panorama": [
+      {
+        "from": "marta",
+        "to": "bolsa_premio",
+        "type": "g_motivo",
+        "evidence": [
+          "c_notas"
+        ]
+      },
+      {
+        "from": "helio",
+        "to": "playback",
+        "type": "g_sabia",
+        "evidence": [
+          "c_dep_helio"
+        ]
+      },
+      {
+        "from": "marta",
+        "to": "playback",
+        "type": "g_sabia",
+        "evidence": [
+          "c_dep_helio"
+        ]
+      },
+      {
+        "from": "gabi",
+        "to": "enzo",
+        "type": "g_acobertou",
+        "evidence": [
+          "c_kit_enzo"
+        ]
+      },
+      {
+        "from": "enzo",
+        "to": "playback",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_audio"
+        ]
+      },
+      {
+        "from": "enzo",
+        "to": "apagao",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_kit_enzo"
+        ]
+      },
+      {
+        "from": "kevin",
+        "to": "apagao",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_comanda"
+        ]
+      },
+      {
+        "from": "iris",
+        "to": "apagao",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_log_luz"
+        ]
+      },
+      {
+        "from": "juju",
+        "to": "kevin",
+        "type": "g_estava_com",
+        "evidence": [
+          "c_chat_danca"
+        ]
+      },
+      {
+        "from": "apagao",
+        "to": "deposito",
+        "type": "g_aconteceu",
+        "evidence": [
+          "c_bala",
+          "c_porta"
+        ]
+      },
+      {
+        "from": "bilhete",
+        "to": "teatro",
+        "type": "g_aconteceu",
+        "evidence": [
+          "c_bilhete_camarim"
+        ]
+      },
+      {
+        "from": "marta",
+        "to": "juju",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_dm_marta"
+        ]
+      }
     ]
   },
   "hints": [
@@ -2536,7 +2659,7 @@
       {
         "clue": "c_caixinha",
         "where": "Teatro: tocar em 'Arara de figurinos'",
-        "proves": "Prova a linha: Enzo inventou A voz no camarim (objetivo: Qual álibi era falso)."
+        "proves": "Prova a linha: Enzo inventou O álibi da voz no camarim (objetivo: Qual álibi era falso)."
       },
       {
         "clue": "c_log_luz",
@@ -2586,7 +2709,7 @@
       {
         "clue": "c_audio",
         "where": "Chega sozinha aos 4 min",
-        "proves": "Prova a linha: Enzo inventou A voz no camarim (objetivo: Qual álibi era falso)."
+        "proves": "Prova a linha: Enzo inventou O álibi da voz no camarim (objetivo: Qual álibi era falso)."
       },
       {
         "clue": "c_dep_iris",
@@ -2606,7 +2729,7 @@
       {
         "clue": "c_dep_enzo_verdade",
         "where": "mostrar 'Celular da caixinha' para Enzo; ou mostrar 'Armário da banda' para Enzo; ou conversar com Enzo ('Enzo, onde você estava às 20h06?')",
-        "proves": "Prova a linha: Enzo inventou A voz no camarim (objetivo: Qual álibi era falso)."
+        "proves": "Prova a linha: Enzo inventou O álibi da voz no camarim (objetivo: Qual álibi era falso)."
       },
       {
         "clue": "c_dep_gabi",
@@ -2633,6 +2756,17 @@
         "where": "mostrar 'Bolsa da organizadora' + 'Notas dos jurados' para Profa. Marta",
         "proves": "Prova a linha: Profa. Marta pegou As chaves do zelador (objetivo: Quem pegou as chaves do zelador)."
       }
+    ],
+    "panorama_story": [
+      "19h40: As chaves do zelador somem da mesa da sala dos professores.",
+      "19h50: Marta escreve à filha: 'hoje é seu dia, confia na mãe'.",
+      "19h55: Notas parciais: Os Ácaros na frente.",
+      "19h58: Marta pergunta ao jurado: 'e se faltar luz?'.",
+      "20h05: O teste de playback do Enzo toca sozinho no camarim.",
+      "20h06: Enzo vai ao banheiro, passando mal de nervoso.",
+      "20h10: Marta passa pela sala de música e sai pelos fundos.",
+      "20h12: Com as chaves do zelador, ela desliga o disjuntor. Deixa cair uma bala de mel.",
+      "No quadro oficial: a organizadora apagou as luzes pela filha e usou o segredo do Enzo como isca; a Juju não sabia."
     ],
     "red_herrings": [
       "O Kevin ganhou, mas estava na cantina.",
@@ -2663,6 +2797,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

@@ -1540,6 +1540,24 @@
       "kind": "fato",
       "name": "As 14 cédulas falsas",
       "icon": "papel"
+    },
+    {
+      "id": "anulacao",
+      "kind": "fato",
+      "name": "A anulação da eleição",
+      "icon": "papel"
+    },
+    {
+      "id": "plano_b",
+      "kind": "fato",
+      "name": "O 'plano B' da Chapa Azul",
+      "icon": "cartaz"
+    },
+    {
+      "id": "chamado",
+      "kind": "fato",
+      "name": "O chamado falso ao mesário",
+      "icon": "celular"
     }
   ],
   "items": [
@@ -1934,6 +1952,80 @@
         "type": "colocou",
         "category": "fraude"
       }
+    ],
+    "panorama": [
+      {
+        "from": "teo",
+        "to": "anulacao",
+        "type": "g_motivo",
+        "evidence": [
+          "c_regra"
+        ]
+      },
+      {
+        "from": "caio",
+        "to": "plano_b",
+        "type": "g_sabia",
+        "evidence": [
+          "c_chat_azul"
+        ]
+      },
+      {
+        "from": "teo",
+        "to": "kaua",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_comanda"
+        ]
+      },
+      {
+        "from": "caio",
+        "to": "teo",
+        "type": "g_acobertou",
+        "evidence": [
+          "c_dep_caio"
+        ]
+      },
+      {
+        "from": "bela",
+        "to": "cedulas",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_cedulas"
+        ]
+      },
+      {
+        "from": "rui",
+        "to": "cedulas",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_cartaz"
+        ]
+      },
+      {
+        "from": "cida",
+        "to": "teo",
+        "type": "g_viu",
+        "evidence": [
+          "c_comanda"
+        ]
+      },
+      {
+        "from": "kaua",
+        "to": "chamado",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_urna"
+        ]
+      },
+      {
+        "from": "chamado",
+        "to": "cantina",
+        "type": "g_aconteceu",
+        "evidence": [
+          "c_comanda"
+        ]
+      }
     ]
   },
   "hints": [
@@ -2109,6 +2201,15 @@
         "proves": "Prova a linha: Téo estava em Biblioteca (urna) (objetivo: Quem colocou as cédulas falsas)."
       }
     ],
+    "panorama_story": [
+      "Seg, 22h: Téo avisa a Chapa Azul que vão perder e fala num 'plano B'.",
+      "Seg, noite: Caio empresta ao Téo a chave do armário do grêmio.",
+      "12h00: Rui começa o comício no pátio.",
+      "12h02: Téo chama o mesário à cantina, 'urgente'.",
+      "12h05: Téo abre a urna, põe 14 cédulas para a Rosa e troca o lacre.",
+      "16h00: Contagem: 212 votos para 198 assinaturas. Caio grita fraude.",
+      "No quadro oficial: o Téo fraudou para anular, com a chave que o Caio emprestou; a Rosa venceria de qualquer jeito."
+    ],
     "red_herrings": [
       "A DM do Rui ao mesário parece suborno, mas ele pedia cuidado com a urna.",
       "A Bela venceu, mas venceria sem as cédulas falsas."
@@ -2137,6 +2238,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

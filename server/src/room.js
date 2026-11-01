@@ -25,7 +25,16 @@ const CARD_TAGS = ['inocente', 'suspeito', 'mentiu', 'alibi'];
 function allLinkTypes(c) {
   const own = c.link_types || [];
   const labels = new Set(own.map((t) => String(t.label).toLowerCase()));
-  return [...own, ...GENERIC_LINKS.filter((g) => !labels.has(g.label) && !own.some((t) => t.id === g.id))];
+  // pares de cartas que as ligações do próprio caso já cobrem (pela solução)
+  const kindOf = Object.fromEntries((c.cards || []).map((x) => [x.id, x.kind]));
+  const ownPairs = new Set();
+  for (const e of [...((c.solution || {}).edges || []), ...((c.solution || {}).traps || [])]) {
+    if (own.some((t) => t.id === e.type)) ownPairs.add(`${kindOf[e.from]}>${kindOf[e.to]}`);
+  }
+  // "esteve em" e "aconteceu em" repetiriam o "estava em" do caso: some quando o caso já liga esse par
+  const SAME = { g_esteve: 'pessoa>lugar', g_aconteceu: 'fato>lugar' };
+  return [...own, ...GENERIC_LINKS.filter((g) => !labels.has(g.label) && !own.some((t) => t.id === g.id)
+    && !(SAME[g.id] && ownPairs.has(SAME[g.id])))];
 }
 // provas de um fio (compatível com quadros antigos que tinham só "evidence")
 function proofsOf(l) { return Array.isArray(l.proofs) ? [...l.proofs] : (l.evidence ? [l.evidence] : []); }
@@ -365,6 +374,7 @@ class Room {
       reveal: c.reveal,
       culprit: c.solution.culprit || null,
       edges: c.solution.edges,
+      panorama: c.solution.panorama || [],
       categories: c.solution.categories,
       ranking: this.ranking(),
     };

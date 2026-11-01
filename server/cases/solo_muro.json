@@ -750,8 +750,20 @@
     {
       "id": "muro",
       "kind": "fato",
-      "name": "Muro pichado",
+      "name": "O muro do pátio",
       "icon": "cartaz"
+    },
+    {
+      "id": "zero",
+      "kind": "fato",
+      "name": "A prova zerada e a viagem perdida",
+      "icon": "papel"
+    },
+    {
+      "id": "tranca",
+      "kind": "fato",
+      "name": "A tranca quebrada dos fundos",
+      "icon": "chave"
     }
   ],
   "items": [
@@ -983,6 +995,49 @@
         "type": "pichou",
         "category": "autoria"
       }
+    ],
+    "panorama": [
+      {
+        "from": "thiago",
+        "to": "zero",
+        "type": "g_motivo",
+        "evidence": [
+          "c_ocorrencia"
+        ]
+      },
+      {
+        "from": "nogueira",
+        "to": "thiago",
+        "type": "g_brigou",
+        "evidence": [
+          "c_ocorrencia"
+        ]
+      },
+      {
+        "from": "kevin",
+        "to": "muro",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_live_kevin"
+        ]
+      },
+      {
+        "from": "jorge",
+        "to": "thiago",
+        "type": "g_viu",
+        "evidence": [
+          "c_livro",
+          "c_dep_jorge"
+        ]
+      },
+      {
+        "from": "tranca",
+        "to": "deposito",
+        "type": "g_aconteceu",
+        "evidence": [
+          "c_pegada"
+        ]
+      }
     ]
   },
   "hints": [
@@ -1063,7 +1118,7 @@
       {
         "clue": "c_pegada",
         "where": "Depósito: tocar em 'Porta dos fundos'",
-        "proves": "Prova a linha: Thiago pichou Muro pichado (objetivo: Quem pichou o muro); Thiago estava em Depósito (objetivo: Quem pichou o muro). Aponta para Thiago."
+        "proves": "Prova a linha: Thiago pichou O muro do pátio (objetivo: Quem pichou o muro); Thiago estava em Depósito (objetivo: Quem pichou o muro). Aponta para Thiago."
       },
       {
         "clue": "c_livro",
@@ -1078,7 +1133,7 @@
       {
         "clue": "c_tenis",
         "where": "Sala dos professores: tocar em 'Achados e perdidos'",
-        "proves": "Prova a linha: Thiago pichou Muro pichado (objetivo: Quem pichou o muro). Aponta para Thiago."
+        "proves": "Prova a linha: Thiago pichou O muro do pátio (objetivo: Quem pichou o muro). Aponta para Thiago."
       },
       {
         "clue": "c_live_kevin",
@@ -1098,8 +1153,15 @@
       {
         "clue": "c_confissao",
         "where": "mostrar 'Achados da coordenação' para Thiago; ou mostrar 'Porta dos fundos' para Thiago",
-        "proves": "Prova a linha: Thiago pichou Muro pichado (objetivo: Quem pichou o muro). Aponta para Thiago."
+        "proves": "Prova a linha: Thiago pichou O muro do pátio (objetivo: Quem pichou o muro). Aponta para Thiago."
       }
+    ],
+    "panorama_story": [
+      "Sexta: Nogueira pega o Thiago colando, zera a prova e o tira da viagem.",
+      "22h05: Kevin pinta ao vivo no festival da praça.",
+      "22h10: Thiago entra pelos fundos do depósito e picha o muro.",
+      "6h50: A escola acorda com o recado. O Kevin leva a culpa.",
+      "No quadro oficial: o Thiago entrou pela tranca quebrada e pichou por vingança; o Kevin estava na praça."
     ],
     "red_herrings": [
       "O Kevin é grafiteiro, mas assina tudo e estava ao vivo na praça."
@@ -1128,6 +1190,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

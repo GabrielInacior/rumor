@@ -71,7 +71,7 @@
     },
     {
       "id": "entregou",
-      "label": "repassou para",
+      "label": "repassou o gabarito para",
       "directed": true
     },
     {
@@ -1527,6 +1527,24 @@
       "kind": "fato",
       "name": "O gabarito da prova final",
       "icon": "papel"
+    },
+    {
+      "id": "perfil_fantasma",
+      "kind": "fato",
+      "name": "O perfil @fantasma",
+      "icon": "celular"
+    },
+    {
+      "id": "setup",
+      "kind": "fato",
+      "name": "O computador gamer do Nico",
+      "icon": "computador"
+    },
+    {
+      "id": "pix",
+      "kind": "fato",
+      "name": "Os 27 Pix de vinte reais",
+      "icon": "caixa"
     }
   ],
   "items": [
@@ -1961,6 +1979,88 @@
         "type": "pegou",
         "category": "origem"
       }
+    ],
+    "panorama": [
+      {
+        "from": "nico",
+        "to": "setup",
+        "type": "g_motivo",
+        "evidence": [
+          "c_story_nico"
+        ]
+      },
+      {
+        "from": "nico",
+        "to": "rosa",
+        "type": "g_brigou",
+        "evidence": [
+          "c_dep_rosa"
+        ]
+      },
+      {
+        "from": "nico",
+        "to": "perfil_fantasma",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_email"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "perfil_fantasma",
+        "type": "g_sabia",
+        "evidence": [
+          "c_dm_fantasma"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "gabarito",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_dm_fantasma"
+        ]
+      },
+      {
+        "from": "lia",
+        "to": "gabarito",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_registro_bib"
+        ]
+      },
+      {
+        "from": "kaua",
+        "to": "gabarito",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_comprovante"
+        ]
+      },
+      {
+        "from": "mari",
+        "to": "perfil_fantasma",
+        "type": "g_sabia",
+        "evidence": [
+          "c_dep_mari"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "pix",
+        "type": "g_sabia",
+        "evidence": [
+          "c_celular_pedro"
+        ]
+      },
+      {
+        "from": "joana",
+        "to": "lia",
+        "type": "g_alibi",
+        "evidence": [
+          "c_registro_bib"
+        ]
+      }
     ]
   },
   "hints": [
@@ -2054,7 +2154,7 @@
       {
         "clue": "c_dm_fantasma",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Nico repassou para Pedro (objetivo: Quem passou o gabarito ao vendedor)."
+        "proves": "Prova a linha: Nico repassou o gabarito para Pedro (objetivo: Quem passou o gabarito ao vendedor)."
       },
       {
         "clue": "c_story_nico",
@@ -2084,7 +2184,7 @@
       {
         "clue": "c_celular_pedro",
         "where": "Quadra: tocar em 'Bolsa do Pedro'",
-        "proves": "Prova a linha: Pedro repassou para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
+        "proves": "Prova a linha: Pedro repassou o gabarito para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
       },
       {
         "clue": "c_registro_bib",
@@ -2094,7 +2194,7 @@
       {
         "clue": "c_comprovante",
         "where": "Sala de aula: tocar em 'Mochila do Kauã'",
-        "proves": "Prova a linha: Pedro repassou para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
+        "proves": "Prova a linha: Pedro repassou o gabarito para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
       },
       {
         "clue": "c_foto_gabarito",
@@ -2109,12 +2209,12 @@
       {
         "clue": "c_email",
         "where": "Chega sozinha aos 4 min 30 s",
-        "proves": "Prova a linha: Nico pegou O gabarito da prova final (objetivo: Quem tirou o gabarito da coordenação); Nico repassou para Pedro (objetivo: Quem passou o gabarito ao vendedor). Aponta para Nico."
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final (objetivo: Quem tirou o gabarito da coordenação); Nico repassou o gabarito para Pedro (objetivo: Quem passou o gabarito ao vendedor). Aponta para Nico."
       },
       {
         "clue": "c_dep_pedro",
         "where": "mostrar 'Mochila do Kauã' para Pedro; ou trocar 'Carregador de celular' com Pedro",
-        "proves": "Prova a linha: Nico repassou para Pedro (objetivo: Quem passou o gabarito ao vendedor)."
+        "proves": "Prova a linha: Nico repassou o gabarito para Pedro (objetivo: Quem passou o gabarito ao vendedor)."
       },
       {
         "clue": "c_dep_rosa",
@@ -2129,7 +2229,7 @@
       {
         "clue": "c_dep_kaua",
         "where": "conversar com Kauã ('De quem você comprou?'); ou mostrar 'Mochila do Kauã' para Kauã",
-        "proves": "Prova a linha: Pedro repassou para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
+        "proves": "Prova a linha: Pedro repassou o gabarito para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
       },
       {
         "clue": "c_dep_mari",
@@ -2141,6 +2241,14 @@
         "where": "mostrar 'Recado da coordenação' + 'Impressora da coordenação' para Nico; ou mostrar 'Foto impressa' + 'Impressora da coordenação' para Nico",
         "proves": "Prova a linha: Nico estava em Coordenação (objetivo: Quem tirou o gabarito da coordenação)."
       }
+    ],
+    "panorama_story": [
+      "Quinta, 13h: Lia começa a estudar na biblioteca, onde fica até 15h02.",
+      "Quinta, 13h48: Sozinho na coordenação, Nico imprime o gabarito.",
+      "Sábado, 21h: Como @fantasma, Nico recruta o Pedro para vender.",
+      "Domingo, 18h: O perfil de venda aparece. 27 Pix caem na conta do Pedro.",
+      "Segunda, 7h: A prova é cancelada.",
+      "No quadro oficial: o Nico tirou o gabarito e se escondeu atrás do @fantasma; o Pedro vendeu; a Lia só queria uma carta."
     ],
     "red_herrings": [
       "O Pix na conta do Pedro: ele vendia, não roubava.",
@@ -2170,6 +2278,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

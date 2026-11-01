@@ -1227,6 +1227,12 @@
       "kind": "fato",
       "name": "A encomenda 'para a peça dos 60 anos'",
       "icon": "papel"
+    },
+    {
+      "id": "antiquario",
+      "kind": "fato",
+      "name": "A venda ao Antiquário Relíquia",
+      "icon": "caixa"
     }
   ],
   "items": [
@@ -1559,6 +1565,56 @@
         "type": "pegou",
         "category": "taca"
       }
+    ],
+    "panorama": [
+      {
+        "from": "marta",
+        "to": "antiquario",
+        "type": "g_motivo",
+        "evidence": [
+          "c_cartao"
+        ]
+      },
+      {
+        "from": "marta",
+        "to": "sofia",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_dep_nogueira"
+        ]
+      },
+      {
+        "from": "sofia",
+        "to": "marta",
+        "type": "g_acobertou",
+        "evidence": [
+          "c_dep_sofia"
+        ]
+      },
+      {
+        "from": "marta",
+        "to": "jorge",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_livro_jorge"
+        ]
+      },
+      {
+        "from": "jorge",
+        "to": "taca",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_livro_jorge"
+        ]
+      },
+      {
+        "from": "nanda",
+        "to": "marta",
+        "type": "g_viu",
+        "evidence": [
+          "c_dep_nanda"
+        ]
+      }
     ]
   },
   "hints": [
@@ -1714,6 +1770,14 @@
         "proves": "Prova a linha: Profa. Marta estava em Sala do diretor (objetivo: Onde a vice estava sexta às 18h)."
       }
     ],
+    "panorama_story": [
+      "Março: O jornal fotografa a taça com o amassado na alça.",
+      "Quinta: Marta encomenda à Sofia uma réplica 'para a peça'.",
+      "18h00: Sexta: Marta pega a chave da vitrine e libera o zelador mais cedo.",
+      "18h10: Marta sai da diretoria com a taça na bolsa.",
+      "Sábado: A taça é vendida ao Antiquário Relíquia.",
+      "No quadro oficial: a vice mentiu para a Sofia e para o zelador, trocou a taça e vendeu a verdadeira; a Sofia acobertou."
+    ],
     "red_herrings": [
       "O Seu Jorge tem a chave, mas foi liberado às 18h.",
       "A Sofia fez a cópia, mas não pegou a taça."
@@ -1742,6 +1806,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

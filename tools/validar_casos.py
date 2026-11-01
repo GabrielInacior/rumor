@@ -300,6 +300,23 @@ def check(p):
         ev = e["evidence"]
         if not any(x in worst for x in ev): err.append("edge sem prova no pior caminho %s>%s" % (e["from"], e["to"]))
         if not any(clues[x]["release"] != "interrogatorio" for x in ev): err.append("edge só por interrogatório %s>%s" % (e["from"], e["to"]))
+    # panorama: ligações não obrigatórias
+    GEN = {"g_estava_com": "pp", "g_mentiu": "pp", "g_acobertou": "pp", "g_alibi": "pp", "g_brigou": "pp", "g_amigo": "pp",
+           "g_viu": "pp|pf", "g_mentiu_sobre": "pf", "g_sabia": "pf", "g_motivo": "pf", "g_nao_fez": "pf", "g_esteve": "pl", "g_aconteceu": "fl"}
+    K = {"pessoa": "p", "fato": "f", "lugar": "l"}
+    pano = sol.get("panorama", [])
+    lo, hi = (6, 12) if mode == "multi" else (4, 8)
+    if not lo <= len(pano) <= hi: err.append("panorama %d (regra %d a %d)" % (len(pano), lo, hi))
+    req_keys = {(e["from"], e["to"], e["type"]) for e in sol["edges"]}
+    for l in pano:
+        if l["from"] not in cards or l["to"] not in cards: err.append("panorama ids " + str(l)); continue
+        if l["type"] in GEN:
+            pair = K[cards[l["from"]]["kind"]] + K[cards[l["to"]]["kind"]]
+            if pair not in GEN[l["type"]].split("|"): err.append("panorama tipo x cartas %s %s>%s" % (l["type"], l["from"], l["to"]))
+        elif l["type"] not in lts: err.append("panorama tipo desconhecido " + l["type"])
+        if (l["from"], l["to"], l["type"]) in req_keys: err.append("panorama repete fio obrigatório " + str(l))
+        for x in l.get("evidence", []):
+            if x not in clues: err.append("panorama evidence " + x)
     ce = sol.get("culprit_evidence", [])
     if not ce or any(x not in clues for x in ce): err.append("culprit_evidence")
     elif not any(clues[x]["release"] != "interrogatorio" and x in worst for x in ce): err.append("culpado sem prova no pior caminho")
@@ -313,7 +330,8 @@ def check(p):
         cm = tg.get("clue_map", [])
         if {x["clue"] for x in cm} != set(clues) or any(not x.get("where") or not x.get("proves") for x in cm): err.append("clue_map incompleto")
         if not tg.get("red_herrings"): err.append("red_herrings")
-        if not 4 <= len(tg.get("faq", [])) <= 6: err.append("faq")
+        if not 4 <= len(tg.get("faq", [])) <= 8: err.append("faq")
+        if not 5 <= len(tg.get("panorama_story", [])) <= 10: err.append("panorama_story")
         if len(tg.get("talking_points", [])) != 3: err.append("talking_points")
         if "—" in json.dumps(tg, ensure_ascii=False): err.append("travessão no guia")
     print("%-18s %-5s dif %d %4ds | locs %d pessoas %d pistas %2d split %d itens %d edges %d | %s" % (

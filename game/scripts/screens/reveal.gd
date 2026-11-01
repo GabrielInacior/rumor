@@ -236,7 +236,8 @@ func _build_board(r: Dictionary) -> Control:
 	page.add_child(UI.full(bv))
 	page.set_meta("board", bv)
 	var ids: Array = []
-	for e in r.get("edges", []):
+	var all_edges: Array = (r.get("edges", []) as Array) + (r.get("panorama", []) as Array)
+	for e in all_edges:
 		for k in ["from", "to"]:
 			if not ids.has(e[k]):
 				ids.append(e[k])
@@ -251,6 +252,13 @@ func _build_board(r: Dictionary) -> Control:
 		var ev: Variant = null
 		if not (e.get("evidence", []) as Array).is_empty():
 			ev = e["evidence"][0]
-		links.append({"id": "o%d" % n, "a": e["from"], "b": e["to"], "type": e["type"], "evidence": ev})
+		links.append({"id": "o%d" % n, "a": e["from"], "b": e["to"], "type": e["type"], "evidence": ev, "color": "vermelho"})
+	# panorama: o resto da história (quem mentiu, acobertou, quem é inocente), em fios azuis
+	for e in r.get("panorama", []):
+		n += 1
+		var pev: Variant = null
+		if not (e.get("evidence", []) as Array).is_empty():
+			pev = e["evidence"][0]
+		links.append({"id": "o%d" % n, "a": e["from"], "b": e["to"], "type": e["type"], "evidence": pev, "color": "azul"})
 	bv.set_data(cards, links)
 	return page

@@ -1362,7 +1362,7 @@
     {
       "id": "dentista",
       "kind": "lugar",
-      "name": "Dentista",
+      "name": "Consultório do dentista",
       "scene": "sala_professores"
     },
     {
@@ -1373,7 +1373,7 @@
     {
       "id": "ninguem",
       "kind": "fato",
-      "name": "A conta @ninguém",
+      "name": "@ninguém",
       "icon": "celular"
     },
     {
@@ -1381,6 +1381,30 @@
       "kind": "fato",
       "name": "Os segredos dos achados e perdidos",
       "icon": "caixa"
+    },
+    {
+      "id": "humilhacao",
+      "kind": "fato",
+      "name": "A humilhação do Caíque no grupo",
+      "icon": "mensagem"
+    },
+    {
+      "id": "postit",
+      "kind": "fato",
+      "name": "A senha no post-it",
+      "icon": "papel"
+    },
+    {
+      "id": "ameaca",
+      "kind": "fato",
+      "name": "A ameaça dos R$ 50",
+      "icon": "mensagem"
+    },
+    {
+      "id": "troca",
+      "kind": "fato",
+      "name": "A troca de plantão",
+      "icon": "prancheta"
     }
   ],
   "items": [
@@ -1775,6 +1799,89 @@
         "type": "postou",
         "category": "conta"
       }
+    ],
+    "panorama": [
+      {
+        "from": "kevin",
+        "to": "caique",
+        "type": "g_brigou",
+        "evidence": [
+          "c_story_caique"
+        ]
+      },
+      {
+        "from": "caique",
+        "to": "humilhacao",
+        "type": "g_motivo",
+        "evidence": [
+          "c_story_caique"
+        ]
+      },
+      {
+        "from": "caique",
+        "to": "postit",
+        "type": "g_sabia",
+        "evidence": [
+          "c_senha"
+        ]
+      },
+      {
+        "from": "joana",
+        "to": "ninguem",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_atestado"
+        ]
+      },
+      {
+        "from": "lia",
+        "to": "ninguem",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_chamada_aula"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "ameaca",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_pix_pedro"
+        ]
+      },
+      {
+        "from": "kevin",
+        "to": "segredos",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_bilhete_kevin"
+        ]
+      },
+      {
+        "from": "troca",
+        "to": "biblioteca",
+        "type": "g_aconteceu",
+        "evidence": [
+          "c_escala_troca"
+        ]
+      },
+      {
+        "from": "cida",
+        "to": "caique",
+        "type": "g_viu",
+        "evidence": [
+          "c_comanda"
+        ]
+      },
+      {
+        "from": "caique",
+        "to": "joana",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_escala_troca",
+          "c_coord_log"
+        ]
+      }
     ]
   },
   "hints": [
@@ -1882,7 +1989,7 @@
       {
         "clue": "c_escala_troca",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Caíque postou como A conta @ninguém (objetivo: Quem postou como @ninguém); Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém). Aponta para Caíque."
+        "proves": "Prova a linha: Caíque postou como @ninguém (objetivo: Quem postou como @ninguém); Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém). Aponta para Caíque."
       },
       {
         "clue": "c_pix_pedro",
@@ -1917,7 +2024,7 @@
       {
         "clue": "c_atestado",
         "where": "Sala dos professores: tocar em 'Atestados'",
-        "proves": "Prova a linha: Joana estava em Dentista (objetivo: Onde a Joana estava às 14h05)."
+        "proves": "Prova a linha: Joana estava em Consultório do dentista (objetivo: Onde a Joana estava às 14h05)."
       },
       {
         "clue": "c_comanda",
@@ -1927,12 +2034,12 @@
       {
         "clue": "c_coord_log",
         "where": "Chega sozinha aos 5 min",
-        "proves": "Prova a linha: Caíque postou como A conta @ninguém (objetivo: Quem postou como @ninguém). Aponta para Caíque."
+        "proves": "Prova a linha: Caíque postou como @ninguém (objetivo: Quem postou como @ninguém). Aponta para Caíque."
       },
       {
         "clue": "c_dep_joana",
         "where": "mostrar 'Atestado arquivado' para Joana",
-        "proves": "Prova a linha: Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém); Joana estava em Dentista (objetivo: Onde a Joana estava às 14h05)."
+        "proves": "Prova a linha: Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém); Joana estava em Consultório do dentista (objetivo: Onde a Joana estava às 14h05)."
       },
       {
         "clue": "c_dep_kevin",
@@ -1954,6 +2061,16 @@
         "where": "mostrar 'Rastreio da coordenação' + 'Troca de escala' para Caíque; ou mostrar 'Bolsa do Kevin' + 'Rastreio da coordenação' para Caíque",
         "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos (objetivo: De onde vieram os segredos)."
       }
+    ],
+    "panorama_story": [
+      "Semana passada: O celular do Kevin e o diário da Juju passam pelos achados. Voltam abertos.",
+      "Segunda: Caíque posta que alguém 'vai pagar o ingresso'.",
+      "13h00: Joana vai ao dentista. Caíque cobre o plantão.",
+      "14h00: Caíque pergunta na cantina se o wifi da biblioteca é bom.",
+      "14h05: Com a senha do post-it, posta como @ninguém.",
+      "14h12: Manda a ameaça para seis alunos.",
+      "14h30: Pedro paga em segredo.",
+      "No quadro oficial: o Caíque lia os achados, cobriu o plantão, usou a senha da Joana e chantageou; Pedro e Kevin mentiram por vergonha."
     ],
     "red_herrings": [
       "O 'tá ligado??' da Lia: virou moda, e ela estava em aula.",
@@ -1983,6 +2100,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

@@ -608,6 +608,18 @@
       "kind": "fato",
       "name": "Os bilhetes ameaçadores",
       "icon": "carta"
+    },
+    {
+      "id": "recuperacao",
+      "kind": "fato",
+      "name": "A recuperação da Bia",
+      "icon": "papel"
+    },
+    {
+      "id": "vaga",
+      "kind": "fato",
+      "name": "A vaga de titular",
+      "icon": "trofeu"
     }
   ],
   "items": [
@@ -767,6 +779,48 @@
         "type": "escreveu",
         "category": "autoria"
       }
+    ],
+    "panorama": [
+      {
+        "from": "lu",
+        "to": "vaga",
+        "type": "g_motivo",
+        "evidence": [
+          "c_ficha"
+        ]
+      },
+      {
+        "from": "lu",
+        "to": "recuperacao",
+        "type": "g_sabia",
+        "evidence": [
+          "c_ficha"
+        ]
+      },
+      {
+        "from": "lu",
+        "to": "bia",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_chat_time"
+        ]
+      },
+      {
+        "from": "duda",
+        "to": "bia",
+        "type": "g_brigou",
+        "evidence": [
+          "c_chat_time"
+        ]
+      },
+      {
+        "from": "duda",
+        "to": "bilhetes",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_treino"
+        ]
+      }
     ]
   },
   "hints": [
@@ -864,6 +918,13 @@
         "proves": "Aponta para Lu."
       }
     ],
+    "panorama_story": [
+      "21h00: Briga no grupo. A Lu responde: 'somos um time ❤️'.",
+      "7h00: Duda começa o treino.",
+      "7h10: Lu força o armário da Bia e deixa o quarto bilhete.",
+      "7h25: Lu aparece no treino dizendo que pegou trânsito.",
+      "No quadro oficial: a Lu escreveu os bilhetes de olho na vaga; a capitã brigava, mas estava no treino."
+    ],
     "red_herrings": [
       "A briga da Duda com a Bia: ela é dura, mas estava no treino na hora do bilhete."
     ],
@@ -891,6 +952,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

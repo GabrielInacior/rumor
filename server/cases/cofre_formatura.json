@@ -1653,6 +1653,24 @@
       "kind": "fato",
       "name": "Bilhete 'Obrigado, Caio'",
       "icon": "carta"
+    },
+    {
+      "id": "alarme",
+      "kind": "fato",
+      "name": "O alarme das 23h17",
+      "icon": "relogio"
+    },
+    {
+      "id": "festa",
+      "kind": "fato",
+      "name": "A festa de quinze da Lari",
+      "icon": "caixa"
+    },
+    {
+      "id": "auditoria",
+      "kind": "fato",
+      "name": "A prestação de contas de sexta",
+      "icon": "papel"
     }
   ],
   "items": [
@@ -2071,6 +2089,89 @@
         "type": "pegou",
         "category": "cofre"
       }
+    ],
+    "panorama": [
+      {
+        "from": "lari",
+        "to": "caio",
+        "type": "g_brigou",
+        "evidence": [
+          "c_dep_caio"
+        ]
+      },
+      {
+        "from": "lari",
+        "to": "auditoria",
+        "type": "g_sabia",
+        "evidence": [
+          "c_auditoria"
+        ]
+      },
+      {
+        "from": "bia",
+        "to": "lari",
+        "type": "g_acobertou",
+        "evidence": [
+          "c_dm_bia_lari"
+        ]
+      },
+      {
+        "from": "bia",
+        "to": "festa",
+        "type": "g_sabia",
+        "evidence": [
+          "c_dm_bia_lari"
+        ]
+      },
+      {
+        "from": "rafa",
+        "to": "dinheiro",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_camera"
+        ]
+      },
+      {
+        "from": "caio",
+        "to": "dinheiro",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_ata"
+        ]
+      },
+      {
+        "from": "alarme",
+        "to": "sala_professores",
+        "type": "g_aconteceu",
+        "evidence": [
+          "c_log_cofre",
+          "c_camera"
+        ]
+      },
+      {
+        "from": "jorge",
+        "to": "lari",
+        "type": "g_viu",
+        "evidence": [
+          "c_dep_jorge"
+        ]
+      },
+      {
+        "from": "joana",
+        "to": "lari",
+        "type": "g_viu",
+        "evidence": [
+          "c_dep_joana"
+        ]
+      },
+      {
+        "from": "lari",
+        "to": "bilhete",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_impressora"
+        ]
+      }
     ]
   },
   "hints": [
@@ -2255,6 +2356,16 @@
         "proves": "Prova a linha: Lari estava em Sala do diretor (objetivo: Quem abriu o cofre e quando)."
       }
     ],
+    "panorama_story": [
+      "Quarta: Bia cobra da Lari os R$ 800 usados na festa de quinze.",
+      "17h30: Caio abre a assembleia na cantina.",
+      "17h40: Lari imprime 'Obrigado, Caio' na biblioteca.",
+      "17h45: Lari sai da assembleia 'para buscar as rifas'.",
+      "17h52: Lari abre o cofre com o código da tesouraria e leva tudo.",
+      "17h55: Seu Jorge a vê sair da diretoria com a mochila estufada.",
+      "23h17: Rafa pula o muro e arromba o armário dos confiscados. O alarme toca.",
+      "No quadro oficial: a Lari esvaziou o cofre à tarde e culpou o ex; a Bia acobertou; o alarme da noite foi o Rafa atrás do celular."
+    ],
     "red_herrings": [
       "O vulto das 23h17: era o Rafa, buscando o próprio celular.",
       "O bilhete com o nome do Caio: foi escrito para incriminá-lo."
@@ -2283,6 +2394,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

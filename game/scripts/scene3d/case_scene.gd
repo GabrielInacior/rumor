@@ -2542,6 +2542,31 @@ func _gui_input(e: InputEvent) -> void:
 
 func _tap(pos: Vector2) -> void:
 	var vp_pos := pos / float(stretch_shrink)
+	# o anel amarelo da pista também pega a pista, mesmo com alguém na frente: confere na tela
+	# se o toque caiu perto do anel de uma pista ainda não achada (antes do raio 3D)
+	var best_id := ""
+	var best_d := 64.0 * _hires_f
+	for gl in _glows:
+		var ring: Node3D = gl["ring"]
+		if not ring.visible or cam.is_position_behind(ring.global_position):
+			continue
+		var sp := cam.unproject_position(ring.global_position)
+		var dd := sp.distance_to(vp_pos)
+		if dd < best_d:
+			best_d = dd
+			best_id = str(gl["id"])
+	if best_id != "":
+		for k in _targets:
+			var td: Dictionary = _targets[k]
+			if td.get("kind") == "hotspot" and str(td.get("id")) == best_id:
+				hotspot_tapped.emit(best_id, str(td["label"]))
+				var rtw := create_tween()
+				for gl in _glows:
+					if str(gl["id"]) == best_id:
+						var rn: Node3D = gl["ring"]
+						rtw.tween_property(rn, "scale", Vector3.ONE * 1.3, 0.08)
+						rtw.tween_property(rn, "scale", Vector3.ONE, 0.12)
+				return
 	var from := cam.project_ray_origin(vp_pos)
 	var dir := cam.project_ray_normal(vp_pos)
 	var q := PhysicsRayQueryParameters3D.create(from, from + dir * 40.0)

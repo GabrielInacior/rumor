@@ -980,6 +980,24 @@
       "kind": "fato",
       "name": "O celular do Gabriel",
       "icon": "celular"
+    },
+    {
+      "id": "divida",
+      "kind": "fato",
+      "name": "A dívida do Gui num site de jogo",
+      "icon": "caixa"
+    },
+    {
+      "id": "segredo",
+      "kind": "fato",
+      "name": "A senha do cadeado (0408)",
+      "icon": "chave"
+    },
+    {
+      "id": "tenis",
+      "kind": "fato",
+      "name": "O tênis novo do Kauã",
+      "icon": "mochila"
     }
   ],
   "items": [
@@ -1224,6 +1242,64 @@
         "type": "pegou",
         "category": "furto"
       }
+    ],
+    "panorama": [
+      {
+        "from": "gui",
+        "to": "segredo",
+        "type": "g_sabia",
+        "evidence": [
+          "c_papel"
+        ]
+      },
+      {
+        "from": "gui",
+        "to": "gabriel",
+        "type": "g_amigo",
+        "evidence": [
+          "c_alerta"
+        ]
+      },
+      {
+        "from": "gui",
+        "to": "gabriel",
+        "type": "g_mentiu",
+        "evidence": [
+          "c_alerta"
+        ]
+      },
+      {
+        "from": "kaua",
+        "to": "celular",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_recibo"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "gui",
+        "type": "g_viu",
+        "evidence": [
+          "c_dep_pedro"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "celular",
+        "type": "g_nao_fez",
+        "evidence": [
+          "c_comanda"
+        ]
+      },
+      {
+        "from": "gabriel",
+        "to": "segredo",
+        "type": "g_mentiu_sobre",
+        "evidence": [
+          "c_cadeado"
+        ]
+      }
     ]
   },
   "hints": [
@@ -1354,6 +1430,15 @@
         "proves": "Prova a linha: Gui pegou O celular do Gabriel (objetivo: Quem pegou o celular). Aponta para Gui."
       }
     ],
+    "panorama_story": [
+      "9h40: Gui sai da aula com 'dor de barriga'.",
+      "9h41: Gui abre o armário do Gabriel com o segredo 0408.",
+      "9h46: Pedro, matando aula, chega à cantina.",
+      "9h50: Gui pede um saco plástico na cantina.",
+      "10h06: Gui consola o Gabriel no grupo.",
+      "11h20: O celular aparece à venda na internet.",
+      "No quadro oficial: o melhor amigo sabia a senha, pegou o celular e fingiu solidariedade; o tênis do Kauã era da Bolsa Atleta."
+    ],
     "red_herrings": [
       "O tênis novo do Kauã: foi pago com a Bolsa Atleta.",
       "O Pedro saiu cedo, mas foi matar aula na cantina."
@@ -1382,6 +1467,10 @@
       {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
+      },
+      {
+        "q": "Como montar o panorama?",
+        "a": "Além dos fios obrigatórios, liguem pessoas entre si (quem mentiu para quem, quem acobertou, quem estava com quem, quem é álibi de quem), marquem os inocentes com 'não fez' e a etiqueta INOCENTE, e prendam várias provas no mesmo fio. O panorama não vale nota, mas mostra se a história fecha sem furos."
       }
     ],
     "talking_points": [

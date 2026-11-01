@@ -74,6 +74,16 @@ static func build(g: Dictionary) -> Control:
 	ov.add_child(_para("No modo solo, o aluno confirma a entrega sozinho."))
 	v.add_child(_section("OBJETIVOS E COMO TERMINAR", ov, true))
 
+	# a história completa que o quadro oficial conta (panorama), em ordem
+	var ps: Array = tg.get("panorama_story", [])
+	if not ps.is_empty():
+		var pv := UI.vbox(8)
+		var pn := 0
+		for line in ps:
+			pn += 1
+			pv.add_child(_bullet(str(pn), UI.strip_emoji(str(line))))
+		v.add_child(_section("A HISTÓRIA COMPLETA", pv, false))
+
 	# 2. caminho da solução
 	var steps: Array = tg.get("solution_steps", [])
 	var sv := UI.vbox(8)

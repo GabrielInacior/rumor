@@ -111,6 +111,15 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
       {"from": "caio", "to": "duda", "type": "contou", "category": "cadeia",
        "evidence": ["c_celular", "c_print_gremio"]}  // qualquer UMA delas presa vale
     ],
+    // PANORAMA: ligações NÃO obrigatórias que completam a história (não valem nota; aparecem no quadro oficial da
+    // revelação e no guia). Mesmo formato dos edges, evidence opcional. Multi 6 a 12, solo 4 a 8. Pode usar os tipos
+    // do caso ou as ligações gerais do motor (ids fixos, NÃO declarar em link_types):
+    //   g_estava_com, g_mentiu ("mentiu para"), g_acobertou, g_alibi ("é o álibi de"), g_brigou, g_amigo: pessoa > pessoa
+    //   g_viu: pessoa > pessoa | pessoa > fato
+    //   g_mentiu_sobre, g_sabia, g_motivo ("tinha motivo para"), g_nao_fez: pessoa > fato
+    //   g_esteve ("esteve em"): pessoa > lugar (só aparece se o caso não tiver ligação própria com esse rótulo)
+    //   g_aconteceu: fato > lugar
+    "panorama": [{"from": "rafa", "to": "boato", "type": "g_nao_fez", "evidence": ["c_post_rafa"]}],
     "traps": [                                      // 1 a 2 hipóteses erradas plausíveis
       {"from": "rafa", "to": "boato", "type": "postou", "category": "post"}
     ]
@@ -123,8 +132,9 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
     "solution_steps": ["5 a 8 passos do caminho ótimo, citando pista, lugar e pessoa"],
     "pacing": [{"when": "0 a 5 min", "aha": "o que costuma acontecer", "if_stuck": "pergunta para destravar"}],  // 3 a 6
     "clue_map": [{"clue": "c_id", "where": "como se obtém (cena+objeto, quem dá, t+, troca)", "proves": "o que prova"}],  // TODAS as pistas
+    "panorama_story": ["5 a 10 frases curtas, em ordem: a história completa contada pelo quadro oficial"],
     "red_herrings": ["pista falsa e por que é falsa"],
-    "faq": [{"q": "dúvida comum", "a": "como ajudar sem entregar"}],  // 4 a 6
+    "faq": [{"q": "dúvida comum", "a": "como ajudar sem entregar"}],  // 4 a 8 (inclui "Como montar o panorama?")
     "talking_points": ["pergunta para a revelação (raciocínio, fontes, boatos)"]  // exatamente 3
   },
 
@@ -286,6 +296,15 @@ start ou hotspot.
 
 - Todo objetivo tem pelo menos um fio com prova (`evidence`). Nenhum depende de outro para ser provado, e nenhum
   deve ser trivial demais. As armadilhas ficam no objetivo que elas tentam enganar.
+
+## Panorama
+
+- O quadro tem etiquetas nas cartas de pessoa (INOCENTE, SUSPEITO, MENTIU, TEM ÁLIBI), provas ilimitadas por fio e
+  "envolver várias pessoas" num lugar ou fato.
+- Cada caso traz os **fatos** que a história precisa (ex.: "O alarme das 23h17", "A prestação de contas de sexta"),
+  para o aluno ligar quem fez o quê, quando e por quê: 2 a 4 fatos extras nos multi, 1 a 3 nos solo.
+- Todo fio obrigatório deve fazer sentido lido como frase ("LARI ESCREVEU O BILHETE 'OBRIGADO, CAIO'"). Se o rótulo do
+  tipo ficar estranho, ajuste o `label` ou o nome da carta.
 
 ## Validador
 

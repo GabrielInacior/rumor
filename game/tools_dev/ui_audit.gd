@@ -39,6 +39,18 @@ func _shot(name: String) -> void:
 
 
 func _public_case() -> Dictionary:
+	# o mesmo caso público que o servidor entrega (ligações gerais, pares...), via node
+	var out := []
+	var js := ProjectSettings.globalize_path("res://").path_join("../tools/dev/public_case.js")
+	if OS.execute("node", [js, str(full_case["id"])], out) == 0 and not out.is_empty():
+		# o terminal do Windows entrega os bytes UTF-8 lidos como Latin-1: refaz os bytes e decodifica
+		var raw := str(out[0])
+		var bytes := PackedByteArray()
+		for i in raw.length():
+			bytes.append(raw.unicode_at(i) & 0xFF)
+		var pc: Variant = JSON.parse_string(bytes.get_string_from_utf8())
+		if pc is Dictionary:
+			return pc
 	var c := full_case.duplicate(true)
 	var sol: Dictionary = c["solution"]
 	c.erase("solution")
