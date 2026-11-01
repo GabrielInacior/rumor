@@ -28,6 +28,13 @@
     },
     {
       "id": "bento",
+      "scene": "sala_professores",
+      "if": [
+        "mel_falou"
+      ]
+    },
+    {
+      "id": "bento",
       "scene": "biblioteca"
     },
     {
@@ -183,10 +190,11 @@
       "role": "coordenadora",
       "look": {
         "skin": "#5d3a22",
-        "hair": "cacheado_longo",
+        "hair": "longo",
         "hair_color": "#2a1a10",
         "top": "#880e4f",
-        "accessory": "brinco"
+        "accessory": "cracha",
+        "outfit": "formal"
       },
       "talk": {
         "greet": [
@@ -199,6 +207,15 @@
         "mood": "desconfiado",
         "tree": {
           "entries": [
+            {
+              "if": [
+                "mel_falou"
+              ],
+              "ifnot": [
+                "duo_arm"
+              ],
+              "node": "duo_bento"
+            },
             {
               "if": [
                 "vera_bravo"
@@ -282,10 +299,118 @@
                   "end": true
                 }
               ]
+            },
+            "duo_bento": {
+              "cast": [
+                "bento"
+              ],
+              "lines": [
+                {
+                  "who": "bento",
+                  "text": "Coordenadora, vim só reforçar: o Davi sempre foi falso. Todo mundo sabe.",
+                  "expr": "desconfiado",
+                  "anim": "apontando",
+                  "react": "desconfiado"
+                },
+                {
+                  "who": "vera",
+                  "text": "Curioso, Bento. A Mel disse que vendeu uma cópia da prova. Pra você.",
+                  "expr": "desconfiado",
+                  "anim": "pensando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "bento",
+                  "text": "A Mel mente! Ela sempre me odiou.",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "desconfiado"
+                }
+              ],
+              "sets": [
+                "duo_arm"
+              ],
+              "choices": [
+                {
+                  "text": "Você ficou sozinho na sala no almoço",
+                  "kind": "boa",
+                  "next": "duo_fim",
+                  "requires": [
+                    "c_lousa"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "vera",
+                  "text": "A lousa diz: 'só o Bento, 12h15 às 12h45'. Explique.",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "bento",
+                  "text": "Eu... estudava. Sozinho. Isso não prova nada.",
+                  "expr": "nervoso",
+                  "anim": "nervoso",
+                  "react": "desconfiado"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da rede",
+                  "kind": "boa",
+                  "next": "duo_conf",
+                  "requires": [
+                    "c_rede"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "bento_encurralado"
+              ],
+              "cast": [
+                "bento"
+              ]
+            },
+            "duo_conf": {
+              "lines": [
+                {
+                  "who": "bento",
+                  "text": "...Fui eu. A bolsa era minha única chance. O Davi não merecia isso.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao",
+              "cast": [
+                "bento"
+              ]
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "mel",
@@ -1428,7 +1553,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Rede da biblioteca' para Bento",
+        "where": "mostrar 'Rede da biblioteca' para Dona Vera; ou mostrar 'Rede da biblioteca' para Bento",
         "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47. Aponta para Bento."
       }
     ],

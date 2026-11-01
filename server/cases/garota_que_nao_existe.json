@@ -37,11 +37,25 @@
     },
     {
       "id": "kevin",
+      "scene": "biblioteca",
+      "if": [
+        "kevin_falou"
+      ]
+    },
+    {
+      "id": "kevin",
       "scene": "cantina"
     },
     {
       "id": "nanda",
       "scene": "biblioteca"
+    },
+    {
+      "id": "leo",
+      "scene": "quadra",
+      "if": [
+        "leo_bravo"
+      ]
     },
     {
       "id": "leo",
@@ -83,7 +97,9 @@
         "hair": "raspado",
         "hair_color": "#3a3a3a",
         "top": "#1b5e20",
-        "accessory": "bone"
+        "accessory": "cracha",
+        "outfit": "uniforme",
+        "facial_hair": "cavanhaque"
       },
       "talk": {
         "greet": [
@@ -235,7 +251,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "gabriel",
@@ -1090,6 +1107,18 @@
           "entries": [
             {
               "if": [
+                "nanda_papo",
+                "kevin_falou"
+              ],
+              "ifnot": [
+                "leo_falou",
+                "duo_luiza",
+                "leo_bravo"
+              ],
+              "node": "duo_kevin"
+            },
+            {
+              "if": [
                 "leo_falou"
               ],
               "node": "conta"
@@ -1229,6 +1258,81 @@
                   "end": true
                 }
               ]
+            },
+            "duo_kevin": {
+              "cast": [
+                "kevin"
+              ],
+              "lines": [
+                {
+                  "who": "kevin",
+                  "text": "Léo, eu contei das fotos. Acabou, mano.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "bravo"
+                },
+                {
+                  "who": "leo",
+                  "text": "Você me entregou? Por um CHOCOLATE?",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "desconfiado"
+                },
+                {
+                  "who": "kevin",
+                  "text": "Você usou minha prima, Léo. Ela chorou.",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                }
+              ],
+              "sets": [
+                "duo_luiza"
+              ],
+              "choices": [
+                {
+                  "text": "Léo, você escreve 'excessão', né?",
+                  "kind": "boa",
+                  "next": "duo_fim",
+                  "requires": [
+                    "c_redacao"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "leo",
+                  "text": "...Dois anos no banco. Eu só queria um jogo. A Luiza era eu.",
+                  "expr": "triste",
+                  "anim": "pensando",
+                  "react": "triste"
+                },
+                {
+                  "who": "kevin",
+                  "text": "E eu deixei. Também tenho culpa.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao",
+              "cast": [
+                "kevin"
+              ]
             }
           }
         }
@@ -1242,10 +1346,11 @@
       "role": "professora de ciências e de redação de reforço",
       "look": {
         "skin": "#d29b73",
-        "hair": "longo",
+        "hair": "coque_baixo",
         "hair_color": "#3e2a1c",
         "top": "#00796b",
-        "accessory": "oculos"
+        "accessory": "oculos",
+        "outfit": "formal"
       },
       "talk": {
         "greet": [
@@ -1343,7 +1448,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "biblioteca",
@@ -2017,7 +2123,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Redação corrigida' + 'Prancheta do técnico' + 'Computador da biblioteca' para Léo; ou mostrar 'Redação corrigida' + 'Cartaz do campeonato' para Léo",
+        "where": "mostrar 'Redação corrigida' + 'Prancheta do técnico' + 'Computador da biblioteca' para Léo; ou mostrar 'Redação corrigida' + 'Cartaz do campeonato' para Léo; ou mostrar 'Redação corrigida' para Léo",
         "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio. Aponta para Léo."
       },
       {

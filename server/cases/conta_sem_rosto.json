@@ -21,6 +21,13 @@
     },
     {
       "id": "caique",
+      "scene": "biblioteca",
+      "if": [
+        "kevin_falou"
+      ]
+    },
+    {
+      "id": "caique",
       "scene": "corredor"
     },
     {
@@ -30,6 +37,13 @@
     {
       "id": "lia",
       "scene": "sala_aula"
+    },
+    {
+      "id": "pedro",
+      "scene": "corredor",
+      "if": [
+        "pedro_falou"
+      ]
     },
     {
       "id": "pedro",
@@ -92,6 +106,16 @@
         "mood": "nervoso",
         "tree": {
           "entries": [
+            {
+              "if": [
+                "joana_falou",
+                "kevin_falou"
+              ],
+              "ifnot": [
+                "duo_conta"
+              ],
+              "node": "duo_caique"
+            },
             {
               "if": [
                 "joana_falou"
@@ -227,6 +251,82 @@
                   "kind": "neutra",
                   "end": true
                 }
+              ]
+            },
+            "duo_caique": {
+              "cast": [
+                "caique"
+              ],
+              "lines": [
+                {
+                  "who": "joana",
+                  "text": "Caíque. Você cobriu meu plantão. Você viu meu post-it.",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "caique",
+                  "text": "Todo mundo via teu post-it, Joana! Tava colado no monitor!",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "bravo"
+                },
+                {
+                  "who": "joana",
+                  "text": "Mas só você sentou aqui na terça. Às 14h05.",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                }
+              ],
+              "sets": [
+                "duo_conta"
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o rastreio e a troca de escala",
+                  "kind": "boa",
+                  "next": "duo_fim",
+                  "requires": [
+                    "c_coord_log",
+                    "c_escala_troca"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "caique",
+                  "text": "...O Kevin me humilhou na frente de todo mundo. Eu só quis que ele sentisse.",
+                  "expr": "triste",
+                  "anim": "pensando",
+                  "react": "surpreso"
+                },
+                {
+                  "who": "joana",
+                  "text": "E usou meu nome pra isso.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao",
+              "cast": [
+                "caique"
               ]
             }
           }
@@ -1046,7 +1146,8 @@
         "hair": "coque",
         "hair_color": "#2e2e2e",
         "top": "#ffffff",
-        "accessory": "nenhum"
+        "accessory": "nenhum",
+        "outfit": "uniforme"
       },
       "talk": {
         "greet": [
@@ -1140,7 +1241,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "juju",
@@ -1834,7 +1936,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Rastreio da coordenação' + 'Troca de escala' para Caíque; ou mostrar 'Bolsa do Kevin' + 'Rastreio da coordenação' para Caíque",
+        "where": "mostrar 'Rastreio da coordenação' + 'Troca de escala' para Joana; ou mostrar 'Rastreio da coordenação' + 'Troca de escala' para Caíque; ou mostrar 'Bolsa do Kevin' + 'Rastreio da coordenação' para Caíque",
         "proves": "Prova a linha: Caíque postou como A conta @ninguém. Aponta para Caíque."
       }
     ],

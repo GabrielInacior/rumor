@@ -23,6 +23,13 @@
     },
     {
       "id": "gui",
+      "scene": "cantina",
+      "if": [
+        "pedro_falou"
+      ]
+    },
+    {
+      "id": "gui",
       "scene": "corredor"
     },
     {
@@ -172,7 +179,9 @@
         "hair": "raspado",
         "hair_color": "#3a3a3a",
         "top": "#1b5e20",
-        "accessory": "bone"
+        "accessory": "cracha",
+        "outfit": "uniforme",
+        "facial_hair": "cavanhaque"
       },
       "talk": {
         "greet": [
@@ -266,7 +275,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "gui",
@@ -602,6 +612,15 @@
               "if": [
                 "pedro_falou"
               ],
+              "ifnot": [
+                "duo_vest"
+              ],
+              "node": "duo_gui"
+            },
+            {
+              "if": [
+                "pedro_falou"
+              ],
               "node": "conta"
             },
             {
@@ -762,6 +781,110 @@
                 }
               ],
               "unlock": "c_dep_pedro"
+            },
+            "duo_gui": {
+              "cast": [
+                "gui"
+              ],
+              "lines": [
+                {
+                  "who": "gui",
+                  "text": "Vai acreditar num cara que mata aula de física pra comer coxinha?",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "bravo"
+                },
+                {
+                  "who": "pedro",
+                  "text": "Eu vi a lanterna, Gui. No armário 12. O do Gabriel.",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "gui",
+                  "text": "Era... o meu armário. Eu confundi.",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "desconfiado"
+                }
+              ],
+              "sets": [
+                "duo_vest"
+              ],
+              "choices": [
+                {
+                  "text": "O seu armário é no corredor, Gui",
+                  "kind": "boa",
+                  "next": "duo_fim"
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "gui",
+                  "text": "...Tá. Tá bom. Eu devo dinheiro, mano. Muito.",
+                  "expr": "triste",
+                  "anim": "pensando",
+                  "react": "surpreso"
+                },
+                {
+                  "who": "pedro",
+                  "text": "Devolve o celular dele, Gui. Ele é teu amigo.",
+                  "expr": "triste",
+                  "anim": "falando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o papel com o segredo 0408",
+                  "kind": "boa",
+                  "next": "duo_conf",
+                  "requires": [
+                    "c_papel"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "gui_encurralado"
+              ],
+              "cast": [
+                "gui"
+              ]
+            },
+            "duo_conf": {
+              "lines": [
+                {
+                  "who": "gui",
+                  "text": "Fui eu. Peguei e anunciei. Desculpa, Pedro. Desculpa pro Gabriel também.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao",
+              "cast": [
+                "gui"
+              ]
             }
           }
         }
@@ -1141,7 +1264,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Armário do Gui' para Gui; ou mostrar 'Anúncio na internet' para Gui",
+        "where": "mostrar 'Armário do Gui' para Gui; ou mostrar 'Anúncio na internet' para Gui; ou mostrar 'Armário do Gui' para Pedro",
         "proves": "Prova a linha: Gui pegou O celular do Gabriel. Aponta para Gui."
       }
     ],

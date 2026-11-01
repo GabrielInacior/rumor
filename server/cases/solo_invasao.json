@@ -15,6 +15,13 @@
   "scene_people": [
     {
       "id": "ana",
+      "scene": "patio",
+      "if": [
+        "ana_bravo"
+      ]
+    },
+    {
+      "id": "ana",
       "scene": "laboratorio"
     },
     {
@@ -57,10 +64,11 @@
       "role": "professora de ciências, dona do laboratório",
       "look": {
         "skin": "#d29b73",
-        "hair": "longo",
+        "hair": "coque_baixo",
         "hair_color": "#3e2a1c",
         "top": "#00796b",
-        "accessory": "oculos"
+        "accessory": "oculos",
+        "outfit": "formal"
       },
       "talk": {
         "greet": [
@@ -214,7 +222,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "lari",
@@ -240,6 +249,16 @@
         "mood": "desconfiado",
         "tree": {
           "entries": [
+            {
+              "if": [
+                "jorge_falou"
+              ],
+              "ifnot": [
+                "duo_inv",
+                "ana_bravo"
+              ],
+              "node": "duo_ana"
+            },
             {
               "if": [
                 "lari_bravo"
@@ -326,6 +345,111 @@
                   "kind": "neutra",
                   "end": true
                 }
+              ]
+            },
+            "duo_ana": {
+              "cast": [
+                "ana"
+              ],
+              "lines": [
+                {
+                  "who": "lari",
+                  "text": "Profa., sexta às 16h30 eu fui limpar o armário. O microscópio já não tava lá.",
+                  "expr": "desconfiado",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "ana",
+                  "text": "Você se confundiu, querida. Devia ser outro armário.",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "desconfiado"
+                },
+                {
+                  "who": "lari",
+                  "text": "Só existe UM armário de microscópio nesse laboratório.",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                }
+              ],
+              "sets": [
+                "duo_inv"
+              ],
+              "choices": [
+                {
+                  "text": "A Lari tem razão, professora",
+                  "kind": "boa",
+                  "next": "duo_fim"
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "ana",
+                  "text": "Eu... levei pra manutenção. Sexta. É isso. Manutenção.",
+                  "expr": "nervoso",
+                  "anim": "nervoso",
+                  "react": "desconfiado"
+                },
+                {
+                  "who": "lari",
+                  "text": "Manutenção não quebra janela domingo de madrugada.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros",
+                  "react": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o alarme e os códigos",
+                  "kind": "boa",
+                  "next": "duo_conf",
+                  "requires": [
+                    "c_alarme",
+                    "c_codigos"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "ana_contradita"
+              ],
+              "cast": [
+                "ana"
+              ]
+            },
+            "duo_conf": {
+              "lines": [
+                {
+                  "who": "ana",
+                  "text": "...Quebrou no meu cursinho. Eu entrei em pânico. Desculpa, Lari.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao",
+              "cast": [
+                "ana"
               ]
             }
           }
@@ -481,10 +605,12 @@
       "role": "diretor",
       "look": {
         "skin": "#8a5a3c",
-        "hair": "raspado",
+        "hair": "calvo",
         "hair_color": "#bdbdbd",
         "top": "#263238",
-        "accessory": "oculos"
+        "accessory": "oculos_leitura",
+        "outfit": "formal",
+        "facial_hair": "bigode"
       },
       "talk": {
         "greet": [
@@ -578,7 +704,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "jorge",
@@ -588,10 +715,12 @@
       "role": "zelador de plantão",
       "look": {
         "skin": "#7a4b2a",
-        "hair": "raspado",
+        "hair": "grisalho_curto",
         "hair_color": "#cfcfcf",
         "top": "#546e7a",
-        "accessory": "nenhum"
+        "accessory": "cracha",
+        "outfit": "uniforme",
+        "facial_hair": "bigode"
       },
       "talk": {
         "greet": [
@@ -766,7 +895,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "laboratorio",
@@ -1204,7 +1334,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Painel do alarme' + 'Códigos do alarme' para Profa. Ana; ou mostrar 'Ficha do armário' para Profa. Ana",
+        "where": "mostrar 'Painel do alarme' + 'Códigos do alarme' para Profa. Ana; ou mostrar 'Ficha do armário' para Profa. Ana; ou mostrar 'Painel do alarme' + 'Códigos do alarme' para Lari",
         "proves": "Aponta para Profa. Ana."
       }
     ],

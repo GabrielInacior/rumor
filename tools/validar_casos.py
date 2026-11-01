@@ -20,7 +20,9 @@ EX = set("neutro feliz surpreso bravo desconfiado triste nervoso".split())
 AN = set("falando pensando nervoso negando apontando dando_de_ombros rindo".split())
 ICONS = set("celular mensagem onibus trofeu livro carta chocolate carregador baqueta fita computador pizza chave mochila coroa camera papel microfone bola prancheta caixa cartaz wifi relogio sacola".split())
 HAIR = {"f": set("longo rabo coque trancas ondulado cacheado_longo".split()), "m": set("curto raspado franja cacheado".split())}
-ACC = set("nenhum oculos bone fones brinco cachecol".split())
+ACC = set("nenhum oculos bone fones brinco cachecol oculos_leitura cracha".split())
+HAIR_ADULT = {"f": set("coque_baixo chanel coque longo".split()), "m": set("calvo grisalho_curto curto raspado".split())}
+FACIAL = set("nenhum bigode barba cavanhaque".split())
 # limites por modo
 RULES = {
  "solo":  {"locs": (2, 5), "people": (3, 6), "clues": (5, 20), "edges": (2, 5), "trades": 1, "dur": (600, 1500)},
@@ -79,7 +81,12 @@ def check(p):
         if c["kind"] == "pessoa":
             g = c.get("gender")
             if g not in HAIR: err.append("gender " + c["id"])
-            elif c["look"]["hair"] not in HAIR[g]: err.append("cabelo x gênero " + c["id"])
+            elif c["look"]["hair"] not in (HAIR_ADULT if c.get("adult") else HAIR)[g]: err.append("cabelo x gênero/idade " + c["id"])
+            if c.get("adult"):
+                if c["look"].get("outfit") not in ("formal", "uniforme"): err.append("outfit adulto " + c["id"])
+                if g == "m" and c["look"].get("facial_hair") not in FACIAL: err.append("facial_hair " + c["id"])
+                if g == "f" and "facial_hair" in c["look"]: err.append("facial_hair em mulher " + c["id"])
+            elif "outfit" in c["look"] or "facial_hair" in c["look"] or "adult" in c: err.append("campo adulto em adolescente " + c["id"])
             if c["look"]["accessory"] not in ACC: err.append("acessório " + c["id"])
             gr = c.get("talk", {}).get("greet", [])
             if not 1 <= len(gr) <= 2 or c["talk"].get("mood") not in EX: err.append("talk " + c["id"])
@@ -127,20 +134,33 @@ def check(p):
         if c["release"] == "hotspot" and cid not in hs_clues: err.append("pista hotspot órfã " + cid)
     for i in items:
         if i not in hs_items: err.append("item sem hotspot " + i)
-    sp = {}
-    for s in d["scene_people"]:
-        if s["id"] not in cards or s["scene"] not in locs: err.append("scene_people " + str(s))
-        sp[s["scene"]] = sp.get(s["scene"], 0) + 1
-        if "tree" not in cards[s["id"]].get("talk", {}): err.append("sem tree " + s["id"])
+    sp, seen_default = {}, {}
+    for e in d["scene_people"]:
+        if e["id"] not in cards or e["scene"] not in locs: err.append("scene_people " + str(e))
+        if e["id"] in seen_default: err.append("entrada depois da padrão " + e["id"])
+        if not e.get("if") and not e.get("ifnot"):
+            seen_default[e["id"]] = e["scene"]; sp[e["scene"]] = sp.get(e["scene"], 0) + 1
+        if "tree" not in cards[e["id"]].get("talk", {}): err.append("sem tree " + e["id"])
+    for pid in {e["id"] for e in d["scene_people"]}:
+        if pid not in seen_default: err.append("sem entrada padrão " + pid)
     if any(not 1 <= sp.get(l, 0) <= 3 for l in locs): err.append("pessoas por cena %s" % sp)
-    trees = {s["id"]: cards[s["id"]]["talk"]["tree"] for s in d["scene_people"]}
+    occ = {}
+    for e in d["scene_people"]: occ.setdefault(e["scene"], set()).add(e["id"])
+    for sc, ps in occ.items():
+        if len(ps) > 3: err.append("até %d pessoas podem estar em %s" % (len(ps), sc))
+    moves = sum(1 for e in d["scene_people"] if e.get("if") or e.get("ifnot"))
+    def scene_of(pid, F):
+        for e in d["scene_people"]:
+            if e["id"] == pid and set(e.get("if", [])) <= F and not (set(e.get("ifnot", [])) & F): return e["scene"]
+    trees = {e["id"]: cards[e["id"]]["talk"]["tree"] for e in d["scene_people"]}
     all_sets = set()
     for t in trees.values():
         for nd in t["nodes"].values(): all_sets |= set(nd.get("sets", []))
     bad_flags, unlockers, takers = set(), {}, {}
+    duo_count = [0]
     for pid, t in trees.items():
         nodes, ent = t["nodes"], t["entries"]
-        if not 3 <= len(nodes) <= 6: err.append("nós %s %d" % (pid, len(nodes)))
+        if not 3 <= len(nodes) <= 10: err.append("nós %s %d" % (pid, len(nodes)))
         if set(ent[-1]) != {"node"}: err.append("última entry com condição " + pid)
         for e in ent:
             if e["node"] not in nodes: err.append("entry node " + e["node"])
@@ -153,7 +173,14 @@ def check(p):
                 if "next" in c and c["next"] not in rch: rch.add(c["next"]); stack.append(c["next"])
         if set(nodes) - rch: err.append("nó inalcançável %s %s" % (pid, set(nodes) - rch))
         for nid, nd in nodes.items():
-            if not 1 <= len(nd["lines"]) <= 3: err.append("falas %s.%s" % (pid, nid))
+            if not 1 <= len(nd["lines"]) <= 4: err.append("falas %s.%s" % (pid, nid))
+            cast = nd.get("cast", [])
+            for x in cast:
+                if x not in cards or cards[x]["kind"] != "pessoa" or x not in trees: err.append("cast inválido %s.%s" % (pid, nid))
+            if cast: duo_count[0] += 1 if any(e["node"] == nid for e in ent) else 0
+            for l in nd["lines"]:
+                if l.get("who", pid) not in [pid] + cast: err.append("who fora do cast %s.%s" % (pid, nid))
+                if "react" in l and l["react"] not in EX: err.append("react %s.%s" % (pid, nid))
             for l in nd["lines"]:
                 if l["expr"] not in EX or l["anim"] not in AN: err.append("expr/anim %s.%s" % (pid, nid))
                 if W(l["text"]) > 22: err.append("fala longa %s.%s (%d)" % (pid, nid, W(l["text"])))
@@ -187,6 +214,23 @@ def check(p):
                     if not (tg.get("end") and tg.get("lock") and tg.get("sets")): err.append("ruim sem lock/flag %s" % pid)
                     elif tg["lines"][0]["expr"] not in ("bravo", "nervoso"): err.append("lock expr")
                     else: bad_flags |= set(tg["sets"])
+    for e in d["scene_people"]:
+        for f in e.get("if", []) + e.get("ifnot", []):
+            if f not in all_sets: err.append("flag de movimento nunca setada " + f)
+    for pid, t in trees.items():
+        for e in t["entries"]:
+            nd = t["nodes"][e["node"]]
+            if nd.get("cast"):
+                F = set(e.get("if", []))
+                where_ = {x: scene_of(x, F) for x in [pid] + nd["cast"]}
+                if len(set(where_.values())) != 1: err.append("conversa a dois sem as duas na mesma sala %s: %s" % (pid, where_))
+        for nid, nd in t["nodes"].items():
+            if nd.get("cast") and not any(e["node"] == nid for e in t["entries"]):
+                preds = [o for o in t["nodes"].values() if any(c.get("next") == nid for c in o["choices"])]
+                if not preds or any(not set(nd["cast"]) <= set(o.get("cast", [])) for o in preds): err.append("nó com cast sem antecessor com cast %s.%s" % (pid, nid))
+    if mode == "multi" and not (2 <= moves <= 3 and 1 <= duo_count[0] <= 2): err.append("multi: movimentos %d, conversas a dois %d" % (moves, duo_count[0]))
+    if mode == "solo" and not 1 <= moves <= 2: err.append("solo: movimentos %d" % moves)
+    if mode == "solo" and d["difficulty"] >= 2 and duo_count[0] != 1: err.append("solo médio/difícil: conversas a dois %d" % duo_count[0])
     if len(takers) < R["trades"]: err.append("trocas %d" % len(takers))
     for it, who in takers.items():
         if len(who) > 1: err.append("item %s usado por mais de uma pessoa" % it)

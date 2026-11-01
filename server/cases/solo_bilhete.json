@@ -21,6 +21,13 @@
     },
     {
       "id": "lu",
+      "scene": "corredor",
+      "if": [
+        "duda_falou"
+      ]
+    },
+    {
+      "id": "lu",
       "scene": "quadra"
     }
   ],

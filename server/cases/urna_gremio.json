@@ -24,7 +24,21 @@
     },
     {
       "id": "teo",
+      "scene": "sala_professores",
+      "if": [
+        "teo_bravo"
+      ]
+    },
+    {
+      "id": "teo",
       "scene": "sala_aula"
+    },
+    {
+      "id": "caio",
+      "scene": "biblioteca",
+      "if": [
+        "caio_falou"
+      ]
     },
     {
       "id": "caio",
@@ -559,6 +573,17 @@
           "entries": [
             {
               "if": [
+                "kaua_falou"
+              ],
+              "ifnot": [
+                "caio_falou",
+                "teo_bravo",
+                "duo_urna"
+              ],
+              "node": "duo_teo"
+            },
+            {
+              "if": [
                 "caio_falou"
               ],
               "node": "conta"
@@ -721,6 +746,111 @@
                 }
               ],
               "unlock": "c_dep_caio"
+            },
+            "duo_teo": {
+              "cast": [
+                "teo"
+              ],
+              "lines": [
+                {
+                  "who": "caio",
+                  "text": "Téo, o Kauã disse que você tirou ele da urna ao meio-dia.",
+                  "expr": "desconfiado",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "teo",
+                  "text": "E daí? Eu fiz por VOCÊ, Caio. Pela chapa!",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "surpreso"
+                },
+                {
+                  "who": "caio",
+                  "text": "Eu disse 'se perder, perdeu'.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "bravo"
+                },
+                {
+                  "who": "teo",
+                  "text": "E me deu a chave do armário mesmo assim.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros",
+                  "react": "nervoso"
+                }
+              ],
+              "sets": [
+                "duo_urna"
+              ],
+              "choices": [
+                {
+                  "text": "Caio, você deu a chave pra ele?",
+                  "kind": "boa",
+                  "next": "duo_fim"
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "caio",
+                  "text": "...Dei. Ele disse 'plano B'. Eu não quis saber qual. Que vergonha.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Téo, mostra o bloco da mochila",
+                  "kind": "boa",
+                  "next": "duo_conf",
+                  "requires": [
+                    "c_bloco"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "caio_falou"
+              ],
+              "unlock": "c_dep_caio",
+              "cast": [
+                "teo"
+              ]
+            },
+            "duo_conf": {
+              "lines": [
+                {
+                  "who": "teo",
+                  "text": "Catorze cédulas pra Rosa. Pra anular. Era o único jeito de não perder.",
+                  "expr": "triste",
+                  "anim": "pensando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao",
+              "cast": [
+                "teo"
+              ]
             }
           }
         }
@@ -750,6 +880,15 @@
         "mood": "surpreso",
         "tree": {
           "entries": [
+            {
+              "if": [
+                "bela_papo"
+              ],
+              "ifnot": [
+                "duo_rosa"
+              ],
+              "node": "duo_rui"
+            },
             {
               "if": [
                 "bela_bravo"
@@ -831,6 +970,83 @@
                   "kind": "neutra",
                   "end": true
                 }
+              ]
+            },
+            "duo_rui": {
+              "cast": [
+                "rui"
+              ],
+              "lines": [
+                {
+                  "who": "rui",
+                  "text": "Eu te disse que a gente ganhava, Bela!",
+                  "expr": "feliz",
+                  "anim": "rindo",
+                  "react": "desconfiado"
+                },
+                {
+                  "who": "bela",
+                  "text": "Por catorze votos de papel grosso, Rui? Olha pra mim.",
+                  "expr": "desconfiado",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "rui",
+                  "text": "Eu não sei de cédula nenhuma! Eu tava no microfone!",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "desconfiado"
+                }
+              ],
+              "sets": [
+                "duo_rosa"
+              ],
+              "choices": [
+                {
+                  "text": "Sem as falsas, vocês ganham igual",
+                  "kind": "boa",
+                  "next": "duo_fim",
+                  "requires": [
+                    "c_cedulas"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "bela",
+                  "text": "Então a fraude não era pra gente ganhar... era pra anular.",
+                  "expr": "surpreso",
+                  "anim": "pensando",
+                  "react": "surpreso"
+                },
+                {
+                  "who": "rui",
+                  "text": "Quem ganha com anular é quem perdeu.",
+                  "expr": "desconfiado",
+                  "anim": "apontando",
+                  "react": "desconfiado"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "rosa_inocente"
+              ],
+              "cast": [
+                "rui"
               ]
             }
           }
@@ -986,10 +1202,11 @@
       "role": "coordenadora, cuidou da apuração",
       "look": {
         "skin": "#5d3a22",
-        "hair": "cacheado_longo",
+        "hair": "longo",
         "hair_color": "#2a1a10",
         "top": "#880e4f",
-        "accessory": "brinco"
+        "accessory": "cracha",
+        "outfit": "formal"
       },
       "talk": {
         "greet": [
@@ -1088,7 +1305,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "cida",
@@ -1101,7 +1319,8 @@
         "hair": "coque",
         "hair_color": "#2e2e2e",
         "top": "#ffffff",
-        "accessory": "nenhum"
+        "accessory": "nenhum",
+        "outfit": "uniforme"
       },
       "talk": {
         "greet": [
@@ -1195,7 +1414,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "biblioteca",
@@ -1758,7 +1978,7 @@
       },
       {
         "clue": "c_dep_caio",
-        "where": "mostrar 'Relatório do lacre' para Caio; ou trocar 'Carregador de celular' com Caio",
+        "where": "mostrar 'Relatório do lacre' para Caio; ou trocar 'Carregador de celular' com Caio; ou conversar com Caio ('Caio, você deu a chave pra ele?')",
         "proves": "Prova a linha: Caio entregou a chave para Téo."
       },
       {
@@ -1773,7 +1993,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Mochila do Téo' para Téo; ou mostrar 'Cédulas separadas' + 'Regulamento' para Téo",
+        "where": "mostrar 'Mochila do Téo' para Téo; ou mostrar 'Cédulas separadas' + 'Regulamento' para Téo; ou mostrar 'Mochila do Téo' para Caio",
         "proves": "Prova a linha: Téo colocou As 14 cédulas falsas. Aponta para Téo."
       }
     ],

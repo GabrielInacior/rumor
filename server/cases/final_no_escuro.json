@@ -21,11 +21,25 @@
     },
     {
       "id": "marta",
+      "scene": "sala_professores",
+      "if": [
+        "helio_falou"
+      ]
+    },
+    {
+      "id": "marta",
       "scene": "teatro"
     },
     {
       "id": "jorge",
       "scene": "deposito"
+    },
+    {
+      "id": "enzo",
+      "scene": "corredor",
+      "if": [
+        "enzo_bravo"
+      ]
     },
     {
       "id": "enzo",
@@ -38,6 +52,13 @@
     {
       "id": "kevin",
       "scene": "cantina"
+    },
+    {
+      "id": "juju",
+      "scene": "teatro",
+      "if": [
+        "kevin_falou"
+      ]
     },
     {
       "id": "juju",
@@ -245,10 +266,11 @@
       "role": "organizadora do festival",
       "look": {
         "skin": "#b5835a",
-        "hair": "longo",
+        "hair": "chanel",
         "hair_color": "#9e9e9e",
         "top": "#00695c",
-        "accessory": "oculos"
+        "accessory": "cracha",
+        "outfit": "formal"
       },
       "talk": {
         "greet": [
@@ -261,6 +283,17 @@
         "mood": "triste",
         "tree": {
           "entries": [
+            {
+              "if": [
+                "kevin_falou"
+              ],
+              "ifnot": [
+                "helio_falou",
+                "marta_falou",
+                "duo_mae"
+              ],
+              "node": "duo_juju"
+            },
             {
               "if": [
                 "marta_falou"
@@ -400,10 +433,86 @@
                   "end": true
                 }
               ]
+            },
+            "duo_juju": {
+              "cast": [
+                "juju"
+              ],
+              "lines": [
+                {
+                  "who": "juju",
+                  "text": "Mãe. 'Hoje é seu dia, confia na mãe.' O que isso queria dizer?",
+                  "expr": "triste",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "marta",
+                  "text": "Filha, não é hora pra isso...",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "triste"
+                },
+                {
+                  "who": "juju",
+                  "text": "Eu não quero uma bolsa ganha no escuro.",
+                  "expr": "bravo",
+                  "anim": "negando",
+                  "react": "surpreso"
+                }
+              ],
+              "sets": [
+                "duo_mae"
+              ],
+              "choices": [
+                {
+                  "text": "Professora, sua filha merece a verdade",
+                  "kind": "boa",
+                  "next": "duo_fim",
+                  "requires": [
+                    "c_bolsa_marta"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "marta",
+                  "text": "...Fui eu, Juju. As chaves, o disjuntor, o bilhete. Fiz por você.",
+                  "expr": "triste",
+                  "anim": "pensando",
+                  "react": "triste"
+                },
+                {
+                  "who": "juju",
+                  "text": "Você não fez por mim. Você fez por você.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao",
+              "cast": [
+                "juju"
+              ]
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "jorge",
@@ -413,10 +522,12 @@
       "role": "zelador, dono das chaves do depósito",
       "look": {
         "skin": "#7a4b2a",
-        "hair": "raspado",
+        "hair": "grisalho_curto",
         "hair_color": "#cfcfcf",
         "top": "#546e7a",
-        "accessory": "nenhum"
+        "accessory": "cracha",
+        "outfit": "uniforme",
+        "facial_hair": "bigode"
       },
       "talk": {
         "greet": [
@@ -568,7 +679,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "enzo",
@@ -594,6 +706,17 @@
         "mood": "nervoso",
         "tree": {
           "entries": [
+            {
+              "if": [
+                "iris_falou"
+              ],
+              "ifnot": [
+                "enzo_bravo",
+                "duo_banda",
+                "enzo_falou"
+              ],
+              "node": "duo_gabi"
+            },
             {
               "if": [
                 "enzo_falou"
@@ -772,6 +895,86 @@
                   "kind": "neutra",
                   "end": true
                 }
+              ]
+            },
+            "duo_gabi": {
+              "cast": [
+                "gabi"
+              ],
+              "lines": [
+                {
+                  "who": "gabi",
+                  "text": "Enzo, a Íris disse que tua voz no camarim tava repetida.",
+                  "expr": "desconfiado",
+                  "anim": "pensando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "enzo",
+                  "text": "Gabi... você sabe por quê. Você sempre soube.",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "triste"
+                },
+                {
+                  "who": "gabi",
+                  "text": "Sei. Playback. Mas você não apagou a luz. Apagou?",
+                  "expr": "triste",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                }
+              ],
+              "sets": [
+                "duo_banda"
+              ],
+              "choices": [
+                {
+                  "text": "Enzo, onde você estava às 20h06?",
+                  "kind": "boa",
+                  "next": "duo_fim"
+                },
+                {
+                  "text": "Você tava no camarim às 20h12?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "enzo",
+                  "text": "No banheiro, vomitando de nervoso. Eu nem sei onde fica o disjuntor.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "triste"
+                },
+                {
+                  "who": "gabi",
+                  "text": "Então alguém usou teu segredo. Quem sabia do playback?",
+                  "expr": "bravo",
+                  "anim": "pensando",
+                  "react": "surpreso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "enzo_falou"
+              ],
+              "unlock": "c_dep_enzo_verdade",
+              "cast": [
+                "gabi"
               ]
             }
           }
@@ -1392,10 +1595,12 @@
       "role": "jurado e professor de música",
       "look": {
         "skin": "#c08a64",
-        "hair": "curto",
+        "hair": "calvo",
         "hair_color": "#9e9e9e",
         "top": "#5d4037",
-        "accessory": "oculos"
+        "accessory": "oculos",
+        "outfit": "formal",
+        "facial_hair": "nenhum"
       },
       "talk": {
         "greet": [
@@ -1575,7 +1780,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "deposito",
@@ -2316,12 +2522,12 @@
       },
       {
         "clue": "c_dep_enzo",
-        "where": "conversar com Enzo ('Onde você tava às 20h12?')",
+        "where": "conversar com Enzo ('Onde você tava às 20h12?'); ou conversar com Enzo ('Você tava no camarim às 20h12?')",
         "proves": "O álibi falso do Enzo."
       },
       {
         "clue": "c_dep_enzo_verdade",
-        "where": "mostrar 'Celular da caixinha' para Enzo; ou mostrar 'Armário da banda' para Enzo",
+        "where": "mostrar 'Celular da caixinha' para Enzo; ou mostrar 'Armário da banda' para Enzo; ou conversar com Enzo ('Enzo, onde você estava às 20h06?')",
         "proves": "Prova a linha: Enzo inventou A voz no camarim."
       },
       {
@@ -2346,7 +2552,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Bolsa da organizadora' + 'Notas dos jurados' para Profa. Marta",
+        "where": "mostrar 'Bolsa da organizadora' + 'Notas dos jurados' para Profa. Marta; ou mostrar 'Bolsa da organizadora' para Profa. Marta",
         "proves": "Prova a linha: Profa. Marta estava em Depósito. Aponta para Profa. Marta."
       }
     ],

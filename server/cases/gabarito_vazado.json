@@ -16,6 +16,13 @@
   "scene_people": [
     {
       "id": "nico",
+      "scene": "quadra",
+      "if": [
+        "pedro_falou"
+      ]
+    },
+    {
+      "id": "nico",
       "scene": "sala_professores"
     },
     {
@@ -29,6 +36,13 @@
     {
       "id": "ivo",
       "scene": "quadra"
+    },
+    {
+      "id": "lia",
+      "scene": "sala_professores",
+      "if": [
+        "lia_falou"
+      ]
     },
     {
       "id": "lia",
@@ -246,7 +260,8 @@
         "hair": "coque",
         "hair_color": "#5d5d5d",
         "top": "#c2185b",
-        "accessory": "cachecol"
+        "accessory": "oculos_leitura",
+        "outfit": "formal"
       },
       "talk": {
         "greet": [
@@ -398,7 +413,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "pedro",
@@ -424,6 +440,15 @@
         "mood": "nervoso",
         "tree": {
           "entries": [
+            {
+              "if": [
+                "pedro_falou"
+              ],
+              "ifnot": [
+                "duo_gab"
+              ],
+              "node": "duo_nico"
+            },
             {
               "if": [
                 "pedro_falou"
@@ -588,6 +613,110 @@
                 }
               ],
               "unlock": "c_dep_pedro"
+            },
+            "duo_nico": {
+              "cast": [
+                "nico"
+              ],
+              "lines": [
+                {
+                  "who": "nico",
+                  "text": "E aí, Pedro. Tudo tranquilo? Nada pra contar pra ninguém, né?",
+                  "expr": "feliz",
+                  "anim": "rindo",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "pedro",
+                  "text": "Você disse que era foto da internet, Nico! Agora a prova foi cancelada!",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "bravo"
+                },
+                {
+                  "who": "nico",
+                  "text": "Fala baixo. Sério. Fala baixo.",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "bravo"
+                }
+              ],
+              "sets": [
+                "duo_gab"
+              ],
+              "choices": [
+                {
+                  "text": "Nico, você é o @fantasma?",
+                  "kind": "boa",
+                  "next": "duo_fim"
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "nico",
+                  "text": "Prova. Cadê a prova? Ninguém tem prova de nada.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros",
+                  "react": "desconfiado"
+                },
+                {
+                  "who": "pedro",
+                  "text": "Teu e-mail tá no perfil, gênio. A coordenação vai achar.",
+                  "expr": "desconfiado",
+                  "anim": "apontando",
+                  "react": "surpreso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o e-mail do @fantasma",
+                  "kind": "boa",
+                  "next": "duo_conf",
+                  "requires": [
+                    "c_email"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "nico_exposto"
+              ],
+              "cast": [
+                "nico"
+              ]
+            },
+            "duo_conf": {
+              "lines": [
+                {
+                  "who": "nico",
+                  "text": "...Imprimi às 13h48. A Rosa me reprovou. O resto vocês sabem.",
+                  "expr": "triste",
+                  "anim": "pensando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao",
+              "cast": [
+                "nico"
+              ]
             }
           }
         }
@@ -604,7 +733,9 @@
         "hair": "raspado",
         "hair_color": "#3a3a3a",
         "top": "#1b5e20",
-        "accessory": "bone"
+        "accessory": "cracha",
+        "outfit": "uniforme",
+        "facial_hair": "cavanhaque"
       },
       "talk": {
         "greet": [
@@ -698,7 +829,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "lia",
@@ -1868,7 +2000,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Recado da coordenação' + 'Impressora da coordenação' para Nico; ou mostrar 'Foto impressa' + 'Impressora da coordenação' para Nico",
+        "where": "mostrar 'Recado da coordenação' + 'Impressora da coordenação' para Nico; ou mostrar 'Foto impressa' + 'Impressora da coordenação' para Nico; ou mostrar 'Recado da coordenação' para Pedro",
         "proves": "Prova a linha: Nico pegou O gabarito da prova final. Aponta para Nico."
       }
     ],

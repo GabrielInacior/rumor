@@ -26,6 +26,13 @@
     },
     {
       "id": "thiago",
+      "scene": "deposito",
+      "if": [
+        "jorge_falou"
+      ]
+    },
+    {
+      "id": "thiago",
       "scene": "sala_professores"
     }
   ],
@@ -52,10 +59,12 @@
       "role": "professor de história, alvo do recado",
       "look": {
         "skin": "#d8a982",
-        "hair": "curto",
+        "hair": "grisalho_curto",
         "hair_color": "#757575",
         "top": "#4e342e",
-        "accessory": "oculos"
+        "accessory": "oculos_leitura",
+        "outfit": "formal",
+        "facial_hair": "barba"
       },
       "talk": {
         "greet": [
@@ -154,7 +163,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "kevin",
@@ -400,10 +410,12 @@
       "role": "zelador",
       "look": {
         "skin": "#7a4b2a",
-        "hair": "raspado",
+        "hair": "grisalho_curto",
         "hair_color": "#cfcfcf",
         "top": "#546e7a",
-        "accessory": "nenhum"
+        "accessory": "cracha",
+        "outfit": "uniforme",
+        "facial_hair": "bigode"
       },
       "talk": {
         "greet": [
@@ -555,7 +567,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "thiago",

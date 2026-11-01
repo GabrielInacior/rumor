@@ -271,14 +271,19 @@ func _build_set() -> void:
 	w.add_child(rim)
 	var cam := Camera3D.new()
 	w.add_child(cam)
+	# com adulto na cena a câmera sobe um pouco (eles são mais altos)
+	var lift := 0.0
+	for c in cast:
+		if bool(c.get("adult", false)):
+			lift = 0.16
 	if duo:
 		cam.fov = 44 if _wide() else 50
-		cam.position = Vector3(0.0, 1.5, 3.1 if _wide() else 3.7)
-		cam.look_at(Vector3(0.0, 1.25, 0), Vector3.UP)
+		cam.position = Vector3(0.0, 1.5 + lift, 3.1 if _wide() else 3.7)
+		cam.look_at(Vector3(0.0, 1.25 + lift, 0), Vector3.UP)
 	else:
 		cam.fov = 36
-		cam.position = Vector3(0.18, 1.55, 2.35)
-		cam.look_at(Vector3(0.0, 1.36, 0), Vector3.UP)
+		cam.position = Vector3(0.18, 1.55 + lift, 2.35)
+		cam.look_at(Vector3(0.0, 1.36 + lift, 0), Vector3.UP)
 
 
 func _show_choices() -> bool:

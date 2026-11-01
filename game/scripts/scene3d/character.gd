@@ -132,7 +132,8 @@ func _build_model() -> void:
 				var col: Color = colors.get(key, Color("#7a86b0"))
 				m.set_surface_override_material(s, _toon(col, 0.008))
 	if bool(card.get("adult", false)):
-		model.scale = Vector3.ONE * 1.07
+		# adultos visivelmente mais altos que os adolescentes (~1,80 m contra ~1,60 m)
+		model.scale = Vector3.ONE * 1.12
 	var aps := model.find_children("*", "AnimationPlayer", true, false)
 	if aps.size() > 0:
 		anim = aps[0]

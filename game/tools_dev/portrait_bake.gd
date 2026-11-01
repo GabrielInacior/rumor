@@ -59,8 +59,9 @@ func _bake(card: Dictionary, path: String) -> void:
 	var cam := Camera3D.new()
 	cam.fov = 24
 	vp.add_child(cam)
-	cam.position = Vector3(0.1, 1.52, 1.55)
-	cam.look_at(Vector3(0.0, 1.43, 0), Vector3.UP)
+	var lift := 0.17 if bool(card.get("adult", false)) else 0.0
+	cam.position = Vector3(0.1, 1.52 + lift, 1.55)
+	cam.look_at(Vector3(0.0, 1.43 + lift, 0), Vector3.UP)
 	for i in 20:
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw

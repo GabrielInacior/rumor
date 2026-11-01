@@ -24,6 +24,13 @@
     },
     {
       "id": "rafa",
+      "scene": "sala_professores",
+      "if": [
+        "rafa_bravo"
+      ]
+    },
+    {
+      "id": "rafa",
       "scene": "corredor"
     },
     {
@@ -36,7 +43,21 @@
     },
     {
       "id": "bia",
+      "scene": "biblioteca",
+      "if": [
+        "bia_falou"
+      ]
+    },
+    {
+      "id": "bia",
       "scene": "cantina"
+    },
+    {
+      "id": "lari",
+      "scene": "sala_diretor",
+      "if": [
+        "joana_papo"
+      ]
     },
     {
       "id": "lari",
@@ -75,10 +96,12 @@
       "role": "diretor",
       "look": {
         "skin": "#8a5a3c",
-        "hair": "raspado",
+        "hair": "calvo",
         "hair_color": "#bdbdbd",
         "top": "#263238",
-        "accessory": "oculos"
+        "accessory": "oculos_leitura",
+        "outfit": "formal",
+        "facial_hair": "bigode"
       },
       "talk": {
         "greet": [
@@ -177,7 +200,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "caio",
@@ -203,6 +227,16 @@
         "mood": "bravo",
         "tree": {
           "entries": [
+            {
+              "if": [
+                "rafa_falou"
+              ],
+              "ifnot": [
+                "rafa_bravo",
+                "duo_cr"
+              ],
+              "node": "duo_rafa"
+            },
             {
               "if": [
                 "caio_falou"
@@ -338,6 +372,83 @@
                   "kind": "neutra",
                   "end": true
                 }
+              ]
+            },
+            "duo_rafa": {
+              "cast": [
+                "rafa"
+              ],
+              "lines": [
+                {
+                  "who": "caio",
+                  "text": "Você invadiu a escola e EU levo a culpa?",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
+                },
+                {
+                  "who": "rafa",
+                  "text": "Eu peguei MEU celular, presidente. Teu cofre eu nem vi.",
+                  "expr": "bravo",
+                  "anim": "negando",
+                  "react": "desconfiado"
+                },
+                {
+                  "who": "caio",
+                  "text": "Prova.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros",
+                  "react": "bravo"
+                }
+              ],
+              "sets": [
+                "duo_cr"
+              ],
+              "choices": [
+                {
+                  "text": "O vulto da câmera não vai à diretoria",
+                  "kind": "boa",
+                  "next": "duo_fim",
+                  "requires": [
+                    "c_camera"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "caio",
+                  "text": "Então o cofre foi aberto à tarde... Quem saiu cedo da assembleia?",
+                  "expr": "surpreso",
+                  "anim": "pensando",
+                  "react": "feliz"
+                },
+                {
+                  "who": "rafa",
+                  "text": "Pergunta pra tua ex, presidente.",
+                  "expr": "desconfiado",
+                  "anim": "apontando",
+                  "react": "surpreso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "caio_desconfia"
+              ],
+              "cast": [
+                "rafa"
               ]
             }
           }
@@ -517,10 +628,12 @@
       "role": "zelador",
       "look": {
         "skin": "#7a4b2a",
-        "hair": "raspado",
+        "hair": "grisalho_curto",
         "hair_color": "#cfcfcf",
         "top": "#546e7a",
-        "accessory": "nenhum"
+        "accessory": "cracha",
+        "outfit": "uniforme",
+        "facial_hair": "bigode"
       },
       "talk": {
         "greet": [
@@ -677,7 +790,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "cida",
@@ -690,7 +804,8 @@
         "hair": "coque",
         "hair_color": "#2e2e2e",
         "top": "#ffffff",
-        "accessory": "nenhum"
+        "accessory": "nenhum",
+        "outfit": "uniforme"
       },
       "talk": {
         "greet": [
@@ -784,7 +899,8 @@
             }
           }
         }
-      }
+      },
+      "adult": true
     },
     {
       "id": "bia",
@@ -1005,6 +1121,17 @@
           "entries": [
             {
               "if": [
+                "bia_falou"
+              ],
+              "ifnot": [
+                "joana_papo",
+                "duo_amigas",
+                "lari_falou"
+              ],
+              "node": "duo_bia"
+            },
+            {
+              "if": [
                 "lari_falou"
               ],
               "node": "conta"
@@ -1141,6 +1268,127 @@
                   "kind": "neutra",
                   "end": true
                 }
+              ]
+            },
+            "duo_bia": {
+              "cast": [
+                "bia"
+              ],
+              "lines": [
+                {
+                  "who": "bia",
+                  "text": "Amiga, eu contei dos oitocentos. Não dava mais pra segurar.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "bravo"
+                },
+                {
+                  "who": "lari",
+                  "text": "Você me VENDEU? Por um chocolate?",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "triste"
+                },
+                {
+                  "who": "bia",
+                  "text": "Eu te vendi por consciência, Lari.",
+                  "expr": "triste",
+                  "anim": "falando",
+                  "react": "surpreso"
+                }
+              ],
+              "sets": [
+                "duo_amigas"
+              ],
+              "choices": [
+                {
+                  "text": "Lari, a Bia está tentando te ajudar",
+                  "kind": "boa",
+                  "next": "duo_fim"
+                },
+                {
+                  "text": "Bia, você também escondeu tudo",
+                  "kind": "neutra",
+                  "next": "duo_culpa"
+                }
+              ]
+            },
+            "duo_fim": {
+              "lines": [
+                {
+                  "who": "lari",
+                  "text": "...Tá. Eu peguei. O bilhete foi raiva. Ele terminou comigo por MENSAGEM.",
+                  "expr": "triste",
+                  "anim": "pensando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o relatório do cofre",
+                  "kind": "boa",
+                  "next": "duo_conf",
+                  "requires": [
+                    "c_log_cofre"
+                  ]
+                },
+                {
+                  "text": "Deixa os dois conversarem.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "lari_encurralada"
+              ],
+              "cast": [
+                "bia"
+              ]
+            },
+            "duo_culpa": {
+              "lines": [
+                {
+                  "who": "bia",
+                  "text": "Escondi. E vou pagar por isso também. Mas ela precisa falar.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "sets": [
+                "bia_culpada"
+              ],
+              "cast": [
+                "bia"
+              ]
+            },
+            "duo_conf": {
+              "lines": [
+                {
+                  "who": "lari",
+                  "text": "17h52. Código da tesouraria. Levei tudo. Desculpa, Bia.",
+                  "expr": "triste",
+                  "anim": "negando",
+                  "react": "triste"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, os dois.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao",
+              "cast": [
+                "bia"
               ]
             }
           }
@@ -1875,7 +2123,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Relatório do cofre' + 'Fila da impressora' para Lari; ou mostrar 'Mesa de estudo' + 'Relatório do cofre' para Lari",
+        "where": "mostrar 'Relatório do cofre' + 'Fila da impressora' para Lari; ou mostrar 'Mesa de estudo' + 'Relatório do cofre' para Lari; ou mostrar 'Relatório do cofre' para Lari",
         "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura; Lari escreveu Bilhete 'Obrigado, Caio'. Aponta para Lari."
       }
     ],
