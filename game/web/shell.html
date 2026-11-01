@@ -122,6 +122,22 @@ const engine = new Engine(GODOT_CONFIG);
   const err = document.getElementById('err');
   const fail = (e) => { console.error(e); err.style.display = 'block'; err.textContent = 'Não foi possível abrir o jogo: ' + (e && e.message ? e.message : e) + '. Recarregue a página.'; };
 
+  // botão voltar do celular/navegador, fechar ou recarregar a aba: o navegador pede confirmação
+  // (evita sair da partida sem querer). Só depois que o jogo abriu.
+  function guardExit() {
+    const onUnload = (e) => { e.preventDefault(); e.returnValue = ''; return ''; };
+    window.addEventListener('beforeunload', onUnload);
+    history.pushState({ rumor: 1 }, '');
+    window.addEventListener('popstate', () => {
+      if (window.confirm('Sair do RUMOR? A partida continua sem você. Para voltar, entre de novo com o mesmo código e o mesmo nome.')) {
+        window.removeEventListener('beforeunload', onUnload);
+        history.back();
+      } else {
+        history.pushState({ rumor: 1 }, '');
+      }
+    });
+  }
+
   const missing = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
   if (missing.length !== 0) { fail('o navegador não tem: ' + missing.join(', ')); return; }
 
@@ -153,7 +169,7 @@ const engine = new Engine(GODOT_CONFIG);
       try { const AC = window.AudioContext || window.webkitAudioContext; if (AC) { const ac = new AC(); ac.resume(); setTimeout(() => ac.close(), 500); } } catch (e) {}
       // espera a tela desenhar o "ENTRANDO..." antes do trabalho pesado de iniciar
       requestAnimationFrame(() => setTimeout(() => {
-        engine.start().then(function () { cover.remove(); }, fail);
+        engine.start().then(function () { cover.remove(); guardExit(); }, fail);
       }, 30));
     };
     enter.addEventListener('click', go, { once: true });

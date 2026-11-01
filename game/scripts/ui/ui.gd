@@ -194,6 +194,50 @@ static func short_name(n: String, max_len := 13) -> String:
 	return out
 
 
+## Janela de confirmação por cima de tudo (sair do caso, fechar a sala...). Toque fora cancela.
+static func confirm(host: Node, title_text: String, body: String, yes_text: String, on_yes: Callable, no_text := "CONTINUAR AQUI") -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 50
+	host.add_child(layer)
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.6)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	layer.add_child(full(dim))
+	dim.gui_input.connect(func(e: InputEvent) -> void:
+		if e is InputEventMouseButton and (e as InputEventMouseButton).pressed:
+			layer.queue_free())
+	var cc := CenterContainer.new()
+	cc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(full(cc))
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", box(Color(NAVY, 0.98), YELLOW, 3, 22, 26))
+	var vs := host.get_viewport().get_visible_rect().size if host is CanvasItem else Vector2(720, 1280)
+	p.custom_minimum_size.x = minf(vs.x - 40, 620)
+	var v := vbox(16)
+	var t := title(title_text, 46, YELLOW)
+	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(t)
+	v.add_child(label(body, 24, PAPER))
+	var yes := button(yes_text, "primary", 90)
+	yes.pressed.connect(func() -> void:
+		layer.queue_free()
+		on_yes.call())
+	v.add_child(yes)
+	var no := button(no_text, "ghost", 80)
+	no.pressed.connect(func() -> void: layer.queue_free())
+	v.add_child(no)
+	p.add_child(v)
+	cc.add_child(p)
+
+
+## Foto de evidência do caso (objeto 3D gerado por tools_dev/case_icon_bake): nunca uma pessoa.
+static func case_icon(case_id: String) -> Texture2D:
+	var p := "res://assets/case_icons/%s.png" % case_id
+	if ResourceLoader.exists(p):
+		return load(p)
+	return null
+
+
 static func portrait(id: String) -> Texture2D:
 	var p := "res://assets/portraits/%s.png" % id
 	if ResourceLoader.exists(p):

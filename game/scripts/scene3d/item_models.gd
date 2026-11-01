@@ -183,6 +183,45 @@ static func build(kind: String) -> Node3D:
 			_add(r, torus(0.3, 0.34), Vector3(0, 0.32, 0), NAVY, Vector3(PI / 2, 0, 0))
 			_add(r, box(Vector3(0.03, 0.2, 0.02)), Vector3(0, 0.4, 0.05), NAVY)
 			_add(r, box(Vector3(0.14, 0.03, 0.02)), Vector3(0.06, 0.32, 0.05), Color("#e2384f"))
+		"cofre":
+			# cofre de aço com disco de segredo, alavanca e porta entreaberta
+			var steel := Color("#4a5470")
+			_add(r, box(Vector3(0.62, 0.62, 0.52)), Vector3(0, 0.31, 0), steel)
+			_add(r, box(Vector3(0.5, 0.5, 0.03)), Vector3(0, 0.31, 0.27), steel.lightened(0.15))
+			_add(r, cyl(0.1, 0.04, 0.1, 18), Vector3(-0.06, 0.36, 0.3), Color("#c9ced9"), Vector3(PI / 2, 0, 0))
+			_add(r, box(Vector3(0.015, 0.06, 0.02)), Vector3(-0.06, 0.42, 0.32), Color("#e2384f"))
+			_add(r, box(Vector3(0.04, 0.18, 0.04)), Vector3(0.16, 0.3, 0.3), Y)
+			_add(r, box(Vector3(0.66, 0.04, 0.56)), Vector3(0, 0.02, 0), steel.darkened(0.3))
+			# maços de dinheiro caindo para fora
+			_add(r, box(Vector3(0.18, 0.05, 0.09)), Vector3(0.36, 0.03, 0.3), Color("#7cc48a"), Vector3(0, 0.4, 0))
+			_add(r, box(Vector3(0.18, 0.05, 0.09)), Vector3(0.42, 0.08, 0.22), Color("#8fd49c"), Vector3(0, -0.3, 0.1))
+		"urna":
+			_add(r, box(Vector3(0.56, 0.5, 0.44)), Vector3(0, 0.25, 0), Color("#e8e3d4"))
+			_add(r, box(Vector3(0.58, 0.05, 0.46)), Vector3(0, 0.52, 0), Color("#2f4a8a"))
+			_add(r, box(Vector3(0.26, 0.02, 0.05)), Vector3(0, 0.55, 0), Color("#0b0f1c"))
+			_add(r, box(Vector3(0.2, 0.18, 0.01)), Vector3(0.02, 0.62, 0), PAPER, Vector3(0, 0, 0.12))
+			_add(r, box(Vector3(0.3, 0.12, 0.01)), Vector3(0, 0.3, 0.225), Color("#2f4a8a"))
+			_add(r, box(Vector3(0.08, 0.1, 0.02)), Vector3(0.22, 0.4, 0.23), Color("#e2384f"))
+		"microscopio":
+			var mc := Color("#d9dde6")
+			_add(r, box(Vector3(0.4, 0.06, 0.32)), Vector3(0, 0.03, 0), NAVY)
+			_add(r, box(Vector3(0.08, 0.5, 0.1)), Vector3(-0.1, 0.3, -0.06), mc, Vector3(0, 0, 0.12))
+			_add(r, box(Vector3(0.26, 0.03, 0.22)), Vector3(0.04, 0.22, 0), NAVY)
+			_add(r, cyl(0.05, 0.36, 0.04), Vector3(0.05, 0.48, 0), mc, Vector3(0, 0, -0.35))
+			_add(r, cyl(0.03, 0.1), Vector3(-0.02, 0.69, 0), Color("#0b0f1c"), Vector3(0, 0, -0.35))
+			_add(r, cyl(0.025, 0.08), Vector3(0.1, 0.3, 0), Y, Vector3(0, 0, -0.35))
+		"spray":
+			_add(r, cyl(0.12, 0.46), Vector3(0, 0.23, 0), Color("#e2384f"))
+			_add(r, cyl(0.12, 0.08, 0.06), Vector3(0, 0.5, 0), Color("#c9ced9"))
+			_add(r, box(Vector3(0.05, 0.05, 0.05)), Vector3(0, 0.57, 0.02), Color("#0b0f1c"))
+			_add(r, box(Vector3(0.2, 0.1, 0.01)), Vector3(0, 0.26, 0.122), PAPER)
+			# respingo de tinta no chão
+			_add(r, cyl(0.2, 0.01, 0.2, 18), Vector3(0.18, 0.005, 0.14), Color("#e2384f"))
+		"cadeado":
+			_add(r, box(Vector3(0.36, 0.3, 0.14)), Vector3(0, 0.15, 0), Y.darkened(0.15))
+			_add(r, torus(0.1, 0.14), Vector3(0, 0.32, 0), Color("#c9ced9"), Vector3(PI / 2, 0, 0))
+			_add(r, cyl(0.03, 0.02), Vector3(0, 0.15, 0.075), Color("#0b0f1c"), Vector3(PI / 2, 0, 0))
+			_add(r, box(Vector3(0.02, 0.06, 0.02)), Vector3(0, 0.11, 0.08), Color("#0b0f1c"))
 		_:
 			_add(r, box(Vector3(0.5, 0.36, 0.4)), Vector3(0, 0.18, 0), Color("#a07a4a"))
 			_add(r, box(Vector3(0.52, 0.04, 0.12)), Vector3(0, 0.37, 0), Color("#c9a46b"))

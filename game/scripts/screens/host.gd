@@ -57,7 +57,13 @@ func _build_waiting() -> void:
 	UI.clear(body)
 	var c := CenterContainer.new()
 	body.add_child(UI.full(c))
-	c.add_child(UI.title("CRIANDO A SALA...", 70))
+	var v := UI.vbox(24)
+	v.add_child(UI.title("CRIANDO A SALA...", 70))
+	# se o servidor não responder, o professor não fica preso aqui
+	var back := UI.button("Voltar", "ghost", 80)
+	back.pressed.connect(func() -> void: get_meta("main").go_home())
+	v.add_child(back)
+	c.add_child(v)
 
 
 # ================================================================== LOBBY
@@ -201,7 +207,7 @@ func _case_thumb(c: Dictionary, side: float) -> Control:
 	tr.custom_minimum_size = Vector2(side, side)
 	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	tr.texture = UI.portrait(str(c.get("cover", "")))
+	tr.texture = UI.case_icon(str(c.get("id", "")))
 	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ph.add_child(tr)
 	return ph

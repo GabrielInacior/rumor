@@ -53,9 +53,17 @@ func _ready() -> void:
 		page_holder.add_child(UI.full(pages[k]))
 
 	if Net.role == "host":
+		var hrow := UI.hbox(10)
+		var close := UI.button("FECHAR A SALA", "ghost", 100)
+		close.custom_minimum_size.x = 240
+		close.pressed.connect(func() -> void:
+			UI.confirm(self, "FECHAR A SALA?", "Os alunos saem da sala. Para jogar de novo, crie outra.", "FECHAR", func() -> void: get_meta("main").go_home()))
+		hrow.add_child(close)
 		var again := UI.button("NOVA RODADA", "primary", 100)
+		again.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		again.pressed.connect(func() -> void: Net.send({"t": "host_lobby"}))
-		v.add_child(again)
+		hrow.add_child(again)
+		v.add_child(hrow)
 	else:
 		var row := UI.hbox(10)
 		if hidden and Net.state.get("solo", false):
@@ -68,9 +76,14 @@ func _ready() -> void:
 				Net.send({"t": "solo_start", "caseId": cid, "name": "Detetive"})
 				Net.role = "player")
 			row.add_child(retry)
-		var leave := UI.button("Sair da sala", "ghost", 84)
+		var solo := bool(Net.state.get("solo", false))
+		var leave := UI.button("VOLTAR AOS CASOS" if solo else "Sair da sala", "ghost", 84)
 		leave.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		leave.pressed.connect(func() -> void: get_meta("main").go_home())
+		leave.pressed.connect(func() -> void:
+			if solo:
+				get_meta("main").leave_to_solo()
+			else:
+				get_meta("main").go_home())
 		row.add_child(leave)
 		v.add_child(row)
 	_show("resultado" if hidden else "placar")

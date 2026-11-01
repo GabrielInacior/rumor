@@ -58,6 +58,15 @@ func _show_solo_hint() -> void:
 		if hints_used < hints.size():
 			v.add_child(UI.label("Toque em DICA de novo para uma dica mais forte (%d de %d)." % [hints_used, hints.size()], 21, UI.MIST))
 	_open_sheet(v)
+func _confirm_exit() -> void:
+	if Net.state.get("solo", false):
+		UI.confirm(self, "SAIR DO CASO?", "Você volta para a lista de casos. O que fez neste caso não fica salvo.", "SAIR PARA A LISTA",
+			func() -> void: get_meta("main").leave_to_solo())
+	else:
+		UI.confirm(self, "SAIR DA SALA?", "Sua equipe continua o caso. Para voltar, entre de novo com o mesmo código e o mesmo nome.", "SAIR DA SALA",
+			func() -> void: get_meta("main").go_home())
+
+
 const LOC_NAMES := {
 	"corredor": "Corredor", "biblioteca": "Biblioteca", "teatro": "Teatro", "sala_aula": "Sala de aula",
 	"cantina": "Cantina", "patio": "Pátio", "sala_professores": "Sala dos profs", "quadra": "Quadra",
@@ -92,6 +101,13 @@ func _ready() -> void:
 	hint_btn.visible = false
 	hint_btn.pressed.connect(_show_solo_hint)
 	th.add_child(hint_btn)
+	# sair sempre à mão (com confirmação): solo volta para a lista; equipe sai da sala
+	var exit_btn := UI.button("SAIR", "ghost", 70)
+	exit_btn.add_theme_font_override("font", UI.font("title"))
+	exit_btn.add_theme_font_size_override("font_size", 26)
+	exit_btn.custom_minimum_size.x = 100
+	exit_btn.pressed.connect(_confirm_exit)
+	th.add_child(exit_btn)
 	root.add_child(top)
 
 	# ---- páginas

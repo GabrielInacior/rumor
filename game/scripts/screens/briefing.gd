@@ -15,6 +15,20 @@ func _ready() -> void:
 	add_child(UI.full(m))
 	var outer := UI.vbox(12)
 	m.add_child(outer)
+	# sair sempre à mão, também na abertura
+	var toprow := UI.hbox(10)
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	toprow.add_child(sp)
+	var exit_btn := UI.button("SAIR", "ghost", 64)
+	exit_btn.custom_minimum_size.x = 120
+	exit_btn.pressed.connect(func() -> void:
+		if Net.state.get("solo", false):
+			UI.confirm(self, "SAIR DO CASO?", "Você volta para a lista de casos.", "SAIR PARA A LISTA", func() -> void: get_meta("main").leave_to_solo())
+		else:
+			UI.confirm(self, "SAIR DA SALA?", "Para voltar, entre de novo com o mesmo código e o mesmo nome.", "SAIR DA SALA", func() -> void: get_meta("main").go_home()))
+	toprow.add_child(exit_btn)
+	outer.add_child(toprow)
 	# tudo que é leitura rola junto (no celular em pé nada fica espremido numa rolagem interna)
 	var sc := ScrollContainer.new()
 	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED

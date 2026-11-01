@@ -173,8 +173,16 @@ func go_solo() -> void:
 
 func go_home() -> void:
 	forced = ""
+	Net.leave()
 	Net.forget_session()
 	_route()
+
+
+## Sai do caso solo e volta para a lista de casos.
+func leave_to_solo() -> void:
+	Net.leave()
+	Net.forget_session()
+	go_solo()
 
 
 func _route() -> void:

@@ -74,6 +74,12 @@ func has_saved_session() -> bool:
 	return code != "" and ((role == "player" and pid != "") or (role == "host" and host_secret != ""))
 
 
+## Avisa o servidor que o aluno saiu pelo botão (não fica "conectado" segurando a turma).
+func leave() -> void:
+	if role == "player" and pid != "":
+		send({"t": "leave"})
+
+
 func forget_session() -> void:
 	role = ""; code = ""; pid = ""; secret = ""; host_secret = ""
 	state = {}; case_data = {}; reveal_data = {}

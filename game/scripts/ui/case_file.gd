@@ -27,9 +27,7 @@ func setup(c: Dictionary, n: int, is_solved: bool) -> void:
 	_seed = float(hash(str(c.get("id", ""))) % 100) / 100.0
 	custom_minimum_size = Vector2(0, 520)
 	mouse_filter = Control.MOUSE_FILTER_PASS
-	var cover := str(c.get("cover", ""))
-	if cover != "":
-		_photo = UI.portrait(cover)
+	_photo = UI.case_icon(str(c.get("id", "")))
 	_build()
 
 
@@ -63,7 +61,7 @@ func _build() -> void:
 	go.set_meta("go", true)
 	go.pressed.connect(_on_open)
 	add_child(go)
-	var cap := UI.label(str(data.get("cover_name", "")), 20, INK, "marker")
+	var cap := UI.label("EVIDÊNCIA", 20, INK, "marker")
 	cap.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cap.autowrap_mode = TextServer.AUTOWRAP_OFF
 	cap.clip_text = true

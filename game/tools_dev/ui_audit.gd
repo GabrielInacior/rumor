@@ -207,6 +207,12 @@ func _run() -> void:
 	await _shot("06_cena")
 	main.current._open_map()
 	await _shot("06b_mapa")
+	if main.current.has_method("_confirm_exit"):
+		main.current._confirm_exit()
+		await _shot("06c_sair")
+		for ch in main.current.get_children():
+			if ch is CanvasLayer:
+				ch.queue_free()
 	main.current._close_sheet()
 	var g: Node = main.current
 	g._set_tab("pistas")

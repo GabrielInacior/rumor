@@ -113,9 +113,8 @@ function handle(sock, msg) {
     // lista pública (sem solução) para a tela de escolha do modo solo
     send(sock, { t: 'cases', cases: [...cases.values()].map((c) => ({
       id: c.id, title: c.title, tagline: c.tagline, difficulty: c.difficulty, duration_sec: c.duration_sec, mode: modeOf(c),
-      // capa do arquivo: uma testemunha (nunca o culpado), onde começa e quantos envolvidos
-      cover: ((c.cards || []).find((x) => x.kind === 'pessoa' && x.id !== (c.solution || {}).culprit) || {}).id || '',
-      cover_name: ((c.cards || []).find((x) => x.kind === 'pessoa' && x.id !== (c.solution || {}).culprit) || {}).name || '',
+      // capa do arquivo: um OBJETO do caso (nunca uma pessoa, para não dar pista)
+      cover_icon: c.cover_icon || '',
       place: ((c.cards || []).find((x) => x.kind === 'lugar') || {}).name || '',
       people: (c.cards || []).filter((x) => x.kind === 'pessoa').length,
     })) });
@@ -186,6 +185,13 @@ function handle(sock, msg) {
   if (!room) return;
   if (msg.t.startsWith('host_')) {
     if (sock.role === 'host') room.hostCmd(msg);
+    return;
+  }
+  // aluno saiu pelo botão: fica marcado como fora (pode voltar pelo mesmo nome) e não segura
+  // a chamada de prontos nem a votação da equipe
+  if (msg.t === 'leave' && sock.role === 'player') {
+    room.drop(sock);
+    sock.room = null; sock.role = null; sock.pid = null;
     return;
   }
   if (sock.role === 'player') room.playerCmd(sock, msg);
