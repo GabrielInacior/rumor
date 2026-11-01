@@ -16,6 +16,12 @@ var _busy := false
 func get_tex(key: String) -> Texture2D:
 	if _cache.has(key):
 		return _cache[key]
+	# foto de lugar já pronta (gerada por tools_dev/place_bake): nada de renderizar no celular
+	if key.begins_with("scene:"):
+		var p := "res://assets/places/%s.png" % key.substr(6)
+		if ResourceLoader.exists(p):
+			_cache[key] = load(p)
+			return _cache[key]
 	if not _queue.has(key):
 		_queue.append(key)
 		_pump.call_deferred()

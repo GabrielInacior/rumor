@@ -113,7 +113,17 @@ func _host_state(phase: String) -> Dictionary:
 			continue
 		var p := cdir.path_join(fn)
 		var c: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(p))
-		s["cases"].append({"id": c["id"], "title": c["title"], "tagline": c["tagline"], "difficulty": c["difficulty"], "duration_sec": c["duration_sec"]})
+		if str(c.get("mode", "multi")) == "solo":
+			continue
+		var cover := ""
+		var people := 0
+		for k in c["cards"]:
+			if k["kind"] == "pessoa":
+				people += 1
+				if cover == "" and k["id"] != c["solution"]["culprit"]:
+					cover = k["id"]
+		s["cases"].append({"id": c["id"], "title": c["title"], "tagline": c["tagline"], "difficulty": c["difficulty"], "duration_sec": c["duration_sec"],
+			"cover": cover, "people": people, "places": (c.get("locations", []) as Array).size()})
 	s["clues"] = full_case["clues"]
 	s["boards"] = {"t1": s["board"], "t2": s["board"], "t3": {"cards": [], "links": []}}
 	var feed := []
@@ -271,6 +281,13 @@ func _run() -> void:
 	# --- professor
 	_apply("host", _host_state("lobby"))
 	await _shot("18_prof_lobby")
+	main.current._open_case_picker()
+	await _shot("18b_prof_escolher_caso")
+	Net.guide_data = full_case.duplicate(true)
+	main.current._open_guide_overlay()
+	await _wait(1.0)
+	await _shot("18c_prof_guia_lobby")
+	main.current.viewer_layer.get_children().map(func(c: Node) -> void: c.queue_free())
 	_apply("host", _host_state("playing"))
 	await _shot("19_prof_rodada")
 	main.current.game_tab = "aovivo"

@@ -67,94 +67,224 @@ func _host_url() -> String:
 	return "o endereço do servidor"
 
 
+const MANILA := Color("#d9b977")
+const MANILA_EDGE := Color("#b8944f")
+const DOC_INK := Color("#1b2140")
+
+
 func _build_lobby() -> void:
 	UI.clear(body)
 	var wide := _wide()
-	var m := UI.margin(36 if wide else 24, 40 if wide else 30, 24)
+	var m := UI.margin(36 if wide else 20, 24 if wide else 20, 18)
 	body.add_child(UI.full(m))
-	var page := UI.vbox(14)
+	var page := UI.vbox(12)
 	m.add_child(page)
-	# no celular em pé tudo vira uma página só que rola; o botão de começar fica fixo embaixo
+	# topo: crachá da diretoria + código da sala (o que os alunos precisam ver) + contador
+	var badge := UI.label("DIRETORIA DE INVESTIGAÇÃO  ·  PROF. AILSON", 20, UI.PINK, "type")
+	badge.autowrap_mode = TextServer.AUTOWRAP_OFF
+	badge.clip_text = true
+	page.add_child(badge)
+	var head := UI.hbox(16)
+	var hv := UI.vbox(0)
+	hv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var url := UI.label("Entrem em " + _host_url() + " e digitem o código", 22, UI.MIST, "bold")
+	url.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hv.add_child(url)
+	hv.add_child(UI.title("SALA " + Net.code, 120 if wide else 92, UI.YELLOW))
+	head.add_child(hv)
+	var cnt_box := PanelContainer.new()
+	cnt_box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	cnt_box.add_theme_stylebox_override("panel", UI.box(Color(UI.YELLOW, 0.12), UI.YELLOW, 2, 18, 14))
+	var cv := UI.vbox(0)
+	lobby_count = UI.title("0", 64, UI.YELLOW)
+	lobby_count.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cv.add_child(lobby_count)
+	var cl := UI.label("na sala", 20, UI.PAPER, "bold")
+	cl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cl.autowrap_mode = TextServer.AUTOWRAP_OFF
+	cv.add_child(cl)
+	cnt_box.add_child(cv)
+	head.add_child(cnt_box)
+	page.add_child(head)
+
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	page.add_child(scroll)
-	var outer: BoxContainer = UI.hbox(30) if wide else UI.vbox(18)
-	outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(outer)
-
-	var left := UI.vbox(12)
-	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	outer.add_child(left)
-	left.add_child(UI.label("PROF. AILSON  ·  sala de investigação", 24, UI.PINK, "bold"))
-	left.add_child(UI.label("Entrem em  " + _host_url() + "  e digitem:", 26, UI.MIST, "bold"))
-	left.add_child(UI.title("SALA " + Net.code, 150 if wide else 120, UI.YELLOW))
-	lobby_count = UI.label("", 28, UI.PAPER, "bold")
-	left.add_child(lobby_count)
-	lobby_teams = GridContainer.new()
-	(lobby_teams as GridContainer).columns = 3 if wide else 1
-	lobby_teams.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	lobby_teams.add_theme_constant_override("h_separation", 14)
-	lobby_teams.add_theme_constant_override("v_separation", 12)
-	left.add_child(lobby_teams)
-
-	var right := UI.vbox(12)
-	right.custom_minimum_size.x = 560 if wide else 0
-	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL if not wide else Control.SIZE_FILL
-	outer.add_child(right)
-	right.add_child(UI.title("ESCOLHA O CASO", 40, UI.PAPER))
-	lobby_cases = UI.vbox(12)
+	var inner := UI.vbox(12)
+	inner.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(inner)
+	# caso escolhido (pasta parda numa linha) + TROCAR / GUIA
+	lobby_cases = UI.vbox(0)
 	lobby_cases.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right.add_child(lobby_cases)
-	var tc := UI.hbox(12)
-	var tl := UI.label("Equipes", 30, UI.PAPER, "bold")
-	tl.autowrap_mode = TextServer.AUTOWRAP_OFF
-	tl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	tc.add_child(tl)
-	var minus := UI.button("-", "ghost", 80)
-	minus.custom_minimum_size.x = 90
-	minus.pressed.connect(func() -> void: Net.send({"t": "host_settings", "teamCount": int(Net.state["settings"]["teamCount"]) - 1}))
-	tc.add_child(minus)
-	var cnt := UI.title("", 56, UI.YELLOW)
-	cnt.name = "TeamCount"
-	cnt.custom_minimum_size.x = 40
-	cnt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	tc.add_child(cnt)
-	var plus := UI.button("+", "ghost", 80)
-	plus.custom_minimum_size.x = 90
-	plus.pressed.connect(func() -> void: Net.send({"t": "host_settings", "teamCount": int(Net.state["settings"]["teamCount"]) + 1}))
-	tc.add_child(plus)
-	var shuffle := UI.button("Sortear", "ghost", 80)
-	shuffle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	shuffle.pressed.connect(func() -> void: Net.send({"t": "host_shuffle"}))
-	tc.add_child(shuffle)
-	right.add_child(tc)
-	var tm := UI.hbox(12)
-	var tml := UI.label("Tempo", 30, UI.PAPER, "bold")
-	tml.autowrap_mode = TextServer.AUTOWRAP_OFF
-	tml.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	tm.add_child(tml)
-	var tminus := UI.button("-5 min", "ghost", 80)
-	tminus.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tminus.pressed.connect(func() -> void: Net.send({"t": "host_settings", "extraMin": int(Net.state["settings"].get("extraMin", 0)) - 5}))
-	tm.add_child(tminus)
-	var tplus := UI.button("+5 min", "ghost", 80)
-	tplus.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tplus.pressed.connect(func() -> void: Net.send({"t": "host_settings", "extraMin": int(Net.state["settings"].get("extraMin", 0)) + 5}))
-	tm.add_child(tplus)
-	right.add_child(tm)
-
-	var guide_btn := UI.button("Ler o guia do caso (solução e dicas)", "ghost", 80)
-	guide_btn.pressed.connect(_open_guide_overlay)
-	right.add_child(guide_btn)
-	var start := UI.button("COMEÇAR O CASO", "primary", 116)
-	start.add_theme_font_size_override("font_size", 52)
+	inner.add_child(lobby_cases)
+	# ajustes numa faixa só: equipes e tempo
+	var row: BoxContainer = UI.hbox(14) if wide else UI.vbox(10)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	inner.add_child(row)
+	row.add_child(_stepper("EQUIPES", "TeamCount",
+		func() -> void: Net.send({"t": "host_settings", "teamCount": int(Net.state["settings"]["teamCount"]) - 1}),
+		func() -> void: Net.send({"t": "host_settings", "teamCount": int(Net.state["settings"]["teamCount"]) + 1}),
+		"Sortear", func() -> void: Net.send({"t": "host_shuffle"})))
+	row.add_child(_stepper("TEMPO", "TimeLabel",
+		func() -> void: Net.send({"t": "host_settings", "extraMin": int(Net.state["settings"].get("extraMin", 0)) - 5}),
+		func() -> void: Net.send({"t": "host_settings", "extraMin": int(Net.state["settings"].get("extraMin", 0)) + 5})))
+	lobby_teams = GridContainer.new()
+	(lobby_teams as GridContainer).columns = 3 if wide else 2
+	lobby_teams.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lobby_teams.add_theme_constant_override("h_separation", 10)
+	lobby_teams.add_theme_constant_override("v_separation", 10)
+	inner.add_child(lobby_teams)
+	# rodapé fixo: fechar (pequeno) + começar (grande)
+	var foot := UI.hbox(12)
+	var leave := UI.button("Fechar", "ghost", 96)
+	leave.custom_minimum_size.x = 150
+	leave.pressed.connect(func() -> void: get_meta("main").go_home())
+	foot.add_child(leave)
+	var start := UI.button("COMEÇAR O CASO", "primary", 96)
+	start.add_theme_font_size_override("font_size", 44)
+	start.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	start.name = "Start"
 	start.pressed.connect(func() -> void: Net.send({"t": "host_start"}))
-	page.add_child(start)
-	var leave := UI.button("Fechar a sala", "ghost", 64)
-	leave.pressed.connect(func() -> void: get_meta("main").go_home())
-	page.add_child(leave)
+	foot.add_child(start)
+	page.add_child(foot)
+
+
+## Faixa compacta "RÓTULO  [-] valor [+]  (ação)".
+func _stepper(label: String, value_name: String, minus_cb: Callable, plus_cb: Callable, extra := "", extra_cb := Callable()) -> Control:
+	var p := PanelContainer.new()
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	p.add_theme_stylebox_override("panel", UI.box(Color(UI.NAVY, 0.9), Color(UI.SKY, 0.4), 2, 16, 10))
+	var h := UI.hbox(8)
+	var l := UI.label(label, 22, UI.MIST, "type")
+	l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	l.custom_minimum_size.x = 110
+	h.add_child(l)
+	var mi := UI.button("-", "ghost", 68)
+	mi.custom_minimum_size.x = 68
+	mi.pressed.connect(minus_cb)
+	h.add_child(mi)
+	var v := UI.title("", 44, UI.YELLOW)
+	v.name = value_name
+	v.custom_minimum_size.x = 96
+	v.autowrap_mode = TextServer.AUTOWRAP_OFF
+	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(v)
+	var pl := UI.button("+", "ghost", 68)
+	pl.custom_minimum_size.x = 68
+	pl.pressed.connect(plus_cb)
+	h.add_child(pl)
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(sp)
+	if extra != "":
+		var ex := UI.button(extra, "ghost", 68)
+		ex.custom_minimum_size.x = 130
+		ex.pressed.connect(extra_cb)
+		h.add_child(ex)
+	p.add_child(h)
+	return p
+
+
+func _diff_name(d: int) -> String:
+	return ["FÁCIL", "MÉDIO", "DIFÍCIL"][clampi(d, 1, 3) - 1]
+
+
+func _case_thumb(c: Dictionary, side: float) -> Control:
+	var ph := PanelContainer.new()
+	ph.add_theme_stylebox_override("panel", UI.box(Color("#f7f3ea"), Color.TRANSPARENT, 0, 3, 6))
+	ph.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	ph.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var tr := TextureRect.new()
+	tr.custom_minimum_size = Vector2(side, side)
+	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	tr.texture = UI.portrait(str(c.get("cover", "")))
+	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ph.add_child(tr)
+	return ph
+
+
+## Janela para escolher o caso da aula (lista compacta, um toque escolhe e fecha).
+func _open_case_picker() -> void:
+	UI.clear(viewer_layer)
+	var bg := ColorRect.new()
+	bg.color = Color(UI.NIGHT, 0.94)
+	bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	viewer_layer.add_child(UI.full(bg))
+	var m := UI.margin(20, 24, 20)
+	viewer_layer.add_child(UI.full(m))
+	var v := UI.vbox(10)
+	m.add_child(v)
+	var h := UI.hbox(10)
+	var tl := UI.title("ESCOLHA O CASO", 52, UI.YELLOW)
+	tl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tl.autowrap_mode = TextServer.AUTOWRAP_OFF
+	h.add_child(tl)
+	var close := UI.button("Fechar", "ghost", 72)
+	close.custom_minimum_size.x = 150
+	close.pressed.connect(func() -> void: UI.clear(viewer_layer))
+	h.add_child(close)
+	v.add_child(h)
+	var sc := ScrollContainer.new()
+	sc.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	v.add_child(sc)
+	var lst := UI.vbox(10)
+	lst.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sc.add_child(lst)
+	var sel := str(Net.state.get("settings", {}).get("caseId", ""))
+	var cases: Array = (Net.state.get("cases", []) as Array).duplicate()
+	cases.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.get("difficulty", 1)) < int(b.get("difficulty", 1)))
+	var n := 0
+	for c in cases:
+		n += 1
+		var on: bool = c["id"] == sel
+		var d := int(c.get("difficulty", 1))
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.custom_minimum_size = Vector2(0, 156)
+		b.add_theme_stylebox_override("normal", UI.box(MANILA if on else Color("#efe6cf"), Color("#c42c3f") if on else MANILA_EDGE, 4 if on else 2, 8))
+		b.add_theme_stylebox_override("hover", UI.box(MANILA, MANILA_EDGE, 3, 8))
+		b.add_theme_stylebox_override("pressed", UI.box(MANILA_EDGE, MANILA_EDGE, 3, 8))
+		var row := UI.hbox(16)
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		row.offset_left = 16; row.offset_right = -16; row.offset_top = 12; row.offset_bottom = -12
+		row.add_child(_case_thumb(c, 108))
+		var tv := UI.vbox(2)
+		tv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var no := UI.label("ARQUIVO Nº %02d%s" % [n, "   ·   ESCOLHIDO" if on else ""], 18, Color("#c42c3f") if on else Color(DOC_INK, 0.6), "type")
+		no.autowrap_mode = TextServer.AUTOWRAP_OFF
+		no.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tv.add_child(no)
+		var t := UI.title(str(c["title"]).to_upper(), 38, DOC_INK)
+		t.autowrap_mode = TextServer.AUTOWRAP_OFF
+		t.clip_text = true
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tv.add_child(t)
+		var tg := UI.label(UI.strip_emoji(str(c.get("tagline", ""))), 20, Color(DOC_INK, 0.85), "type")
+		tg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tg.max_lines_visible = 2
+		tv.add_child(tg)
+		var meta := UI.label("%s  ·  %d min  ·  %d envolvidos  ·  %d lugares" % [_diff_name(d), int(c.get("duration_sec", 900)) / 60,
+			int(c.get("people", 0)), int(c.get("places", 0))], 19, [Color("#2f6b3a"), Color("#8a6a1a"), Color("#c42c3f")][clampi(d, 1, 3) - 1], "bold")
+		meta.autowrap_mode = TextServer.AUTOWRAP_OFF
+		meta.clip_text = true
+		meta.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tv.add_child(meta)
+		row.add_child(tv)
+		b.add_child(row)
+		var cid := str(c["id"])
+		b.pressed.connect(func() -> void:
+			Sfx.play("ui_tap")
+			Net.send({"t": "host_settings", "caseId": cid})
+			UI.clear(viewer_layer))
+		lst.add_child(b)
+	UI.scroll_friendly(lst)
 
 
 func _refresh_lobby() -> void:
@@ -162,67 +292,90 @@ func _refresh_lobby() -> void:
 	var total := 0
 	for t in st.get("teams", []):
 		total += (t["players"] as Array).size()
-	lobby_count.text = "%d detetive%s na sala" % [total, "" if total == 1 else "s"]
+	lobby_count.text = str(total)
 	var cnt := find_child("TeamCount", true, false) as Label
 	if cnt:
 		cnt.text = str(int(st.get("settings", {}).get("teamCount", 3)))
 	var start := find_child("Start", true, false) as Button
 	if start:
 		start.disabled = total == 0
+		start.text = "COMEÇAR O CASO" if total > 0 else "ESPERANDO ALUNOS..."
+	var sel := str(st.get("settings", {}).get("caseId", ""))
+	var cur := {}
+	for c in st.get("cases", []):
+		if c["id"] == sel:
+			cur = c
+	var tlab := find_child("TimeLabel", true, false) as Label
+	if tlab:
+		tlab.text = "%d min" % (int(cur.get("duration_sec", 0)) / 60)
+	# caso escolhido: pasta parda
+	UI.clear(lobby_cases)
+	var cp := PanelContainer.new()
+	cp.add_theme_stylebox_override("panel", UI.box(MANILA, MANILA_EDGE, 2, 8, 14))
+	var ch := UI.hbox(14)
+	if not cur.is_empty():
+		ch.add_child(_case_thumb(cur, 100))
+	var cv := UI.vbox(2)
+	cv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var k := UI.label("CASO DA AULA  ·  CONFIDENCIAL", 18, Color("#c42c3f"), "type")
+	k.autowrap_mode = TextServer.AUTOWRAP_OFF
+	k.clip_text = true
+	cv.add_child(k)
+	var tt := UI.title(str(cur.get("title", "Escolha um caso")).to_upper(), 40, DOC_INK)
+	tt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	cv.add_child(tt)
+	if not cur.is_empty():
+		var mt := UI.label("%s  ·  %d envolvidos  ·  %d lugares" % [_diff_name(int(cur.get("difficulty", 1))), int(cur.get("people", 0)), int(cur.get("places", 0))], 19, Color(DOC_INK, 0.75), "type")
+		mt.autowrap_mode = TextServer.AUTOWRAP_OFF
+		mt.clip_text = true
+		cv.add_child(mt)
+	ch.add_child(cv)
+	var bv := UI.vbox(8)
+	bv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var change := UI.button("TROCAR", "primary", 64)
+	change.custom_minimum_size.x = 140
+	change.pressed.connect(_open_case_picker)
+	bv.add_child(change)
+	var guide := UI.button("GUIA", "ghost", 64)
+	guide.custom_minimum_size.x = 140
+	guide.add_theme_color_override("font_color", DOC_INK)
+	guide.add_theme_stylebox_override("normal", UI.box(Color("#f4efe2"), DOC_INK, 2, 12))
+	guide.pressed.connect(_open_guide_overlay)
+	bv.add_child(guide)
+	ch.add_child(bv)
+	cp.add_child(ch)
+	lobby_cases.add_child(cp)
+	# equipes (compactas)
 	UI.clear(lobby_teams)
 	for t in st.get("teams", []):
 		var col := Color(str(t["color"]))
 		var p := PanelContainer.new()
 		p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		p.add_theme_stylebox_override("panel", UI.box(Color(col, 0.1), col, 3, 18, 18))
-		var v := UI.vbox(8)
-		var th := UI.hbox(8)
-		var tn := UI.title(str(t["name"]).to_upper(), 42, col)
+		p.add_theme_stylebox_override("panel", UI.box(Color(col, 0.1), col, 2, 14, 12))
+		var v := UI.vbox(6)
+		var th := UI.hbox(6)
+		var tn := UI.title(str(t["name"]).to_upper(), 32, col)
 		tn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		tn.autowrap_mode = TextServer.AUTOWRAP_OFF
+		tn.clip_text = true
 		th.add_child(tn)
-		th.add_child(UI.title(str((t["players"] as Array).size()), 42, Color(col, 0.6)))
+		th.add_child(UI.title(str((t["players"] as Array).size()), 32, Color(col, 0.7)))
 		v.add_child(th)
 		var flow := HFlowContainer.new()
-		flow.add_theme_constant_override("h_separation", 8)
-		flow.add_theme_constant_override("v_separation", 8)
+		flow.add_theme_constant_override("h_separation", 6)
+		flow.add_theme_constant_override("v_separation", 6)
 		for pl in t["players"]:
 			var chip := PanelContainer.new()
-			chip.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.8), Color(col, 0.6), 2, 26, 12))
-			var cl := UI.label(str(pl["name"]), 22, UI.PAPER if pl["online"] else UI.MIST, "bold")
-			cl.autowrap_mode = TextServer.AUTOWRAP_OFF
-			chip.add_child(cl)
+			chip.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.8), Color(col, 0.5), 1, 20, 8))
+			var clb := UI.label(str(pl["name"]), 20, UI.PAPER if pl["online"] else UI.MIST, "bold")
+			clb.autowrap_mode = TextServer.AUTOWRAP_OFF
+			chip.add_child(clb)
 			flow.add_child(chip)
 		if (t["players"] as Array).is_empty():
-			flow.add_child(UI.label("vazia", 22, UI.MIST, "type"))
+			flow.add_child(UI.label("ninguém ainda", 20, UI.MIST, "type"))
 		v.add_child(flow)
 		p.add_child(v)
 		lobby_teams.add_child(p)
-	UI.clear(lobby_cases)
-	var sel := str(st.get("settings", {}).get("caseId", ""))
-	for c in st.get("cases", []):
-		var on: bool = c["id"] == sel
-		var b := Button.new()
-		b.focus_mode = Control.FOCUS_NONE
-		b.custom_minimum_size = Vector2(0, 150)
-		b.add_theme_stylebox_override("normal", UI.box(Color(UI.YELLOW, 0.15) if on else Color(0, 0, 0, 0.3), UI.YELLOW if on else UI.BLUE, 4 if on else 2, 18))
-		b.add_theme_stylebox_override("hover", UI.box(Color(UI.YELLOW, 0.2), UI.YELLOW, 3, 18))
-		b.add_theme_stylebox_override("pressed", UI.box(Color(UI.YELLOW, 0.3), UI.YELLOW, 3, 18))
-		var v := UI.vbox(2)
-		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		v.offset_left = 20; v.offset_top = 12; v.offset_right = -16
-		var t := UI.title(str(c["title"]).to_upper(), 40, UI.YELLOW if on else UI.PAPER)
-		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		v.add_child(t)
-		var tg := UI.label(UI.strip_emoji(str(c.get("tagline", ""))), 22, UI.MIST)
-		tg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		v.add_child(tg)
-		var meta := UI.label("%s  ·  %d min" % ["Fácil" if int(c.get("difficulty", 1)) == 1 else ("Médio" if int(c.get("difficulty", 1)) == 2 else "Difícil"), int(c.get("duration_sec", 900)) / 60], 22, UI.PINK, "bold")
-		meta.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		v.add_child(meta)
-		b.add_child(v)
-		b.pressed.connect(func() -> void: Net.send({"t": "host_settings", "caseId": c["id"]}))
-		lobby_cases.add_child(b)
 	UI.scroll_friendly(lobby_cases)
 	UI.scroll_friendly(lobby_teams)
 

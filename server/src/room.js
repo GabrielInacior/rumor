@@ -605,6 +605,9 @@ class Room {
     }
     s.cases = [...this.cases.values()].filter((c) => (c.mode || 'multi') !== 'solo').map((c) => ({
       id: c.id, title: c.title, tagline: c.tagline, difficulty: c.difficulty, duration_sec: this.durationFor(c),
+      cover: ((c.cards || []).find((x) => x.kind === 'pessoa' && x.id !== (c.solution || {}).culprit) || {}).id || '',
+      people: (c.cards || []).filter((x) => x.kind === 'pessoa').length,
+      places: (c.locations || []).length,
     }));
     if (this.phase !== 'lobby') {
       s.clues = this.caseData.clues;

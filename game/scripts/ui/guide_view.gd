@@ -152,7 +152,60 @@ static func build(g: Dictionary) -> Control:
 		for t in tp:
 			tv.add_child(_bullet("?", UI.strip_emoji(str(t))))
 		v.add_child(_section("PARA CONVERSAR NA REVELAÇÃO", tv, false))
-	return v
+	_inkify(v)
+	return _folder(v, str(g.get("title", "")))
+
+
+const DOC_INK := Color("#1b2140")
+const DOC_RED := Color("#c42c3f")
+const MANILA := Color("#d9b977")
+const MANILA_EDGE := Color("#b8944f")
+const SHEET := Color("#f4efe2")
+
+
+## Cores de tela escura viram cores de tinta sobre papel (o dossiê do diretor).
+static func _inkify(n: Node) -> void:
+	for c in n.get_children():
+		if c is Label:
+			var l := c as Label
+			var col: Color = l.get_theme_color("font_color")
+			var out := DOC_INK
+			if col.is_equal_approx(UI.MIST):
+				out = Color(DOC_INK, 0.65)
+			elif col.is_equal_approx(UI.YELLOW) or col.is_equal_approx(UI.RED) or col.is_equal_approx(UI.PINK):
+				out = DOC_RED
+			elif col.is_equal_approx(UI.GREEN):
+				out = Color("#2f6b3a")
+			l.add_theme_color_override("font_color", out)
+		_inkify(c)
+
+
+## Pasta parda com etiqueta, carimbo e a folha do guia dentro.
+static func _folder(content: Control, title: String) -> Control:
+	var outer := PanelContainer.new()
+	outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	outer.add_theme_stylebox_override("panel", UI.box(MANILA, MANILA_EDGE, 2, 8, 14))
+	var v := UI.vbox(10)
+	var h := UI.hbox(10)
+	var lab := UI.label("ARQUIVO DA DIRETORIA  ·  " + title.to_upper(), 18, Color(DOC_INK, 0.75), "type")
+	lab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lab.autowrap_mode = TextServer.AUTOWRAP_OFF
+	lab.clip_text = true
+	h.add_child(lab)
+	var stamp := PanelContainer.new()
+	stamp.add_theme_stylebox_override("panel", UI.box(Color.TRANSPARENT, DOC_RED, 3, 4, 6))
+	var st := UI.title("CONFIDENCIAL", 26, DOC_RED)
+	st.autowrap_mode = TextServer.AUTOWRAP_OFF
+	stamp.add_child(st)
+	stamp.rotation = -0.06
+	h.add_child(stamp)
+	v.add_child(h)
+	var sheet := PanelContainer.new()
+	sheet.add_theme_stylebox_override("panel", UI.box(SHEET, Color("#c9bfa5"), 1, 4, 20))
+	sheet.add_child(content)
+	v.add_child(sheet)
+	outer.add_child(v)
+	return outer
 
 
 static func _derive_clue_map(g: Dictionary) -> Array:
@@ -199,9 +252,14 @@ static func _section(title: String, content: Control, open: bool) -> Control:
 	var head := UI.button(("▼  " if false else "") + title, "ghost", 70)
 	head.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	head.add_theme_font_override("font", UI.font("title"))
-	head.add_theme_font_size_override("font_size", 32)
+	head.add_theme_font_size_override("font_size", 30)
+	for k in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		head.add_theme_color_override(k, Color("#1b2140"))
+	head.add_theme_stylebox_override("normal", UI.box(Color("#e6d3a3"), Color("#b8944f"), 2, 6, 14))
+	head.add_theme_stylebox_override("hover", UI.box(Color("#d9b977"), Color("#b8944f"), 2, 6, 14))
+	head.add_theme_stylebox_override("pressed", UI.box(Color("#c7a25e"), Color("#b8944f"), 2, 6, 14))
 	var body := PanelContainer.new()
-	body.add_theme_stylebox_override("panel", UI.box(Color(UI.NAVY, 0.85), Color(UI.YELLOW, 0.25), 1, 14, 18))
+	body.add_theme_stylebox_override("panel", UI.box(Color("#fbf8f0"), Color("#d8ccb0"), 1, 4, 18))
 	body.add_child(content)
 	body.visible = open
 	head.text = ("—  " if false else "") + title + ("   (fechar)" if open else "   (abrir)")
