@@ -145,6 +145,13 @@ class Room {
       if (p && p.sock === sock) p.sock = null;
     }
     this.checkReady(); // quem caiu não segura a turma na abertura
+    // quem caiu também não segura a votação de entrega: se todos os conectados já votaram sim, entrega
+    for (const t of this.teams) {
+      if (t.vote && this.phase === 'playing') {
+        const on = this.onlineOf(t);
+        if (on.length > 0 && on.every((pid) => t.vote.yes.includes(pid))) this.finishTeam(t, t.vote.culprit, t.vote.by);
+      }
+    }
     this.broadcast();
   }
 

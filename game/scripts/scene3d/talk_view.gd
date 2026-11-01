@@ -19,6 +19,8 @@ var cast: Array = []          # cartas de quem participa da conversa (1 ou 2 pes
 var chars := {}               # id -> Character
 var speaker := ""             # quem fala na linha atual
 var _tail: Control
+var _world: Node3D
+var _cam: Camera3D
 var text_l: Label
 var hint_l: Label
 var tag_l: Label
@@ -98,6 +100,7 @@ func _enter_node() -> void:
 	if str(node.get("give_item", "")) != "":
 		items.append(node["give_item"])
 	Net.send({"t": "talk_node", "person": str(card.get("id", "")), "node": node_id})
+	_sync_cast()
 	if str(node.get("unlock", "")) != "":
 		unlocked.emit(str(card.get("id", "")), node_id)
 	if float(node.get("lock", 0)) > 0.0:
@@ -206,6 +209,7 @@ func _wide() -> bool:
 
 func _build_set() -> void:
 	var w := Node3D.new()
+	_world = w
 	_vp.add_child(w)
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
@@ -270,20 +274,71 @@ func _build_set() -> void:
 	rim.position = Vector3(-1.1, 2.0, -0.8)
 	w.add_child(rim)
 	var cam := Camera3D.new()
+	_cam = cam
 	w.add_child(cam)
 	# com adulto na cena a câmera sobe um pouco (eles são mais altos)
 	var lift := 0.0
 	for c in cast:
 		if bool(c.get("adult", false)):
 			lift = 0.16
+	_frame()
+
+
+## Enquadra 1 ou 2 personagens (lado a lado) e sobe a câmera se houver adulto.
+func _frame() -> void:
+	if _cam == null:
+		return
+	var duo := chars.size() >= 2
+	var lift := 0.0
+	for c in cast:
+		if bool(c.get("adult", false)):
+			lift = 0.16
+	var i := 0
+	for c in cast:
+		var chn: Node3D = chars.get(str(c.get("id", "")))
+		if chn == null:
+			continue
+		if duo:
+			var gap := 0.62 if _wide() else 0.4
+			chn.position = Vector3(-gap if i == 0 else gap, 0, 0.0)
+			chn.rotation.y = 0.55 if i == 0 else -0.55
+		else:
+			chn.position = Vector3.ZERO
+			chn.rotation.y = 0.18
+		i += 1
+	# na tela deitada o balão ocupa a parte de baixo: a câmera mira mais baixo para o rosto subir
+	var wide := _wide()
 	if duo:
-		cam.fov = 44 if _wide() else 50
-		cam.position = Vector3(0.0, 1.5 + lift, 3.1 if _wide() else 3.7)
-		cam.look_at(Vector3(0.0, 1.25 + lift, 0), Vector3.UP)
+		_cam.fov = 44 if wide else 50
+		_cam.position = Vector3(0.0, 1.5 + lift, 3.1 if wide else 3.7)
+		_cam.look_at(Vector3(0.0, (1.0 if wide else 1.25) + lift, 0), Vector3.UP)
 	else:
-		cam.fov = 36
-		cam.position = Vector3(0.18, 1.55 + lift, 2.35)
-		cam.look_at(Vector3(0.0, 1.36 + lift, 0), Vector3.UP)
+		_cam.fov = 36
+		_cam.position = Vector3(0.18, 1.55 + lift, 2.6 if wide else 2.35)
+		_cam.look_at(Vector3(0.0, (1.12 if wide else 1.36) + lift, 0), Vector3.UP)
+
+
+## Um nó pode chamar alguém para a conversa no meio dela: a pessoa entra em cena na hora.
+func _sync_cast() -> void:
+	if _world == null:
+		return
+	var ids: Array = _node().get("cast", [])
+	var changed := false
+	for cid in ids:
+		var id := str(cid)
+		if chars.has(id) or chars.size() >= 2:
+			continue
+		var other := Net.card_by_id(id)
+		if other.is_empty():
+			continue
+		cast.append(other)
+		var chn := Character.new()
+		_world.add_child(chn)
+		chn.setup(other)
+		chars[id] = chn
+		changed = true
+	if changed:
+		_frame()
 
 
 func _show_choices() -> bool:
