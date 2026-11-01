@@ -1539,21 +1539,15 @@ func _objectives_box(result: Dictionary = {}) -> Control:
 func _open_submit() -> void:
 	var v := UI.vbox(14)
 	var solo := bool(Net.state.get("solo", false))
-	v.add_child(UI.title("ENTREGAR O CASO?", 50, UI.PINK))
-	v.add_child(UI.label("O principal é apontar o culpado. Os secundários são as provas no quadro: cada fio importante com a pista que prova.", 23, UI.PAPER))
-	v.add_child(_objectives_box())
-	v.add_child(UI.label(("Depois de entregar, o quadro fecha e o resultado fica guardado." if solo else
-		"Toda a equipe vota. Depois de entregar, o quadro fecha. Ganha quem cumprir mais objetivos; no empate, quem entregou primeiro."), 21, UI.MIST))
-	var read := UI.button("Ler a história do quadro antes", "ghost", 70)
-	read.pressed.connect(func() -> void:
-		_close_sheet()
-		_open_story())
-	v.add_child(read)
 	var verb := "ENTREGAR" if solo else "PEDIR O VOTO DA EQUIPE"
-	var go := UI.button("ENTREGAR AGORA" if solo else "PEDIR O VOTO DA EQUIPE", "primary", 110)
+	v.add_child(UI.title("ENTREGAR O CASO", 50, UI.PINK))
+	# botão fixo no rodapé: um toque no suspeito + um toque aqui (nada de procurar botão no fim)
+	var go := UI.button("ESCOLHA O CULPADO ACIMA" if Net.case_data.get("has_culprit", false) else ("ENTREGAR AGORA" if solo else verb), "primary", 100)
 	go.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	go.add_theme_stylebox_override("normal", UI.box(UI.PINK, UI.INK, 0, 20))
+	go.add_theme_stylebox_override("hover", UI.box(UI.PINK.lightened(0.15), UI.INK, 0, 20))
 	if Net.case_data.get("has_culprit", false):
-		v.add_child(UI.title(str(Net.case_data.get("culprit_question", "Quem é o responsável?")).to_upper(), 40, UI.PINK))
+		v.add_child(UI.label(str(Net.case_data.get("culprit_question", "Quem é o responsável?")) + "  Toque no suspeito:", 24, UI.PAPER, "bold"))
 		var grid := GridContainer.new()
 		grid.columns = 3
 		grid.add_theme_constant_override("h_separation", 12)
@@ -1567,6 +1561,8 @@ func _open_submit() -> void:
 			b.add_theme_stylebox_override("pressed", UI.box(UI.PINK, UI.INK, 0, 8, 8))
 			btns.append(b)
 			var cid := str(c["id"])
+			if cid == chosen_culprit:
+				b.button_pressed = true
 			b.pressed.connect(func() -> void:
 				chosen_culprit = cid
 				for o in btns:
@@ -1579,12 +1575,20 @@ func _open_submit() -> void:
 		go.disabled = chosen_culprit == ""
 		if chosen_culprit != "":
 			go.text = "ACUSAR %s E %s" % [_name_of(chosen_culprit).to_upper(), verb]
+	v.add_child(UI.label("O QUE VALE PONTO", 18, UI.YELLOW, "type"))
+	v.add_child(_objectives_box())
+	v.add_child(UI.label(("Depois de entregar, o quadro fecha e o resultado fica guardado." if solo else
+		"Toda a equipe vota. Depois de entregar, o quadro fecha. Ganha quem cumprir mais objetivos; no empate, quem entregou primeiro."), 21, UI.MIST))
+	var read := UI.button("Ler a história do quadro antes", "ghost", 70)
+	read.pressed.connect(func() -> void:
+		_close_sheet()
+		_open_story())
+	v.add_child(read)
 	go.pressed.connect(func() -> void:
 		Net.send({"t": "propose_finish", "culprit": chosen_culprit})
 		Sfx.play("submit_stamp")
 		_close_sheet())
-	v.add_child(go)
-	_open_sheet(v)
+	_open_sheet(v, go)
 
 
 var _vote_open := false
@@ -1639,7 +1643,7 @@ func _show_result(r: Dictionary) -> void:
 
 
 # ================================================================== painéis
-func _open_sheet(content: Control) -> void:
+func _open_sheet(content: Control, footer: Control = null) -> void:
 	_close_sheet()
 	UI.fix_vertical_text.call_deferred(content)
 	var dim := ColorRect.new()
@@ -1673,13 +1677,15 @@ func _open_sheet(content: Control) -> void:
 	scroll.add_child(content)
 	UI.scroll_friendly(content)
 	frame.add_child(scroll)
+	if footer:
+		frame.add_child(footer)
 	panel.add_child(frame)
 	sheet_layer.add_child(panel)
 	# encolhe para o tamanho do conteúdo quando ele é pequeno
 	await get_tree().process_frame
 	if not is_instance_valid(panel):
 		return
-	var want := content.get_combined_minimum_size().y + 150
+	var want := content.get_combined_minimum_size().y + 150 + (footer.get_combined_minimum_size().y + 10 if footer else 0.0)
 	panel.offset_top = -minf(want, size.y * 0.82)
 	panel.position.y += 60
 	panel.create_tween().tween_property(panel, "position:y", panel.position.y - 60, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

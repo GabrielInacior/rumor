@@ -2,12 +2,17 @@
 // Validação determinística da teoria (o quadro da equipe) contra a solução oficial do caso.
 // Fica separada da sala para ser testada sozinha e para que a regra seja uma só.
 
+// tipos que dizem a mesma coisa valem no mesmo fio (o aluno não precisa acertar a palavra exata)
+const SAME_MEANING = { estava: ['g_esteve'], g_esteve: ['estava'] };
+
 function linkMatches(link, edge, linkTypes) {
-  if (link.type !== edge.type) return false;
+  const okTypes = [edge.type, ...(edge.alt_types || []), ...(SAME_MEANING[edge.type] || [])];
+  if (!okTypes.includes(link.type)) return false;
   if (link.a === edge.from && link.b === edge.to) return true;
-  const lt = linkTypes.find((t) => t.id === edge.type);
-  const directed = lt ? lt.directed !== false : true;
-  return !directed && link.a === edge.to && link.b === edge.from;
+  // fio ao contrário também vale quando a ligação não tem direção ou o caso permite (edge.any_direction)
+  const lt = linkTypes.find((t) => t.id === link.type);
+  const directed = lt ? lt.directed !== false : !String(link.type).startsWith('g_');
+  return (!directed || edge.any_direction) && link.a === edge.to && link.b === edge.from;
 }
 
 /**
