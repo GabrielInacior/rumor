@@ -24,6 +24,12 @@ def check(n):
     cards = {c["id"]: c for c in d["cards"]}; clues = {c["id"]: c for c in d["clues"]}
     items = {i["id"]: i for i in d.get("items", [])}
     if set(cards) & set(clues) or set(items) & (set(cards) | set(clues)): err.append("ids duplicados entre cartas/pistas/itens")
+    ICONS = set("celular mensagem onibus trofeu livro carta chocolate carregador baqueta fita computador pizza chave mochila coroa camera papel microfone bola prancheta caixa cartaz wifi relogio sacola".split())
+    for c in d["cards"]:
+        if c["kind"] == "fato" and c.get("icon") not in ICONS: err.append("icon fato " + c["id"])
+        if c["kind"] == "lugar" and c["id"] not in ANCH and c.get("scene") not in ANCH: err.append("lugar sem scene " + c["id"])
+    for i in d.get("items", []):
+        if i.get("icon") not in ICONS: err.append("icon item " + i["id"])
     locs = d["locations"]
     need = {1: (3, 3), 2: (3, 4), 3: (4, 4)}[d["difficulty"]]
     if not need[0] <= len(locs) <= need[1] or d["scene"] != locs[0] or any(l not in ANCH for l in locs): err.append("locations")

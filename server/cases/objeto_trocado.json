@@ -864,19 +864,22 @@
     {
       "id": "trofeu_real",
       "kind": "fato",
-      "name": "Troféu verdadeiro (metal, gravado)"
+      "name": "Troféu verdadeiro (metal, gravado)",
+      "icon": "trofeu"
     },
     {
       "id": "trofeu_rei",
       "kind": "fato",
-      "name": "Troféu do rei (plástico, da peça)"
+      "name": "Troféu do rei (plástico, da peça)",
+      "icon": "coroa"
     }
   ],
   "items": [
     {
       "id": "fita",
       "name": "Fita silver tape",
-      "desc": "Do clube de robótica. Conserta qualquer coisa, inclusive coroa de rei."
+      "desc": "Do clube de robótica. Conserta qualquer coisa, inclusive coroa de rei.",
+      "icon": "fita"
     }
   ],
   "clues": [

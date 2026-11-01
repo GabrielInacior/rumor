@@ -668,7 +668,8 @@
     {
       "id": "sala_prova",
       "kind": "lugar",
-      "name": "Sala da recuperação"
+      "name": "Sala da recuperação",
+      "scene": "sala_aula"
     },
     {
       "id": "quadra",
@@ -678,14 +679,16 @@
     {
       "id": "ninguem",
       "kind": "fato",
-      "name": "Post da @ninguém, 14h05"
+      "name": "Post da @ninguém, 14h05",
+      "icon": "mensagem"
     }
   ],
   "items": [
     {
       "id": "rascunho",
       "name": "Rascunho de cartinha",
-      "desc": "Amassado, assinado 'P.', cheio de coraçãozinho. Começa com 'Oi, menina do 2B'."
+      "desc": "Amassado, assinado 'P.', cheio de coraçãozinho. Começa com 'Oi, menina do 2B'.",
+      "icon": "carta"
     }
   ],
   "clues": [

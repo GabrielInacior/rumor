@@ -6,6 +6,7 @@ extends Control
 const BoardView := preload("res://scripts/board/board_view.gd")
 const CaseScene := preload("res://scripts/scene3d/case_scene.gd")
 const TalkView := preload("res://scripts/scene3d/talk_view.gd")
+const ItemView := preload("res://scripts/ui/item_view.gd")
 
 var timer_l: Label
 var team_l: Label
@@ -197,8 +198,8 @@ func _narrate(text: String, important: bool) -> void:
 	narr_panel.modulate.a = 1.0
 	Sfx.play("paper_flip", -6.0)
 	var tw := narr_panel.create_tween()
-	tw.tween_interval(4.5 if important else 3.2)
-	tw.tween_property(narr_panel, "modulate:a", 0.0, 0.4)
+	tw.tween_interval(7.5 if important else 5.5)
+	tw.tween_property(narr_panel, "modulate:a", 0.0, 1.0)
 	tw.tween_callback(func() -> void: narr_panel.visible = false)
 
 
@@ -295,26 +296,35 @@ func _refresh_clues() -> void:
 		return str(a.get("time", "")) < str(b.get("time", "")))
 	# mochila: objetos de troca que a equipe carrega (pegos nas cenas ou ganhos em conversa)
 	var items: Array = Net.state.get("items", [])
-	if not items.is_empty():
-		clue_list.add_child(UI.title("MOCHILA DA EQUIPE", 34, UI.YELLOW))
+	# mochila da equipe: a mochila gira em 3D e cada objeto aparece como modelo low-poly
+	var bag := PanelContainer.new()
+	bag.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.75), Color(UI.YELLOW, 0.5), 2, 22, 16))
+	var bh := UI.hbox(14)
+	var iv := ItemView.new()
+	iv.kind = "mochila"
+	iv.custom_minimum_size = Vector2(150, 150)
+	bh.add_child(iv)
+	var bv := UI.vbox(6)
+	bv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bv.add_child(UI.title("MOCHILA DA EQUIPE", 38, UI.YELLOW))
+	if items.is_empty():
+		bv.add_child(UI.label("Vazia por enquanto. Objetos achados nas cenas vêm parar aqui e podem ser trocados por informação numa conversa.", 21, UI.MIST))
+	else:
 		var flow := HFlowContainer.new()
-		flow.add_theme_constant_override("h_separation", 12)
-		flow.add_theme_constant_override("v_separation", 12)
+		flow.add_theme_constant_override("h_separation", 10)
+		flow.add_theme_constant_override("v_separation", 10)
 		for iid in items:
 			var it := {}
 			for x in Net.case_data.get("items", []):
 				if x["id"] == iid:
 					it = x
-			var tag := Paper.make("sticky")
-			tag.custom_minimum_size = Vector2(300, 0)
-			var tv := UI.vbox(2)
-			tv.add_child(UI.label(UI.strip_emoji(str(it.get("name", iid))), 28, UI.INK, "marker"))
-			tv.add_child(UI.label(UI.strip_emoji(str(it.get("desc", ""))), 19, Color(UI.INK, 0.75)))
-			tag.add_child(tv)
-			flow.add_child(tag)
-		clue_list.add_child(flow)
-		clue_list.add_child(UI.label("Ofereça numa conversa: alguém pode querer trocar por informação.", 20, UI.MIST))
-		clue_list.add_child(UI.title("PISTAS", 34, UI.YELLOW))
+			flow.add_child(_item_card(it if not it.is_empty() else {"id": iid, "name": iid}))
+		bv.add_child(flow)
+		bv.add_child(UI.label("Ofereça numa conversa: alguém pode querer trocar por informação.", 19, UI.MIST))
+	bh.add_child(bv)
+	bag.add_child(bh)
+	clue_list.add_child(bag)
+	clue_list.add_child(UI.title("PISTAS", 34, UI.YELLOW))
 	for c in sorted:
 		clue_list.add_child(_clue_row(c, mine.has(c["id"]), on_board.has("c:" + str(c["id"]))))
 	if clues.is_empty():
@@ -374,6 +384,30 @@ func _clue_row(c: Dictionary, mine: bool, pinned: bool) -> Control:
 	b.add_child(h)
 	b.pressed.connect(func() -> void: _open_clue(c))
 	return b
+
+
+func _item_card(it: Dictionary) -> Control:
+	var p := Paper.make("polaroid")
+	p.custom_minimum_size = Vector2(200, 0)
+	var v := UI.vbox(4)
+	var tr := TextureRect.new()
+	tr.custom_minimum_size = Vector2(176, 132)
+	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	var key := "item:" + ItemModels.kind_for(it)
+	tr.texture = Snap.get_tex(key)
+	if tr.texture == null:
+		Snap.photo_ready.connect(func(k: String) -> void:
+			if k == key and is_instance_valid(tr):
+				tr.texture = Snap.get_tex(key), CONNECT_ONE_SHOT)
+	v.add_child(tr)
+	var n := UI.label(UI.strip_emoji(str(it.get("name", ""))), 22, UI.INK, "marker")
+	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	n.custom_minimum_size.x = 176
+	v.add_child(n)
+	p.add_child(v)
+	p.tooltip_text = str(it.get("desc", ""))
+	return p
 
 
 func _chip(text: String, col: Color) -> Control:
@@ -576,17 +610,45 @@ func _name_of(id: String) -> String:
 	return UI.strip_emoji(str(Net.card_by_id(id).get("name", id)))
 
 
+var link_color := "vermelho"
+
+
+## fileira de cores de fio: cada equipe pode combinar um código (ex.: amarelo = mentira)
+func _color_row(selected: String, on_pick: Callable) -> Control:
+	var row := UI.hbox(12)
+	for cname in ["vermelho", "amarelo", "azul", "verde", "rosa"]:
+		var col: Color = BoardView.LINK_COLORS[cname]
+		var sw := Button.new()
+		sw.focus_mode = Control.FOCUS_NONE
+		sw.custom_minimum_size = Vector2(88, 72)
+		sw.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var on: bool = cname == selected
+		sw.add_theme_stylebox_override("normal", UI.box(col, Color.WHITE if on else Color(0, 0, 0, 0.4), 5 if on else 2, 36))
+		sw.add_theme_stylebox_override("hover", UI.box(col.lightened(0.15), Color.WHITE, 4, 36))
+		sw.add_theme_stylebox_override("pressed", UI.box(col.darkened(0.2), Color.WHITE, 5, 36))
+		sw.pressed.connect(func() -> void:
+			Sfx.play("ui_tap")
+			on_pick.call(cname))
+		row.add_child(sw)
+	return row
+
+
 func _open_relation_picker(a: String, b: String) -> void:
 	var v := UI.vbox(14)
 	v.add_child(UI.title("QUE LIGAÇÃO É ESSA?", 46, UI.YELLOW))
 	v.add_child(UI.label("O fio sai de %s e vai até %s." % [_name_of(a), _name_of(b)], 24, UI.MIST))
+	v.add_child(UI.label("Cor do fio", 22, UI.PAPER, "bold"))
+	v.add_child(_color_row(link_color, func(cname: String) -> void:
+		link_color = cname
+		_close_sheet()
+		_open_relation_picker(a, b)))
 	for lt in Net.case_data.get("link_types", []):
 		var btn := UI.button("%s  %s  %s" % [_name_of(a), str(lt["label"]).to_upper(), _name_of(b)], "ghost", 96)
 		btn.add_theme_font_override("font", UI.font("bold"))
 		btn.add_theme_font_size_override("font_size", 26)
 		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		btn.pressed.connect(func() -> void:
-			Net.board_op({"k": "link", "a": a, "b": b, "type": lt["id"]})
+			Net.board_op({"k": "link", "a": a, "b": b, "type": lt["id"], "color": link_color})
 			Sfx.play("string_connect")
 			_close_sheet())
 		v.add_child(btn)
@@ -620,6 +682,10 @@ func _on_link_tapped(id: String) -> void:
 		v.add_child(UI.label("Prova presa: " + UI.strip_emoji(str(ev.get("title", "?"))), 26, UI.YELLOW, "bold"))
 	else:
 		v.add_child(UI.label("Sem prova. Um fio sem prova é só um palpite.", 24, UI.MIST))
+	v.add_child(UI.label("Cor do fio", 22, UI.PAPER, "bold"))
+	v.add_child(_color_row(str(l.get("color", "vermelho")), func(cname: String) -> void:
+		Net.board_op({"k": "recolor", "id": id, "color": cname})
+		_close_sheet()))
 	var prove := UI.button("PRENDER UMA PROVA" if l.get("evidence") == null else "TROCAR A PROVA", "primary")
 	prove.pressed.connect(func() -> void: _open_evidence_picker(id))
 	v.add_child(prove)

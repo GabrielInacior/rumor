@@ -261,7 +261,8 @@ func toast(text: String, color := UI.YELLOW) -> void:
 	toast_box.add_child(m)
 	p.modulate.a = 0.0
 	var tw := create_tween()
-	tw.tween_property(p, "modulate:a", 1.0, 0.2)
-	tw.tween_interval(3.2)
-	tw.tween_property(p, "modulate:a", 0.0, 0.4)
+	# avisos ficam bastante tempo e somem devagar (o aluno pode estar conversando com a equipe)
+	tw.tween_property(p, "modulate:a", 1.0, 0.3)
+	tw.tween_interval(6.5)
+	tw.tween_property(p, "modulate:a", 0.0, 1.2)
 	tw.tween_callback(m.queue_free)

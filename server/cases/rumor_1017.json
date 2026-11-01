@@ -848,24 +848,28 @@
     {
       "id": "boato",
       "kind": "fato",
-      "name": "Boato no 2A: \"a viagem foi cancelada\""
+      "name": "Boato no 2A: \"a viagem foi cancelada\"",
+      "icon": "mensagem"
     },
     {
       "id": "aviso",
       "kind": "fato",
-      "name": "Aviso real: a viagem muda de data"
+      "name": "Aviso real: a viagem muda de data",
+      "icon": "onibus"
     }
   ],
   "items": [
     {
       "id": "carregador",
       "name": "Carregador de celular",
-      "desc": "Esquecido na tomada. Vale ouro numa escola com celular em 2%."
+      "desc": "Esquecido na tomada. Vale ouro numa escola com celular em 2%.",
+      "icon": "carregador"
     },
     {
       "id": "baqueta",
       "name": "Baqueta com 'DUDA' escrito",
-      "desc": "Caiu na correria. Uma baterista sem baqueta é só uma pessoa batendo na mesa."
+      "desc": "Caiu na correria. Uma baterista sem baqueta é só uma pessoa batendo na mesa.",
+      "icon": "baqueta"
     }
   ],
   "clues": [

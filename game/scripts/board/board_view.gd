@@ -11,9 +11,10 @@ signal card_moved(ref: String, pos: Vector2)   # pos normalizada 0..1
 
 const BOARD := Vector2(1500, 1500)
 const SIZES := {
-	"pessoa": Vector2(176, 228), "lugar": Vector2(210, 116), "fato": Vector2(236, 132), "pista": Vector2(216, 146),
+	"pessoa": Vector2(176, 228), "lugar": Vector2(230, 200), "fato": Vector2(236, 210), "pista": Vector2(216, 146),
 }
 const DRAG_START := 14.0
+const LINK_COLORS := {"vermelho": Color("#e2384f"), "amarelo": Color("#ffc83d"), "azul": Color("#4e9bff"), "verde": Color("#5fd38a"), "rosa": Color("#ff6fae")}
 
 var cards: Array = []        # [{ref,x,y}]
 var links: Array = []        # [{id,a,b,type,evidence}]
@@ -40,6 +41,7 @@ var _fitted := false
 
 
 func _ready() -> void:
+	Snap.photo_ready.connect(func(_k: String) -> void: queue_redraw())
 	clip_contents = true
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	resized.connect(func() -> void:
@@ -314,8 +316,11 @@ func _draw() -> void:
 	for l in links:
 		var pts := _link_points(l)
 		var sel: bool = l["id"] == selected_link
-		draw_polyline(pts, Color(0, 0, 0, 0.35), 9.0, true)
-		draw_polyline(pts, UI.YELLOW if sel else UI.RED, 6.0 if sel else 5.0, true)
+		var lc: Color = LINK_COLORS.get(str(l.get("color", "vermelho")), UI.RED)
+		draw_polyline(pts, Color(0, 0, 0, 0.35), 10.0 if sel else 9.0, true)
+		if sel:
+			draw_polyline(pts, Color.WHITE, 9.0, true)
+		draw_polyline(pts, lc, 6.0 if sel else 5.0, true)
 		draw_polyline(pts, Color(1, 1, 1, 0.25), 1.5, true)
 		_draw_link_tag(l, pts, sel)
 
@@ -336,7 +341,7 @@ func _draw_link_tag(l: Dictionary, pts: PackedVector2Array, sel: bool) -> void:
 	# seta de direção
 	var tip := k + dir * 30
 	var side := Vector2(-dir.y, dir.x)
-	draw_colored_polygon(PackedVector2Array([tip, tip - dir * 24 + side * 13, tip - dir * 24 - side * 13]), UI.YELLOW if sel else UI.RED)
+	draw_colored_polygon(PackedVector2Array([tip, tip - dir * 24 + side * 13, tip - dir * 24 - side * 13]), LINK_COLORS.get(str(l.get("color", "vermelho")), UI.RED))
 	# etiqueta de papel com o tipo de ligação
 	var f := UI.font("marker")
 	var txt := Net.link_label(str(l["type"]))
@@ -391,20 +396,25 @@ func _draw_card(c: Dictionary) -> void:
 				_draw_silhouette(ph, card)
 			var nm := str(card.get("name", "?"))
 			draw_string(f_m, Vector2(lr.position.x + 8, lr.end.y - 18), nm, HORIZONTAL_ALIGNMENT_CENTER, lr.size.x - 16, _fit_size(f_m, nm, lr.size.x - 16, 30), UI.INK)
-		"lugar":
+		"lugar", "fato":
+			# polaroide: foto em cima (cena 3D do lugar ou objeto do fato), legenda à mão embaixo
 			var card := Net.card_by_id(ref.substr(2))
-			draw_rect(lr, Color("#cfe0f5"))
-			draw_rect(Rect2(lr.position, Vector2(lr.size.x, 28)), UI.SKY)
-			draw_string(UI.font("title"), lr.position + Vector2(10, 23), "LUGAR", HORIZONTAL_ALIGNMENT_LEFT, -1, 24, UI.PAPER)
-			draw_multiline_string(f_m, lr.position + Vector2(10, 58), str(card.get("name", "?")), HORIZONTAL_ALIGNMENT_LEFT, lr.size.x - 20, 24, 2, UI.INK)
-		"fato":
-			var card := Net.card_by_id(ref.substr(2))
-			draw_rect(lr, Color("#fff4c4"))
-			for i in 4:
-				draw_line(lr.position + Vector2(8, 44 + i * 22), lr.position + Vector2(lr.size.x - 8, 44 + i * 22), Color(UI.SKY, 0.35), 1.5)
-			draw_line(lr.position + Vector2(30, 0), lr.position + Vector2(30, lr.size.y), Color(UI.RED, 0.4), 1.5)
-			draw_string(UI.font("title"), lr.position + Vector2(36, 26), "FATO", HORIZONTAL_ALIGNMENT_LEFT, -1, 24, UI.RED)
-			draw_multiline_string(f_m, lr.position + Vector2(36, 54), UI.strip_emoji(str(card.get("name", "?"))), HORIZONTAL_ALIGNMENT_LEFT, lr.size.x - 46, 21, 3, UI.INK)
+			var is_place := kind == "lugar"
+			draw_rect(lr, Color("#fbfaf6"))
+			var ph := Rect2(lr.position + Vector2(10, 10), Vector2(lr.size.x - 20, lr.size.y - 82))
+			var key := ("scene:" + str(card.get("scene", ref.substr(2)))) if is_place else ("item:" + ItemModels.kind_for(card))
+			var tex: Texture2D = Snap.get_tex(key)
+			if tex:
+				draw_texture_rect(tex, ph, false)
+			else:
+				draw_rect(ph, Color("#26407a"))
+			var tag_col := UI.SKY if is_place else UI.RED
+			var tag := "LUGAR" if is_place else "FATO"
+			var tw := UI.font("title").get_string_size(tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x + 14
+			draw_rect(Rect2(ph.position + Vector2(6, 6), Vector2(tw, 26)), tag_col)
+			draw_string(UI.font("title"), ph.position + Vector2(13, 27), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, UI.PAPER)
+			var nm2 := UI.strip_emoji(str(card.get("name", "?")))
+			draw_multiline_string(f_m, Vector2(lr.position.x + 10, ph.end.y + 28), nm2, HORIZONTAL_ALIGNMENT_CENTER, lr.size.x - 20, _fit_size(f_m, nm2, (lr.size.x - 20) * 2.0, 22), 2, UI.INK)
 		"pista":
 			var clue := Net.clue_by_id(ref.substr(2))
 			var col := UI.clue_color(str(clue.get("kind", "")))

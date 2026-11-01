@@ -49,11 +49,17 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
        "tree": { ... }                                                                             // ver "Interrogatório"
      }},
     {"id": "biblioteca", "kind": "lugar", "name": "Biblioteca"},
-    {"id": "boato", "kind": "fato", "name": "Boato: \"a viagem foi cancelada\""}
+    // lugar cujo id não é um id de cena: "scene" = cena mais parecida (usada na "foto" da carta)
+    {"id": "sala_prova", "kind": "lugar", "name": "Sala da recuperação", "scene": "sala_aula"},
+    // fato: "icon" obrigatório (modelo 3D low-poly da "foto" no quadro)
+    {"id": "boato", "kind": "fato", "name": "Boato: \"a viagem foi cancelada\"", "icon": "mensagem"}
   ],
+  // icon: celular | mensagem | onibus | trofeu | livro | carta | chocolate | carregador | baqueta | fita |
+  //       computador | pizza | chave | mochila | coroa | camera | papel | microfone | bola | prancheta |
+  //       caixa | cartaz | wifi | relogio | sacola
 
-  "items": [                          // objetos de troca, vão para a mochila da equipe
-    {"id": "carregador", "name": "Carregador de celular", "desc": "Vale ouro numa escola com celular em 2%."}
+  "items": [                          // objetos de troca, vão para a mochila da equipe. "icon" obrigatório.
+    {"id": "carregador", "name": "Carregador de celular", "desc": "Vale ouro numa escola com celular em 2%.", "icon": "carregador"}
   ],
 
   "clues": [

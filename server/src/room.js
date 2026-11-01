@@ -15,6 +15,7 @@ const TEAM_PRESETS = [
 const BRIEFING_SEC = 12;
 const MAX_CARDS = 70;
 const MAX_LINKS = 70;
+const LINK_COLORS = ['vermelho', 'amarelo', 'azul', 'verde', 'rosa'];
 
 const token = () => crypto.randomBytes(9).toString('base64url');
 
@@ -396,7 +397,14 @@ class Room {
         if (!c.link_types.some((t) => t.id === op.type)) return false;
         if (b.links.some((l) => l.a === a && l.b === bb && l.type === op.type)) return false;
         b.seq += 1;
-        b.links.push({ id: 'l' + b.seq, a, b: bb, type: op.type, evidence: null, by: p.name });
+        const color = LINK_COLORS.includes(op.color) ? op.color : 'vermelho';
+        b.links.push({ id: 'l' + b.seq, a, b: bb, type: op.type, evidence: null, color, by: p.name });
+        return true;
+      }
+      case 'recolor': {
+        const l = b.links.find((x) => x.id === op.id);
+        if (!l || !LINK_COLORS.includes(op.color)) return false;
+        l.color = op.color;
         return true;
       }
       case 'retype': {

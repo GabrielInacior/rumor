@@ -82,9 +82,12 @@ func _player_state(phase: String) -> Dictionary:
 		for k in ["from", "to"]:
 			if not cards.any(func(c: Dictionary) -> bool: return c["ref"] == "p:" + str(edge[k])):
 				cards.append({"ref": "p:" + str(edge[k]), "x": randf_range(0.2, 0.8), "y": randf_range(0.2, 0.8), "by": "Lince"})
+	for c in full_case["cards"]:
+		if c["kind"] in ["fato", "lugar"] and not cards.any(func(x: Dictionary) -> bool: return x["ref"] == "p:" + str(c["id"])):
+			cards.append({"ref": "p:" + str(c["id"]), "x": randf_range(0.2, 0.8), "y": randf_range(0.25, 0.85), "by": "Faro"})
 	var links := []
 	for j in mini(2, e.size()):
-		links.append({"id": "l%d" % j, "a": e[j]["from"], "b": e[j]["to"], "type": e[j]["type"], "evidence": clues[0]["id"] if j == 0 else null, "by": "Corvo"})
+		links.append({"id": "l%d" % j, "a": e[j]["from"], "b": e[j]["to"], "type": e[j]["type"], "evidence": clues[0]["id"] if j == 0 else null, "color": ["vermelho", "azul"][j % 2], "by": "Corvo"})
 	cards.append({"ref": "c:" + str(clues[0]["id"]), "x": 0.5, "y": 0.12, "by": "Coruja"})
 	var items := []
 	for it in full_case.get("items", []).slice(0, 2):
@@ -160,6 +163,8 @@ func _run() -> void:
 		await _shot("08_pista_" + str(k))
 		g._close_sheet()
 	g._set_tab("quadro")
+	await _wait(4.0)
+	g.board.fit()
 	await _shot("09_quadro")
 	g.board.selected_ref = str(Net.state["board"]["cards"][0]["ref"])
 	g._update_action_bar()

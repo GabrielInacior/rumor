@@ -51,9 +51,11 @@ def blur_wrap(img, sigma):
 
 # ------------------------------------------------------------------ pincel
 class Canvas:
-    def __init__(self, base, rng, n=N):
+    def __init__(self, base, rng, n=N, w=None):
+        # n = altura; w = largura (padrão quadrado). Tudo dá a volta nos dois eixos.
         self.n = n
-        self.c = np.ones((n, n, 3)) * np.array(base, float)
+        self.w = w or n
+        self.c = np.ones((n, self.w, 3)) * np.array(base, float)
         self.rng = rng
 
     def stroke(self, x, y, ang, length, width, col, alpha=0.85, bristle=0.55, dry=0.5, jitter=0.05, curve=0.0):
@@ -91,7 +93,7 @@ class Canvas:
         col = np.array(col, float)
         colpix = col[None, None, :] * (1.0 + (bv[..., None] - 0.5) * jitter * 2.0)
         rows = (int(round(y)) + np.arange(-r, r + 1)) % self.n
-        cols = (int(round(x)) + np.arange(-r, r + 1)) % self.n
+        cols = (int(round(x)) + np.arange(-r, r + 1)) % self.w
         ix = np.ix_(rows, cols)
         sub = self.c[ix]
         a3 = a[..., None]
@@ -120,6 +122,20 @@ class Canvas:
 
     def img(self):
         return self.c
+
+
+def grid_mask(rng, n, period_x, period_y, width, wobble=0.6, offset=0.0):
+    """Rejunte/junta: distância às linhas da grade com largura que respira (linha pintada à mão,
+    contínua, sem tracejado). Devolve 0..1 (1 = dentro da linha)."""
+    yy, xx = np.mgrid[0:n, 0:n].astype(float)
+    nz = soft_noise(rng, n, cut=12)
+    dx = np.abs(((xx + offset + nz * wobble) % period_x) - period_x / 2) if period_x else np.full((n, n), 1e9)
+    dy = np.abs(((yy + offset + nz * wobble) % period_y) - period_y / 2) if period_y else np.full((n, n), 1e9)
+    dx = period_x / 2 - dx if period_x else dx
+    dy = period_y / 2 - dy if period_y else dy
+    d = np.minimum(dx, dy)
+    w = width * (1.0 + 0.25 * soft_noise(rng, n, cut=20))
+    return np.clip((w * 0.5 - d) / 0.9 + 0.5, 0, 1)
 
 
 def tone(v, warm=0.0):
@@ -202,16 +218,17 @@ def tex_plaster(seed=21):
     """Reboco/parede pintada: rolo e trincha em várias direções, manchas, poucas marcas."""
     rng = np.random.default_rng(seed)
     cv = Canvas(tone(0.55, -0.2), rng)
-    cv.mul(1.0 + soft_noise(rng, cut=2.5) * 0.07 + soft_noise(rng, cut=9) * 0.03)
-    for _ in range(320):
+    cv.mul(1.0 + soft_noise(rng, cut=2.5) * 0.05)
+    # trincha larga em X (como quem pinta parede de verdade), opaca o bastante para a borda aparecer
+    for _ in range(260):
         x, y = rng.random() * N, rng.random() * N
-        ang = rng.choice([0.0, math.pi / 2, math.pi / 4, -math.pi / 4]) + (rng.random() - 0.5) * 0.5
+        ang = rng.choice([math.pi / 4, -math.pi / 4, math.pi / 2]) + (rng.random() - 0.5) * 0.4
+        v = 0.55 + (rng.random() - 0.5) * 0.11
+        cv.stroke(x, y, ang, rng.uniform(80, 180), rng.uniform(24, 44), tone(v, rng.uniform(-0.6, 0.4)), rng.uniform(0.55, 0.8), 0.7, 0.7, 0.07)
+    for _ in range(700):
+        x, y = rng.random() * N, rng.random() * N
         v = 0.55 + (rng.random() - 0.5) * 0.12
-        cv.stroke(x, y, ang, rng.uniform(70, 170), rng.uniform(26, 48), tone(v, rng.uniform(-0.6, 0.4)), rng.uniform(0.25, 0.5), 0.8, 0.8, 0.08)
-    for _ in range(900):
-        x, y = rng.random() * N, rng.random() * N
-        v = 0.55 + (rng.random() - 0.5) * 0.14
-        cv.stroke(x, y, rng.random() * math.pi, rng.uniform(16, 44), rng.uniform(6, 14), tone(v, rng.uniform(-0.5, 0.5)), rng.uniform(0.2, 0.45), 0.7, 0.7, 0.1)
+        cv.stroke(x, y, rng.choice([math.pi / 4, -math.pi / 4]) + rng.normal(0, 0.3), rng.uniform(20, 50), rng.uniform(7, 15), tone(v, rng.uniform(-0.5, 0.5)), rng.uniform(0.45, 0.7), 0.6, 0.6, 0.08)
     # manchas de umidade escorrendo (verticais, raras)
     for _ in range(5):
         x, y = rng.random() * N, rng.random() * N
@@ -242,12 +259,10 @@ def tex_tile(seed=31):
         col = tone(0.78, 0.2) if k < 0.4 else (tone(0.3, -0.3) if k < 0.8 else tone(0.6, 1.5))
         cv.dab(x, y, rng.uniform(0.8, 2.4), col, rng.uniform(0.45, 0.85))
     # rejunte: linha escura com uma luz fina ao lado (canto da placa gasto)
-    for i in range(4):
-        p = i * T
-        cv.line([(p, -4), (p, N + 4)], 3.2, tone(0.28, -0.3), 0.9, 14)
-        cv.line([(-4, p), (N + 4, p)], 3.2, tone(0.28, -0.3), 0.9, 14)
-        cv.line([(p + 3, -4), (p + 3, N + 4)], 1.6, tone(0.7), 0.35, 14)
-        cv.line([(-4, p + 3), (N + 4, p + 3)], 1.6, tone(0.7), 0.35, 14)
+    hi = grid_mask(rng, N, T, T, 1.6, 0.8, -3.0)
+    cv.c = cv.c * (1 - hi[..., None] * 0.3) + tone(0.72) * hi[..., None] * 0.3
+    g = grid_mask(rng, N, T, T, 3.4, 0.8)
+    cv.c = cv.c * (1 - g[..., None] * 0.85) + tone(0.27, -0.3) * g[..., None] * 0.85
     # brilho de cera: arcos largos de enceradeira, bem leves
     for _ in range(40):
         x, y = rng.random() * N, rng.random() * N
@@ -312,15 +327,16 @@ def tex_wood_grain(seed=43):
     """Madeira de móvel (sem emendas): veio pintado e manchas do verniz."""
     rng = np.random.default_rng(seed)
     cv = Canvas(tone(0.52, 0.6), rng)
-    cv.mul(1.0 + soft_noise(rng, cut=5, aniso=(0.25, 1.6)) * 0.06)
-    for _ in range(520):
+    # faixas largas de veio (claro/escuro alternando devagar), cada uma feita de pinceladas visíveis
+    band = soft_noise(rng, cut=4, aniso=(0.15, 1.0))
+    for _ in range(620):
         x, y = rng.random() * N, rng.random() * N
-        v = 0.52 + (rng.random() - 0.5) * 0.1
-        cv.stroke(x, y, rng.normal(0, 0.04), rng.uniform(80, 200), rng.uniform(10, 26), tone(v, rng.uniform(0.2, 1.0)), 0.45, 0.6, 0.75, 0.06)
-    for _ in range(900):
+        v = 0.52 + band[int(y) % N, int(x) % N] * 0.045 + (rng.random() - 0.5) * 0.07
+        cv.stroke(x, y, rng.normal(0, 0.02), rng.uniform(70, 180), rng.uniform(9, 22), tone(v, rng.uniform(0.2, 1.0)), 0.8, 0.6, 0.6, 0.06)
+    for _ in range(650):
         x, y = rng.random() * N, rng.random() * N
-        dv = (rng.random() - 0.65) * 0.22
-        cv.stroke(x, y, rng.normal(0, 0.05), rng.uniform(40, 160), rng.uniform(1.0, 2.4), tone(0.52 + dv, 0.7), rng.uniform(0.3, 0.6), 0.4, 0.8, 0.05, curve=rng.normal(0, 0.5))
+        dv = (rng.random() - 0.65) * 0.24
+        cv.stroke(x, y, rng.normal(0, 0.03), rng.uniform(40, 160), rng.uniform(1.0, 2.2), tone(0.52 + dv, 0.7), rng.uniform(0.4, 0.75), 0.4, 0.8, 0.05, curve=rng.normal(0, 0.35))
     for _ in range(3):
         kx, ky = rng.random() * N, rng.random() * N
         for k in range(5):
@@ -341,23 +357,23 @@ def tex_metal(seed=61):
     """Metal pintado (armário, prateleira): trincha vertical, amassados, riscos e lascas."""
     rng = np.random.default_rng(seed)
     cv = Canvas(tone(0.55, -0.3), rng)
-    cv.mul(1.0 + soft_noise(rng, cut=4, aniso=(1.6, 0.3)) * 0.05)
-    for _ in range(700):
+    # tinta esmalte passada de trincha de cima para baixo: listras verticais nítidas
+    for _ in range(820):
         x, y = rng.random() * N, rng.random() * N
-        v = 0.55 + (rng.random() - 0.5) * 0.08
-        cv.stroke(x, y, math.pi / 2 + rng.normal(0, 0.03), rng.uniform(60, 180), rng.uniform(6, 18), tone(v, -0.3), 0.4, 0.75, 0.8, 0.05)
-    # amassados: manchas escuras com luz de um lado
-    for _ in range(9):
+        v = 0.55 + (rng.random() - 0.5) * 0.1
+        cv.stroke(x, y, math.pi / 2 + rng.normal(0, 0.02), rng.uniform(70, 200), rng.uniform(6, 16), tone(v, -0.3), 0.75, 0.75, 0.7, 0.05)
+    # brilho do esmalte: uma faixa clara mais larga e suave em diagonal
+    for _ in range(10):
         x, y = rng.random() * N, rng.random() * N
-        rr = rng.uniform(10, 24)
-        cv.stroke(x, y, rng.random() * 3, rr * 2, rr * 1.2, tone(0.45, -0.3), 0.3, 0.3, 0.3, 0.03)
-        cv.stroke(x - rr * 0.4, y - rr * 0.4, rng.random() * 3, rr * 1.2, rr * 0.5, tone(0.66), 0.25, 0.3, 0.3, 0.03)
-    # riscos claros finos e lascas de tinta escura
-    for _ in range(70):
+        cv.stroke(x, y, math.pi / 2 + 0.25, rng.uniform(150, 300), rng.uniform(20, 40), tone(0.66), 0.25, 0.9, 0.9, 0.03)
+    # riscos claros finos (chave, mochila batendo) e poucas lascas pequenas
+    for _ in range(90):
         x, y = rng.random() * N, rng.random() * N
-        cv.stroke(x, y, rng.normal(0.2, 0.6), rng.uniform(12, 50), rng.uniform(0.8, 1.6), tone(0.78), rng.uniform(0.4, 0.8), 0.2, 0.5, 0.02)
-    for _ in range(40):
-        cv.dab(rng.random() * N, rng.random() * N, rng.uniform(1.5, 4.0), tone(0.3, 0.8), 0.75)
+        cv.stroke(x, y, rng.normal(0.15, 0.5), rng.uniform(10, 40), rng.uniform(0.8, 1.5), tone(0.8), rng.uniform(0.45, 0.85), 0.2, 0.5, 0.02)
+    for _ in range(14):
+        x, y = rng.random() * N, rng.random() * N
+        cv.dab(x, y, rng.uniform(1.0, 2.2), tone(0.36, 0.6), 0.7)
+        cv.dab(x + 1.5, y - 1.5, rng.uniform(0.6, 1.2), tone(0.75), 0.6)
     c = kuwahara_wrap(cv.img(), 1)
     return finish(c, 1.0, 0.6)
 
@@ -369,16 +385,18 @@ def tex_fabric(seed=71):
     twill = np.sin((xx + yy) * 2 * math.pi / 6) * 0.5 + 0.5
     cross = np.sin(xx * 2 * math.pi / 3) * np.sin(yy * 2 * math.pi / 3) * 0.5 + 0.5
     cv = Canvas(tone(0.55, 0.2), rng)
-    cv.mul(1.0 + soft_noise(rng, cut=7) * 0.07 + soft_noise(rng, cut=40) * 0.05)
-    for _ in range(1500):
+    cv.mul(1.0 + soft_noise(rng, cut=3) * 0.05)
+    # tecido pintado: hachuras curtas cruzadas em dois sentidos (trama), opacas, sem ruído fino
+    for _ in range(2400):
         x, y = rng.random() * N, rng.random() * N
-        v = 0.55 + (rng.random() - 0.5) * 0.12
-        cv.stroke(x, y, rng.random() * math.pi, rng.uniform(10, 30), rng.uniform(5, 12), tone(v, rng.uniform(-0.4, 0.6)), 0.35, 0.8, 0.6, 0.12)
-    # marcas de pisada: caminhos mais escuros e amassados
+        v = 0.55 + (rng.random() - 0.5) * 0.13
+        ang = (math.pi / 4 if rng.random() < 0.6 else -math.pi / 4) + rng.normal(0, 0.12)
+        cv.stroke(x, y, ang, rng.uniform(12, 30), rng.uniform(4, 8), tone(v, rng.uniform(-0.4, 0.6)), 0.7, 0.7, 0.5, 0.1)
+    # marcas de uso: caminhos mais escuros e amassados
     for _ in range(6):
         x, y = rng.random() * N, rng.random() * N
-        cv.stroke(x, y, rng.random() * math.pi, rng.uniform(140, 260), rng.uniform(40, 70), tone(0.47), 0.22, 0.9, 0.9, 0.05)
-    c = cv.img() * (0.93 + twill[..., None] * 0.08 + cross[..., None] * 0.04)
+        cv.stroke(x, y, rng.random() * math.pi, rng.uniform(140, 260), rng.uniform(40, 70), tone(0.47), 0.2, 0.9, 0.9, 0.05)
+    c = cv.img() * (0.96 + twill[..., None] * 0.05 + cross[..., None] * 0.02)
     c = kuwahara_wrap(c, 1)
     return finish(c, 1.0, 0.6)
 
@@ -387,11 +405,11 @@ def tex_concrete(seed=81):
     """Concreto/calçada: placas de 2 por textura, agregado, manchas de chuva e rachaduras."""
     rng = np.random.default_rng(seed)
     cv = Canvas(tone(0.55, -0.1), rng)
-    cv.mul(1.0 + soft_noise(rng, cut=3) * 0.08 + soft_noise(rng, cut=14) * 0.04)
-    for _ in range(600):
+    cv.mul(1.0 + soft_noise(rng, cut=3) * 0.07)
+    for _ in range(700):
         x, y = rng.random() * N, rng.random() * N
         v = 0.55 + (rng.random() - 0.5) * 0.12
-        cv.stroke(x, y, rng.random() * math.pi, rng.uniform(30, 90), rng.uniform(12, 30), tone(v, rng.uniform(-0.5, 0.3)), 0.35, 0.8, 0.7, 0.08)
+        cv.stroke(x, y, rng.random() * math.pi, rng.uniform(30, 90), rng.uniform(12, 30), tone(v, rng.uniform(-0.5, 0.3)), 0.6, 0.8, 0.7, 0.08)
     for _ in range(2200):
         k = rng.random()
         cv.dab(rng.random() * N, rng.random() * N, rng.uniform(0.6, 1.8), tone(0.36 if k < 0.6 else 0.72), rng.uniform(0.35, 0.7))
@@ -412,9 +430,8 @@ def tex_concrete(seed=81):
             pts.append((x, y))
         cv.line(pts, 1.4, tone(0.25, -0.3), 0.85, 6)
     # junta de dilatação entre placas
-    for p in (0, N // 2):
-        cv.line([(p, -4), (p, N + 4)], 3.0, tone(0.3, -0.3), 0.85, 12)
-        cv.line([(-4, p), (N + 4, p)], 3.0, tone(0.3, -0.3), 0.85, 12)
+    g = grid_mask(rng, N, N // 2, N // 2, 3.2, 1.2)
+    cv.c = cv.c * (1 - g[..., None] * 0.8) + tone(0.3, -0.3) * g[..., None] * 0.8
     c = kuwahara_wrap(cv.img(), 1)
     return finish(c, 1.0, 0.6)
 
