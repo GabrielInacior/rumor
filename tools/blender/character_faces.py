@@ -636,6 +636,41 @@ def cmd_sheet_mf(tiles):
     print("sheet ok", out)
 
 
+def cmd_sheet_adults(tiles):
+    """docs/arte_exploracao/personagem_adultos.png: 4 adultos (112%) ao lado de 2 adolescentes, mesma escala."""
+    names = [("professor", "PROFESSOR  blazer + bigode"), ("professora", "PROFESSORA  cardiga + coque baixo"),
+             ("diretor", "DIRETOR  careca + barba grisalha"), ("zelador", "ZELADOR  uniforme + cavanhaque"),
+             ("teen_m", "ALUNO"), ("teen_f", "ALUNA")]
+    fw, fh, step = 640, 1000, 430
+    W_ = step * 5 + fw
+    face = 480
+    H_ = fh + face * 6 // 6 + 10
+    sheet = painted_bg(W_, fh)
+    canvas = Image.new("RGBA", (W_, fh + face), (6, 12, 31, 255))
+    canvas.alpha_composite(sheet, (0, 0))
+    for i, (n, lab) in enumerate(names):
+        im = Image.open(os.path.join(tiles, "ad_full_%s.png" % n)).convert("RGBA")
+        canvas.alpha_composite(im, (i * step, 0))
+    d = ImageDraw.Draw(canvas)
+    for i, (n, lab) in enumerate(names):
+        d.text((i * step + 200, fh - 70), lab.split("  ")[0], font=font(30), fill=(255, 200, 61, 255))
+    fw2 = W_ // 6
+    for i, (n, lab) in enumerate(names):
+        im = Image.open(os.path.join(tiles, "ad_face_%s.png" % n)).convert("RGBA").resize((fw2, fw2), Image.LANCZOS)
+        bg = Image.new("RGBA", (fw2, fw2))
+        bd = ImageDraw.Draw(bg)
+        for y in range(fw2):
+            k = y / fw2
+            bd.line([(0, y), (fw2, y)], fill=(int(14 + 30 * (1 - k)), int(24 + 46 * (1 - k)), int(58 + 80 * (1 - k)), 255))
+        bg.alpha_composite(im)
+        ImageDraw.Draw(bg).text((10, 6), lab, font=font(20), fill=(255, 200, 61, 255))
+        canvas.alpha_composite(bg, (i * fw2, fh))
+    canvas = canvas.crop((0, 0, W_, fh + fw2))
+    out = os.path.join(DOCS, "personagem_adultos.png")
+    canvas.convert("RGB").save(out)
+    print("sheet ok", out)
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "atlas"
     if cmd == "atlas":
@@ -644,3 +679,5 @@ if __name__ == "__main__":
         cmd_sheet(sys.argv[2])
     elif cmd == "sheet_mf":
         cmd_sheet_mf(sys.argv[2])
+    elif cmd == "sheet_adults":
+        cmd_sheet_adults(sys.argv[2])

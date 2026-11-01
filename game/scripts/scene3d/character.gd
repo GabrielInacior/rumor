@@ -73,16 +73,28 @@ func _build_model() -> void:
 		"M_hair": Color(str(look.get("hair_color", "#1c1830"))),
 		"M_acc": Color("#1b2650"),
 	}
+	var adult := bool(card.get("adult", false))
+	if adult:
+		# adulto: calça social e sapato escuros; gravata/detalhe com cor própria
+		colors["M_pants"] = Color(str(look.get("pants", "#2b2a33")))
+		colors["M_shoes"] = Color("#3a2418")
+		colors["M_acc"] = Color(str(look.get("accent", "#a3263a")))
 	var hair := "Hair_" + str(look.get("hair", "curto"))
 	var acc := "Acc_" + str(look.get("accessory", "nenhum"))
 	var fem := is_female()
-	var has_f := model.find_child("Body_f", true, false) != null
+	# cabeça adulta é menor: cabelo/acessório de adolescente vira o equivalente adulto
+	if adult:
+		var hmap := {"raspado": "raspado_adult", "curto": "grisalho_curto", "franja": "grisalho_curto", "cacheado": "grisalho_curto",
+			"coque": "coque_baixo", "longo": "chanel", "rabo": "coque_baixo", "ondulado": "chanel", "cacheado_longo": "chanel", "trancas": "coque_baixo"}
+		var h := str(look.get("hair", "curto"))
+		hair = "Hair_" + str(hmap.get(h, h))
+		var amap := {"oculos": "oculos_leitura", "cracha": "cracha", "oculos_leitura": "oculos_leitura"}
+		acc = "Acc_" + str(amap.get(str(look.get("accessory", "nenhum")), "nenhum"))
 	# cabelo que ainda não existe no modelo cai para o parecido mais próximo (nunca fica careca)
 	if model.find_child(hair, true, false) == null:
 		hair = "Hair_" + str({"trancas": "rabo", "ondulado": "longo", "cacheado_longo": "cacheado", "calvo": "raspado",
 			"grisalho_curto": "curto", "coque_baixo": "coque", "chanel": "longo"}.get(str(look.get("hair", "")), "longo" if fem else "curto"))
 	# peças do corpo/roupa que este personagem usa (adolescente x adulto, gênero, uniforme)
-	var adult := bool(card.get("adult", false))
 	var g := "f" if fem else "m"
 	var outfit := str(look.get("outfit", "formal"))
 	var want := {}
@@ -102,6 +114,7 @@ func _build_model() -> void:
 	if adult and not fem and fh != "nenhum":
 		pick.call(["Face_" + fh])
 	var garments := ["Body", "Top", "Pants", "Shoes"]
+	var face_suffix := "_adult" if adult and model.find_child("Face_eyes_adult", true, false) != null else ""
 	for mi in model.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		var n := String(m.name)
@@ -109,7 +122,9 @@ func _build_model() -> void:
 			m.visible = n == hair
 		elif n.begins_with("Acc_"):
 			m.visible = n == acc
-		elif n.begins_with("Face_") and n != "Face_eyes" and n != "Face_mouth":
+		elif n in ["Face_eyes", "Face_mouth", "Face_eyes_adult", "Face_mouth_adult"]:
+			m.visible = n.ends_with("_adult") == (face_suffix != "")
+		elif n.begins_with("Face_"):
 			m.visible = want.has(n)
 		else:
 			for gp in garments:
@@ -119,11 +134,15 @@ func _build_model() -> void:
 			var src := m.mesh.surface_get_material(s)
 			var mname := src.resource_name if src else ""
 			if mname.begins_with("M_face_eyes") or n.begins_with("Face_eyes"):
-				eyes_mat = _face_mat(src, "eyes")
-				m.set_surface_override_material(s, eyes_mat)
+				var em := _face_mat(src, "eyes", n.ends_with("_adult"))
+				m.set_surface_override_material(s, em)
+				if m.visible:
+					eyes_mat = em
 			elif mname.begins_with("M_face_mouth") or n.begins_with("Face_mouth"):
-				mouth_mat = _face_mat(src, "mouth")
-				m.set_surface_override_material(s, mouth_mat)
+				var mm := _face_mat(src, "mouth", n.ends_with("_adult"))
+				m.set_surface_override_material(s, mm)
+				if m.visible:
+					mouth_mat = mm
 			else:
 				var key := ""
 				for k in colors:
@@ -147,12 +166,13 @@ func is_female() -> bool:
 	return str(_look().get("hair", "")) in ["longo", "rabo", "coque", "trancas", "ondulado", "cacheado_longo"]
 
 
-func _face_mat(src: Material, which: String) -> ShaderMaterial:
+func _face_mat(src: Material, which: String, adult_face := false) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = FACE
 	var tex: Texture2D = null
-	var p := "res://assets/characters/%s_atlas.png" % which
-	var pf := "res://assets/characters/%s_atlas_f.png" % which
+	var sfx := "_adult" if adult_face else ""
+	var p := "res://assets/characters/%s_atlas%s.png" % [which, sfx]
+	var pf := "res://assets/characters/%s_atlas%s_f.png" % [which, sfx]
 	if is_female() and ResourceLoader.exists(pf):
 		p = pf
 	if ResourceLoader.exists(p):
