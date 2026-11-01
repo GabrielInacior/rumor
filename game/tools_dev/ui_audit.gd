@@ -131,7 +131,10 @@ func _host_state(phase: String) -> Dictionary:
 	var acts := [["t1", "Corvo", "Corvo achou uma pista: Quadro de avisos", "cena"], ["t2", "Sombra", "Sombra fez Caio contar: Depoimento do Caio", "conversa"],
 		["t1", "Lince", "Lince ligou Caio contou para Duda", "quadro"], ["t3", "Lupa", "Caio se fechou com Lupa (escolha ruim)", "alerta"],
 		["t2", "Faro", "Faro apresentou a teoria acusando Duda: CERTA", "acerto"], [null, null, "Nova pista liberada para todas as equipes: Print do grêmio", "sistema"],
-		["t3", "Trench", "Trench pegou Carregador de celular (Mochila)", "cena"], [null, null, "Professor mandou dica para todos: \"Conversem!\"", "dica"]]
+		["t3", "Trench", "Trench pegou Carregador de celular (Mochila)", "cena"], [null, null, "Professor mandou dica para todos: \"Conversem!\"", "dica"],
+		["t1", "Coruja", "Coruja fixou no quadro: Sala do diretor", "quadro"], ["t1", "Coruja", "Coruja ligou Lari esteve em Sala do diretor", "quadro"],
+		["t1", "Corvo", "Corvo prendeu a prova: Relatório do cofre", "quadro"], ["t3", "Lupa", "Lupa propôs entregar o caso acusando Lari", "teoria"],
+		["t2", "Faro", "Neblina entregou o caso: culpado CERTO, 2 de 3 partes provadas", "acerto"], ["t3", "Gato Preto", "Gato Preto quer continuar investigando (entrega cancelada)", "teoria"]]
 	for i in acts.size():
 		feed.append({"at": now - (acts.size() - i) * 40000.0, "team": acts[i][0], "who": acts[i][1], "text": acts[i][2], "kind": acts[i][3]})
 	s["feed"] = feed

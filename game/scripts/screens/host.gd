@@ -675,64 +675,243 @@ const FEED_COLORS := {"cena": Color("#ffc83d"), "conversa": Color("#6fd3ff"), "q
 	"acerto": Color("#8ef0b5"), "alerta": Color("#ff6fae"), "dica": Color("#ffffff"), "sistema": Color("#a9bdf0"), "sala": Color("#a9bdf0")}
 
 
+## Ícone desenhado de cada tipo de ação (lupa, balão, alfinete, urna, carimbo, alerta, lâmpada...).
+class FeedIcon extends Control:
+	var kind := ""
+	var col := Color.WHITE
+	var ring := true
+
+	func _init(k: String, c: Color, sz := 44.0, with_ring := true) -> void:
+		kind = k
+		col = c
+		ring = with_ring
+		custom_minimum_size = Vector2(sz, sz)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		var c := size / 2
+		var r := minf(size.x, size.y) / 2 - 1
+		if ring:
+			draw_circle(c, r, Color(col, 0.18))
+			draw_arc(c, r, 0, TAU, 32, col, 2.0)
+		var s := r * 0.55
+		var w := maxf(2.0, r * 0.12)
+		match kind:
+			"cena":  # lupa
+				draw_arc(c + Vector2(-s * 0.2, -s * 0.2), s * 0.6, 0, TAU, 20, col, w)
+				draw_line(c + Vector2(s * 0.25, s * 0.25), c + Vector2(s * 0.85, s * 0.85), col, w * 1.4)
+			"conversa":  # balão
+				draw_rect(Rect2(c + Vector2(-s, -s * 0.7), Vector2(s * 2, s * 1.2)), col, false, w)
+				draw_colored_polygon(PackedVector2Array([c + Vector2(-s * 0.4, s * 0.5), c + Vector2(-s * 0.7, s * 1.0), c + Vector2(0, s * 0.5)]), col)
+				for i in 3:
+					draw_circle(c + Vector2(-s * 0.5 + i * s * 0.5, -s * 0.1), w * 0.7, col)
+			"quadro":  # alfinete com fio
+				draw_line(c + Vector2(-s, s * 0.7), c + Vector2(s, -s * 0.2), Color(UI.RED, 0.9), w)
+				draw_circle(c + Vector2(-s, s * 0.7), w * 1.3, col)
+				draw_circle(c + Vector2(s, -s * 0.2), w * 1.6, col)
+				draw_line(c + Vector2(s, -s * 0.2), c + Vector2(s * 0.6, -s * 0.9), col, w)
+			"teoria":  # urna com cédula
+				draw_rect(Rect2(c + Vector2(-s, -s * 0.2), Vector2(s * 2, s * 1.1)), col, false, w)
+				draw_line(c + Vector2(-s * 0.5, -s * 0.2), c + Vector2(s * 0.5, -s * 0.2), Color(0, 0, 0, 0.6), w)
+				draw_rect(Rect2(c + Vector2(-s * 0.35, -s), Vector2(s * 0.7, s * 0.9)), col)
+			"acerto":  # visto de carimbo
+				draw_polyline(PackedVector2Array([c + Vector2(-s * 0.8, 0), c + Vector2(-s * 0.2, s * 0.6), c + Vector2(s * 0.9, -s * 0.6)]), col, w * 1.6)
+			"alerta":  # exclamação
+				draw_line(c + Vector2(0, -s * 0.9), c + Vector2(0, s * 0.25), col, w * 1.6)
+				draw_circle(c + Vector2(0, s * 0.75), w, col)
+			"dica":  # lâmpada
+				draw_arc(c + Vector2(0, -s * 0.2), s * 0.6, PI * 0.8, PI * 2.2, 20, col, w)
+				draw_line(c + Vector2(-s * 0.3, s * 0.45), c + Vector2(s * 0.3, s * 0.45), col, w)
+				draw_line(c + Vector2(-s * 0.2, s * 0.8), c + Vector2(s * 0.2, s * 0.8), col, w)
+			"sala":  # porta
+				draw_rect(Rect2(c + Vector2(-s * 0.55, -s * 0.9), Vector2(s * 1.1, s * 1.8)), col, false, w)
+				draw_circle(c + Vector2(s * 0.25, 0), w * 0.8, col)
+			_:  # sistema: relógio
+				draw_arc(c, s * 0.85, 0, TAU, 24, col, w)
+				draw_line(c, c + Vector2(0, -s * 0.55), col, w)
+				draw_line(c, c + Vector2(s * 0.4, 0), col, w)
+
+
+const FEED_TITLES := {"cena": "PISTA NA CENA", "conversa": "INTERROGATÓRIO", "quadro": "QUADRO", "teoria": "ENTREGA", "acerto": "ACERTO",
+	"alerta": "ALERTA", "dica": "DICA", "sistema": "AVISO", "sala": "SALA"}
+
+
+func _ago(at: float) -> String:
+	var ago := int((Net.server_now_ms() - at) / 1000.0)
+	return ("agora" if ago < 10 else "há %ds" % ago) if ago < 60 else "há %dmin" % (ago / 60)
+
+
 func _build_feed() -> void:
 	var st := Net.state
-	var chips := HFlowContainer.new()
-	chips.add_theme_constant_override("h_separation", 8)
-	chips.add_theme_constant_override("v_separation", 8)
-	var opts := [["", "TODAS", UI.PAPER]]
-	for t in st.get("teams", []):
-		opts.append([str(t["id"]), str(t["name"]).to_upper(), Color(str(t["color"]))])
-	for o in opts:
-		var on: bool = feed_filter == o[0]
-		var b := UI.button(o[1], "ghost", 60)
-		b.add_theme_font_override("font", UI.font("title"))
-		b.add_theme_font_size_override("font_size", 26)
-		b.custom_minimum_size.x = 140
-		b.add_theme_stylebox_override("normal", UI.box(o[2] if on else Color(UI.NIGHT, 0.8), o[2], 2, 14))
-		b.add_theme_color_override("font_color", UI.INK if on else o[2])
-		b.pressed.connect(func() -> void:
-			feed_filter = o[0]
-			_feed_len = -1
-			_refresh_game())
-		chips.add_child(b)
-	page_box.add_child(chips)
 	var team_by := {}
 	for t in st.get("teams", []):
 		team_by[t["id"]] = t
 	var feed: Array = st.get("feed", [])
-	var shown := 0
+	# no PC: radar numa coluna à esquerda, ocorrências à direita
+	var left: VBoxContainer = page_box
+	var right: VBoxContainer = page_box
+	if _wide():
+		var cols := UI.hbox(16)
+		cols.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		left = UI.vbox(10)
+		left.custom_minimum_size.x = 470
+		right = UI.vbox(10)
+		right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cols.add_child(left)
+		cols.add_child(right)
+		page_box.add_child(cols)
+
+	# ---- radar: uma faixa por equipe com as últimas ações em ícones (quem está ativo, fazendo o quê)
+	var radar := PanelContainer.new()
+	radar.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.85), Color(UI.YELLOW, 0.35), 2, 14, 12))
+	var rv := UI.vbox(8)
+	var rt := UI.label("RADAR DAS EQUIPES  ·  últimas ações", 18, UI.YELLOW, "type")
+	rt.autowrap_mode = TextServer.AUTOWRAP_OFF
+	rv.add_child(rt)
+	for t in st.get("teams", []):
+		var tcol := Color(str(t["color"]))
+		var on := feed_filter == str(t["id"])
+		var lane := Button.new()
+		lane.focus_mode = Control.FOCUS_NONE
+		lane.custom_minimum_size = Vector2(0, 58)
+		lane.add_theme_stylebox_override("normal", UI.box(Color(tcol, 0.16 if on else 0.06), tcol if on else Color(tcol, 0.35), 2, 10))
+		lane.add_theme_stylebox_override("hover", UI.box(Color(tcol, 0.2), tcol, 2, 10))
+		lane.add_theme_stylebox_override("pressed", UI.box(Color(tcol, 0.3), tcol, 2, 10))
+		var lh := UI.hbox(8)
+		lh.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		lh.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		lh.offset_left = 10; lh.offset_right = -10
+		var nm := UI.title(str(t["name"]).to_upper(), 28, tcol)
+		nm.custom_minimum_size.x = 120
+		nm.autowrap_mode = TextServer.AUTOWRAP_OFF
+		nm.clip_text = true
+		nm.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		nm.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		lh.add_child(nm)
+		var icons := UI.hbox(4)
+		icons.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		icons.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		icons.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var recent := []
+		for i in range(feed.size() - 1, -1, -1):
+			if feed[i].get("team") == t["id"]:
+				recent.append(feed[i])
+				if recent.size() >= 9:
+					break
+		var last_at := 0.0
+		for k in recent.size():
+			var e: Dictionary = recent[k]
+			if k == 0:
+				last_at = float(e.get("at", 0))
+			var kd := str(e.get("kind", ""))
+			var ic := FeedIcon.new(kd, FEED_COLORS.get(kd, UI.MIST), 34.0)
+			ic.modulate.a = 1.0 - k * 0.08
+			icons.add_child(ic)
+		if recent.is_empty():
+			var none := UI.label("sem ações ainda", 18, UI.MIST, "type")
+			none.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			icons.add_child(none)
+		lh.add_child(icons)
+		var ag := UI.label(_ago(last_at) if last_at > 0 else "", 17, UI.MIST, "bold")
+		ag.autowrap_mode = TextServer.AUTOWRAP_OFF
+		ag.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		ag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		lh.add_child(ag)
+		lane.add_child(lh)
+		var tid := str(t["id"])
+		lane.pressed.connect(func() -> void:
+			feed_filter = "" if feed_filter == tid else tid
+			_feed_len = -1
+			_refresh_game())
+		rv.add_child(lane)
+	var hint := UI.label("Toque numa equipe para ver só as ocorrências dela" if feed_filter == "" else "Mostrando só %s · toque de novo para ver todas" % str(team_by.get(feed_filter, {}).get("name", "")).to_upper(), 16, UI.MIST)
+	rv.add_child(hint)
+	radar.add_child(rv)
+	left.add_child(radar)
+
+	# ---- linha do tempo: fio vermelho com alfinetes, um cartão por ocorrência (repetidas agrupadas)
+	var title := UI.label("OCORRÊNCIAS", 20, UI.YELLOW, "type")
+	right.add_child(title)
+	var groups := []
 	for i in range(feed.size() - 1, -1, -1):
 		var e: Dictionary = feed[i]
 		if feed_filter != "" and e.get("team") != feed_filter and e.get("team") != null:
 			continue
-		var t: Dictionary = team_by.get(e.get("team"), {})
-		var tcol := Color(str(t.get("color", "#a9bdf0")))
-		var row := PanelContainer.new()
-		row.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.75), Color.TRANSPARENT, 0, 12, 12))
-		var h := UI.hbox(10)
-		var bar := ColorRect.new()
-		bar.color = FEED_COLORS.get(str(e.get("kind", "")), UI.MIST)
-		bar.custom_minimum_size = Vector2(6, 0)
-		h.add_child(bar)
-		var vv := UI.vbox(2)
-		vv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var ago := int((Net.server_now_ms() - float(e.get("at", 0))) / 1000.0)
-		var meta := ("há %ds" % ago) if ago < 60 else ("há %dmin" % (ago / 60))
-		if not t.is_empty():
-			meta = str(t["name"]).to_upper() + "  ·  " + meta
-		var ml := UI.label(meta, 17, tcol, "bold")
-		ml.autowrap_mode = TextServer.AUTOWRAP_OFF
-		vv.add_child(ml)
-		vv.add_child(UI.label(UI.strip_emoji(str(e.get("text", ""))), 23, UI.PAPER))
-		h.add_child(vv)
-		row.add_child(h)
-		page_box.add_child(row)
-		shown += 1
-		if shown >= 80:
+		var last: Dictionary = groups[-1] if not groups.is_empty() else {}
+		if not last.is_empty() and last["kind"] == e.get("kind") and last["team"] == e.get("team") and str(e.get("kind")) in ["quadro", "cena"] \
+				and float(last["first_at"]) - float(e.get("at", 0)) < 120000.0:
+			last["count"] += 1
+			last["first_at"] = float(e.get("at", 0))
+			continue
+		groups.append({"kind": e.get("kind"), "team": e.get("team"), "who": e.get("who"), "text": str(e.get("text", "")),
+			"at": float(e.get("at", 0)), "first_at": float(e.get("at", 0)), "count": 1})
+		if groups.size() >= 60:
 			break
-	if shown == 0:
-		page_box.add_child(UI.label("Nada ainda. As ações dos alunos aparecem aqui em tempo real.", 24, UI.MIST, "type"))
+	if groups.is_empty():
+		right.add_child(UI.label("Nada ainda. As ações dos alunos aparecem aqui em tempo real.", 24, UI.MIST, "type"))
+		return
+	for g in groups:
+		right.add_child(_feed_card(g, team_by.get(g["team"], {})))
+
+
+func _feed_card(g: Dictionary, t: Dictionary) -> Control:
+	var kd := str(g["kind"])
+	var kcol: Color = FEED_COLORS.get(kd, UI.MIST)
+	var tcol := Color(str(t.get("color", "#a9bdf0")))
+	var big := kd in ["acerto", "alerta"] or (kd == "teoria" and str(g["text"]).find("entregou") >= 0)
+	var row := UI.hbox(10)
+	# coluna do fio: linha vermelha contínua com o alfinete no ícone
+	var rail := Control.new()
+	rail.custom_minimum_size = Vector2(52, 0)
+	rail.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rail.draw.connect(func() -> void:
+		rail.draw_line(Vector2(26, 0), Vector2(26, rail.size.y + 10), Color(UI.RED, 0.55), 3.0))
+	var ic := FeedIcon.new(kd, kcol, 46.0)
+	ic.position = Vector2(3, 10)
+	rail.add_child(ic)
+	row.add_child(rail)
+	var card := PanelContainer.new()
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var sb := UI.box(Color(kcol, 0.12) if big else Color(UI.NIGHT, 0.82), kcol if big else Color(tcol, 0.35), 3 if big else 1, 10, 10)
+	sb.border_width_left = 6
+	sb.border_color = kcol if big else tcol
+	card.add_theme_stylebox_override("panel", sb)
+	var v := UI.vbox(2)
+	var head := UI.hbox(8)
+	var kl := UI.label(FEED_TITLES.get(kd, "AVISO"), 16, kcol, "type")
+	kl.autowrap_mode = TextServer.AUTOWRAP_OFF
+	head.add_child(kl)
+	if not t.is_empty():
+		var tg := PanelContainer.new()
+		tg.add_theme_stylebox_override("panel", UI.box(Color(tcol, 0.2), tcol, 1, 6, 4))
+		var tl := UI.label(str(t["name"]).to_upper(), 14, tcol, "bold")
+		tl.autowrap_mode = TextServer.AUTOWRAP_OFF
+		tg.add_child(tl)
+		head.add_child(tg)
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(sp)
+	var al := UI.label(_ago(float(g["at"])), 15, UI.MIST, "bold")
+	al.autowrap_mode = TextServer.AUTOWRAP_OFF
+	head.add_child(al)
+	v.add_child(head)
+	# título curto (antes dos dois pontos) e detalhe em letra menor
+	var txt := UI.strip_emoji(str(g["text"]))
+	var cut := txt.find(": ")
+	var main := txt.substr(0, cut) if cut > 0 else txt
+	var detail := txt.substr(cut + 2) if cut > 0 else ""
+	if int(g["count"]) > 1:
+		main = "%s mexeu no quadro %dx" % [str(g.get("who", "A equipe")), int(g["count"])] if kd == "quadro" else "%s achou %d pistas" % [str(g.get("who", "A equipe")), int(g["count"])]
+		detail = "última: " + (detail if detail != "" else txt)
+	var ml := UI.label(main, 26 if big else 22, UI.PAPER, "bold")
+	v.add_child(ml)
+	if detail != "":
+		var dl := UI.label(detail, 18, UI.MIST)
+		dl.max_lines_visible = 2
+		v.add_child(dl)
+	card.add_child(v)
+	row.add_child(card)
+	return row
 
 
 func _board_thumb(t: Dictionary) -> Control:
