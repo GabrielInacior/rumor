@@ -2232,16 +2232,24 @@
     ],
     "categories": [
       {
-        "id": "apagao",
-        "label": "Quem foi ao disjuntor e com qual chave"
+        "id": "disjuntor",
+        "label": "Quem foi ao disjuntor"
       },
       {
-        "id": "onde",
-        "label": "Onde cada um estava às 20h12"
+        "id": "chaves",
+        "label": "Quem pegou as chaves do zelador"
       },
       {
         "id": "isca",
-        "label": "O álibi falso"
+        "label": "Qual álibi era falso"
+      },
+      {
+        "id": "rivais",
+        "label": "Onde estavam o Kevin e a Íris às 20h12"
+      },
+      {
+        "id": "corredor",
+        "label": "Onde o zelador estava às 20h12"
       }
     ],
     "edges": [
@@ -2249,7 +2257,7 @@
         "from": "marta",
         "to": "deposito",
         "type": "estava",
-        "category": "apagao",
+        "category": "disjuntor",
         "evidence": [
           "c_bala",
           "c_porta",
@@ -2262,7 +2270,7 @@
         "from": "marta",
         "to": "chaves",
         "type": "pegou",
-        "category": "apagao",
+        "category": "chaves",
         "evidence": [
           "c_bolsa_marta",
           "c_dep_jorge"
@@ -2283,7 +2291,7 @@
         "from": "kevin",
         "to": "cantina",
         "type": "estava",
-        "category": "onde",
+        "category": "rivais",
         "evidence": [
           "c_comanda",
           "c_chat_danca",
@@ -2294,7 +2302,7 @@
         "from": "iris",
         "to": "teatro",
         "type": "estava",
-        "category": "onde",
+        "category": "rivais",
         "evidence": [
           "c_log_luz",
           "c_story_iris",
@@ -2305,7 +2313,7 @@
         "from": "jorge",
         "to": "corredor",
         "type": "estava",
-        "category": "onde",
+        "category": "corredor",
         "evidence": [
           "c_balde",
           "c_dep_jorge"
@@ -2317,19 +2325,19 @@
         "from": "enzo",
         "to": "deposito",
         "type": "estava",
-        "category": "apagao"
+        "category": "disjuntor"
       },
       {
         "from": "kevin",
         "to": "deposito",
         "type": "estava",
-        "category": "apagao"
+        "category": "disjuntor"
       },
       {
         "from": "iris",
         "to": "deposito",
         "type": "estava",
-        "category": "apagao"
+        "category": "disjuntor"
       }
     ]
   },
@@ -2395,7 +2403,7 @@
       "Sala de música: o armário do Enzo não tem bala nenhuma, e o quadro diz que as balas são distribuídas pela Profa. Marta. A Gabi viu a Marta sair pelos fundos às 20h10.",
       "Sala dos professores: as notas mostram o motivo, e a bolsa da Marta tem as chaves do zelador. O Hélio conta que revelou o playback a ela.",
       "Pistas só de um aluno (DM da Marta à filha, grupo da dança) ligam a Marta à Juju.",
-      "Montar as 6 linhas, incluindo o álibi falso do Enzo, e apontar a Profa. Marta."
+      "Provar no quadro os 5 objetivos secundários e apontar a Profa. Marta."
     ],
     "pacing": [
       {
@@ -2443,12 +2451,12 @@
       {
         "clue": "c_chat_danca",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Kevin estava em Cantina."
+        "proves": "Prova a linha: Kevin estava em Cantina (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
       },
       {
         "clue": "c_story_iris",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Íris estava em Teatro."
+        "proves": "Prova a linha: Íris estava em Teatro (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
       },
       {
         "clue": "c_dm_marta",
@@ -2458,22 +2466,22 @@
       {
         "clue": "c_caixinha",
         "where": "Teatro: tocar em 'Arara de figurinos'",
-        "proves": "Prova a linha: Enzo inventou A voz no camarim."
+        "proves": "Prova a linha: Enzo inventou A voz no camarim (objetivo: Qual álibi era falso)."
       },
       {
         "clue": "c_log_luz",
         "where": "Teatro: tocar em 'Mesa de luz'",
-        "proves": "Prova a linha: Íris estava em Teatro."
+        "proves": "Prova a linha: Íris estava em Teatro (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
       },
       {
         "clue": "c_bala",
         "where": "Depósito: tocar em 'Caixa de fusíveis'",
-        "proves": "Prova a linha: Profa. Marta estava em Depósito."
+        "proves": "Prova a linha: Profa. Marta estava em Depósito (objetivo: Quem foi ao disjuntor)."
       },
       {
         "clue": "c_porta",
         "where": "Depósito: tocar em 'Porta dos fundos'",
-        "proves": "Prova a linha: Profa. Marta estava em Depósito."
+        "proves": "Prova a linha: Profa. Marta estava em Depósito (objetivo: Quem foi ao disjuntor)."
       },
       {
         "clue": "c_kit_enzo",
@@ -2488,12 +2496,12 @@
       {
         "clue": "c_comanda",
         "where": "Cantina: tocar em 'Balcão'",
-        "proves": "Prova a linha: Kevin estava em Cantina."
+        "proves": "Prova a linha: Kevin estava em Cantina (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
       },
       {
         "clue": "c_balde",
         "where": "Corredor: tocar em 'Balde do zelador'",
-        "proves": "Prova a linha: Seu Jorge estava em Corredor."
+        "proves": "Prova a linha: Seu Jorge estava em Corredor (objetivo: Onde o zelador estava às 20h12)."
       },
       {
         "clue": "c_notas",
@@ -2503,22 +2511,22 @@
       {
         "clue": "c_bolsa_marta",
         "where": "Sala dos professores: tocar em 'Bolsa da organizadora'",
-        "proves": "Prova a linha: Profa. Marta estava em Depósito; Profa. Marta pegou As chaves do zelador. Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta estava em Depósito (objetivo: Quem foi ao disjuntor); Profa. Marta pegou As chaves do zelador (objetivo: Quem pegou as chaves do zelador). Aponta para Profa. Marta."
       },
       {
         "clue": "c_audio",
         "where": "Chega sozinha aos 4 min",
-        "proves": "Prova a linha: Enzo inventou A voz no camarim."
+        "proves": "Prova a linha: Enzo inventou A voz no camarim (objetivo: Qual álibi era falso)."
       },
       {
         "clue": "c_dep_iris",
         "where": "mostrar 'Mesa de luz' para Íris",
-        "proves": "Prova a linha: Íris estava em Teatro."
+        "proves": "Prova a linha: Íris estava em Teatro (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
       },
       {
         "clue": "c_dep_jorge",
         "where": "mostrar 'Aviso no balde' para Seu Jorge",
-        "proves": "Prova a linha: Profa. Marta pegou As chaves do zelador; Seu Jorge estava em Corredor."
+        "proves": "Prova a linha: Profa. Marta pegou As chaves do zelador (objetivo: Quem pegou as chaves do zelador); Seu Jorge estava em Corredor (objetivo: Onde o zelador estava às 20h12)."
       },
       {
         "clue": "c_dep_enzo",
@@ -2528,17 +2536,17 @@
       {
         "clue": "c_dep_enzo_verdade",
         "where": "mostrar 'Celular da caixinha' para Enzo; ou mostrar 'Armário da banda' para Enzo; ou conversar com Enzo ('Enzo, onde você estava às 20h06?')",
-        "proves": "Prova a linha: Enzo inventou A voz no camarim."
+        "proves": "Prova a linha: Enzo inventou A voz no camarim (objetivo: Qual álibi era falso)."
       },
       {
         "clue": "c_dep_gabi",
         "where": "mostrar 'Quadro de horários' para Gabi",
-        "proves": "Prova a linha: Profa. Marta estava em Depósito. Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta estava em Depósito (objetivo: Quem foi ao disjuntor). Aponta para Profa. Marta."
       },
       {
         "clue": "c_dep_kevin",
         "where": "mostrar 'Comanda da cantina' para Kevin; ou trocar 'Barra de chocolate' com Kevin",
-        "proves": "Prova a linha: Kevin estava em Cantina."
+        "proves": "Prova a linha: Kevin estava em Cantina (objetivo: Onde estavam o Kevin e a Íris às 20h12)."
       },
       {
         "clue": "c_dep_juju",
@@ -2553,7 +2561,7 @@
       {
         "clue": "c_confissao",
         "where": "mostrar 'Bolsa da organizadora' + 'Notas dos jurados' para Profa. Marta; ou mostrar 'Bolsa da organizadora' para Profa. Marta",
-        "proves": "Prova a linha: Profa. Marta estava em Depósito. Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta estava em Depósito (objetivo: Quem foi ao disjuntor). Aponta para Profa. Marta."
       }
     ],
     "red_herrings": [
@@ -2583,8 +2591,8 @@
         "a": "Quem sabia do playback? Perguntem ao jurado."
       },
       {
-        "q": "A Juju sabia?",
-        "a": "Conversem com ela com cuidado. E leiam a DM da mãe."
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

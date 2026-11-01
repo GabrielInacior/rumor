@@ -1750,12 +1750,20 @@
     ],
     "categories": [
       {
-        "id": "caminho",
-        "label": "Caminho do gabarito"
+        "id": "origem",
+        "label": "Quem tirou o gabarito da coordenação"
       },
       {
-        "id": "onde",
-        "label": "Onde cada um estava às 13h48"
+        "id": "fornecedor",
+        "label": "Quem passou o gabarito ao vendedor"
+      },
+      {
+        "id": "venda",
+        "label": "Quem vendeu o gabarito aos alunos"
+      },
+      {
+        "id": "lia",
+        "label": "Onde a Lia estava na hora da impressão"
       }
     ],
     "edges": [
@@ -1763,7 +1771,7 @@
         "from": "nico",
         "to": "gabarito",
         "type": "pegou",
-        "category": "caminho",
+        "category": "origem",
         "evidence": [
           "c_log_impressora",
           "c_foto_gabarito",
@@ -1775,7 +1783,7 @@
         "from": "nico",
         "to": "pedro",
         "type": "entregou",
-        "category": "caminho",
+        "category": "fornecedor",
         "evidence": [
           "c_dm_fantasma",
           "c_email",
@@ -1786,7 +1794,7 @@
         "from": "pedro",
         "to": "kaua",
         "type": "entregou",
-        "category": "caminho",
+        "category": "venda",
         "evidence": [
           "c_comprovante",
           "c_celular_pedro",
@@ -1797,7 +1805,7 @@
         "from": "nico",
         "to": "coordenacao",
         "type": "estava",
-        "category": "onde",
+        "category": "origem",
         "evidence": [
           "c_escala",
           "c_log_impressora",
@@ -1808,7 +1816,7 @@
         "from": "lia",
         "to": "biblioteca",
         "type": "estava",
-        "category": "onde",
+        "category": "lia",
         "evidence": [
           "c_registro_bib",
           "c_dep_lia"
@@ -1820,13 +1828,13 @@
         "from": "pedro",
         "to": "gabarito",
         "type": "pegou",
-        "category": "caminho"
+        "category": "origem"
       },
       {
         "from": "lia",
         "to": "gabarito",
         "type": "pegou",
-        "category": "caminho"
+        "category": "origem"
       }
     ]
   },
@@ -1878,7 +1886,7 @@
       "Na foto impressa, a bandeja da impressora da coordenação e o chaveiro de videogame.",
       "Na coordenação, a impressora registra nico.ajudante às 13h48 e a escala mostra o Nico sozinho. Na biblioteca, o álibi da Lia.",
       "O recado da coordenação (cerca de 4 min 30 s) liga o e-mail do @fantasma ao Nico.",
-      "Montar as 5 linhas e apontar o Nico."
+      "Provar no quadro os 4 objetivos secundários e apontar o Nico."
     ],
     "pacing": [
       {
@@ -1916,7 +1924,7 @@
       {
         "clue": "c_dm_fantasma",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Nico repassou para Pedro."
+        "proves": "Prova a linha: Nico repassou para Pedro (objetivo: Quem passou o gabarito ao vendedor)."
       },
       {
         "clue": "c_story_nico",
@@ -1936,32 +1944,32 @@
       {
         "clue": "c_log_impressora",
         "where": "Sala dos professores: tocar em 'Impressora da coordenação'",
-        "proves": "Prova a linha: Nico pegou O gabarito da prova final; Nico estava em Coordenação. Aponta para Nico."
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final (objetivo: Quem tirou o gabarito da coordenação); Nico estava em Coordenação (objetivo: Quem tirou o gabarito da coordenação). Aponta para Nico."
       },
       {
         "clue": "c_escala",
         "where": "Sala dos professores: tocar em 'Escala'",
-        "proves": "Prova a linha: Nico estava em Coordenação."
+        "proves": "Prova a linha: Nico estava em Coordenação (objetivo: Quem tirou o gabarito da coordenação)."
       },
       {
         "clue": "c_celular_pedro",
         "where": "Quadra: tocar em 'Bolsa do Pedro'",
-        "proves": "Prova a linha: Pedro repassou para Kauã."
+        "proves": "Prova a linha: Pedro repassou para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
       },
       {
         "clue": "c_registro_bib",
         "where": "Biblioteca: tocar em 'Registro da biblioteca'",
-        "proves": "Prova a linha: Lia estava em Biblioteca."
+        "proves": "Prova a linha: Lia estava em Biblioteca (objetivo: Onde a Lia estava na hora da impressão)."
       },
       {
         "clue": "c_comprovante",
         "where": "Sala de aula: tocar em 'Mochila do Kauã'",
-        "proves": "Prova a linha: Pedro repassou para Kauã."
+        "proves": "Prova a linha: Pedro repassou para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
       },
       {
         "clue": "c_foto_gabarito",
         "where": "Sala de aula: tocar em 'Foto impressa'",
-        "proves": "Prova a linha: Nico pegou O gabarito da prova final. Aponta para Nico."
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final (objetivo: Quem tirou o gabarito da coordenação). Aponta para Nico."
       },
       {
         "clue": "c_classificado",
@@ -1971,27 +1979,27 @@
       {
         "clue": "c_email",
         "where": "Chega sozinha aos 4 min 30 s",
-        "proves": "Prova a linha: Nico pegou O gabarito da prova final; Nico repassou para Pedro. Aponta para Nico."
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final (objetivo: Quem tirou o gabarito da coordenação); Nico repassou para Pedro (objetivo: Quem passou o gabarito ao vendedor). Aponta para Nico."
       },
       {
         "clue": "c_dep_pedro",
         "where": "mostrar 'Mochila do Kauã' para Pedro; ou trocar 'Carregador de celular' com Pedro",
-        "proves": "Prova a linha: Nico repassou para Pedro."
+        "proves": "Prova a linha: Nico repassou para Pedro (objetivo: Quem passou o gabarito ao vendedor)."
       },
       {
         "clue": "c_dep_rosa",
         "where": "mostrar 'Impressora da coordenação' para Profa. Rosa",
-        "proves": "Prova a linha: Nico estava em Coordenação."
+        "proves": "Prova a linha: Nico estava em Coordenação (objetivo: Quem tirou o gabarito da coordenação)."
       },
       {
         "clue": "c_dep_lia",
         "where": "mostrar 'Registro da biblioteca' para Lia",
-        "proves": "Prova a linha: Lia estava em Biblioteca."
+        "proves": "Prova a linha: Lia estava em Biblioteca (objetivo: Onde a Lia estava na hora da impressão)."
       },
       {
         "clue": "c_dep_kaua",
         "where": "conversar com Kauã ('De quem você comprou?')",
-        "proves": "Prova a linha: Pedro repassou para Kauã."
+        "proves": "Prova a linha: Pedro repassou para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
       },
       {
         "clue": "c_dep_mari",
@@ -2001,7 +2009,7 @@
       {
         "clue": "c_confissao",
         "where": "mostrar 'Recado da coordenação' + 'Impressora da coordenação' para Nico; ou mostrar 'Foto impressa' + 'Impressora da coordenação' para Nico; ou mostrar 'Recado da coordenação' para Pedro",
-        "proves": "Prova a linha: Nico pegou O gabarito da prova final. Aponta para Nico."
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final (objetivo: Quem tirou o gabarito da coordenação). Aponta para Nico."
       }
     ],
     "red_herrings": [
@@ -2028,6 +2036,10 @@
       {
         "q": "Por que o Nico faria isso?",
         "a": "Vejam o story dele. E perguntem à Profa. Rosa sobre o ano passado."
+      },
+      {
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

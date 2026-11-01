@@ -1865,11 +1865,23 @@
     "categories": [
       {
         "id": "perfil",
-        "label": "Quem criou e de onde vieram as fotos"
+        "label": "Quem criou a Luiza"
       },
       {
-        "id": "onde",
-        "label": "Onde cada um estava"
+        "id": "fotos",
+        "label": "De onde vieram as fotos"
+      },
+      {
+        "id": "computador",
+        "label": "Onde a Luiza foi usada na escola"
+      },
+      {
+        "id": "shopping",
+        "label": "Onde os titulares estavam na véspera"
+      },
+      {
+        "id": "vaga",
+        "label": "Quem ganhou a vaga no gol"
       }
     ],
     "edges": [
@@ -1889,7 +1901,7 @@
         "from": "kevin",
         "to": "leo",
         "type": "entregou",
-        "category": "perfil",
+        "category": "fotos",
         "evidence": [
           "c_busca",
           "c_campeonato",
@@ -1901,7 +1913,7 @@
         "from": "leo",
         "to": "biblioteca",
         "type": "estava",
-        "category": "onde",
+        "category": "computador",
         "evidence": [
           "c_computador",
           "c_dep_nanda"
@@ -1911,7 +1923,7 @@
         "from": "gabriel",
         "to": "shopping",
         "type": "estava",
-        "category": "onde",
+        "category": "shopping",
         "evidence": [
           "c_shopping",
           "c_chat_time",
@@ -1922,7 +1934,7 @@
         "from": "leo",
         "to": "quadra",
         "type": "estava",
-        "category": "onde",
+        "category": "vaga",
         "evidence": [
           "c_sumula",
           "c_chat_time"
@@ -1996,7 +2008,7 @@
       "Na cantina, o cartaz do campeonato mostra a dupla Kevin e Léo online toda noite às 23h.",
       "A investigação do jornal (cerca de 4 min 30 s) liga as fotos à prima do Kevin: ele vira o suspeito.",
       "Na biblioteca, a reserva e o histórico do computador põem o Léo no Instagram às 14h10.",
-      "Montar as 5 linhas e apontar o Léo; o Kevin entra como quem entregou as fotos."
+      "Provar no quadro os 5 objetivos secundários e apontar o Léo; o Kevin entra como quem entregou as fotos."
     ],
     "pacing": [
       {
@@ -2054,32 +2066,32 @@
       {
         "clue": "c_story_kevin",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Kevin entregou as fotos para Léo."
+        "proves": "Prova a linha: Kevin entregou as fotos para Léo (objetivo: De onde vieram as fotos)."
       },
       {
         "clue": "c_sumula",
         "where": "Quadra: tocar em 'Súmula'",
-        "proves": "Prova a linha: Léo estava em Quadra."
+        "proves": "Prova a linha: Léo estava em Quadra (objetivo: Quem ganhou a vaga no gol)."
       },
       {
         "clue": "c_prancheta",
         "where": "Quadra: tocar em 'Prancheta'",
-        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio. Aponta para Léo."
+        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio (objetivo: Quem criou a Luiza). Aponta para Léo."
       },
       {
         "clue": "c_redacao",
         "where": "Sala de aula: tocar em 'Redação corrigida'",
-        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio. Aponta para Léo."
+        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio (objetivo: Quem criou a Luiza). Aponta para Léo."
       },
       {
         "clue": "c_campeonato",
         "where": "Cantina: tocar em 'Cartaz do campeonato'",
-        "proves": "Prova a linha: Kevin entregou as fotos para Léo. Aponta para Léo."
+        "proves": "Prova a linha: Kevin entregou as fotos para Léo (objetivo: De onde vieram as fotos). Aponta para Léo."
       },
       {
         "clue": "c_computador",
         "where": "Biblioteca: tocar em 'Computador'",
-        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio; Léo estava em Biblioteca. Aponta para Léo."
+        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio (objetivo: Quem criou a Luiza); Léo estava em Biblioteca (objetivo: Onde a Luiza foi usada na escola). Aponta para Léo."
       },
       {
         "clue": "c_shopping",
@@ -2089,7 +2101,7 @@
       {
         "clue": "c_busca",
         "where": "Chega sozinha aos 4 min 30 s",
-        "proves": "Prova a linha: Kevin entregou as fotos para Léo."
+        "proves": "Prova a linha: Kevin entregou as fotos para Léo (objetivo: De onde vieram as fotos)."
       },
       {
         "clue": "c_dep_ivo",
@@ -2109,12 +2121,12 @@
       {
         "clue": "c_dep_kevin",
         "where": "mostrar 'Investigação do jornal' para Kevin; ou trocar 'Barra de chocolate' com Kevin",
-        "proves": "Prova a linha: Kevin entregou as fotos para Léo."
+        "proves": "Prova a linha: Kevin entregou as fotos para Léo (objetivo: De onde vieram as fotos)."
       },
       {
         "clue": "c_dep_nanda",
         "where": "conversar com Nanda ('O que você descobriu?')",
-        "proves": "Prova a linha: Léo estava em Biblioteca."
+        "proves": "Prova a linha: Léo estava em Biblioteca (objetivo: Onde a Luiza foi usada na escola)."
       },
       {
         "clue": "c_dep_ana",
@@ -2124,7 +2136,7 @@
       {
         "clue": "c_confissao",
         "where": "mostrar 'Redação corrigida' + 'Prancheta do técnico' + 'Computador da biblioteca' para Léo; ou mostrar 'Redação corrigida' + 'Cartaz do campeonato' para Léo; ou mostrar 'Redação corrigida' para Léo",
-        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio. Aponta para Léo."
+        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio (objetivo: Quem criou a Luiza). Aponta para Léo."
       },
       {
         "clue": "c_redacao_lista",
@@ -2158,8 +2170,8 @@
         "a": "Quem ganhou com a suspensão dos titulares?"
       },
       {
-        "q": "Cada um de nós tem uma DM diferente.",
-        "a": "Juntem as três no quadro. Sozinhas, elas não dizem nada."
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

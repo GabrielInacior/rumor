@@ -1173,6 +1173,12 @@
       "kind": "fato",
       "name": "A taça de latão da vitrine",
       "icon": "coroa"
+    },
+    {
+      "id": "encomenda",
+      "kind": "fato",
+      "name": "A encomenda 'para a peça dos 60 anos'",
+      "icon": "papel"
     }
   ],
   "items": [
@@ -1430,12 +1436,20 @@
     ],
     "categories": [
       {
-        "id": "troca",
-        "label": "Quem pegou a taça e quem fez a cópia"
+        "id": "taca",
+        "label": "Quem levou a taça verdadeira"
+      },
+      {
+        "id": "replica",
+        "label": "Quem fez a cópia de latão"
+      },
+      {
+        "id": "encomenda",
+        "label": "Quem encomendou a cópia com uma mentira"
       },
       {
         "id": "quando",
-        "label": "Onde estava quem trocou"
+        "label": "Onde a vice estava sexta às 18h"
       }
     ],
     "edges": [
@@ -1443,7 +1457,7 @@
         "from": "marta",
         "to": "taca",
         "type": "pegou",
-        "category": "troca",
+        "category": "taca",
         "evidence": [
           "c_chave_log",
           "c_cartao",
@@ -1455,7 +1469,7 @@
         "from": "sofia",
         "to": "replica",
         "type": "fez",
-        "category": "troca",
+        "category": "replica",
         "evidence": [
           "c_encomenda",
           "c_molde",
@@ -1472,6 +1486,17 @@
           "c_livro_jorge",
           "c_dep_nanda"
         ]
+      },
+      {
+        "from": "marta",
+        "to": "encomenda",
+        "type": "fez",
+        "category": "encomenda",
+        "evidence": [
+          "c_encomenda",
+          "c_dep_nogueira",
+          "c_dep_sofia"
+        ]
       }
     ],
     "traps": [
@@ -1479,13 +1504,13 @@
         "from": "jorge",
         "to": "taca",
         "type": "pegou",
-        "category": "troca"
+        "category": "taca"
       },
       {
         "from": "sofia",
         "to": "taca",
         "type": "pegou",
-        "category": "troca"
+        "category": "taca"
       }
     ]
   },
@@ -1535,7 +1560,7 @@
       "O Prof. Nogueira conta que a peça não tem taça: a encomenda era mentira.",
       "Na diretoria, o caderno da chave mostra a Marta na sexta às 18h; no depósito, o livro do zelador confirma que ela o liberou.",
       "No escaninho da vice, o cartão do antiquário. O post do antiquário (chega com o tempo) mostra a taça com o amassado.",
-      "Mostrar o caderno e o post à Marta e apontá-la."
+      "Mostrar o caderno e o post à Marta, provar no quadro os 4 objetivos secundários e apontá-la."
     ],
     "pacing": [
       {
@@ -1578,22 +1603,22 @@
       {
         "clue": "c_chave_log",
         "where": "Sala do diretor: tocar em 'Caderno da chave'",
-        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata); Profa. Marta estava em Sala do diretor. Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata) (objetivo: Quem levou a taça verdadeira); Profa. Marta estava em Sala do diretor (objetivo: Onde a vice estava sexta às 18h). Aponta para Profa. Marta."
       },
       {
         "clue": "c_encomenda",
         "where": "Teatro: tocar em 'Encomendas'",
-        "proves": "Prova a linha: Sofia fez A taça de latão da vitrine."
+        "proves": "Prova a linha: Sofia fez A taça de latão da vitrine (objetivo: Quem fez a cópia de latão); Profa. Marta fez A encomenda 'para a peça dos 60 anos' (objetivo: Quem encomendou a cópia com uma mentira)."
       },
       {
         "clue": "c_molde",
         "where": "Teatro: tocar em 'Caixa de objetos'",
-        "proves": "Prova a linha: Sofia fez A taça de latão da vitrine."
+        "proves": "Prova a linha: Sofia fez A taça de latão da vitrine (objetivo: Quem fez a cópia de latão)."
       },
       {
         "clue": "c_cartao",
         "where": "Sala dos professores: tocar em 'Escaninho da vice'",
-        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata). Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata) (objetivo: Quem levou a taça verdadeira). Aponta para Profa. Marta."
       },
       {
         "clue": "c_foto_marco",
@@ -1603,17 +1628,17 @@
       {
         "clue": "c_livro_jorge",
         "where": "Depósito: tocar em 'Livro do plantão'",
-        "proves": "Prova a linha: Profa. Marta estava em Sala do diretor. Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta estava em Sala do diretor (objetivo: Onde a vice estava sexta às 18h). Aponta para Profa. Marta."
       },
       {
         "clue": "c_antiquario",
         "where": "Chega sozinha aos 5 min",
-        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata). Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata) (objetivo: Quem levou a taça verdadeira). Aponta para Profa. Marta."
       },
       {
         "clue": "c_dep_sofia",
         "where": "mostrar 'Encomenda do teatro' para Sofia; ou trocar 'Fita silver tape' com Sofia; ou conversar com Profa. Marta ('Sofia, conta tudo agora')",
-        "proves": "Prova a linha: Sofia fez A taça de latão da vitrine."
+        "proves": "Prova a linha: Sofia fez A taça de latão da vitrine (objetivo: Quem fez a cópia de latão); Profa. Marta fez A encomenda 'para a peça dos 60 anos' (objetivo: Quem encomendou a cópia com uma mentira)."
       },
       {
         "clue": "c_dep_nogueira",
@@ -1623,7 +1648,7 @@
       {
         "clue": "c_dep_nanda",
         "where": "trocar 'Barra de chocolate' com Nanda",
-        "proves": "Prova a linha: Profa. Marta estava em Sala do diretor."
+        "proves": "Prova a linha: Profa. Marta estava em Sala do diretor (objetivo: Onde a vice estava sexta às 18h)."
       },
       {
         "clue": "c_dep_jorge",
@@ -1633,7 +1658,7 @@
       {
         "clue": "c_confissao",
         "where": "mostrar 'Caderno da chave' + 'Post do antiquário' para Profa. Marta; ou mostrar 'Caderno da chave' para Profa. Marta",
-        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata). Aponta para Profa. Marta."
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata) (objetivo: Quem levou a taça verdadeira). Aponta para Profa. Marta."
       }
     ],
     "red_herrings": [
@@ -1660,6 +1685,10 @@
       {
         "q": "A Sofia não fala.",
         "a": "Ela está com medo. Talvez ajudar com o cenário destrave."
+      },
+      {
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

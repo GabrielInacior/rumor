@@ -934,11 +934,11 @@
     "categories": [
       {
         "id": "autoria",
-        "label": "Quem pichou"
+        "label": "Quem pichou o muro"
       },
       {
-        "id": "onde",
-        "label": "Onde cada um estava domingo à noite"
+        "id": "kevin",
+        "label": "Onde o Kevin estava domingo às 22h"
       }
     ],
     "edges": [
@@ -957,7 +957,7 @@
         "from": "thiago",
         "to": "deposito",
         "type": "estava",
-        "category": "onde",
+        "category": "autoria",
         "evidence": [
           "c_pegada",
           "c_livro",
@@ -968,7 +968,7 @@
         "from": "kevin",
         "to": "festival",
         "type": "estava",
-        "category": "onde",
+        "category": "kevin",
         "evidence": [
           "c_live_kevin",
           "c_dep_kevin"
@@ -1024,7 +1024,7 @@
       "Na sala dos professores, a ocorrência de sexta mostra o motivo do Thiago.",
       "Nos achados, o tênis de raio com tinta tem o nome do Thiago.",
       "A live do Kevin (chega com o tempo) mostra que ele estava na praça.",
-      "Mostrar o tênis ao Thiago e apontá-lo."
+      "Mostrar o tênis ao Thiago, provar no quadro os 2 objetivos secundários e apontá-lo."
     ],
     "pacing": [
       {
@@ -1057,12 +1057,12 @@
       {
         "clue": "c_pegada",
         "where": "Depósito: tocar em 'Porta dos fundos'",
-        "proves": "Prova a linha: Thiago pichou Muro pichado; Thiago estava em Depósito. Aponta para Thiago."
+        "proves": "Prova a linha: Thiago pichou Muro pichado (objetivo: Quem pichou o muro); Thiago estava em Depósito (objetivo: Quem pichou o muro). Aponta para Thiago."
       },
       {
         "clue": "c_livro",
         "where": "Depósito: tocar em 'Livro do plantão'",
-        "proves": "Prova a linha: Thiago estava em Depósito."
+        "proves": "Prova a linha: Thiago estava em Depósito (objetivo: Quem pichou o muro)."
       },
       {
         "clue": "c_ocorrencia",
@@ -1072,27 +1072,27 @@
       {
         "clue": "c_tenis",
         "where": "Sala dos professores: tocar em 'Achados e perdidos'",
-        "proves": "Prova a linha: Thiago pichou Muro pichado. Aponta para Thiago."
+        "proves": "Prova a linha: Thiago pichou Muro pichado (objetivo: Quem pichou o muro). Aponta para Thiago."
       },
       {
         "clue": "c_live_kevin",
         "where": "Chega sozinha aos 3 min",
-        "proves": "Prova a linha: Kevin estava em Festival da praça."
+        "proves": "Prova a linha: Kevin estava em Festival da praça (objetivo: Onde o Kevin estava domingo às 22h)."
       },
       {
         "clue": "c_dep_kevin",
         "where": "mostrar 'Live do Kevin' para Kevin; ou trocar 'Carregador de celular' com Kevin",
-        "proves": "Prova a linha: Kevin estava em Festival da praça."
+        "proves": "Prova a linha: Kevin estava em Festival da praça (objetivo: Onde o Kevin estava domingo às 22h)."
       },
       {
         "clue": "c_dep_jorge",
         "where": "mostrar 'Livro do plantão' para Seu Jorge",
-        "proves": "Prova a linha: Thiago estava em Depósito."
+        "proves": "Prova a linha: Thiago estava em Depósito (objetivo: Quem pichou o muro)."
       },
       {
         "clue": "c_confissao",
         "where": "mostrar 'Achados da coordenação' para Thiago; ou mostrar 'Porta dos fundos' para Thiago",
-        "proves": "Prova a linha: Thiago pichou Muro pichado. Aponta para Thiago."
+        "proves": "Prova a linha: Thiago pichou Muro pichado (objetivo: Quem pichou o muro). Aponta para Thiago."
       }
     ],
     "red_herrings": [
@@ -1114,6 +1114,10 @@
       {
         "q": "Qual o motivo?",
         "a": "Leiam as ocorrências de sexta na sala dos professores."
+      },
+      {
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

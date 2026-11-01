@@ -1149,11 +1149,15 @@
     "categories": [
       {
         "id": "sumico",
-        "label": "Quando o microscópio saiu"
+        "label": "Quando o microscópio saiu de verdade"
       },
       {
         "id": "noite",
-        "label": "Onde cada um estava às 2h03"
+        "label": "Quem estava no laboratório às 2h03"
+      },
+      {
+        "id": "zelador",
+        "label": "Onde o zelador estava às 2h03"
       }
     ],
     "edges": [
@@ -1184,7 +1188,7 @@
         "from": "jorge",
         "to": "guarita",
         "type": "estava",
-        "category": "noite",
+        "category": "zelador",
         "evidence": [
           "c_ronda",
           "c_dep_jorge"
@@ -1252,7 +1256,7 @@
       "Na diretoria, o painel mostra o alarme desligado com o código 07 e a gaveta diz que o 07 é da Profa. Ana.",
       "No corredor, o livro da ronda dá o álibi do Seu Jorge; com as chaves devolvidas, ele fala do carro prata.",
       "O story do Theo mostra alguém DENTRO do laboratório às 2h04, e o anúncio do cursinho (chega com o tempo) mostra o motivo.",
-      "Mostrar o alarme e os códigos à Profa. Ana e apontá-la."
+      "Mostrar o alarme e os códigos à Profa. Ana, provar no quadro os 3 objetivos secundários e apontá-la."
     ],
     "pacing": [
       {
@@ -1280,12 +1284,12 @@
       {
         "clue": "c_poeira",
         "where": "Laboratório: tocar em 'Suporte do microscópio'",
-        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital."
+        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital (objetivo: Quando o microscópio saiu de verdade)."
       },
       {
         "clue": "c_ficha_lab",
         "where": "Laboratório: tocar em 'Ficha do armário'",
-        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital. Aponta para Profa. Ana."
+        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital (objetivo: Quando o microscópio saiu de verdade). Aponta para Profa. Ana."
       },
       {
         "clue": "c_vidro",
@@ -1295,12 +1299,12 @@
       {
         "clue": "c_alarme",
         "where": "Sala do diretor: tocar em 'Painel do alarme'",
-        "proves": "Prova a linha: Profa. Ana estava em Laboratório. Aponta para Profa. Ana."
+        "proves": "Prova a linha: Profa. Ana estava em Laboratório (objetivo: Quem estava no laboratório às 2h03). Aponta para Profa. Ana."
       },
       {
         "clue": "c_codigos",
         "where": "Sala do diretor: tocar em 'Gaveta do diretor'",
-        "proves": "Prova a linha: Profa. Ana estava em Laboratório. Aponta para Profa. Ana."
+        "proves": "Prova a linha: Profa. Ana estava em Laboratório (objetivo: Quem estava no laboratório às 2h03). Aponta para Profa. Ana."
       },
       {
         "clue": "c_ronda",
@@ -1310,17 +1314,17 @@
       {
         "clue": "c_story_theo",
         "where": "Já no início, para todos",
-        "proves": "Prova a linha: Profa. Ana estava em Laboratório."
+        "proves": "Prova a linha: Profa. Ana estava em Laboratório (objetivo: Quem estava no laboratório às 2h03)."
       },
       {
         "clue": "c_cursinho",
         "where": "Chega sozinha aos 4 min",
-        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital. Aponta para Profa. Ana."
+        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital (objetivo: Quando o microscópio saiu de verdade). Aponta para Profa. Ana."
       },
       {
         "clue": "c_dep_lari",
         "where": "conversar com Lari ('O que não fecha?')",
-        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital."
+        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital (objetivo: Quando o microscópio saiu de verdade)."
       },
       {
         "clue": "c_dep_theo",
@@ -1330,7 +1334,7 @@
       {
         "clue": "c_dep_jorge",
         "where": "mostrar 'Livro da ronda' para Seu Jorge; ou trocar 'Molho de chaves do zelador' com Seu Jorge",
-        "proves": "Prova a linha: Seu Jorge estava em Guarita do zelador."
+        "proves": "Prova a linha: Seu Jorge estava em Guarita do zelador (objetivo: Onde o zelador estava às 2h03)."
       },
       {
         "clue": "c_confissao",
@@ -1361,6 +1365,10 @@
       {
         "q": "A professora é a vítima!",
         "a": "A vítima ganha alguma coisa com o seguro? Esperem o anúncio que chega."
+      },
+      {
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

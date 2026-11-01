@@ -1092,11 +1092,15 @@
     "categories": [
       {
         "id": "furto",
-        "label": "Quem pegou"
+        "label": "Quem pegou o celular"
       },
       {
-        "id": "onde",
-        "label": "Onde cada um estava às 9h41"
+        "id": "vestiario",
+        "label": "Quem estava no vestiário às 9h41"
+      },
+      {
+        "id": "pedro",
+        "label": "Onde o Pedro estava quando saiu da aula"
       }
     ],
     "edges": [
@@ -1115,7 +1119,7 @@
         "from": "gui",
         "to": "quadra",
         "type": "estava",
-        "category": "onde",
+        "category": "vestiario",
         "evidence": [
           "c_lista",
           "c_dep_pedro"
@@ -1125,7 +1129,7 @@
         "from": "pedro",
         "to": "cantina",
         "type": "estava",
-        "category": "onde",
+        "category": "pedro",
         "evidence": [
           "c_comanda",
           "c_dep_pedro"
@@ -1197,7 +1201,8 @@
       "Na mochila do Kauã, o recibo mostra o tênis pago com a Bolsa Atleta.",
       "No armário do Gui, o papel com o segredo 0408.",
       "Na cantina, a comanda põe o Pedro lá às 9h46; com chocolate, ele conta que viu o Gui no vestiário.",
-      "O anúncio (chega com o tempo) mostra o celular com o adesivo do Gabriel. Apontar o Gui."
+      "O anúncio (chega com o tempo) mostra o celular com o adesivo do Gabriel. Apontar o Gui.",
+      "Provar no quadro os 3 objetivos secundários e apontar o Gui."
     ],
     "pacing": [
       {
@@ -1230,12 +1235,12 @@
       {
         "clue": "c_lista",
         "where": "Quadra: tocar em 'Chamada'",
-        "proves": "Prova a linha: Gui estava em Quadra e vestiário."
+        "proves": "Prova a linha: Gui estava em Quadra e vestiário (objetivo: Quem estava no vestiário às 9h41)."
       },
       {
         "clue": "c_papel",
         "where": "Corredor: tocar em 'Armário do Gui'",
-        "proves": "Prova a linha: Gui pegou O celular do Gabriel. Aponta para Gui."
+        "proves": "Prova a linha: Gui pegou O celular do Gabriel (objetivo: Quem pegou o celular). Aponta para Gui."
       },
       {
         "clue": "c_recibo",
@@ -1245,12 +1250,12 @@
       {
         "clue": "c_comanda",
         "where": "Cantina: tocar em 'Balcão'",
-        "proves": "Prova a linha: Pedro estava em Cantina."
+        "proves": "Prova a linha: Pedro estava em Cantina (objetivo: Onde o Pedro estava quando saiu da aula)."
       },
       {
         "clue": "c_anuncio",
         "where": "Chega sozinha aos 4 min",
-        "proves": "Prova a linha: Gui pegou O celular do Gabriel. Aponta para Gui."
+        "proves": "Prova a linha: Gui pegou O celular do Gabriel (objetivo: Quem pegou o celular). Aponta para Gui."
       },
       {
         "clue": "c_dep_kaua",
@@ -1260,12 +1265,12 @@
       {
         "clue": "c_dep_pedro",
         "where": "mostrar 'Comanda da cantina' para Pedro; ou trocar 'Barra de chocolate' com Pedro",
-        "proves": "Prova a linha: Gui estava em Quadra e vestiário; Pedro estava em Cantina. Aponta para Gui."
+        "proves": "Prova a linha: Gui estava em Quadra e vestiário (objetivo: Quem estava no vestiário às 9h41); Pedro estava em Cantina (objetivo: Onde o Pedro estava quando saiu da aula). Aponta para Gui."
       },
       {
         "clue": "c_confissao",
         "where": "mostrar 'Armário do Gui' para Gui; ou mostrar 'Anúncio na internet' para Gui; ou mostrar 'Armário do Gui' para Pedro",
-        "proves": "Prova a linha: Gui pegou O celular do Gabriel. Aponta para Gui."
+        "proves": "Prova a linha: Gui pegou O celular do Gabriel (objetivo: Quem pegou o celular). Aponta para Gui."
       }
     ],
     "red_herrings": [
@@ -1292,6 +1297,10 @@
       {
         "q": "Como saber que é o celular dele?",
         "a": "Esperem o anúncio. Comparem a capinha."
+      },
+      {
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

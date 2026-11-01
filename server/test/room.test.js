@@ -95,7 +95,12 @@ test('rodada completa', async () => {
   assert.ok(!pc.case.solution && !pc.case.clues, 'solução e pistas não vão no caso público');
   // pula o briefing
   const room = require('../src/server').rooms.get(hosted.code);
-  room.phaseEndsAt = 0;
+  // abertura: só conta quando todos dão PRONTO
+  const w = await a.wait((m) => m.t === 'state' && m.phase === 'briefing' && m.readyList);
+  assert.strictEqual(w.countdown, false);
+  for (const x of [a, b, c]) x.send({ t: 'ready' });
+  await host.wait((m) => m.t === 'state' && m.countdown === true);
+  room.phaseEndsAt = 1;
   const sa = await a.next((m) => m.t === 'state' && m.phase === 'playing');
   const sb = await b.wait((m) => m.t === 'state' && m.phase === 'playing');
   // split: cada aluno da equipe 1 tem uma pista diferente; c3 (team) todos

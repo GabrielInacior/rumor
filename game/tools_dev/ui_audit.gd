@@ -185,9 +185,23 @@ func _run() -> void:
 	# --- aluno
 	_apply("player", _player_state("lobby"))
 	await _shot("04_lobby")
-	_apply("player", _player_state("briefing"))
+	var bs := _player_state("briefing")
+	var rl := []
+	var ri := 0
+	for t in bs["teams"]:
+		for pl in t["players"]:
+			rl.append({"id": pl["name"], "name": pl["name"], "team": t["id"], "ready": ri % 3 != 1, "online": ri != 5})
+			ri += 1
+	bs["readyList"] = rl
+	bs["countdown"] = false
+	_apply("player", bs)
 	await _wait(3.0)
 	await _shot("05_briefing")
+	var hb := _host_state("briefing")
+	hb["readyList"] = rl
+	hb["countdown"] = false
+	_apply("host", hb)
+	await _shot("05b_prof_chamada")
 	_apply("player", _player_state("playing"))
 	await _wait(1.5)
 	await _shot("06_cena")

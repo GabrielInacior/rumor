@@ -1690,11 +1690,19 @@
     "categories": [
       {
         "id": "conta",
-        "label": "Quem postou e de onde vêm os segredos"
+        "label": "Quem postou como @ninguém"
       },
       {
-        "id": "onde",
-        "label": "Onde cada um estava às 14h05"
+        "id": "segredos",
+        "label": "De onde vieram os segredos"
+      },
+      {
+        "id": "joana",
+        "label": "Onde a Joana estava às 14h05"
+      },
+      {
+        "id": "lia",
+        "label": "Onde a Lia estava às 14h05"
       }
     ],
     "edges": [
@@ -1713,7 +1721,7 @@
         "from": "caique",
         "to": "segredos",
         "type": "leu",
-        "category": "conta",
+        "category": "segredos",
         "evidence": [
           "c_achados",
           "c_bilhete_kevin",
@@ -1724,7 +1732,7 @@
         "from": "caique",
         "to": "biblioteca",
         "type": "estava",
-        "category": "onde",
+        "category": "conta",
         "evidence": [
           "c_escala_troca",
           "c_comanda",
@@ -1735,7 +1743,7 @@
         "from": "joana",
         "to": "dentista",
         "type": "estava",
-        "category": "onde",
+        "category": "joana",
         "evidence": [
           "c_atestado",
           "c_dep_joana"
@@ -1745,7 +1753,7 @@
         "from": "lia",
         "to": "sala_aula",
         "type": "estava",
-        "category": "onde",
+        "category": "lia",
         "evidence": [
           "c_chamada_aula",
           "c_dep_lia"
@@ -1824,7 +1832,7 @@
       "Na biblioteca, a senha num post-it explica como ele entrou na conta.",
       "No corredor, os achados com celulares e diário abertos (responsável: Caíque); na quadra, o bilhete 'C.' na bolsa do Kevin.",
       "Na cantina, o Caíque perguntou sobre o wifi às 14h. O Pedro (com chocolate) admite o Pix para 'C. Monteiro'.",
-      "Montar as 5 linhas e apontar o Caíque."
+      "Provar no quadro os 4 objetivos secundários e apontar o Caíque."
     ],
     "pacing": [
       {
@@ -1867,7 +1875,7 @@
       {
         "clue": "c_escala_troca",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Caíque postou como A conta @ninguém; Caíque estava em Biblioteca. Aponta para Caíque."
+        "proves": "Prova a linha: Caíque postou como A conta @ninguém (objetivo: Quem postou como @ninguém); Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém). Aponta para Caíque."
       },
       {
         "clue": "c_pix_pedro",
@@ -1887,47 +1895,47 @@
       {
         "clue": "c_achados",
         "where": "Corredor: tocar em 'Achados e perdidos'",
-        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos. Aponta para Caíque."
+        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos (objetivo: De onde vieram os segredos). Aponta para Caíque."
       },
       {
         "clue": "c_bilhete_kevin",
         "where": "Quadra: tocar em 'Bolsa do Kevin'",
-        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos. Aponta para Caíque."
+        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos (objetivo: De onde vieram os segredos). Aponta para Caíque."
       },
       {
         "clue": "c_chamada_aula",
         "where": "Sala de aula: tocar em 'Chamada da redação'",
-        "proves": "Prova a linha: Lia estava em Aula de redação."
+        "proves": "Prova a linha: Lia estava em Aula de redação (objetivo: Onde a Lia estava às 14h05)."
       },
       {
         "clue": "c_atestado",
         "where": "Sala dos professores: tocar em 'Atestados'",
-        "proves": "Prova a linha: Joana estava em Dentista."
+        "proves": "Prova a linha: Joana estava em Dentista (objetivo: Onde a Joana estava às 14h05)."
       },
       {
         "clue": "c_comanda",
         "where": "Cantina: tocar em 'Balcão'",
-        "proves": "Prova a linha: Caíque estava em Biblioteca. Aponta para Caíque."
+        "proves": "Prova a linha: Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém). Aponta para Caíque."
       },
       {
         "clue": "c_coord_log",
         "where": "Chega sozinha aos 5 min",
-        "proves": "Prova a linha: Caíque postou como A conta @ninguém. Aponta para Caíque."
+        "proves": "Prova a linha: Caíque postou como A conta @ninguém (objetivo: Quem postou como @ninguém). Aponta para Caíque."
       },
       {
         "clue": "c_dep_joana",
         "where": "mostrar 'Atestado arquivado' para Joana",
-        "proves": "Prova a linha: Caíque estava em Biblioteca; Joana estava em Dentista."
+        "proves": "Prova a linha: Caíque estava em Biblioteca (objetivo: Quem postou como @ninguém); Joana estava em Dentista (objetivo: Onde a Joana estava às 14h05)."
       },
       {
         "clue": "c_dep_kevin",
         "where": "mostrar 'Bolsa do Kevin' para Kevin; ou trocar 'Carregador de celular' com Kevin",
-        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos."
+        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos (objetivo: De onde vieram os segredos)."
       },
       {
         "clue": "c_dep_lia",
         "where": "mostrar 'Chamada da redação' para Lia",
-        "proves": "Prova a linha: Lia estava em Aula de redação."
+        "proves": "Prova a linha: Lia estava em Aula de redação (objetivo: Onde a Lia estava às 14h05)."
       },
       {
         "clue": "c_dep_pedro",
@@ -1937,7 +1945,7 @@
       {
         "clue": "c_confissao",
         "where": "mostrar 'Rastreio da coordenação' + 'Troca de escala' para Joana; ou mostrar 'Rastreio da coordenação' + 'Troca de escala' para Caíque; ou mostrar 'Bolsa do Kevin' + 'Rastreio da coordenação' para Caíque",
-        "proves": "Prova a linha: Caíque postou como A conta @ninguém. Aponta para Caíque."
+        "proves": "Prova a linha: Caíque postou como A conta @ninguém (objetivo: Quem postou como @ninguém). Aponta para Caíque."
       }
     ],
     "red_herrings": [
@@ -1964,6 +1972,10 @@
       {
         "q": "Meu colega tem a troca de escala.",
         "a": "Peçam para fixar no quadro. É uma das pistas mais importantes."
+      },
+      {
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

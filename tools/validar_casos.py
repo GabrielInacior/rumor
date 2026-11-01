@@ -245,7 +245,11 @@ def check(p):
     if not sol.get("culprit_question"): err.append("culprit_question")
     if not R["edges"][0] <= len(sol["edges"]) <= R["edges"][1]: err.append("edges %d" % len(sol["edges"]))
     if not 1 <= len(sol["traps"]) <= 3: err.append("traps")
-    if len(sol["categories"]) > 3: err.append("categorias")
+    need = {"solo": {1: 2, 2: 3, 3: 4}, "multi": {1: 3, 2: 4, 3: 5}}[mode][d["difficulty"]]
+    if len(sol["categories"]) != need: err.append("objetivos secundários %d (regra: %d)" % (len(sol["categories"]), need))
+    for c in sol["categories"]:
+        fios = [e for e in sol["edges"] if e["category"] == c["id"]]
+        if not fios or not any(e.get("evidence") for e in fios): err.append("objetivo sem fio com prova " + c["id"])
     cats = {c["id"] for c in sol["categories"]}; lts = {l["id"] for l in d["link_types"]}
     if not 2 <= len(lts) <= 3: err.append("link_types")
     keys = set()

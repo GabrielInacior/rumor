@@ -140,6 +140,7 @@ class Room {
       const p = this.players.get(sock.pid);
       if (p && p.sock === sock) p.sock = null;
     }
+    this.checkReady(); // quem caiu não segura a turma na abertura
     this.broadcast();
   }
 
@@ -176,6 +177,8 @@ class Room {
       this.log(target ? target.id : null, null, `Professor mandou dica${target ? ' para ' + target.name : ' para todos'}: "${text}"`, 'dica');
     } else if (t === 'host_start' && this.phase === 'lobby') {
       this.startRound();
+    } else if (t === 'host_force_start' && this.phase === 'briefing') {
+      this.startCountdown();
     } else if (t === 'host_release' && this.phase === 'playing') {
       this.releaseNextTimed();
     } else if (t === 'host_add_time' && this.phase === 'playing') {
@@ -212,7 +215,9 @@ class Room {
     this.released = new Set();
     this.solvedOrder = [];
     this.phase = 'briefing';
-    this.phaseEndsAt = Date.now() + (this.solo ? 20 : BRIEFING_SEC) * 1000;
+    // a contagem só começa quando todos os alunos conectados derem PRONTO (ou o professor forçar)
+    this.phaseEndsAt = 0;
+    for (const p of this.players.values()) p.ready = false;
     for (const p of this.players.values()) if (p.sock) this.send(p.sock, { t: 'case', case: publicCase(c) });
     if (this.hostSock) this.send(this.hostSock, { t: 'case', case: publicCase(c) });
   }
@@ -221,6 +226,19 @@ class Room {
   durationFor(c) {
     const base = Math.round(((c.duration_sec || 900) * TIME_BONUS) / 60);
     return Math.max(5, base + (this.settings.extraMin || 0)) * 60;
+  }
+
+  /** Todos os conectados prontos? Começa a contagem curta (5 s; 3 s no solo). */
+  checkReady() {
+    if (this.phase !== 'briefing' || this.phaseEndsAt) return;
+    const online = [...this.players.values()].filter((p) => p.sock && p.teamId);
+    if (online.length > 0 && online.every((p) => p.ready)) this.startCountdown();
+  }
+
+  startCountdown() {
+    if (this.phase !== 'briefing' || this.phaseEndsAt) return;
+    this.phaseEndsAt = Date.now() + (this.solo ? 3 : 5) * 1000;
+    this.log(null, null, 'Todos prontos: o caso vai começar', 'sistema');
   }
 
   beginPlaying() {
@@ -310,7 +328,7 @@ class Room {
 
   // ------------------------------------------------------------- tempo
   tick(now) {
-    if (this.phase === 'briefing' && now >= this.phaseEndsAt) { this.beginPlaying(); this.broadcast(); return; }
+    if (this.phase === 'briefing' && this.phaseEndsAt && now >= this.phaseEndsAt) { this.beginPlaying(); this.broadcast(); return; }
     if (this.phase !== 'playing') return;
     const elapsed = (now - this.startedAt) / 1000;
     let changed = false;
@@ -333,6 +351,12 @@ class Room {
         p.teamId = msg.team; this.syncTeamRosters();
         this.log(p.teamId, p.name, `${p.name} entrou na equipe ${nt.name}`, 'sala');
       }
+      this.broadcast();
+      return;
+    }
+    if (msg.t === 'ready' && this.phase === 'briefing') {
+      p.ready = msg.ready !== false;
+      this.checkReady();
       this.broadcast();
       return;
     }
@@ -615,6 +639,10 @@ class Room {
     return {
       code: this.code, phase: this.phase, now: Date.now(), endsAt: this.phaseEndsAt, solo: !!this.solo,
       startedAt: this.startedAt, settings: this.settings, teams: this.teamsSummary(),
+      readyList: this.phase === 'briefing' ? [...this.players.values()].filter((p) => p.teamId).map((p) => ({
+        id: p.id, name: p.name, team: p.teamId, ready: !!p.ready, online: !!p.sock,
+      })) : null,
+      countdown: this.phase === 'briefing' && !!this.phaseEndsAt,
       released: [...this.released],
     };
   }

@@ -103,9 +103,10 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
 
   "solution": {
     "culprit": "duda",                              // id da pessoa culpada (responsável principal)
-    "culprit_question": "Quem mudou a história?",   // mostrada na hora de apontar; vale como categoria a mais
+    "culprit_question": "Quem mudou a história?",   // OBJETIVO PRINCIPAL, mostrado na hora de apontar
     "culprit_evidence": ["c_celular", "c_dm_duda"], // pistas que sustentam o culpado (para validação e revelação)
-    "categories": [{"id": "cadeia", "label": "Por onde o recado passou"}],   // máx. 3
+    // OBJETIVOS SECUNDÁRIOS: uma parte da história a provar no quadro. Quantidade fixa por modo e nível (ver "Objetivos").
+    "categories": [{"id": "cadeia", "label": "Por onde o recado passou"}],
     "edges": [                                      // 3 a 4 linhas exigidas
       {"from": "caio", "to": "duda", "type": "contou", "category": "cadeia",
        "evidence": ["c_celular", "c_print_gremio"]}  // qualquer UMA delas presa vale
@@ -229,7 +230,7 @@ ou que é aberto por uma entry com essa flag em `if`.
 - Se `evidence` não está vazio, a linha precisa ter presa UMA das pistas da lista;
   senão o feedback da categoria é "a ligação existe, mas falta a prova".
 - Uma armadilha presente marca a categoria como "tem uma ligação errada aqui".
-- O culpado apontado vale como categoria extra (`culprit_question`).
+- O culpado apontado é o objetivo principal (`culprit_question`); cada categoria é um objetivo secundário.
 - Linhas a mais que não são armadilha são ignoradas.
 - Teoria correta = todas as linhas exigidas com prova, nenhuma armadilha e o culpado certo.
 - Teoria errada: equipe bloqueada por `penalty_sec` (padrão 45 s) para entregar de novo.
@@ -248,11 +249,28 @@ ou que é aberto por uma entry com essa flag em `if`.
 | trocas (`take_item`) | pelo menos 1 | pelo menos 2, cada item usado por uma pessoa só |
 | duration_sec | 600 a 1500 | 1500 a 2400 (o servidor ainda soma 50%) |
 
-Comum aos dois: 2 a 3 link_types, até 3 categorias, 1 a 3 armadilhas, pelo menos 1 pista `t+150..300`,
+Comum aos dois: 2 a 3 link_types, objetivos secundários conforme a seção "Objetivos", 1 a 3 armadilhas, pelo menos 1 pista `t+150..300`,
 1 a 2 hotspots por cena, 1 a 3 pessoas por cena.
 
 `unlock` pode apontar para uma pista `t+` (vira **atalho**: a equipe ganha antes do tempo). Nunca para
 start ou hotspot.
+
+## Objetivos
+
+- **Principal:** o culpado (`solution.culprit`, pergunta em `culprit_question`).
+- **Secundários:** `solution.categories`. Cada um é uma parte da história com rótulo curto em forma de pergunta
+  ("Quem tinha o código do cofre", "Onde o Rafa estava às 23h"), e cada fio exigido pertence a um deles.
+- A equipe pode entregar quando quiser. Placar: culpado certo, depois número de secundários cumpridos
+  (todos os fios do objetivo com prova e nenhuma armadilha nele), desempate pelo tempo.
+- Quantidade obrigatória:
+
+| | nível 1 | nível 2 | nível 3 |
+|---|---|---|---|
+| solo | 2 | 3 | 4 |
+| multi | 3 | 4 | 5 |
+
+- Todo objetivo tem pelo menos um fio com prova (`evidence`). Nenhum depende de outro para ser provado, e nenhum
+  deve ser trivial demais. As armadilhas ficam no objetivo que elas tentam enganar.
 
 ## Validador
 

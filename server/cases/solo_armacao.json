@@ -1325,15 +1325,19 @@
     "categories": [
       {
         "id": "prova",
-        "label": "De onde veio a prova"
+        "label": "Quem passou a prova para o Bento"
       },
       {
-        "id": "onde",
-        "label": "Onde cada um estava no almoço"
+        "id": "plantou",
+        "label": "Quem ficou sozinho com a mochila"
+      },
+      {
+        "id": "alibi",
+        "label": "Onde o Davi estava no almoço"
       },
       {
         "id": "denuncia",
-        "label": "Quem fez a denúncia"
+        "label": "Quem mandou a denúncia anônima"
       }
     ],
     "edges": [
@@ -1352,7 +1356,7 @@
         "from": "bento",
         "to": "sala_aula",
         "type": "estava",
-        "category": "onde",
+        "category": "plantou",
         "evidence": [
           "c_lousa",
           "c_dep_caique"
@@ -1362,7 +1366,7 @@
         "from": "davi",
         "to": "biblioteca",
         "type": "estava",
-        "category": "onde",
+        "category": "alibi",
         "evidence": [
           "c_registro_bib",
           "c_ocorrencia",
@@ -1392,7 +1396,7 @@
         "from": "davi",
         "to": "sala_aula",
         "type": "estava",
-        "category": "onde"
+        "category": "plantou"
       }
     ]
   },
@@ -1451,7 +1455,7 @@
       "No laboratório, a prova foi impressa pela monitoria e o bilhete 'valeu pela cópia, B.' liga a Mel ao Bento.",
       "Na biblioteca, o registro da monitoria dá o álibi do Davi; a Joana viu o Bento digitando às 12h47.",
       "No corredor, o comprovante do saque; com a figurinha, o Caíque conta que viu o Bento saindo da sala às 12h44.",
-      "O registro da rede (chega com o tempo) mostra o aparelho 'Galaxy-do-Bento'. Mostrar a ele e apontá-lo."
+      "O registro da rede (chega com o tempo) mostra o aparelho 'Galaxy-do-Bento'. Mostrar a ele, provar no quadro os 4 objetivos secundários e apontá-lo."
     ],
     "pacing": [
       {
@@ -1494,7 +1498,7 @@
       {
         "clue": "c_lousa",
         "where": "Sala de aula: tocar em 'Lousa'",
-        "proves": "Prova a linha: Bento estava em Sala do Davi. Aponta para Bento."
+        "proves": "Prova a linha: Bento estava em Sala do Davi (objetivo: Quem ficou sozinho com a mochila). Aponta para Bento."
       },
       {
         "clue": "c_ranking",
@@ -1504,22 +1508,22 @@
       {
         "clue": "c_ocorrencia",
         "where": "Sala dos professores: tocar em 'Ocorrência'",
-        "proves": "Prova a linha: Davi estava em Biblioteca."
+        "proves": "Prova a linha: Davi estava em Biblioteca (objetivo: Onde o Davi estava no almoço)."
       },
       {
         "clue": "c_impressora",
         "where": "Laboratório: tocar em 'Computador da bancada'",
-        "proves": "Prova a linha: Mel entregou para Bento."
+        "proves": "Prova a linha: Mel entregou para Bento (objetivo: Quem passou a prova para o Bento)."
       },
       {
         "clue": "c_bilhete_mel",
         "where": "Laboratório: tocar em 'Armário de vidros'",
-        "proves": "Prova a linha: Mel entregou para Bento. Aponta para Bento."
+        "proves": "Prova a linha: Mel entregou para Bento (objetivo: Quem passou a prova para o Bento). Aponta para Bento."
       },
       {
         "clue": "c_registro_bib",
         "where": "Biblioteca: tocar em 'Registro da monitoria'",
-        "proves": "Prova a linha: Davi estava em Biblioteca."
+        "proves": "Prova a linha: Davi estava em Biblioteca (objetivo: Onde o Davi estava no almoço)."
       },
       {
         "clue": "c_recibo",
@@ -1529,32 +1533,32 @@
       {
         "clue": "c_rede",
         "where": "Chega sozinha aos 5 min",
-        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47. Aponta para Bento."
+        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47 (objetivo: Quem mandou a denúncia anônima). Aponta para Bento."
       },
       {
         "clue": "c_dep_davi",
         "where": "conversar com Davi ('Onde você tava no almoço?')",
-        "proves": "Prova a linha: Davi estava em Biblioteca."
+        "proves": "Prova a linha: Davi estava em Biblioteca (objetivo: Onde o Davi estava no almoço)."
       },
       {
         "clue": "c_dep_mel",
         "where": "mostrar 'Bilhete no armário' para Mel; ou trocar 'Barra de chocolate' com Mel",
-        "proves": "Prova a linha: Mel entregou para Bento."
+        "proves": "Prova a linha: Mel entregou para Bento (objetivo: Quem passou a prova para o Bento)."
       },
       {
         "clue": "c_dep_joana",
         "where": "conversar com Joana ('Quem usou o celular aqui às 12h47?')",
-        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47."
+        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47 (objetivo: Quem mandou a denúncia anônima)."
       },
       {
         "clue": "c_dep_caique",
         "where": "trocar 'Figurinha do Corujão Dourado' com Caíque",
-        "proves": "Prova a linha: Bento estava em Sala do Davi."
+        "proves": "Prova a linha: Bento estava em Sala do Davi (objetivo: Quem ficou sozinho com a mochila)."
       },
       {
         "clue": "c_confissao",
         "where": "mostrar 'Rede da biblioteca' para Dona Vera; ou mostrar 'Rede da biblioteca' para Bento",
-        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47. Aponta para Bento."
+        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47 (objetivo: Quem mandou a denúncia anônima). Aponta para Bento."
       }
     ],
     "red_herrings": [
@@ -1581,6 +1585,10 @@
       {
         "q": "Ninguém quer falar.",
         "a": "A Mel está com medo e o Caíque coleciona figurinhas. Procurem pela escola."
+      },
+      {
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

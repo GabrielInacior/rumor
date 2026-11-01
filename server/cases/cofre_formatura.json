@@ -1871,11 +1871,15 @@
     "categories": [
       {
         "id": "cofre",
-        "label": "Quem pegou e quem escreveu o bilhete"
+        "label": "Quem abriu o cofre e quando"
       },
       {
-        "id": "onde",
-        "label": "Onde cada um estava"
+        "id": "bilhete",
+        "label": "Quem escreveu o bilhete 'Obrigado, Caio'"
+      },
+      {
+        "id": "alibis",
+        "label": "Onde o Caio e o Rafa estavam"
       }
     ],
     "edges": [
@@ -1894,7 +1898,7 @@
         "from": "lari",
         "to": "bilhete",
         "type": "escreveu",
-        "category": "cofre",
+        "category": "bilhete",
         "evidence": [
           "c_impressora",
           "c_dep_joana",
@@ -1905,7 +1909,7 @@
         "from": "lari",
         "to": "sala_diretor",
         "type": "estava",
-        "category": "onde",
+        "category": "cofre",
         "evidence": [
           "c_log_cofre",
           "c_ata",
@@ -1916,7 +1920,7 @@
         "from": "caio",
         "to": "cantina",
         "type": "estava",
-        "category": "onde",
+        "category": "alibis",
         "evidence": [
           "c_ata",
           "c_chat_formatura",
@@ -1927,7 +1931,7 @@
         "from": "rafa",
         "to": "sala_professores",
         "type": "estava",
-        "category": "onde",
+        "category": "alibis",
         "evidence": [
           "c_camera",
           "c_armario_cel",
@@ -2006,7 +2010,7 @@
       "Na biblioteca, a impressora mostra 'obrigado_caio.docx' do usuário lari.gremio às 17h40; na mesa, o rascunho do rombo.",
       "As pistas só de um aluno (DM da Bia, aviso da auditoria) mostram o motivo: alguém da equipe precisa contar.",
       "O relatório do cofre (por volta dos 4 min) mostra a abertura às 17h52 com o código da tesouraria.",
-      "Mostrar o relatório e a impressão à Lari, montar as 5 linhas e apontá-la."
+      "Mostrar o relatório e a impressão à Lari, provar no quadro os 3 objetivos secundários e apontá-la."
     ],
     "pacing": [
       {
@@ -2039,7 +2043,7 @@
       {
         "clue": "c_chat_formatura",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Caio estava em Cantina."
+        "proves": "Prova a linha: Caio estava em Cantina (objetivo: Onde o Caio e o Rafa estavam)."
       },
       {
         "clue": "c_dm_bia_lari",
@@ -2069,47 +2073,47 @@
       {
         "clue": "c_camera",
         "where": "Corredor: tocar em 'Print da câmera'",
-        "proves": "Prova a linha: Rafa estava em Sala dos professores."
+        "proves": "Prova a linha: Rafa estava em Sala dos professores (objetivo: Onde o Caio e o Rafa estavam)."
       },
       {
         "clue": "c_armario_cel",
         "where": "Sala dos professores: tocar em 'Armário dos confiscados'",
-        "proves": "Prova a linha: Rafa estava em Sala dos professores."
+        "proves": "Prova a linha: Rafa estava em Sala dos professores (objetivo: Onde o Caio e o Rafa estavam)."
       },
       {
         "clue": "c_ata",
         "where": "Cantina: tocar em 'Ata no mural'",
-        "proves": "Prova a linha: Lari estava em Sala do diretor; Caio estava em Cantina."
+        "proves": "Prova a linha: Lari estava em Sala do diretor (objetivo: Quem abriu o cofre e quando); Caio estava em Cantina (objetivo: Onde o Caio e o Rafa estavam)."
       },
       {
         "clue": "c_impressora",
         "where": "Biblioteca: tocar em 'Impressora'",
-        "proves": "Prova a linha: Lari escreveu Bilhete 'Obrigado, Caio'. Aponta para Lari."
+        "proves": "Prova a linha: Lari escreveu Bilhete 'Obrigado, Caio' (objetivo: Quem escreveu o bilhete 'Obrigado, Caio'). Aponta para Lari."
       },
       {
         "clue": "c_rascunho",
         "where": "Biblioteca: tocar em 'Mesa de estudo'",
-        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura. Aponta para Lari."
+        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura (objetivo: Quem abriu o cofre e quando). Aponta para Lari."
       },
       {
         "clue": "c_log_cofre",
         "where": "Chega sozinha aos 4 min",
-        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura; Lari estava em Sala do diretor. Aponta para Lari."
+        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura (objetivo: Quem abriu o cofre e quando); Lari estava em Sala do diretor (objetivo: Quem abriu o cofre e quando). Aponta para Lari."
       },
       {
         "clue": "c_dep_caio",
         "where": "mostrar 'Ata da assembleia' para Caio",
-        "proves": "Prova a linha: Caio estava em Cantina."
+        "proves": "Prova a linha: Caio estava em Cantina (objetivo: Onde o Caio e o Rafa estavam)."
       },
       {
         "clue": "c_dep_rafa",
         "where": "mostrar 'Armário dos confiscados' para Rafa; ou mostrar 'Print da câmera' para Rafa",
-        "proves": "Prova a linha: Rafa estava em Sala dos professores."
+        "proves": "Prova a linha: Rafa estava em Sala dos professores (objetivo: Onde o Caio e o Rafa estavam)."
       },
       {
         "clue": "c_dep_jorge",
         "where": "trocar 'Chaves reserva do zelador' com Seu Jorge",
-        "proves": "Prova a linha: Lari estava em Sala do diretor."
+        "proves": "Prova a linha: Lari estava em Sala do diretor (objetivo: Quem abriu o cofre e quando)."
       },
       {
         "clue": "c_dep_bia",
@@ -2119,12 +2123,12 @@
       {
         "clue": "c_dep_joana",
         "where": "conversar com Joana ('Quem usou a impressora ontem?')",
-        "proves": "Prova a linha: Lari escreveu Bilhete 'Obrigado, Caio'."
+        "proves": "Prova a linha: Lari escreveu Bilhete 'Obrigado, Caio' (objetivo: Quem escreveu o bilhete 'Obrigado, Caio')."
       },
       {
         "clue": "c_confissao",
         "where": "mostrar 'Relatório do cofre' + 'Fila da impressora' para Lari; ou mostrar 'Mesa de estudo' + 'Relatório do cofre' para Lari; ou mostrar 'Relatório do cofre' para Lari",
-        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura; Lari escreveu Bilhete 'Obrigado, Caio'. Aponta para Lari."
+        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura (objetivo: Quem abriu o cofre e quando); Lari escreveu Bilhete 'Obrigado, Caio' (objetivo: Quem escreveu o bilhete 'Obrigado, Caio'). Aponta para Lari."
       }
     ],
     "red_herrings": [
@@ -2153,8 +2157,8 @@
         "a": "Ela protege a amiga. Um chocolate e a DM certa ajudam."
       },
       {
-        "q": "Meu colega tem uma DM que eu não vi.",
-        "a": "Peçam para fixar no quadro. Pistas só suas existem para vocês conversarem."
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

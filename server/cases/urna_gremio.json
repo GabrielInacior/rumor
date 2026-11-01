@@ -1753,11 +1753,15 @@
     "categories": [
       {
         "id": "fraude",
-        "label": "Quem fraudou e com qual chave"
+        "label": "Quem colocou as cédulas falsas"
       },
       {
-        "id": "onde",
-        "label": "Onde cada um estava às 12h05"
+        "id": "chave",
+        "label": "Quem deu a chave do lacre"
+      },
+      {
+        "id": "alibis",
+        "label": "Onde o mesário e o Rui estavam ao meio-dia"
       }
     ],
     "edges": [
@@ -1776,7 +1780,7 @@
         "from": "caio",
         "to": "teo",
         "type": "entregou",
-        "category": "fraude",
+        "category": "chave",
         "evidence": [
           "c_lacre",
           "c_chat_azul",
@@ -1787,7 +1791,7 @@
         "from": "teo",
         "to": "biblioteca",
         "type": "estava",
-        "category": "onde",
+        "category": "fraude",
         "evidence": [
           "c_comanda",
           "c_dep_kaua"
@@ -1797,7 +1801,7 @@
         "from": "kaua",
         "to": "cantina",
         "type": "estava",
-        "category": "onde",
+        "category": "alibis",
         "evidence": [
           "c_comanda",
           "c_urna",
@@ -1808,7 +1812,7 @@
         "from": "rui",
         "to": "patio",
         "type": "estava",
-        "category": "onde",
+        "category": "alibis",
         "evidence": [
           "c_cartaz",
           "c_dep_rui"
@@ -1881,7 +1885,7 @@
       "Na sala do grêmio, a mochila do Téo tem o bloco com 14 folhas faltando, e a lousa diz 'PLANO B: ANULAR'.",
       "No pátio, o cartaz do comício dá o álibi do Rui.",
       "O relatório do lacre (cerca de 4 min) aponta o armário do grêmio. Mostrar ao Caio: ele emprestou a chave.",
-      "Montar as 5 linhas e apontar o Téo."
+      "Provar no quadro os 3 objetivos secundários e apontar o Téo."
     ],
     "pacing": [
       {
@@ -1914,7 +1918,7 @@
       {
         "clue": "c_chat_azul",
         "where": "Já no início, só para um aluno (split)",
-        "proves": "Prova a linha: Caio entregou a chave para Téo."
+        "proves": "Prova a linha: Caio entregou a chave para Téo (objetivo: Quem deu a chave do lacre)."
       },
       {
         "clue": "c_dm_rui",
@@ -1934,17 +1938,17 @@
       {
         "clue": "c_urna",
         "where": "Biblioteca: tocar em 'Mesa da urna'",
-        "proves": "Prova a linha: Kauã estava em Cantina."
+        "proves": "Prova a linha: Kauã estava em Cantina (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
       },
       {
         "clue": "c_bloco",
         "where": "Sala de aula: tocar em 'Mochila do Téo'",
-        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas. Aponta para Téo."
+        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas (objetivo: Quem colocou as cédulas falsas). Aponta para Téo."
       },
       {
         "clue": "c_lousa",
         "where": "Sala de aula: tocar em 'Lousa do grêmio'",
-        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas. Aponta para Téo."
+        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas (objetivo: Quem colocou as cédulas falsas). Aponta para Téo."
       },
       {
         "clue": "c_regra",
@@ -1959,27 +1963,27 @@
       {
         "clue": "c_comanda",
         "where": "Cantina: tocar em 'Balcão'",
-        "proves": "Prova a linha: Téo estava em Biblioteca (urna); Kauã estava em Cantina."
+        "proves": "Prova a linha: Téo estava em Biblioteca (urna) (objetivo: Quem colocou as cédulas falsas); Kauã estava em Cantina (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
       },
       {
         "clue": "c_cartaz",
         "where": "Pátio: tocar em 'Cartaz do comício'",
-        "proves": "Prova a linha: Rui estava em Pátio (comício)."
+        "proves": "Prova a linha: Rui estava em Pátio (comício) (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
       },
       {
         "clue": "c_lacre",
         "where": "Chega sozinha aos 4 min",
-        "proves": "Prova a linha: Caio entregou a chave para Téo."
+        "proves": "Prova a linha: Caio entregou a chave para Téo (objetivo: Quem deu a chave do lacre)."
       },
       {
         "clue": "c_dep_kaua",
         "where": "mostrar 'Comanda da cantina' para Kauã; ou trocar 'Barra de chocolate' com Kauã",
-        "proves": "Prova a linha: Téo estava em Biblioteca (urna); Kauã estava em Cantina."
+        "proves": "Prova a linha: Téo estava em Biblioteca (urna) (objetivo: Quem colocou as cédulas falsas); Kauã estava em Cantina (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
       },
       {
         "clue": "c_dep_caio",
         "where": "mostrar 'Relatório do lacre' para Caio; ou trocar 'Carregador de celular' com Caio; ou conversar com Caio ('Caio, você deu a chave pra ele?')",
-        "proves": "Prova a linha: Caio entregou a chave para Téo."
+        "proves": "Prova a linha: Caio entregou a chave para Téo (objetivo: Quem deu a chave do lacre)."
       },
       {
         "clue": "c_dep_bela",
@@ -1989,12 +1993,12 @@
       {
         "clue": "c_dep_rui",
         "where": "mostrar 'Cartaz do comício' para Rui",
-        "proves": "Prova a linha: Rui estava em Pátio (comício)."
+        "proves": "Prova a linha: Rui estava em Pátio (comício) (objetivo: Onde o mesário e o Rui estavam ao meio-dia)."
       },
       {
         "clue": "c_confissao",
         "where": "mostrar 'Mochila do Téo' para Téo; ou mostrar 'Cédulas separadas' + 'Regulamento' para Téo; ou mostrar 'Mochila do Téo' para Caio",
-        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas. Aponta para Téo."
+        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas (objetivo: Quem colocou as cédulas falsas). Aponta para Téo."
       }
     ],
     "red_herrings": [
@@ -2021,6 +2025,10 @@
       {
         "q": "O Rui mandou mensagem pro mesário!",
         "a": "Leiam a mensagem inteira. E onde o Rui estava ao meio-dia?"
+      },
+      {
+        "q": "Precisamos resolver tudo antes de entregar?",
+        "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
     ],
     "talking_points": [

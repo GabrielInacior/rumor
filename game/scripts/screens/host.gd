@@ -480,7 +480,10 @@ func _do_refresh_game() -> void:
 		(tab_btns[k] as Button).add_theme_stylebox_override("normal", UI.box(UI.YELLOW if on else Color(UI.NIGHT, 0.8), UI.YELLOW.darkened(0.4), 0 if on else 2, 16))
 		(tab_btns[k] as Button).add_theme_color_override("font_color", UI.INK if on else UI.PAPER)
 	if str(st.get("phase", "")) == "briefing":
-		timer_l.text = "%ds" % Net.seconds_left()
+		timer_l.text = ("%ds" % Net.seconds_left()) if st.get("countdown", false) else "PRONTOS?"
+		UI.clear(page_box)
+		page_box.add_child(_ready_panel())
+		return
 	if game_tab == "guia" and page_box.get_child_count() > 0 and not _guide_dirty:
 		return
 	_guide_dirty = false
@@ -540,6 +543,62 @@ func _bar(label: String, val: int, total: int, col: Color) -> Control:
 	pb.add_theme_stylebox_override("background", UI.box(Color(0, 0, 0, 0.4), Color.TRANSPARENT, 0, 7, 0))
 	pb.add_theme_stylebox_override("fill", UI.box(col, Color.TRANSPARENT, 0, 7, 0))
 	v.add_child(pb)
+	return v
+
+
+## Abertura: quem já deu PRONTO e quem falta; o professor pode começar mesmo assim.
+func _ready_panel() -> Control:
+	var st := Net.state
+	var lst: Array = st.get("readyList", []) if st.get("readyList") is Array else []
+	var v := UI.vbox(12)
+	var on := lst.filter(func(r: Dictionary) -> bool: return r["online"])
+	var ok := on.filter(func(r: Dictionary) -> bool: return r["ready"])
+	var head := PanelContainer.new()
+	head.add_theme_stylebox_override("panel", UI.box(Color("#d9b977"), Color("#b8944f"), 2, 8, 14))
+	var hv := UI.vbox(2)
+	var k := UI.label("ABERTURA DO CASO  ·  CHAMADA", 18, Color("#c42c3f"), "type")
+	k.autowrap_mode = TextServer.AUTOWRAP_OFF
+	hv.add_child(k)
+	var big := UI.title("%d DE %d PRONTOS" % [ok.size(), on.size()] if not st.get("countdown", false) else "TODOS PRONTOS!", 54, Color("#1b2140"))
+	big.autowrap_mode = TextServer.AUTOWRAP_OFF
+	hv.add_child(big)
+	hv.add_child(UI.label("O relógio só começa quando todos tocarem em PRONTO. Quem caiu não segura a turma.", 20, Color("#1b2140", 0.75)))
+	head.add_child(hv)
+	v.add_child(head)
+	var grid := GridContainer.new()
+	grid.columns = 1 if not _wide() else 3
+	grid.add_theme_constant_override("h_separation", 12)
+	grid.add_theme_constant_override("v_separation", 12)
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for t in st.get("teams", []):
+		var col := Color(str(t["color"]))
+		var p := PanelContainer.new()
+		p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		p.add_theme_stylebox_override("panel", UI.box(Color(col, 0.08), col, 2, 12, 12))
+		var tv := UI.vbox(6)
+		tv.add_child(UI.title("EQUIPE " + str(t["name"]).to_upper(), 30, col))
+		var flow := HFlowContainer.new()
+		flow.add_theme_constant_override("h_separation", 6)
+		flow.add_theme_constant_override("v_separation", 6)
+		for r in lst:
+			if r["team"] != t["id"]:
+				continue
+			var rc: Color = UI.GREEN if r["ready"] else (UI.MIST.darkened(0.3) if not r["online"] else UI.YELLOW)
+			var chip := PanelContainer.new()
+			chip.add_theme_stylebox_override("panel", UI.box(Color(rc, 0.15), rc, 2, 20, 8))
+			var txt := ("OK  " if r["ready"] else "") + str(r["name"]) + ("" if r["online"] else "  fora") + ("" if r["ready"] or not r["online"] else "  lendo...")
+			var l := UI.label(txt, 20, rc, "bold")
+			l.autowrap_mode = TextServer.AUTOWRAP_OFF
+			chip.add_child(l)
+			flow.add_child(chip)
+		tv.add_child(flow)
+		p.add_child(tv)
+		grid.add_child(p)
+	v.add_child(grid)
+	if not st.get("countdown", false):
+		var force := UI.button("COMEÇAR MESMO ASSIM", "ghost", 80)
+		force.pressed.connect(func() -> void: Net.send({"t": "host_force_start"}))
+		v.add_child(force)
 	return v
 
 
@@ -1111,4 +1170,4 @@ func _process(_dt: float) -> void:
 			if s <= 10 and s > 0:
 				Sfx.play("timer_urgent", -6.0)
 	elif phase_built == "game" and timer_l:
-		timer_l.text = "%ds" % Net.seconds_left()
+		timer_l.text = ("%ds" % Net.seconds_left()) if Net.state.get("countdown", false) else "PRONTOS?"
