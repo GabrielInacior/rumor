@@ -852,13 +852,22 @@ func _on_link_tapped(id: String) -> void:
 		return
 	Sfx.play("ui_tap")
 	var v := UI.vbox(14)
-	v.add_child(UI.title("FIO", 40, UI.RED))
-	v.add_child(UI.label("%s  %s  %s" % [_name_of(l["a"]), Net.link_label(l["type"]).to_upper(), _name_of(l["b"])], 32, UI.PAPER, "bold"))
+	# bilhete de caderno: o que este fio afirma e o que a prova diz (a "colher de chá")
+	var note := Paper.make("notebook")
+	var nv := UI.vbox(6)
+	nv.add_child(UI.label("ESTE FIO DIZ QUE", 18, Color(UI.INK, 0.6), "type"))
+	nv.add_child(UI.label(_sentence(l) + ".", 30, UI.INK, "marker"))
 	if l.get("evidence") != null:
 		var ev := Net.clue_by_id(str(l["evidence"]))
-		v.add_child(UI.label("Prova presa: " + UI.strip_emoji(str(ev.get("title", "?"))), 26, UI.YELLOW, "bold"))
+		nv.add_child(UI.label("PROVA: " + UI.strip_emoji(str(ev.get("title", "?"))), 22, UI.RED, "bold"))
+		nv.add_child(UI.label("\"" + _first_sentence(str(ev.get("text", ""))) + "\"", 20, Color("#1b2140"), "type"))
+		var rel := _relevance(ev, l["a"], l["b"])
+		var rl := UI.label(("A pista " + str(rel[1]) + ".") if int(rel[0]) > 0 else "Atenção: a pista não cita ninguém deste fio. Ela prova mesmo isso?", 20, Color("#2f6b3a") if int(rel[0]) == 2 else (Color("#8a6a1a") if int(rel[0]) == 1 else Color("#8a2a3a")), "bold")
+		nv.add_child(rl)
 	else:
-		v.add_child(UI.label("Sem prova. Um fio sem prova é só um palpite.", 24, UI.MIST))
+		nv.add_child(UI.label("Sem prova ainda. Um fio sem prova é só um palpite.", 20, Color("#8a2a3a"), "bold"))
+	note.add_child(nv)
+	v.add_child(note)
 	v.add_child(UI.label("Cor do fio", 22, UI.PAPER, "bold"))
 	v.add_child(_color_row(str(l.get("color", "vermelho")), func(cname: String) -> void:
 		Net.board_op({"k": "recolor", "id": id, "color": cname})
@@ -979,6 +988,49 @@ func _organize_board() -> void:
 	Sfx.play("card_drop")
 
 
+func _mentions(clue: Dictionary, card_id: String) -> bool:
+	var txt := (str(clue.get("title", "")) + " " + str(clue.get("text", ""))).to_lower()
+	if clue.has("chat"):
+		for l in clue["chat"].get("lines", []):
+			txt += " " + str(l.get("who", "")) + " " + str(l.get("text", ""))
+	if clue.has("post"):
+		txt += " " + str(clue["post"].get("who", "")) + " " + str(clue["post"].get("caption", ""))
+	txt += " " + str(clue.get("who", "")) + " " + str(clue.get("from", ""))
+	txt = txt.to_lower()
+	var nm := _name_of(card_id).to_lower()
+	# nome completo ou a palavra principal (ex.: "Profa. Lúcia" -> "lúcia")
+	if txt.find(card_id.to_lower()) >= 0 or txt.find(nm) >= 0:
+		return true
+	for part in nm.split(" "):
+		if part.length() >= 4 and txt.find(part) >= 0:
+			return true
+	return false
+
+
+func _relevance(clue: Dictionary, a: String, b: String) -> Array:
+	var ma := _mentions(clue, a)
+	var mb := _mentions(clue, b)
+	if ma and mb:
+		return [2, "fala de %s e %s" % [_name_of(a), _name_of(b)], UI.GREEN]
+	if ma or mb:
+		return [1, "fala de %s" % _name_of(a if ma else b), UI.YELLOW]
+	return [0, "não cita ninguém deste fio", UI.MIST]
+
+
+## Frase do fio em linguagem simples (é o que o fio "afirma" no quadro)
+func _sentence(l: Dictionary) -> String:
+	return "%s %s %s" % [_name_of(l["a"]).to_upper(), Net.link_label(l["type"]), _name_of(l["b"]).to_upper()]
+
+
+func _first_sentence(t: String, max_len := 150) -> String:
+	t = UI.strip_emoji(t).replace("\n", " ").strip_edges()
+	if t.length() <= max_len:
+		return t
+	var cut := t.substr(0, max_len)
+	var dot := cut.rfind(". ")
+	return (cut.substr(0, dot + 1) if dot > 40 else cut + "...")
+
+
 func _open_evidence_picker(link_id: String) -> void:
 	_close_sheet()
 	var v := UI.vbox(12)
@@ -986,16 +1038,45 @@ func _open_evidence_picker(link_id: String) -> void:
 	var clues: Array = Net.state.get("clues", [])
 	if clues.is_empty():
 		v.add_child(UI.label("Vocês ainda não têm pistas.", 26, UI.MIST))
-	for c in clues:
-		var btn := UI.button("%s  %s" % [UI.clue_tag(str(c.get("kind", ""))), UI.strip_emoji(str(c.get("title", "")))], "ghost", 88)
-		btn.add_theme_font_size_override("font_size", 24)
-		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.pressed.connect(func() -> void:
+	var lk := {}
+	for x in Net.state.get("board", {}).get("links", []):
+		if x["id"] == link_id:
+			lk = x
+	if not lk.is_empty():
+		v.add_child(UI.label("O fio diz: " + _sentence(lk) + ". Qual pista mostra isso?", 22, UI.PAPER, "bold"))
+	var ranked := clues.duplicate()
+	if not lk.is_empty():
+		ranked.sort_custom(func(x: Dictionary, y: Dictionary) -> bool:
+			return int(_relevance(x, lk["a"], lk["b"])[0]) > int(_relevance(y, lk["a"], lk["b"])[0]))
+	for c in ranked:
+		var row := Button.new()
+		row.focus_mode = Control.FOCUS_NONE
+		row.custom_minimum_size = Vector2(0, 104)
+		row.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.85), Color(UI.SKY, 0.5), 2, 16))
+		row.add_theme_stylebox_override("hover", UI.box(Color(UI.BLUE, 0.4), UI.YELLOW, 2, 16))
+		row.add_theme_stylebox_override("pressed", UI.box(Color(UI.YELLOW, 0.3), UI.YELLOW, 2, 16))
+		var rv := UI.vbox(2)
+		rv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		rv.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		rv.offset_left = 16; rv.offset_right = -12; rv.offset_top = 10
+		var t1 := UI.label("%s  ·  %s" % [UI.clue_tag(str(c.get("kind", ""))), UI.strip_emoji(str(c.get("title", "")))], 24, UI.PAPER, "bold")
+		t1.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		t1.autowrap_mode = TextServer.AUTOWRAP_OFF
+		t1.clip_text = true
+		rv.add_child(t1)
+		if not lk.is_empty():
+			var rel := _relevance(c, lk["a"], lk["b"])
+			var rl := UI.label(str(rel[1]), 20, rel[2], "bold")
+			rl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			rl.autowrap_mode = TextServer.AUTOWRAP_OFF
+			rl.clip_text = true
+			rv.add_child(rl)
+		row.add_child(rv)
+		row.pressed.connect(func() -> void:
 			Net.board_op({"k": "attach", "id": link_id, "clue": c["id"]})
 			Sfx.play("card_pin")
 			_close_sheet())
-		v.add_child(btn)
+		v.add_child(row)
 	_open_sheet(v)
 
 

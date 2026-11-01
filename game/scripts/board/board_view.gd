@@ -57,11 +57,26 @@ func _ready() -> void:
 
 func _process(dt: float) -> void:
 	_t += dt
-	if link_from != "" or not highlight_refs.is_empty():
-		queue_redraw()
+	# redesenha sempre que há prova pendurada (balanço) ou animação de encaixe
+	queue_redraw()
+
+
+var _ev_anim := {}      # link id -> {from: Vector2, t0: ms}
+var _prev_ev := {}
 
 
 func set_data(new_cards: Array, new_links: Array) -> void:
+	# prova recém-presa: a carta "voa" da posição dela até o fio
+	for l in new_links:
+		var e = l.get("evidence")
+		if e != null and _prev_ev.get(l["id"]) != e:
+			var src := _card("c:" + str(e))
+			var from := Vector2(src["x"], src["y"]) * BOARD if not src.is_empty() else Vector2.ZERO
+			if not src.is_empty():
+				_ev_anim[l["id"]] = {"from": from, "t0": Time.get_ticks_msec()}
+	_prev_ev.clear()
+	for l in new_links:
+		_prev_ev[l["id"]] = l.get("evidence")
 	# não sobrescreve a carta que este dedo está arrastando agora
 	if _dragging and _press_card != "":
 		var mine: Dictionary = {}
@@ -408,6 +423,10 @@ func _draw() -> void:
 	if _dragging and _drop_link != "":
 		_badge(_knot(_link(_drop_link)) + Vector2(0, -70), "SOLTE PARA PRENDER A PROVA")
 
+	if selected_link != "" and not _link(selected_link).is_empty():
+		var sl := _link(selected_link)
+		var txt := "%s %s %s" % [str(Net.card_by_id(str(sl["a"])).get("name", "")), Net.link_label(str(sl["type"])), str(Net.card_by_id(str(sl["b"])).get("name", ""))]
+		_badge(_knot(sl) + Vector2(0, -78), UI.strip_emoji(txt).to_upper())
 	if link_from != "":
 		var a := _center(link_from)
 		var pulse := 0.5 + 0.5 * sin(_t * 6.0)
@@ -445,8 +464,16 @@ func _draw_link_tag(l: Dictionary, pts: PackedVector2Array, sel: bool) -> void:
 		var clue := Net.clue_by_id(str(l["evidence"]))
 		var e := _evidence_rect(l)
 		var col := UI.clue_color(str(clue.get("kind", "")))
-		var tilt := (float(hash(str(l["evidence"])) % 7) - 3.0) * 0.02
-		draw_set_transform(offset + e.get_center() * zoom, tilt, Vector2(zoom, zoom))
+		var tilt := (float(hash(str(l["evidence"])) % 7) - 3.0) * 0.02 + sin(_t * 1.6 + float(hash(str(l["id"])) % 10)) * 0.025
+		var ctr := e.get_center()
+		if _ev_anim.has(l["id"]):
+			var an: Dictionary = _ev_anim[l["id"]]
+			var u := clampf((Time.get_ticks_msec() - int(an["t0"])) / 380.0, 0.0, 1.0)
+			var ease := 1.0 - pow(1.0 - u, 3.0)
+			ctr = (an["from"] as Vector2).lerp(ctr, ease) + Vector2(0, -sin(u * PI) * 60.0)
+			if u >= 1.0:
+				_ev_anim.erase(l["id"])
+		draw_set_transform(offset + ctr * zoom, tilt, Vector2(zoom, zoom))
 		var lr := Rect2(-e.size / 2.0, e.size)
 		draw_rect(Rect2(lr.position + Vector2(4, 6), lr.size), Color(0, 0, 0, 0.35))
 		if sel:
