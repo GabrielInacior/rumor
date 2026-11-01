@@ -491,7 +491,8 @@ class Tail extends Control:
 		queue_redraw()
 
 	func _draw() -> void:
-		if bubble == null:
+		# o rabicho só existe junto com o balão (quando aparecem as escolhas, some também)
+		if bubble == null or not bubble.is_visible_in_tree():
 			return
 		var top := bubble.position.y - position.y
 		var x := size.x * side
