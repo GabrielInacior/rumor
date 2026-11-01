@@ -2484,7 +2484,7 @@ func _fit_hires() -> void:
 ## Resolução adaptativa: mede a fluidez a cada 1,5 s; se cair de ~40 quadros por segundo, baixa um
 ## degrau; se ficar folgada por um tempo, sobe de novo (até a resolução real da tela).
 func _adapt_resolution(dt: float) -> void:
-	if not _hires_on or _showcase:
+	if not _hires_on or _showcase or Engine.get_write_movie_path() != "":
 		return
 	_fps_t += dt
 	_fps_frames += 1
