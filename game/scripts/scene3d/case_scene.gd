@@ -133,7 +133,7 @@ func _build() -> void:
 	e.background_energy_multiplier = 1.0
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
-	e.ambient_light_color = Color("#3a5290")
+	e.ambient_light_color = Color("#4a5686")
 	e.ambient_light_energy = 1.5
 	e.fog_enabled = true
 	e.fog_light_color = Color("#16244d")
@@ -196,8 +196,6 @@ func _sky_for(id: String) -> Sky:
 		return _skies[which]
 	var pm := PanoramaSkyMaterial.new()
 	pm.panorama = SKY_TEX[which]
-	if OS.get_environment("SKY_DEBUG") != "":
-		pm.panorama = ImageTexture.create_from_image(Image.load_from_file(OS.get_environment("SKY_DEBUG")))
 	# o tonemap da cena sobe a exposição para o celular; o céu compensa para manter a pintura
 	pm.energy_multiplier = 0.5
 	pm.filter = true
@@ -215,6 +213,11 @@ func _mat(col: Color, emit := 0.0, emit_col := Color("#ffc83d"), outline := 0.02
 		return _mats[key]
 	var m := ShaderMaterial.new()
 	m.shader = TOON
+	if kind in ["tile", "plaster", "ceiling", "concrete", "carpet", "planks"]:
+		# piso e parede um pouco menos azuis: a noite azul já vem do ambiente e da lua, e assim a luz
+		# amarela das lâmpadas aparece quente em vez de virar cinza sobre tinta azul saturada
+		var g := col.get_luminance() * 1.08
+		col = col.lerp(Color(g, g, g * 1.06), 0.32)
 	m.set_shader_parameter("albedo", col)
 	m.set_shader_parameter("emission_energy", emit)
 	m.set_shader_parameter("emission_color", emit_col)
@@ -395,8 +398,8 @@ func _light(pos: Vector3, col: Color, energy: float, rng: float) -> OmniLight3D:
 	# luz quente (lâmpada, abajur, porta acesa) ganha força e alcance: é o contraponto amarelo ao
 	# azul da noite, e o que faz o celular com brilho baixo ainda ler chão e paredes
 	var warm := col.r > col.b + 0.1
-	l.light_energy = energy * (1.4 if warm else 1.1)
-	l.omni_range = rng * (1.2 if warm else 1.0)
+	l.light_energy = energy * (1.8 if warm else 1.1)
+	l.omni_range = rng * (1.35 if warm else 1.0)
 	l.omni_attenuation = 1.2
 	world.add_child(l)
 	return l
@@ -563,8 +566,8 @@ func _place_people() -> void:
 	# uma luz só de "câmera" (preenchimento quente vindo do olhar do jogador) no lugar de uma luz por
 	# pessoa: as pessoas leem bem no escuro e a cena economiza até 2 luzes no celular
 	var fill := SpotLight3D.new()
-	fill.light_color = Color("#ffd9a8")
-	fill.light_energy = 1.8
+	fill.light_color = Color("#ffcf96")
+	fill.light_energy = 2.4
 	fill.spot_range = 14.0
 	fill.spot_angle = 30.0
 	fill.spot_attenuation = 0.6
@@ -662,16 +665,25 @@ func _animate_talkers() -> void:
 		# balão sobe e desce devagar e inclina um tiquinho, como quem está pensando no que dizer
 		b.position.y = float(t["base"]) + sin(_t * 1.8 + ph) * 0.04
 		b.rotation.z = sin(_t * 1.1 + ph) * 0.06
+		# tamanho quase constante na tela: quem está perto da câmera não ganha balão/nome gigante
+		# e quem está longe continua legível
+		var d := cam.global_position.distance_to(b.global_position)
+		var k := clampf(d / 5.5, 0.45, 1.6)
+		b.scale = Vector3(k, k, k)
+		var nl: Label3D = t["name"]
+		if nl:
+			nl.scale = Vector3(k, k, k)
+			nl.position.y = b.position.y + 0.42 * k
 		if not t["talked"]:
 			# respiração lenta e pequena (±15% da opacidade, ciclo de ~5 s)
 			var am: StandardMaterial3D = t["aura_mat"]
 			am.albedo_color.a = AURA_ON.a * (1.0 + 0.15 * sin(_t * 1.25 + ph))
 		var r: Sprite3D = t["ring"]
 		if r.visible:
-			var k := 0.5 + 0.5 * sin(_t * 2.6 + ph)
-			r.modulate.a = 0.45 + 0.4 * k
-			var s := 1.0 + 0.08 * k
-			r.scale = Vector3(s, s, s)
+			var kk := 0.5 + 0.5 * sin(_t * 2.6 + ph)
+			r.modulate.a = 0.45 + 0.4 * kk
+			var rs := 1.0 + 0.08 * kk
+			r.scale = Vector3(rs, rs, rs)
 
 
 # ------------------------------------------------------------------ peças extras das cenas
@@ -723,7 +735,7 @@ func set_showcase(on: bool) -> void:
 
 func _sky(bg: Color, ambient: Color, ambient_energy: float, fog: Color, fog_density: float) -> void:
 	_env.background_color = bg
-	_env.ambient_light_color = ambient.lerp(Color("#3a5290"), 0.4)
+	_env.ambient_light_color = ambient.lerp(Color("#4a5686"), 0.45)
 	_env.ambient_light_energy = ambient_energy * 1.3
 	_env.fog_light_color = fog
 	_env.fog_density = fog_density
@@ -1371,7 +1383,7 @@ func _scene_teatro() -> void:
 		for sx in [-3.15, 3.15]:
 			_flat(Vector3(sx, 0.03, -3.2 + r * 1.2), Vector3(0.12, 0.05, 0.08), WARM, 0.0, 1.6, WARM)
 	_light(Vector3(0, 3.2, -1.2), Color("#ffb070"), 0.7, 5.0)
-	_camera(Vector3(0.2, 2.3, 1.2), Vector3(0.0, 1.2, -6.0), 0.5)
+	_camera(Vector3(0.2, 2.5, 2.3), Vector3(0.0, 1.2, -6.0), 0.5)
 
 
 func _scene_sala_aula() -> void:
@@ -1451,7 +1463,7 @@ func _scene_sala_aula() -> void:
 	}
 	_free_anchors = [{"mesh": ledges[0]}, {"pos": Vector3(0.0, 0.8, -4.4), "size": Vector3(0.3, 0.04, 0.25)}]
 	_moon(Vector3(0.9, -0.6, -0.3), 1.0)
-	_camera(Vector3(1.6, 2.1, 1.9), Vector3(-0.5, 0.8, -4.8), 0.45)
+	_camera(Vector3(1.0, 2.2, 2.7), Vector3(-0.5, 0.8, -4.8), 0.45)
 
 
 func _scene_cantina() -> void:
@@ -1730,7 +1742,7 @@ func _scene_sala_professores() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.2, 0.8, -3.7), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(2.9, 0.98, -2.7), "size": Vector3(0.2, 0.1, 0.2)}]
 	_moon(Vector3(0.8, -0.5, -0.2), 1.0)
-	_camera(Vector3(0.6, 2.0, 2.0), Vector3(-0.3, 0.8, -4.4), 0.45)
+	_camera(Vector3(0.3, 2.2, 2.9), Vector3(-0.3, 0.8, -4.4), 0.45)
 
 
 func _scene_quadra() -> void:
