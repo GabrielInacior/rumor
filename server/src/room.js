@@ -494,7 +494,10 @@ class Room {
         if (!l) return false;
         if (op.clue == null) { l.evidence = null; return true; }
         if (!this.visibleClues(team, p).has(op.clue)) return false;
+        // a carta da pista sai do quadro e vai para o fio (não fica cópia solta)
+        for (const other of b.links) if (other !== l && other.evidence === op.clue) other.evidence = null;
         l.evidence = op.clue;
+        b.cards = b.cards.filter((c) => c.ref !== 'c:' + op.clue);
         return true;
       }
       default:

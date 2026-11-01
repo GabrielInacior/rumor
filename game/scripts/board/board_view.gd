@@ -216,9 +216,9 @@ func _evidence_ids() -> Dictionary:
 
 
 func _evidence_rect(l: Dictionary) -> Rect2:
-	# selo compacto encaixado no nó do fio (não atrapalha a organização do quadro)
+	# a própria carta da pista, em tamanho reduzido, pendurada no nó do fio
 	var k := _knot(l)
-	return Rect2(k + Vector2(-38, -2), Vector2(76, 50))
+	return Rect2(k + Vector2(-66, 6), Vector2(132, 90))
 
 
 # ------------------------------------------------------------------ entrada
@@ -441,22 +441,28 @@ func _draw_link_tag(l: Dictionary, pts: PackedVector2Array, sel: bool) -> void:
 	draw_string(f, r.position + Vector2(11, 25), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, UI.INK)
 	# prova presa no fio: bilhetinho amarelo com clipe
 	if l.get("evidence") != null:
-		# selo de prova: mini foto do tipo da pista + "PROVA", preso por um clipe no nó
+		# a carta da pista "foi" para o fio: mesmo visual da carta solta, menor, presa por tachinha
 		var clue := Net.clue_by_id(str(l["evidence"]))
 		var e := _evidence_rect(l)
 		var col := UI.clue_color(str(clue.get("kind", "")))
-		draw_rect(Rect2(e.position + Vector2(3, 4), e.size), Color(0, 0, 0, 0.35))
-		draw_rect(e, UI.PAPER if not sel else Color("#fff6d6"))
-		draw_rect(Rect2(e.position, Vector2(e.size.x, 6)), col)
+		var tilt := (float(hash(str(l["evidence"])) % 7) - 3.0) * 0.02
+		draw_set_transform(offset + e.get_center() * zoom, tilt, Vector2(zoom, zoom))
+		var lr := Rect2(-e.size / 2.0, e.size)
+		draw_rect(Rect2(lr.position + Vector2(4, 6), lr.size), Color(0, 0, 0, 0.35))
+		if sel:
+			draw_rect(lr.grow(5), UI.YELLOW)
+		draw_rect(lr, UI.PAPER)
+		draw_rect(Rect2(lr.position, Vector2(lr.size.x, 22)), col)
+		draw_string(UI.font("title"), lr.position + Vector2(7, 18), "PROVA · " + UI.clue_tag(str(clue.get("kind", ""))), HORIZONTAL_ALIGNMENT_LEFT, lr.size.x - 10, 17, UI.INK)
 		var ik: String = {"mensagem": "mensagem", "post": "celular", "depoimento": "microfone", "registro": "prancheta",
 			"bilhete": "papel", "objeto": "caixa"}.get(str(clue.get("kind", "")), "papel")
 		var itex: Texture2D = Snap.get_tex("item:" + ik)
-		var ir := Rect2(e.position + Vector2(4, 9), Vector2(30, 24))
 		if itex:
-			draw_texture_rect(itex, ir, false)
-		draw_string(UI.font("title"), e.position + Vector2(36, 28), "OK", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, UI.GREEN.darkened(0.35))
-		draw_string(UI.font("title"), e.position + Vector2(5, 46), "PROVA", HORIZONTAL_ALIGNMENT_CENTER, e.size.x - 10, 15, UI.INK)
-		draw_rect(Rect2(e.position + Vector2(e.size.x / 2.0 - 4, -9), Vector2(8, 15)), Color("#c8ccd8"))
+			draw_texture_rect(itex, Rect2(lr.end.x - 42, lr.position.y + 26, 36, 27), false)
+		draw_multiline_string(UI.font("type"), lr.position + Vector2(7, 40), UI.strip_emoji(str(clue.get("title", "pista"))), HORIZONTAL_ALIGNMENT_LEFT, lr.size.x - 50, 15, 3, UI.INK)
+		draw_circle(Vector2(0, lr.position.y + 3) + Vector2(2, 3), 8, Color(0, 0, 0, 0.35))
+		draw_circle(Vector2(0, lr.position.y + 3), 8, UI.YELLOW.darkened(0.1))
+		draw_set_transform(offset, 0.0, Vector2(zoom, zoom))
 	else:
 		draw_circle(k + Vector2(0, 14), 9, Color(UI.PAPER, 0.85))
 		draw_circle(k + Vector2(0, 14), 5, UI.RED)

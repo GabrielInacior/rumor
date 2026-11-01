@@ -184,6 +184,12 @@ func _run() -> void:
 	await _wait(4.0)
 	g.board.fit()
 	await _shot("09_quadro")
+	g.board.zoom = 0.85
+	var lk: Dictionary = Net.state["board"]["links"][0]
+	var kp: Vector2 = g.board._knot(lk)
+	g.board.offset = g.board.size / 2.0 - kp * g.board.zoom
+	g.board.queue_redraw()
+	await _shot("09b_quadro_zoom")
 	g.board.selected_ref = str(Net.state["board"]["cards"][0]["ref"])
 	g._update_action_bar()
 	await _shot("10_quadro_selecionado")
