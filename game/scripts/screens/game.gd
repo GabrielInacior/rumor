@@ -181,6 +181,47 @@ func _apply_talked() -> void:
 			scene3d.call("set_talked", parts[1], true)
 
 
+## Onde a pessoa está AGORA: a primeira posição (scene_people) cujas condições de flags batem.
+## Assim personagens mudam de sala depois de certas ações da equipe.
+func _person_scene(pid: String) -> String:
+	var flags: Dictionary = Net.state.get("flags", {})
+	var fallback := ""
+	for e in Net.case_data.get("scene_people", []):
+		var eid := str(e.get("id", "")) if e is Dictionary else str(e)
+		if eid != pid:
+			continue
+		var where := str(e.get("scene", locations[0])) if e is Dictionary else str(locations[0])
+		var ok := true
+		if e is Dictionary:
+			for f in e.get("if", []):
+				if not flags.has(f):
+					ok = false
+			for f in e.get("ifnot", []):
+				if flags.has(f):
+					ok = false
+		if ok:
+			return where
+		if fallback == "" and e is Dictionary and (e.get("if", []) as Array).is_empty():
+			fallback = where
+	return fallback
+
+
+func _people_in(room: String) -> Array:
+	var out := []
+	var seen := {}
+	for e in Net.case_data.get("scene_people", []):
+		var pid := str(e.get("id", "")) if e is Dictionary else str(e)
+		if seen.has(pid):
+			continue
+		seen[pid] = true
+		if _person_scene(pid) == room:
+			out.append(pid)
+	return out
+
+
+var _loc_people: Array = []
+
+
 func _load_location(l: String) -> void:
 	loc = l
 	var hs := []
@@ -188,18 +229,11 @@ func _load_location(l: String) -> void:
 		if str(h.get("scene", locations[0])) == l:
 			hs.append(h)
 	var ppl := []
-	for e in Net.case_data.get("scene_people", []):
-		var pid := ""
-		var where := str(locations[0])
-		if e is Dictionary:
-			pid = str(e.get("id", ""))
-			where = str(e.get("scene", where))
-		else:
-			pid = str(e)
-		if where == l:
-			var pc := Net.card_by_id(pid)
-			if not pc.is_empty():
-				ppl.append(pc)
+	_loc_people = _people_in(l)
+	for pid in _loc_people:
+		var pc := Net.card_by_id(str(pid))
+		if not pc.is_empty():
+			ppl.append(pc)
 	var found := {}
 	for hid in Net.state.get("hotspots", []):
 		found[str(hid)] = true
@@ -262,12 +296,12 @@ func _open_map() -> void:
 	mp.current = loc
 	mp.remaining = _remaining_by_room()
 	var ppl := {}
-	for e in Net.case_data.get("scene_people", []):
-		if e is Dictionary:
-			var room := str(e.get("scene", ""))
-			if not ppl.has(room):
-				ppl[room] = []
-			ppl[room].append(_name_of(str(e.get("id", ""))))
+	for room in locations:
+		var names := []
+		for pid in _people_in(str(room)):
+			names.append(_name_of(str(pid)))
+		if not names.is_empty():
+			ppl[room] = names
 	mp.people = ppl
 	mp.room_chosen.connect(func(id: String) -> void:
 		_close_sheet()
@@ -1386,6 +1420,16 @@ func refresh() -> void:
 		scene3d.mark_found(str(hid))
 	_apply_talked()
 	_refresh_loc_strip()
+	# alguém mudou de sala por causa de uma ação da equipe: atualiza a cena e avisa
+	if loc != "" and scene3d and tab == "cena" and _people_in(loc) != _loc_people:
+		var before := _loc_people.duplicate()
+		_load_location(loc)
+		for pid in before:
+			if not _loc_people.has(pid):
+				get_meta("main").toast("%s saiu daqui. Procure no MAPA." % _name_of(str(pid)), UI.YELLOW)
+		for pid in _loc_people:
+			if not before.has(pid):
+				get_meta("main").toast("%s apareceu aqui!" % _name_of(str(pid)), UI.YELLOW)
 	var lr: Variant = Net.state.get("lastResult")
 	if lr is Dictionary and float(lr.get("at", 0)) > last_result_at:
 		var first := last_result_at == 0.0 and Time.get_ticks_msec() < 3000

@@ -14,6 +14,11 @@ var card: Dictionary = {}
 var subtitle := ""
 var ch: Node3D
 var name_l: Label
+var role_l: Label
+var cast: Array = []          # cartas de quem participa da conversa (1 ou 2 pessoas)
+var chars := {}               # id -> Character
+var speaker := ""             # quem fala na linha atual
+var _tail: Control
 var text_l: Label
 var hint_l: Label
 var tag_l: Label
@@ -49,6 +54,15 @@ func open_tree(p_card: Dictionary, p_tree: Dictionary, p_team_clues: Array) -> v
 			node_id = str(e.get("node", node_id))
 			break
 	_enter_node()
+	# elenco: a árvore (ou o nó de entrada) pode chamar outra pessoa para a cena (conversa a dois)
+	var ids: Array = _node().get("cast", tree.get("cast", []))
+	cast = [card]
+	for cid in ids:
+		if str(cid) != str(card.get("id", "")):
+			var other := Net.card_by_id(str(cid))
+			if not other.is_empty():
+				cast.append(other)
+	cast = cast.slice(0, 2)
 
 
 var flags: Dictionary = {}
@@ -133,8 +147,8 @@ func _ready() -> void:
 	tv.add_child(tag_l)
 	name_l = UI.title(UI.strip_emoji(str(card.get("name", ""))).to_upper(), 64, UI.YELLOW)
 	tv.add_child(name_l)
-	if str(card.get("role", "")) != "":
-		tv.add_child(UI.label(str(card["role"]), 22, UI.PAPER))
+	role_l = UI.label(str(card.get("role", "")), 22, UI.PAPER)
+	tv.add_child(role_l)
 	top.add_child(tv)
 	add_child(top)
 	# saída sempre visível: dá para largar a conversa a qualquer momento
@@ -179,9 +193,15 @@ func _ready() -> void:
 	tail.offset_bottom = -30
 	add_child(tail)
 	tail.bubble = bubble
+	_tail = tail
 	modulate.a = 0.0
 	create_tween().tween_property(self, "modulate:a", 1.0, 0.25)
 	_next()
+
+
+func _wide() -> bool:
+	var vs := get_viewport_rect().size
+	return vs.x > vs.y * 1.05
 
 
 func _build_set() -> void:
@@ -220,10 +240,23 @@ func _build_set() -> void:
 		slat.position = Vector3(-1.1, 1.3 + i * 0.16, -1.54)
 		slat.rotation.z = 0.25
 		w.add_child(slat)
-	ch = Character.new()
-	w.add_child(ch)
-	ch.setup(card)
-	ch.rotation.y = 0.18
+	if cast.is_empty():
+		cast = [card]
+	var duo := cast.size() >= 2
+	for i in cast.size():
+		var c: Dictionary = cast[i]
+		var chn := Character.new()
+		w.add_child(chn)
+		chn.setup(c)
+		if duo:
+			# dois na cena: um de cada lado, virados um para o outro; no celular em pé ficam mais juntos
+			var gap := 0.62 if _wide() else 0.4
+			chn.position = Vector3(-gap if i == 0 else gap, 0, 0.0)
+			chn.rotation.y = 0.55 if i == 0 else -0.55
+		else:
+			chn.rotation.y = 0.18
+		chars[str(c.get("id", ""))] = chn
+	ch = chars[str(card.get("id", ""))]
 	var key := OmniLight3D.new()
 	key.light_color = Color("#ffcf7a")
 	key.light_energy = 3.2
@@ -237,10 +270,15 @@ func _build_set() -> void:
 	rim.position = Vector3(-1.1, 2.0, -0.8)
 	w.add_child(rim)
 	var cam := Camera3D.new()
-	cam.fov = 36
 	w.add_child(cam)
-	cam.position = Vector3(0.18, 1.55, 2.35)
-	cam.look_at(Vector3(0.0, 1.36, 0), Vector3.UP)
+	if duo:
+		cam.fov = 44 if _wide() else 50
+		cam.position = Vector3(0.0, 1.5, 3.1 if _wide() else 3.7)
+		cam.look_at(Vector3(0.0, 1.25, 0), Vector3.UP)
+	else:
+		cam.fov = 36
+		cam.position = Vector3(0.18, 1.55, 2.35)
+		cam.look_at(Vector3(0.0, 1.36, 0), Vector3.UP)
 
 
 func _show_choices() -> bool:
@@ -314,9 +352,27 @@ func _next() -> void:
 	var l: Dictionary = lines[idx]
 	_full = _fill(UI.strip_emoji(str(l.get("text", ""))))
 	_shown = 0.0
-	ch.set_expression(str(l.get("expr", "neutro")))
-	ch.play(str(l.get("anim", "falando")))
-	ch.set_talking(true)
+	speaker = str(l.get("who", card.get("id", "")))
+	if not chars.has(speaker):
+		speaker = str(card.get("id", ""))
+	var sp: Node3D = chars[speaker]
+	for id in chars:
+		var other: Node3D = chars[id]
+		if other != sp:
+			other.call("set_talking", false)
+			if l.has("react"):
+				other.call("set_expression", str(l["react"]))
+			other.call("play", "idle")
+	sp.call("set_expression", str(l.get("expr", "neutro")))
+	sp.call("play", str(l.get("anim", "falando")))
+	sp.call("set_talking", true)
+	ch = sp
+	# o nome no topo e o rabicho do balão seguem quem está falando
+	var sc := Net.card_by_id(speaker)
+	name_l.text = UI.strip_emoji(str(sc.get("name", card.get("name", "")))).to_upper()
+	role_l.text = str(sc.get("role", ""))
+	if _tail:
+		_tail.set("side", 0.5 if chars.size() < 2 else (0.3 if speaker == str(cast[0].get("id", "")) else 0.7))
 	var more: bool = idx < lines.size() - 1 or (not tree.is_empty() and not _node().get("end", false) and not (_node().get("choices", []) as Array).is_empty())
 	hint_l.text = "toque para continuar" if more else "toque para fechar"
 	Sfx.play("paper_flip", -14.0, 1.3)
@@ -349,6 +405,7 @@ func _gui_input(e: InputEvent) -> void:
 ## rabicho do balão apontando para o personagem
 class Tail extends Control:
 	var bubble: Control
+	var side := 0.5
 
 	func _process(_dt: float) -> void:
 		queue_redraw()
@@ -357,7 +414,7 @@ class Tail extends Control:
 		if bubble == null:
 			return
 		var top := bubble.position.y - position.y
-		var x := size.x * 0.5
+		var x := size.x * side
 		var pts := PackedVector2Array([Vector2(x - 40, top + 4), Vector2(x + 10, top + 4), Vector2(x - 30, top - 60)])
 		draw_colored_polygon(pts, Color("#fbf8ef"))
 		draw_polyline(PackedVector2Array([pts[0], pts[2], pts[1]]), UI.INK, 5.0)

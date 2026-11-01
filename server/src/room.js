@@ -88,8 +88,18 @@ class Room {
   attachHost(sock) { this.hostSock = sock; sock.room = this; sock.role = 'host'; this.touch(); }
 
   join(sock, rawName) {
-    if (this.players.size >= 60) return { error: 'Sala cheia.' };
     let name = String(rawName || 'Agente').slice(0, 24).trim() || 'Agente';
+    // voltou depois de cair (outro celular, sessão apagada): o mesmo codinome de alguém que está
+    // desconectado retoma aquele jogador, com a mesma equipe e as mesmas pistas
+    const back = [...this.players.values()].find((x) => x.name === name && !x.sock);
+    if (back) {
+      back.sock = sock; back.secret = token(); back.lastAction = Date.now();
+      sock.room = this; sock.role = 'player'; sock.pid = back.id;
+      this.log(back.teamId, back.name, `${back.name} voltou para a sala`, 'sala');
+      this.touch();
+      return { player: back, rejoined: true };
+    }
+    if (this.players.size >= 60) return { error: 'Sala cheia.' };
     const taken = new Set([...this.players.values()].map((p) => p.name));
     if (taken.has(name)) {
       let n = 2;

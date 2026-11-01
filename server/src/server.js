@@ -158,7 +158,7 @@ function handle(sock, msg) {
     if (!room) { send(sock, { t: 'error', msg: 'Sala não encontrada. Confira o código.' }); return; }
     const r = room.join(sock, msg.name);
     if (r.error) { send(sock, { t: 'error', msg: r.error }); return; }
-    send(sock, { t: 'joined', code: room.code, pid: r.player.id, secret: r.player.secret, name: r.player.name });
+    send(sock, { t: 'joined', code: room.code, pid: r.player.id, secret: r.player.secret, name: r.player.name, rejoined: !!r.rejoined });
     if (room.phase !== 'lobby') send(sock, { t: 'case', case: require('./room').publicCase(room.caseData) });
     room.broadcast();
     return;

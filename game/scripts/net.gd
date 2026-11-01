@@ -200,6 +200,8 @@ func _on_message(m: Dictionary) -> void:
 			event.emit(m["evt"])
 		"joined":
 			code = str(m["code"]); pid = str(m["pid"]); secret = str(m["secret"]); my_name = str(m["name"])
+			if m.get("rejoined", false):
+				error_msg.emit.call_deferred("Você voltou para a sua equipe! Tudo o que vocês fizeram continua aqui.")
 			role = "player"
 			_save_session()
 			joined.emit()
