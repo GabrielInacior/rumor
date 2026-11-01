@@ -638,7 +638,11 @@
       "time": "7h20",
       "text": "Letras recortadas de revista: 'SAI DO TIME ATÉ SEXTA OU A ESCOLA INTEIRA VAI SABER.' Cheiro forte de cola de morango.",
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "art": "ransom",
+        "text": "SAI DO TIME ATÉ SEXTA"
+      }
     },
     {
       "id": "c_chat_time",
@@ -668,7 +672,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_armario",
@@ -676,7 +683,10 @@
       "title": "Armário da Bia",
       "text": "A fresta do armário foi forçada com algo fino. No chão, um 'S' recortado da capa da revista 'Vôlei Total'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "recorte"
+      }
     },
     {
       "id": "c_bolsa",
@@ -684,7 +694,10 @@
       "title": "Bolsa da Lu",
       "text": "Na bolsa da Lu: uma 'Vôlei Total' com a capa toda recortada e uma cola bastão sabor morango.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "revista"
+      }
     },
     {
       "id": "c_treino",
@@ -692,7 +705,10 @@
       "title": "Chamada do treino",
       "text": "Chamada de hoje: 7h00, Duda presente. Lu chegou 7h25, 'trânsito'. O bilhete foi achado às 7h20.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_ficha",
@@ -700,7 +716,10 @@
       "title": "Ficha do técnico",
       "text": "Ficha do Prof. Ivo: 'Se a Bia não recuperar as notas, a titular passa a ser a LU.'",
       "release": "t+150",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     }
   ],
   "hotspots": [

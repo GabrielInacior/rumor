@@ -798,7 +798,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "muro"
+      }
     },
     {
       "id": "c_spray",
@@ -806,7 +809,10 @@
       "title": "Lixeira do pátio",
       "text": "Na lixeira, uma lata de spray vermelho 'Color Max' vazia, com etiqueta da Papelaria Estrela.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "spray"
+      }
     },
     {
       "id": "c_pegada",
@@ -814,7 +820,10 @@
       "title": "Porta dos fundos",
       "text": "Tranca dos fundos quebrada. No chão, pegada de tênis com desenho de raio, tamanho 41, respingada de vermelho.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "pegada"
+      }
     },
     {
       "id": "c_livro",
@@ -823,7 +832,10 @@
       "time": "22h10",
       "text": "Livro do zelador, domingo: '22h10, barulho no pátio. Vulto de capuz fugiu pelo depósito.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_ocorrencia",
@@ -831,7 +843,10 @@
       "title": "Ocorrência de sexta",
       "text": "Ocorrência do Prof. Nogueira, sexta: 'Thiago, 2B, pego colando. Prova zerada. Fora da viagem.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prova"
+      }
     },
     {
       "id": "c_tenis",
@@ -839,7 +854,10 @@
       "title": "Achados da coordenação",
       "text": "Nos achados da coordenação: um tênis branco com raio, 41, respingado de vermelho. Etiqueta na palmilha: 'THIAGO 2B'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "tenis"
+      }
     },
     {
       "id": "c_live_kevin",
@@ -861,7 +879,10 @@
         "who": "kevin"
       },
       "release": "t+180",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dep_kevin",
@@ -870,7 +891,10 @@
       "who": "kevin",
       "text": "Kevin estava ao vivo no festival da praça domingo às 22h, e assina todo trabalho dele.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "spray"
+      }
     },
     {
       "id": "c_dep_jorge",
@@ -879,7 +903,10 @@
       "who": "jorge",
       "text": "Seu Jorge viu um vulto de capuz e tênis com raio fugir pelos fundos do depósito às 22h10.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "pegada"
+      }
     },
     {
       "id": "c_confissao",
@@ -888,7 +915,10 @@
       "who": "thiago",
       "text": "Thiago entrou pelos fundos do depósito domingo à noite e pichou o muro por vingança.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "spray"
+      }
     }
   ],
   "hotspots": [

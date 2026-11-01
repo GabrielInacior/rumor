@@ -1579,7 +1579,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_chat_time",
@@ -1609,7 +1612,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_dm_gabriel",
@@ -1634,7 +1640,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_dm_pedro",
@@ -1659,7 +1668,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_dm_kaua",
@@ -1679,7 +1691,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_story_kevin",
@@ -1701,7 +1716,10 @@
         "who": "kevin"
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_sumula",
@@ -1709,7 +1727,10 @@
       "title": "Súmula da semifinal",
       "text": "Súmula: 2A perdeu de 3 a 1. Goleiro: Léo, reserva, primeiro jogo como titular. Suspensos: Gabriel, Pedro, Kauã.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_prancheta",
@@ -1717,7 +1738,10 @@
       "title": "Prancheta do técnico",
       "text": "Prancheta: 'Jogada 7 = escanteio curto. Explicada só no vestiário, sexta. Presentes: titulares e Léo.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_redacao",
@@ -1725,7 +1749,10 @@
       "title": "Redação corrigida",
       "text": "Redação do Léo, nota 6. Em vermelho, três vezes: 'É EXCEÇÃO, não excessão!'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "redacao"
+      }
     },
     {
       "id": "c_campeonato",
@@ -1733,7 +1760,10 @@
       "title": "Cartaz do campeonato",
       "text": "Cartaz: 'Campeonato online de videogame, toda noite às 23h. Dupla líder: KEVIN e LÉO.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "cartaz"
+      }
     },
     {
       "id": "c_computador",
@@ -1742,7 +1772,10 @@
       "time": "14h10",
       "text": "Reserva do computador: ontem 14h às 14h30, Léo. No histórico: instagram.com, 14h10.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "computador"
+      }
     },
     {
       "id": "c_shopping",
@@ -1750,7 +1783,10 @@
       "title": "Mural do corredor",
       "text": "Foto no mural do jornal: Gabriel, Pedro e Kauã no shopping, 17h, esperando com flores. A Luiza não veio.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "camera"
+      }
     },
     {
       "id": "c_busca",
@@ -1776,7 +1812,10 @@
         "who": "nanda"
       },
       "release": "t+270",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "computador"
+      }
     },
     {
       "id": "c_dep_ivo",
@@ -1785,7 +1824,10 @@
       "who": "ivo",
       "text": "A 'jogada 7' só foi explicada no vestiário, para os titulares e o Léo.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_dep_gabriel",
@@ -1794,7 +1836,10 @@
       "who": "gabriel",
       "text": "A Luiza perguntou ao Gabriel da 'jogada 7', um nome que só existe dentro do vestiário.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_dep_mel",
@@ -1803,7 +1848,10 @@
       "who": "mel",
       "text": "O Léo pediu à Mel um filtro 'cara de Portugal' na semana passada.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "camera"
+      }
     },
     {
       "id": "c_dep_kevin",
@@ -1812,7 +1860,10 @@
       "who": "kevin",
       "text": "Kevin deu ao Léo as fotos da prima. Os dois jogam juntos toda noite às 23h. O perfil era do Léo.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "camera"
+      }
     },
     {
       "id": "c_dep_nanda",
@@ -1821,7 +1872,10 @@
       "who": "nanda",
       "text": "Nanda viu o Léo no computador da biblioteca, ontem às 14h10, com o Instagram aberto.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "computador"
+      }
     },
     {
       "id": "c_dep_ana",
@@ -1830,7 +1884,10 @@
       "who": "ana",
       "text": "Só um aluno escreve 'excessão' com dois esses, mesmo corrigido três vezes: o Léo.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "papel"
+      }
     },
     {
       "id": "c_confissao",
@@ -1839,7 +1896,10 @@
       "who": "leo",
       "text": "Léo admite que usou o computador da biblioteca às 14h10, mas nega qualquer ligação com a Luiza.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "computador"
+      }
     },
     {
       "id": "c_redacao_lista",
@@ -1847,7 +1907,10 @@
       "title": "Lista do reforço",
       "text": "Lista do reforço de redação: 'Léo: excessão (3x). Continua errando.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     }
   ],
   "hotspots": [

@@ -1037,7 +1037,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_cadeado",
@@ -1045,7 +1048,10 @@
       "title": "Armário 12",
       "text": "Armário 12 do vestiário, do Gabriel: cadeado aberto com o segredo, sem arrombamento. O celular sumiu, a carteira ficou.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "cadeado"
+      }
     },
     {
       "id": "c_lista",
@@ -1053,7 +1059,10 @@
       "title": "Chamada da aula",
       "text": "Educação física, 9h às 10h. Saíram cedo: Gui às 9h40 ('dor de barriga') e Pedro às 9h45. Kauã ficou até o fim.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_papel",
@@ -1061,7 +1070,10 @@
       "title": "Armário do Gui",
       "text": "Armário do Gui: um papel com '12 = 0408 (niver da Mari)'. 0408 é o segredo do cadeado do Gabriel.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "papel"
+      }
     },
     {
       "id": "c_recibo",
@@ -1069,7 +1081,10 @@
       "title": "Mochila do Kauã",
       "text": "Na mochila do Kauã, o recibo do tênis: pago com o cartão 'Bolsa Atleta Municipal', segunda.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "tenis"
+      }
     },
     {
       "id": "c_comanda",
@@ -1078,7 +1093,10 @@
       "time": "9h46",
       "text": "Comanda: 9h46, Pedro, uma coxinha. 9h50, Gui pediu um saco plástico 'pra guardar uma coisa'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "comanda"
+      }
     },
     {
       "id": "c_anuncio",
@@ -1099,7 +1117,10 @@
         ]
       },
       "release": "t+240",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dep_kaua",
@@ -1108,7 +1129,10 @@
       "who": "kaua",
       "text": "Kauã comprou o tênis com a Bolsa Atleta e ficou na quadra até as 10h.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "tenis"
+      }
     },
     {
       "id": "c_dep_pedro",
@@ -1117,7 +1141,10 @@
       "who": "pedro",
       "text": "Pedro viu, às 9h41, o Gui abrindo o armário do Gabriel com a lanterna do celular.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "cadeado"
+      }
     },
     {
       "id": "c_confissao",
@@ -1126,7 +1153,10 @@
       "who": "gui",
       "text": "Gui pegou o celular do melhor amigo para pagar uma dívida num site de skins e anunciou na internet.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     }
   ],
   "hotspots": [

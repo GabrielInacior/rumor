@@ -1585,7 +1585,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prova"
+      }
     },
     {
       "id": "c_aviso",
@@ -1593,7 +1596,10 @@
       "title": "Aviso da coordenação",
       "text": "Segunda, 7h: 'Prova final de matemática CANCELADA. O gabarito vazou. Quem souber, fale com a coordenação.'",
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_dm_fantasma",
@@ -1623,7 +1629,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_story_nico",
@@ -1645,7 +1654,10 @@
         "who": "nico"
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "computador"
+      }
     },
     {
       "id": "c_grupo",
@@ -1675,7 +1687,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_chat_lia",
@@ -1695,7 +1710,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_log_impressora",
@@ -1704,7 +1722,10 @@
       "time": "13h48",
       "text": "Impressora da coordenação: quinta 13h48, 'final_mat_GABARITO.pdf', impresso por nico.ajudante. Cópia autorizada: só Profa. Rosa, 7h.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "impressora"
+      }
     },
     {
       "id": "c_escala",
@@ -1712,7 +1733,10 @@
       "title": "Escala da coordenação",
       "text": "Coordenação, quinta 13h às 14h: 'só o ajudante Nico. Coordenadora em reunião fora.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_celular_pedro",
@@ -1720,7 +1744,10 @@
       "title": "Bolsa do Pedro",
       "text": "Na bolsa do Pedro, o celular sem senha: 27 Pix de R$ 20 recebidos no domingo.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_registro_bib",
@@ -1728,7 +1755,10 @@
       "title": "Registro da biblioteca",
       "text": "Biblioteca, quinta 13h às 15h: Lia, estudando para a olimpíada. Saída: 15h02.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_comprovante",
@@ -1736,7 +1766,14 @@
       "title": "Mochila do Kauã",
       "text": "Comprovante do Kauã: Pix de R$ 20 para 'Pedro H. Souza', domingo 19h03.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "art": "pix",
+        "valor": "R$ 20,00",
+        "de": "Kauã",
+        "para": "Pedro H. Souza",
+        "hora": "19h03"
+      }
     },
     {
       "id": "c_foto_gabarito",
@@ -1744,7 +1781,10 @@
       "title": "Foto impressa",
       "text": "A foto original do gabarito: no canto aparece a bandeja 'IMPRESSORA 2, COORDENAÇÃO' e um chaveiro de controle de videogame.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prova"
+      }
     },
     {
       "id": "c_classificado",
@@ -1752,7 +1792,10 @@
       "title": "Mural da cantina",
       "text": "Papel meio arrancado do mural: 'Precisa de nota? Chama o @fantasma 👻'. Letra de impressora.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "cartaz"
+      }
     },
     {
       "id": "c_email",
@@ -1760,7 +1803,10 @@
       "title": "Recado da coordenação",
       "text": "Da coordenação: o perfil @fantasma foi criado com o e-mail nico.ajudante.2026. O mesmo usuário da impressora.",
       "release": "t+270",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "computador"
+      }
     },
     {
       "id": "c_dep_pedro",
@@ -1769,7 +1815,10 @@
       "who": "pedro",
       "text": "Pedro vendia o gabarito, mas recebia do @fantasma, que ficava com 70% e exigia anonimato.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dep_rosa",
@@ -1778,7 +1827,10 @@
       "who": "rosa",
       "text": "Às 13h48 a professora estava em aula; só o Nico fica na coordenação. Ela o reprovou no ano passado.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "impressora"
+      }
     },
     {
       "id": "c_dep_lia",
@@ -1787,7 +1839,10 @@
       "who": "lia",
       "text": "Lia estudava na biblioteca das 13h às 15h02 e ofereceu ajuda à professora por uma carta de recomendação.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "livro"
+      }
     },
     {
       "id": "c_dep_kaua",
@@ -1796,7 +1851,10 @@
       "who": "kaua",
       "text": "Kauã pagou ao Pedro, que disse ter 'um fornecedor'.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prova"
+      }
     },
     {
       "id": "c_dep_mari",
@@ -1805,7 +1863,10 @@
       "who": "mari",
       "text": "Mari conta que a foto do gabarito sempre vinha de um tal @fantasma.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prova"
+      }
     },
     {
       "id": "c_confissao",
@@ -1814,7 +1875,10 @@
       "who": "nico",
       "text": "Nico admite que imprimiu o gabarito às 13h48, dizendo que a professora pediu, e nega ser o @fantasma.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "impressora"
+      }
     }
   ],
   "hotspots": [

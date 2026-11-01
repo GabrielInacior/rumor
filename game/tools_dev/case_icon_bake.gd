@@ -2,14 +2,15 @@ extends Node
 ## Gera a "foto de evidência" de cada caso (objeto 3D do campo cover_icon) para as pastas do
 ## solo e a janela de casos do professor. Nunca mostra uma pessoa (não entrega pista).
 ##   godot --audio-driver Dummy --path . --resolution 640x480 res://tools_dev/case_icon_bake.tscn
-const FLAT := ["carta", "papel", "prancheta", "celular", "mensagem", "recorte", "revista", "prova", "envelope", "cracha", "ingresso", "pegada"]
+const FLAT := ["carta", "papel", "prancheta", "celular", "mensagem", "recorte", "revista", "prova", "envelope", "cracha", "ingresso", "pegada", "bloco", "redacao", "comanda"]
 
 
 const KINDS := ["celular", "mensagem", "onibus", "trofeu", "livro", "carta", "chocolate", "carregador", "baqueta", "fita",
 	"computador", "pizza", "chave", "mochila", "coroa", "camera", "papel", "microfone", "bola", "prancheta", "caixa",
 	"cartaz", "wifi", "relogio", "sacola", "cofre", "urna", "microscopio", "spray", "cadeado", "revista", "recorte",
 	"dinheiro", "tenis", "pegada", "pendrive", "envelope", "cracha", "camera_seg", "impressora", "prova", "luva",
-	"bolsa", "ingresso"]
+	"bolsa", "ingresso", "muro", "vidro", "alarme", "molde", "lousa", "bloco", "balas", "caixinha_som", "balde",
+	"disjuntor", "achados", "postit", "redacao", "comanda"]
 
 
 func _ready() -> void:

@@ -1445,7 +1445,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dm_ameaca",
@@ -1470,7 +1473,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_chat_lia",
@@ -1490,7 +1496,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_escala_troca",
@@ -1498,7 +1507,10 @@
       "title": "Troca de escala",
       "text": "Troca de escala, terça: 'Joana (dentista, atestado) troca com Caíque. Biblioteca 13h às 15h: CAÍQUE.'",
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_pix_pedro",
@@ -1518,7 +1530,14 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "art": "pix",
+        "valor": "R$ 50,00",
+        "de": "Pedro",
+        "para": "C. Monteiro",
+        "hora": "14h30"
+      }
     },
     {
       "id": "c_story_caique",
@@ -1540,7 +1559,10 @@
         "who": "caique"
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "ingresso"
+      }
     },
     {
       "id": "c_senha",
@@ -1548,7 +1570,10 @@
       "title": "Monitor da biblioteca",
       "text": "Post-it no monitor: 'senha monitoria: biblio2026 (NÃO ESQUECER, J.)'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "postit"
+      }
     },
     {
       "id": "c_achados",
@@ -1556,7 +1581,10 @@
       "title": "Achados e perdidos",
       "text": "Caixa de achados: dois celulares desbloqueados, um diário com o cadeado aberto, bilhetes dobrados. Etiqueta: 'Responsável: Caíque'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "achados"
+      }
     },
     {
       "id": "c_bilhete_kevin",
@@ -1564,7 +1592,10 @@
       "title": "Bolsa do Kevin",
       "text": "Na bolsa do Kevin, um bilhete: 'Devolvi teu celular dos achados. Abri só pra ver de quem era 😉 C.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "carta"
+      }
     },
     {
       "id": "c_chamada_aula",
@@ -1572,7 +1603,10 @@
       "title": "Chamada da redação",
       "text": "Aula de redação, terça 13h30 às 14h30. Presentes: Lia (1ª fila), Pedro e mais 28.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_atestado",
@@ -1580,7 +1614,10 @@
       "title": "Atestado arquivado",
       "text": "Atestado: Joana, consultório dentário, terça das 13h às 15h30.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_comanda",
@@ -1589,7 +1626,10 @@
       "time": "14h00",
       "text": "Comanda: 14h00, Caíque, um suco. Anotação da Tia Cida: 'perguntou se o wifi da biblioteca é bom pra postar'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "wifi"
+      }
     },
     {
       "id": "c_coord_log",
@@ -1597,7 +1637,10 @@
       "title": "Rastreio da coordenação",
       "text": "Da coordenação: os posts e as DMs da @ninguém saíram do computador da biblioteca, conta 'monitoria', às 14h05 e 14h12.",
       "release": "t+300",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "computador"
+      }
     },
     {
       "id": "c_dep_joana",
@@ -1606,7 +1649,10 @@
       "who": "joana",
       "text": "Joana estava no dentista na terça. O Caíque cobriu o plantão dela, e a senha estava num post-it.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "computador"
+      }
     },
     {
       "id": "c_dep_kevin",
@@ -1615,7 +1661,10 @@
       "who": "kevin",
       "text": "O celular do Kevin passou pelos achados desbloqueado; a foto da cola só estava nele. O bilhete é assinado 'C.'.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dep_lia",
@@ -1624,7 +1673,10 @@
       "who": "lia",
       "text": "Lia estava na aula de redação das 13h30 às 14h30. Diz que o Caíque copia o 'tá ligado??' dela.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "papel"
+      }
     },
     {
       "id": "c_dep_pedro",
@@ -1633,7 +1685,10 @@
       "who": "pedro",
       "text": "Pedro pagou cinquenta reais às 14h30, para 'C. Monteiro'. Escondia que vai repetir de ano.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "dinheiro"
+      }
     },
     {
       "id": "c_confissao",
@@ -1642,7 +1697,10 @@
       "who": "caique",
       "text": "Caíque admite que mexia nos celulares e diários dos achados e que cobriu o plantão, mas nega ser a @ninguém.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "caixa"
+      }
     }
   ],
   "hotspots": [

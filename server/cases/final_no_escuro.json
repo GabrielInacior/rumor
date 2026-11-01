@@ -1944,7 +1944,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_bilhete_camarim",
@@ -1952,7 +1955,10 @@
       "title": "Bilhete no camarim",
       "text": "No espelho do camarim d'Os Ácaros, impresso: 'QUEM CANTA DE MENTIRA, CAI NO ESCURO.'",
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "carta"
+      }
     },
     {
       "id": "c_chat_banda",
@@ -1982,7 +1988,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_chat_danca",
@@ -2007,7 +2016,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_story_iris",
@@ -2024,7 +2036,10 @@
         "who": "iris"
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dm_marta",
@@ -2049,7 +2064,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_caixinha",
@@ -2057,7 +2075,10 @@
       "title": "Atrás do figurino",
       "text": "Atrás das roupas do camarim, uma caixinha de som tocando em loop a voz do Enzo: 'mi mi mi, lá lá lá'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "caixinha_som"
+      }
     },
     {
       "id": "c_log_luz",
@@ -2066,7 +2087,10 @@
       "time": "20h12",
       "text": "Mesa de luz: 20h12, queda total. Anotação da Íris: 'Gabi e Nina no palco. Enzo no camarim. Caiu tudo, até a mesa.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_bala",
@@ -2074,7 +2098,10 @@
       "title": "Caixa de fusíveis",
       "text": "Disjuntor do teatro desligado à mão. No chão, a embalagem de uma bala 'Mel & Garganta'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "balas"
+      }
     },
     {
       "id": "c_porta",
@@ -2082,7 +2109,10 @@
       "title": "Porta dos fundos",
       "text": "Porta dos fundos do depósito aberta com chave, sem arrombamento. Ela dá para o lado da sala de música.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "disjuntor"
+      }
     },
     {
       "id": "c_kit_enzo",
@@ -2090,7 +2120,10 @@
       "title": "Armário da banda",
       "text": "Prateleira do Enzo: fone de retorno e um pendrive 'PLAYBACK_FINAL'. Nenhuma bala de mel.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "pendrive"
+      }
     },
     {
       "id": "c_ordem",
@@ -2098,7 +2131,10 @@
       "title": "Quadro de horários",
       "text": "Ordem: 20h00 Dança do 9º, 20h12 Os Ácaros. Rodapé: 'Balas de mel para os cantores: pegar com a Profa. Marta.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_comanda",
@@ -2107,7 +2143,10 @@
       "time": "20h08",
       "text": "20h08 às 20h25: nove sucos para a Dança do 9º. Kevin pagou.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_balde",
@@ -2115,7 +2154,10 @@
       "title": "Aviso no balde",
       "text": "Aviso: 'Corredor encerado das 20h às 20h30. NÃO PISAR. Jorge.' O chão brilha, sem nenhuma pegada.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "balde"
+      }
     },
     {
       "id": "c_notas",
@@ -2123,7 +2165,10 @@
       "title": "Notas dos jurados",
       "text": "Notas parciais, 19h55: Os Ácaros 9,7. Dança do 9º 9,1. Regra: 'atração que não se apresentar recebe zero'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_bolsa_marta",
@@ -2131,7 +2176,10 @@
       "title": "Bolsa da organizadora",
       "text": "Na bolsa da Profa. Marta: o molho de chaves do zelador e um saco de balas 'Mel & Garganta' pela metade.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "bolsa"
+      }
     },
     {
       "id": "c_audio",
@@ -2139,7 +2187,10 @@
       "title": "Celular da caixinha",
       "text": "Íris examinou a caixinha: arquivo 'teste_playback_enzo.mp3', gravado sexta, tocando em repetição desde 20h05.",
       "release": "t+240",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dep_iris",
@@ -2148,7 +2199,10 @@
       "who": "iris",
       "text": "Íris não saiu da cabine. Às 20h12, Gabi e Nina estavam no palco e a voz do Enzo parecia repetida.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microfone"
+      }
     },
     {
       "id": "c_dep_jorge",
@@ -2157,7 +2211,10 @@
       "who": "jorge",
       "text": "Ninguém passou pelo corredor encerado. As chaves do zelador sumiram às 19h40 da mesa onde estava a organizadora.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "chave"
+      }
     },
     {
       "id": "c_dep_enzo",
@@ -2166,7 +2223,10 @@
       "who": "enzo",
       "text": "Enzo diz que estava no camarim aquecendo a voz às 20h12.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microfone"
+      }
     },
     {
       "id": "c_dep_enzo_verdade",
@@ -2175,7 +2235,10 @@
       "who": "enzo",
       "text": "Enzo canta de playback. O áudio era um teste. Às 20h06 foi ao banheiro, passando mal de nervoso.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "pendrive"
+      }
     },
     {
       "id": "c_dep_gabi",
@@ -2184,7 +2247,10 @@
       "who": "gabi",
       "text": "Às 20h10 a Profa. Marta passou pela sala de música e saiu pelos fundos. Ela distribui as balas de mel.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "caixa"
+      }
     },
     {
       "id": "c_dep_kevin",
@@ -2193,7 +2259,10 @@
       "who": "kevin",
       "text": "Kevin e a dança estavam na cantina desde 20h08. A Juju achou a mãe estranha.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "trofeu"
+      }
     },
     {
       "id": "c_dep_juju",
@@ -2202,7 +2271,10 @@
       "who": "juju",
       "text": "A mãe da Juju, a organizadora, disse 'hoje é seu dia, confia na mãe'. A Juju não sabia de nada.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_dep_helio",
@@ -2211,7 +2283,10 @@
       "who": "helio",
       "text": "O Prof. Hélio contou à Marta sobre o playback. Às 19h58 ela perguntou: 'e se faltar luz?'.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_confissao",
@@ -2220,7 +2295,10 @@
       "who": "marta",
       "text": "A organizadora admite que pegou as chaves do zelador às 19h40, 'para buscar cadeiras', e nega ter ido ao disjuntor.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "chave"
+      }
     }
   ],
   "hotspots": [

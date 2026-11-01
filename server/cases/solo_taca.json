@@ -1257,7 +1257,10 @@
       "time": "9h00",
       "text": "Laudo: 'Peça de latão com tinta dourada. Na base, restos de resina de molde. NÃO é a taça de 1962.'",
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "trofeu"
+      }
     },
     {
       "id": "c_chat",
@@ -1287,7 +1290,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_vitrine",
@@ -1295,7 +1301,10 @@
       "title": "Vitrine",
       "text": "Na vitrine, a 'taça' brilha demais e a alça é lisinha, sem marca nenhuma.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "trofeu"
+      }
     },
     {
       "id": "c_chave_log",
@@ -1304,7 +1313,10 @@
       "time": "18h00",
       "text": "Caderno da chave da vitrine: 'Sexta 18h, retirada para limpeza especial. Ass. Profa. Marta.' Devolvida 18h20.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "chave"
+      }
     },
     {
       "id": "c_encomenda",
@@ -1312,7 +1324,10 @@
       "title": "Encomenda do teatro",
       "text": "Encomenda de objetos: 'Réplica da taça do fundador, para a peça dos 60 anos. Pedido: M. Pago R$ 300.' Feita por Sofia.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_molde",
@@ -1320,7 +1335,10 @@
       "title": "Caixa de objetos",
       "text": "Na caixa, um molde de resina em forma de taça e uma lata de tinta dourada. Etiqueta: 'peça dos 60 anos'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "molde"
+      }
     },
     {
       "id": "c_cartao",
@@ -1328,7 +1346,10 @@
       "title": "Escaninho da vice",
       "text": "No escaninho da vice-direção, um cartão do 'Antiquário Relíquia, compramos prata'. Atrás, a lápis: 'sábado 10h, levar a peça'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "envelope"
+      }
     },
     {
       "id": "c_foto_marco",
@@ -1336,7 +1357,10 @@
       "title": "Mural do jornal",
       "text": "Foto de março no mural do jornal: a taça na vitrine, com um amassado bem visível na alça.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "camera"
+      }
     },
     {
       "id": "c_livro_jorge",
@@ -1344,7 +1368,10 @@
       "title": "Livro do plantão",
       "text": "Livro do zelador: 'Sexta 18h, a Profa. Marta pediu a chave da vitrine e me liberou mais cedo.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "chave"
+      }
     },
     {
       "id": "c_antiquario",
@@ -1365,7 +1392,10 @@
         ]
       },
       "release": "t+300",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dep_sofia",
@@ -1374,7 +1404,10 @@
       "who": "sofia",
       "text": "Sofia fez a réplica a pedido da Profa. Marta, 'para a peça'. Viu a réplica na vitrine e ficou quieta em troca da bolsa.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "coroa"
+      }
     },
     {
       "id": "c_dep_nogueira",
@@ -1383,7 +1416,10 @@
       "who": "nogueira",
       "text": "A peça dos 60 anos não tem nenhuma taça em cena. A encomenda tinha um pretexto falso.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "livro"
+      }
     },
     {
       "id": "c_dep_nanda",
@@ -1392,7 +1428,10 @@
       "who": "nanda",
       "text": "Nanda viu a Profa. Marta sair da diretoria sexta às 18h10 com uma bolsa pesada.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "bolsa"
+      }
     },
     {
       "id": "c_dep_jorge",
@@ -1401,7 +1440,10 @@
       "who": "jorge",
       "text": "Sexta às 18h, a Profa. Marta pediu a chave da vitrine e mandou o Seu Jorge para casa mais cedo.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "chave"
+      }
     },
     {
       "id": "c_confissao",
@@ -1410,7 +1452,10 @@
       "who": "marta",
       "text": "A vice admite que pegou a chave da vitrine sexta às 18h, 'para limpeza', e diz que a taça já devia ser falsa havia anos.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microfone"
+      }
     }
   ],
   "hotspots": [

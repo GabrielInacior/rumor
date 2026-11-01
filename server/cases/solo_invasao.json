@@ -1034,7 +1034,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_poeira",
@@ -1042,7 +1045,10 @@
       "title": "Suporte do microscópio",
       "text": "No suporte vazio, a marca do microscópio na poeira. A poeira é grossa, de dias, não de horas.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microscopio"
+      }
     },
     {
       "id": "c_ficha_lab",
@@ -1050,7 +1056,10 @@
       "title": "Ficha do armário",
       "text": "Controle do armário: 'Microscópio digital retirado sexta 16h, para manutenção. Ass. A.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microscopio"
+      }
     },
     {
       "id": "c_vidro",
@@ -1058,7 +1067,10 @@
       "title": "Cacos no pátio",
       "text": "Os cacos da janela do laboratório caíram AQUI FORA, no pátio. O vidro foi quebrado de dentro para fora.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "vidro"
+      }
     },
     {
       "id": "c_alarme",
@@ -1067,7 +1079,10 @@
       "time": "2h03",
       "text": "Painel do alarme: '2h03 DESATIVADO, código 07. 2h09 ATIVADO, código 07.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "alarme"
+      }
     },
     {
       "id": "c_codigos",
@@ -1075,7 +1090,10 @@
       "title": "Códigos do alarme",
       "text": "Na gaveta, a lista de códigos: 01 Diretor. 03 Seu Jorge. 07 Profa. Ana.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "papel"
+      }
     },
     {
       "id": "c_ronda",
@@ -1083,7 +1101,10 @@
       "title": "Livro da ronda",
       "text": "Livro da ronda: 'Domingo, 1h50 às 2h20, Jorge na guarita. Câmera da guarita gravando.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_story_theo",
@@ -1105,7 +1126,12 @@
         "who": "theo"
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "art": "cctv",
+        "stamp": "2h04",
+        "caption": "Luz acesa no laboratório e uma silhueta do lado de dentro"
+      }
     },
     {
       "id": "c_cursinho",
@@ -1127,7 +1153,10 @@
         "who": "ana"
       },
       "release": "t+240",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microscopio"
+      }
     },
     {
       "id": "c_dep_lari",
@@ -1136,7 +1165,10 @@
       "who": "lari",
       "text": "Lari foi limpar o armário sexta às 16h30 e o microscópio já não estava lá.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microscopio"
+      }
     },
     {
       "id": "c_dep_theo",
@@ -1145,7 +1177,10 @@
       "who": "theo",
       "text": "Theo viu uma pessoa sozinha dentro do laboratório e, depois, um carro prata saindo sem pressa.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dep_jorge",
@@ -1154,7 +1189,10 @@
       "who": "jorge",
       "text": "Seu Jorge estava na guarita das 1h50 às 2h20 e viu entrar um carro prata pela rua de trás às 2h.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microfone"
+      }
     },
     {
       "id": "c_confissao",
@@ -1163,7 +1201,10 @@
       "who": "ana",
       "text": "A Profa. Ana usava o microscópio no cursinho, quebrou o aparelho e encenou a invasão para enganar o inventário e o seguro.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microfone"
+      }
     }
   ],
   "hotspots": [

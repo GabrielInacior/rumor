@@ -1163,7 +1163,10 @@
       "time": "12h47",
       "text": "E-mail anônimo para a coordenação, 12h47: 'A mochila do Davi tem a prova de química da semana que vem. Olhem antes das 13h.'",
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "computador"
+      }
     },
     {
       "id": "c_chat_turma",
@@ -1193,7 +1196,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_mochila",
@@ -1201,7 +1207,10 @@
       "title": "Mochila do Davi",
       "text": "Na mochila: a prova de química impressa e trezentos reais em notas novas, dentro de uma sacola da Papelaria Estrela.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "dinheiro"
+      }
     },
     {
       "id": "c_lousa",
@@ -1209,7 +1218,10 @@
       "title": "Recado na lousa",
       "text": "Na lousa: 'Sala liberada para estudo no almoço, 12h15 às 12h45: só o BENTO. Ass. Coordenação.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "lousa"
+      }
     },
     {
       "id": "c_ranking",
@@ -1217,7 +1229,10 @@
       "title": "Ranking da bolsa",
       "text": "Bolsa de intercâmbio: 1º Davi (9,8). 2º Bento (9,6). 'Se o 1º for desclassificado, a vaga passa ao 2º.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_ocorrencia",
@@ -1225,7 +1240,10 @@
       "title": "Ocorrência",
       "text": "Ocorrência: mochila do Davi aberta às 13h, após denúncia anônima. Davi estava na biblioteca desde as 12h10.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mochila"
+      }
     },
     {
       "id": "c_impressora",
@@ -1233,7 +1251,10 @@
       "title": "Computador do laboratório",
       "text": "Computador do laboratório: 'prova_quimica_final.pdf' impressa quinta 17h10, usuário 'monitoria.quimica'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "impressora"
+      }
     },
     {
       "id": "c_bilhete_mel",
@@ -1241,7 +1262,10 @@
       "title": "Bilhete no armário",
       "text": "Preso no armário de vidros: 'Mel, valeu pela cópia 😉 te passo os 50 amanhã. B.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "carta"
+      }
     },
     {
       "id": "c_registro_bib",
@@ -1249,7 +1273,10 @@
       "title": "Monitoria do Davi",
       "text": "Registro da biblioteca: monitoria com Davi, 12h10 às 13h. Sete alunos assinaram.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_recibo",
@@ -1257,7 +1284,10 @@
       "title": "Lixeira do corredor",
       "text": "Na lixeira, o comprovante de um saque de R$ 300 em notas novas, quinta 18h02, embrulhado em papel da Papelaria Estrela.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "dinheiro"
+      }
     },
     {
       "id": "c_rede",
@@ -1265,7 +1295,10 @@
       "title": "Rede da biblioteca",
       "text": "Da coordenação: o e-mail anônimo saiu às 12h47 de um celular na rede 'Biblioteca-Alunos'. Nome do aparelho: 'Galaxy-do-Bento'.",
       "release": "t+300",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "wifi"
+      }
     },
     {
       "id": "c_dep_davi",
@@ -1274,7 +1307,10 @@
       "who": "davi",
       "text": "Davi passou o almoço dando monitoria paga, escondido, na biblioteca. A mochila ficou na sala.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "livro"
+      }
     },
     {
       "id": "c_dep_mel",
@@ -1283,7 +1319,10 @@
       "who": "mel",
       "text": "Mel imprimiu a prova na quinta e entregou ao Bento por cinquenta reais, 'para revisar'.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "impressora"
+      }
     },
     {
       "id": "c_dep_joana",
@@ -1292,7 +1331,10 @@
       "who": "joana",
       "text": "Joana viu o Bento chegar à biblioteca às 12h46 e digitar sorrindo no celular.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dep_caique",
@@ -1301,7 +1343,10 @@
       "who": "caique",
       "text": "Caíque viu o Bento sair da sala do Davi às 12h44 com uma sacola da Papelaria Estrela.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "sacola"
+      }
     },
     {
       "id": "c_confissao",
@@ -1310,7 +1355,10 @@
       "who": "bento",
       "text": "Bento admite que comprou uma cópia da prova da Mel e ficou sozinho na sala no almoço, mas nega ter mexido na mochila ou mandado a denúncia.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microfone"
+      }
     }
   ],
   "hotspots": [

@@ -540,11 +540,26 @@ func _clue_row(c: Dictionary, mine: bool, pinned: bool) -> Control:
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	h.offset_left = 18; h.offset_right = -16; h.offset_top = 12; h.offset_bottom = -12
-	var who := str(c.get("who", c.get("from", c.get("post", {}).get("who", ""))))
-	var av := ClueView.Avatar.new()
-	av.setup(who, 40, UI.clue_tag(str(c.get("kind", ""))))
-	av.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	h.add_child(av)
+	# miniatura do objeto da pista (imagem de relance); sem imagem própria, o avatar de quem falou
+	if c.get("visual") is Dictionary:
+		var th := PanelContainer.new()
+		th.add_theme_stylebox_override("panel", UI.box(Color("#3a5596"), Color(col, 0.8), 2, 12, 2))
+		th.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		th.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var tr := TextureRect.new()
+		tr.texture = Snap.get_tex("item:" + ClueView.icon_kind(c))
+		tr.custom_minimum_size = Vector2(96, 96)
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		th.add_child(tr)
+		h.add_child(th)
+	else:
+		var who := str(c.get("who", c.get("from", c.get("post", {}).get("who", ""))))
+		var av := ClueView.Avatar.new()
+		av.setup(who, 40, UI.clue_tag(str(c.get("kind", ""))))
+		av.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(av)
 	var v := UI.vbox(4)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE

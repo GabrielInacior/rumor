@@ -87,6 +87,16 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
       "deal": "team"                  // team = todos veem | split = vai pra UM aluno
     }
   ],
+  // TODA pista tem "visual" (imagem no quadro e na lista), UM destes:
+  //  {"model": "<objeto>"}: foto 3D pronta. celular mensagem onibus trofeu livro carta chocolate carregador baqueta fita
+  //    computador pizza chave mochila coroa camera papel microfone bola prancheta caixa cartaz wifi relogio sacola cofre urna
+  //    microscopio spray cadeado revista recorte dinheiro tenis pegada pendrive envelope cracha camera_seg impressora prova
+  //    luva bolsa ingresso
+  //  {"art": "ransom", "text": "..."}: bilhete de letras recortadas (ameaças anônimas)
+  //  {"art": "cctv", "stamp": "23h17", "caption": "..."}: quadro de câmera de segurança
+  //  {"art": "pix", "valor": "R$ 20,00", "de": "...", "para": "...", "hora": "..."}: comprovante de Pix
+  //  Escolha o que melhor representa a pista (depoimento: microfone ou o objeto do que a pessoa conta; ata/lista/relatório:
+  //  prancheta; mensagem: "mensagem" ou "celular" para o ícone).
   // Campos extras por tipo de pista:
   //  mensagem: "app": "chat", "chat": {"group": "nome", "lines": [{"who": "id ou nome solto", "text": "...", "time": "10h17"}]}
   //            o "text" vira resumo de 1 linha

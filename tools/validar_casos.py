@@ -116,6 +116,16 @@ def check(p):
             if mode == "solo": err.append("split em solo " + c["id"])
             if r not in ("start",) and not r.startswith("t+"): err.append("split só em start/t+ " + c["id"])
         elif c["deal"] != "team": err.append("deal " + c["id"])
+    VMODELS = set("celular mensagem onibus trofeu livro carta chocolate carregador baqueta fita computador pizza chave mochila coroa camera papel microfone bola prancheta caixa cartaz wifi relogio sacola cofre urna microscopio spray cadeado revista recorte dinheiro tenis pegada pendrive envelope cracha camera_seg impressora prova luva bolsa ingresso muro vidro alarme molde lousa bloco balas caixinha_som balde disjuntor achados postit redacao comanda".split())
+    VART = {"ransom": ("text",), "cctv": ("stamp", "caption"), "pix": ("valor", "de", "para", "hora")}
+    for c in d["clues"]:
+        vis = c.get("visual")
+        if not isinstance(vis, dict): err.append("pista sem visual " + c["id"]); continue
+        if "model" in vis:
+            if vis["model"] not in VMODELS or "art" in vis: err.append("visual model inválido %s: %s" % (c["id"], vis.get("model")))
+        elif vis.get("art") in VART:
+            if any(not vis.get(k) for k in VART[vis["art"]]): err.append("visual art sem campos " + c["id"])
+        else: err.append("visual inválido " + c["id"])
     if mode == "multi" and splits < 2: err.append("multi precisa de split")
     if not any(c["release"].startswith("t+") and 150 <= int(c["release"][2:]) <= 300 for c in d["clues"]): err.append("sem t+ 150..300")
     per = {}; hs_clues, hs_items = set(), set()

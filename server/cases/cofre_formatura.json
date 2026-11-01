@@ -1716,7 +1716,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_chat_formatura",
@@ -1741,7 +1744,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_dm_bia_lari",
@@ -1771,7 +1777,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_chat_rafa",
@@ -1801,7 +1810,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_auditoria",
@@ -1809,7 +1821,10 @@
       "title": "Aviso do grêmio",
       "text": "Aviso: 'Prestação de contas da formatura SEXTA, 8h, com a coordenação. Tesouraria: Caio e Lari.'",
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_bilhete",
@@ -1817,7 +1832,10 @@
       "title": "Dentro do cofre",
       "text": "No cofre vazio, um bilhete impresso: 'Obrigado, Caio 😉'. Papel timbrado do grêmio.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "carta"
+      }
     },
     {
       "id": "c_codigos",
@@ -1825,7 +1843,10 @@
       "title": "Gaveta do diretor",
       "text": "Códigos do cofre: 'Diretoria (Otávio). Tesouraria (Caio e Lari), código compartilhado.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "cofre"
+      }
     },
     {
       "id": "c_camera",
@@ -1834,7 +1855,12 @@
       "time": "23h17",
       "text": "Câmera do corredor, 23h17: vulto de moletom laranja entra na sala dos professores e sai com algo pequeno. Não chega perto da diretoria.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "art": "cctv",
+        "stamp": "23h17",
+        "caption": "Vulto de moletom laranja entrando na sala dos professores"
+      }
     },
     {
       "id": "c_armario_cel",
@@ -1842,7 +1868,10 @@
       "title": "Armário dos confiscados",
       "text": "Armário dos celulares confiscados: arrombado. Falta um só: o do Rafa.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_ata",
@@ -1850,7 +1879,10 @@
       "title": "Ata da assembleia",
       "text": "Ata, quinta 17h30 às 18h30, na cantina: 'Caio conduziu do começo ao fim. Lari saiu às 17h45 para buscar as rifas.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_impressora",
@@ -1859,7 +1891,10 @@
       "time": "17h40",
       "text": "Fila da impressora da biblioteca: quinta 17h40, 'obrigado_caio.docx', usuário lari.gremio.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "impressora"
+      }
     },
     {
       "id": "c_rascunho",
@@ -1867,7 +1902,10 @@
       "title": "Mesa de estudo",
       "text": "Rascunho rasgado: 'Caixa 4.800. Festa 15: menos 800. Repor até sexta??' riscado várias vezes.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "dinheiro"
+      }
     },
     {
       "id": "c_log_cofre",
@@ -1875,7 +1913,10 @@
       "title": "Relatório do cofre",
       "text": "Do técnico: o cofre foi aberto quinta 17h52 com o código da TESOURARIA. Nenhuma abertura depois. O alarme das 23h17 foi na sala dos professores.",
       "release": "t+240",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "cofre"
+      }
     },
     {
       "id": "c_dep_caio",
@@ -1884,7 +1925,10 @@
       "who": "caio",
       "text": "Caio conduziu a assembleia na cantina das 17h30 às 18h30. Divide o código da tesouraria com a Lari, sua ex.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "cracha"
+      }
     },
     {
       "id": "c_dep_rafa",
@@ -1893,7 +1937,10 @@
       "who": "rafa",
       "text": "Rafa invadiu a escola às 23h para pegar o próprio celular confiscado. Não passou pela diretoria.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_dep_jorge",
@@ -1902,7 +1949,10 @@
       "who": "jorge",
       "text": "Seu Jorge viu a Lari sair da diretoria às 17h55 com a mochila estufada, dizendo que eram rifas.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "mochila"
+      }
     },
     {
       "id": "c_dep_bia",
@@ -1911,7 +1961,10 @@
       "who": "bia",
       "text": "Bia sabia que a Lari tinha usado oitocentos reais da formatura na festa de quinze, e ficou quieta.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "dinheiro"
+      }
     },
     {
       "id": "c_dep_joana",
@@ -1920,7 +1973,10 @@
       "who": "joana",
       "text": "Joana viu a Lari imprimir uma folha às 17h40 e esconder no bolso.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "impressora"
+      }
     },
     {
       "id": "c_confissao",
@@ -1929,7 +1985,10 @@
       "who": "lari",
       "text": "Lari admite que abriu o cofre às 17h52 'para conferir', mas jura que o dinheiro já estava faltando e nega o bilhete.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microfone"
+      }
     }
   ],
   "hotspots": [

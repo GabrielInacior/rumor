@@ -310,6 +310,106 @@ static func build(kind: String) -> Node3D:
 		"ingresso":
 			_add(r, box(Vector3(0.5, 0.02, 0.22)), Vector3.ZERO, Y, Vector3(0, 0.15, 0))
 			_add(r, box(Vector3(0.012, 0.022, 0.22)), Vector3(0.14, 0.002, 0.02), Color("#1b2140"), Vector3(0, 0.15, 0))
+		"muro":
+			# pedaço de muro com pichação colorida
+			_add(r, box(Vector3(0.9, 0.55, 0.12)), Vector3(0, 0.275, 0), Color("#b9b2a2"))
+			for k in 3:
+				_add(r, box(Vector3(0.9, 0.012, 0.125)), Vector3(0, 0.12 + k * 0.16, 0.001), Color("#9a9384"))
+			_add(r, box(Vector3(0.5, 0.12, 0.01)), Vector3(-0.08, 0.36, 0.065), Color("#e2384f"), Vector3(0, 0, 0.12))
+			_add(r, box(Vector3(0.3, 0.07, 0.01)), Vector3(0.18, 0.2, 0.066), Color("#e2384f"), Vector3(0, 0, -0.18))
+			_add(r, box(Vector3(0.04, 0.12, 0.01)), Vector3(0.36, 0.38, 0.066), Color("#e2384f"))
+			_add(r, cyl(0.06, 0.2), Vector3(0.38, 0.1, 0.18), Color("#e2384f"))
+		"vidro":
+			# janela com vidro quebrado e cacos no chão
+			_add(r, box(Vector3(0.6, 0.6, 0.04)), Vector3(0, 0.36, 0), Color("#6b4a2a"))
+			_add(r, box(Vector3(0.5, 0.5, 0.02)), Vector3(0, 0.36, 0.01), Color("#9fd3ff", 0.6))
+			_add(r, box(Vector3(0.22, 0.2, 0.025)), Vector3(0.08, 0.3, 0.012), Color("#0b0f1c"), Vector3(0, 0, 0.5))
+			for k in 6:
+				_add(r, box(Vector3(0.07, 0.008, 0.05)), Vector3(-0.25 + k * 0.1, 0.004, 0.2 + (k % 2) * 0.08), Color("#cfe8ff"), Vector3(0, k * 0.7, 0))
+		"alarme":
+			_add(r, box(Vector3(0.36, 0.46, 0.08)), Vector3(0, 0.3, 0), Color("#e8e3d4"))
+			_add(r, box(Vector3(0.26, 0.1, 0.01)), Vector3(0, 0.44, 0.045), Color("#1b2140"))
+			_add(r, box(Vector3(0.18, 0.04, 0.012)), Vector3(0, 0.44, 0.05), Color("#e2384f"), Vector3.ZERO, Vector3.ONE, 1.5)
+			for k in 9:
+				_add(r, box(Vector3(0.06, 0.05, 0.02)), Vector3(-0.08 + (k % 3) * 0.08, 0.32 - (k / 3) * 0.07, 0.045), Color("#9aa3b8"))
+			_add(r, cyl(0.025, 0.02, 0.025, 10), Vector3(0.13, 0.5, 0.045), Color("#e2384f"), Vector3(PI / 2, 0, 0), Vector3.ONE, 2.0)
+		"molde":
+			# molde de resina aberto com a forma da taça
+			_add(r, box(Vector3(0.3, 0.12, 0.42)), Vector3(-0.17, 0.06, 0), Color("#e6b25a"))
+			_add(r, box(Vector3(0.3, 0.12, 0.42)), Vector3(0.17, 0.06, 0), Color("#e6b25a").darkened(0.08))
+			_add(r, cyl(0.07, 0.125, 0.04, 14), Vector3(-0.17, 0.065, -0.06), Color("#8a5a1c"))
+			_add(r, box(Vector3(0.03, 0.125, 0.12)), Vector3(-0.17, 0.065, 0.06), Color("#8a5a1c"))
+			_add(r, box(Vector3(0.12, 0.125, 0.04)), Vector3(-0.17, 0.065, 0.14), Color("#8a5a1c"))
+		"lousa":
+			_add(r, box(Vector3(0.9, 0.55, 0.04)), Vector3(0, 0.34, 0), Color("#2f4a3a"))
+			_add(r, box(Vector3(0.96, 0.05, 0.08)), Vector3(0, 0.05, 0.03), Color("#6b4a2a"))
+			_add(r, box(Vector3(0.5, 0.025, 0.005)), Vector3(-0.1, 0.48, 0.022), Color("#f4efe2"))
+			_add(r, box(Vector3(0.36, 0.025, 0.005)), Vector3(-0.17, 0.4, 0.022), Color("#f4efe2"))
+			_add(r, box(Vector3(0.6, 0.025, 0.005)), Vector3(-0.05, 0.32, 0.022), Color("#f4efe2"))
+			_add(r, box(Vector3(0.3, 0.06, 0.005)), Vector3(0.22, 0.2, 0.022), Color("#ffc83d"), Vector3(0, 0, 0.1))
+			_add(r, box(Vector3(0.08, 0.02, 0.02)), Vector3(0.3, 0.085, 0.06), Color("#f4efe2"))
+		"bloco":
+			# bloco de papel com as folhas recortadas e tesoura
+			for k in 4:
+				_add(r, box(Vector3(0.36, 0.012, 0.48)), Vector3(0, 0.006 + k * 0.012, 0), PAPER.darkened(k * 0.03))
+			_add(r, box(Vector3(0.36, 0.03, 0.06)), Vector3(0, 0.03, -0.22), NAVY)
+			for k in 3:
+				_add(r, box(Vector3(0.1, 0.012, 0.07)), Vector3(-0.1 + k * 0.1, 0.055, 0.12), Color("#0b0f1c"))
+			_add(r, box(Vector3(0.03, 0.02, 0.24)), Vector3(0.24, 0.06, 0.05), Color("#c9ced9"), Vector3(0, 0.5, 0))
+			_add(r, torus(0.025, 0.045), Vector3(0.2, 0.06, 0.18), Color("#e2384f"))
+		"balas":
+			_add(r, box(Vector3(0.34, 0.06, 0.24)), Vector3(0, 0.03, 0), Color("#ffc83d"))
+			_add(r, box(Vector3(0.2, 0.062, 0.1)), Vector3(0, 0.032, 0), Color("#e2384f"))
+			for k in 4:
+				_add(r, ball(0.035), Vector3(-0.14 + k * 0.09, 0.03, 0.2), Color("#e6b25a"))
+				_add(r, box(Vector3(0.03, 0.02, 0.05)), Vector3(-0.14 + k * 0.09, 0.03, 0.2), Color("#f4efe2"), Vector3(0, PI / 2, 0))
+		"caixinha_som":
+			_add(r, box(Vector3(0.36, 0.22, 0.16)), Vector3(0, 0.11, 0), Color("#1b2140"))
+			_add(r, cyl(0.07, 0.01, 0.07, 18), Vector3(-0.09, 0.11, 0.081), Color("#3a4a7a"), Vector3(PI / 2, 0, 0))
+			_add(r, cyl(0.07, 0.01, 0.07, 18), Vector3(0.09, 0.11, 0.081), Color("#3a4a7a"), Vector3(PI / 2, 0, 0))
+			_add(r, cyl(0.012, 0.012, 0.012, 8), Vector3(0.15, 0.2, 0.081), Color("#5fd38a"), Vector3(PI / 2, 0, 0), Vector3.ONE, 2.0)
+		"balde":
+			_add(r, cyl(0.16, 0.26, 0.19, 16), Vector3(0, 0.13, 0), Color("#2f6fb0"))
+			_add(r, cyl(0.17, 0.02, 0.17, 16), Vector3(0, 0.25, 0), Color("#9fd3ff"))
+			_add(r, torus(0.15, 0.17), Vector3(0, 0.3, 0), Color("#9aa3b8"), Vector3(PI / 2, 0, 0))
+			_add(r, box(Vector3(0.025, 0.7, 0.025)), Vector3(0.18, 0.36, -0.05), Color("#a07a4a"), Vector3(0, 0, -0.35))
+			_add(r, box(Vector3(0.14, 0.08, 0.12)), Vector3(0.05, 0.04, 0.0), Color("#e8e3d4"))
+		"disjuntor":
+			# caixa de fusíveis aberta com a chave geral desligada
+			_add(r, box(Vector3(0.42, 0.56, 0.1)), Vector3(0, 0.32, 0), Color("#9aa3b8"))
+			_add(r, box(Vector3(0.36, 0.5, 0.02)), Vector3(0, 0.32, 0.055), Color("#3a4054"))
+			for k in 6:
+				_add(r, box(Vector3(0.06, 0.1, 0.03)), Vector3(-0.1 + (k % 3) * 0.1, 0.42 - (k / 3) * 0.16, 0.07), Color("#e8e3d4"))
+			_add(r, box(Vector3(0.12, 0.16, 0.035)), Vector3(0, 0.14, 0.075), Color("#e2384f"))
+			_add(r, box(Vector3(0.02, 0.56, 0.42)), Vector3(-0.24, 0.32, 0.25), Color("#9aa3b8"), Vector3(0, 0.9, 0))
+		"achados":
+			_add(r, box(Vector3(0.56, 0.3, 0.4)), Vector3(0, 0.15, 0), Color("#a07a4a"))
+			_add(r, box(Vector3(0.3, 0.07, 0.01)), Vector3(0, 0.22, 0.205), PAPER)
+			_add(r, box(Vector3(0.18, 0.05, 0.24)), Vector3(-0.1, 0.32, 0.0), Color("#ff6fae"), Vector3(0.2, 0.3, 0))
+			_add(r, box(Vector3(0.04, 0.052, 0.24)), Vector3(-0.19, 0.32, 0.02), Y, Vector3(0.2, 0.3, 0))
+			_add(r, box(Vector3(0.14, 0.12, 0.08)), Vector3(0.14, 0.34, 0.05), Color("#4e9bff"))
+		"postit":
+			_add(r, box(Vector3(0.6, 0.4, 0.04)), Vector3(0, 0.4, 0), Color("#151a2e"))
+			_add(r, box(Vector3(0.54, 0.34, 0.01)), Vector3(0, 0.4, 0.022), Color("#9fd3ff"), Vector3.ZERO, Vector3.ONE, 0.8)
+			_add(r, box(Vector3(0.05, 0.18, 0.05)), Vector3(0, 0.12, 0), NAVY)
+			_add(r, box(Vector3(0.24, 0.02, 0.16)), Vector3(0, 0.02, 0), NAVY)
+			_add(r, box(Vector3(0.12, 0.12, 0.012)), Vector3(0.22, 0.5, 0.03), Color("#ffe27a"), Vector3(0, 0, -0.12))
+			_add(r, box(Vector3(0.08, 0.012, 0.005)), Vector3(0.22, 0.52, 0.037), Color("#1b2140"), Vector3(0, 0, -0.12))
+			_add(r, box(Vector3(0.06, 0.012, 0.005)), Vector3(0.22, 0.49, 0.037), Color("#1b2140"), Vector3(0, 0, -0.12))
+		"redacao":
+			_add(r, box(Vector3(0.44, 0.02, 0.58)), Vector3.ZERO, PAPER)
+			for k in 7:
+				_add(r, box(Vector3(0.34, 0.022, 0.012)), Vector3(0, 0.012, -0.2 + k * 0.06), Color("#9aa3b8"))
+			_add(r, box(Vector3(0.14, 0.024, 0.016)), Vector3(-0.06, 0.014, -0.08), Color("#e2384f"), Vector3(0, 0.3, 0))
+			_add(r, box(Vector3(0.1, 0.024, 0.016)), Vector3(0.08, 0.014, 0.1), Color("#e2384f"), Vector3(0, -0.4, 0))
+			_add(r, torus(0.03, 0.045), Vector3(0.12, 0.014, -0.18), Color("#e2384f"))
+			_add(r, box(Vector3(0.02, 0.02, 0.24)), Vector3(0.24, 0.03, 0.12), Color("#e2384f"), Vector3(0, 0.5, 0))
+		"comanda":
+			_add(r, box(Vector3(0.24, 0.02, 0.46)), Vector3.ZERO, Color("#f7f5ee"))
+			_add(r, box(Vector3(0.24, 0.022, 0.06)), Vector3(0, 0.002, -0.2), Color("#2fb38a"))
+			for k in 5:
+				_add(r, box(Vector3(0.16 - (k % 2) * 0.04, 0.022, 0.012)), Vector3(-0.02, 0.012, -0.1 + k * 0.06), Color("#1b2140"))
+			_add(r, box(Vector3(0.08, 0.022, 0.02)), Vector3(0.06, 0.012, 0.2), Color("#e2384f"))
 		_:
 			_add(r, box(Vector3(0.5, 0.36, 0.4)), Vector3(0, 0.18, 0), Color("#a07a4a"))
 			_add(r, box(Vector3(0.52, 0.04, 0.12)), Vector3(0, 0.37, 0), Color("#c9a46b"))

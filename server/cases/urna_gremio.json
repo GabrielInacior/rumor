@@ -1598,7 +1598,10 @@
         ]
       },
       "release": "start",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "urna"
+      }
     },
     {
       "id": "c_chat_azul",
@@ -1628,7 +1631,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_dm_rui",
@@ -1653,7 +1659,10 @@
         ]
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "mensagem"
+      }
     },
     {
       "id": "c_assinaturas",
@@ -1661,7 +1670,10 @@
       "title": "Lista de votação",
       "text": "Lista de votação: 198 assinaturas. Nenhuma rasura.",
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_story_bela",
@@ -1683,7 +1695,10 @@
         "who": "bela"
       },
       "release": "start",
-      "deal": "split"
+      "deal": "split",
+      "visual": {
+        "model": "celular"
+      }
     },
     {
       "id": "c_urna",
@@ -1691,7 +1706,10 @@
       "title": "Mesa da urna",
       "text": "Urna com lacre de outra cor. Ata do mesário: 'Urna sozinha das 12h02 às 12h10, almoço.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "urna"
+      }
     },
     {
       "id": "c_bloco",
@@ -1699,7 +1717,10 @@
       "title": "Mochila do Téo",
       "text": "Na mochila do Téo, um bloco de papel grosso com 14 folhas faltando e uma tesoura. As bordas foram cortadas tortas.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "bloco"
+      }
     },
     {
       "id": "c_lousa",
@@ -1707,7 +1728,10 @@
       "title": "Lousa do grêmio",
       "text": "Na lousa da sala do grêmio, apagado pela metade: 'PLANO B: ANULAR'.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "lousa"
+      }
     },
     {
       "id": "c_regra",
@@ -1715,7 +1739,10 @@
       "title": "Regulamento",
       "text": "Regulamento: 'Se houver mais votos que assinaturas, a eleição é ANULADA e refeita em 30 dias.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_cedulas",
@@ -1723,7 +1750,10 @@
       "title": "Cédulas separadas",
       "text": "As 14 cédulas estranhas: papel grosso, borda torta, todas votando Rosa. Sem elas: Rosa 101, Azul 97. A Rosa vence igual.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "urna"
+      }
     },
     {
       "id": "c_comanda",
@@ -1732,7 +1762,10 @@
       "time": "12h02",
       "text": "Comanda: 12h02, Kauã (mesário), um salgado, 'chamado pelo Téo, urgente'. O Téo não comeu e saiu na hora.",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "prancheta"
+      }
     },
     {
       "id": "c_cartaz",
@@ -1740,7 +1773,10 @@
       "title": "Cartaz do comício",
       "text": "Cartaz: 'COMÍCIO DA ROSA, 12h às 12h20, no pátio. No microfone: Rui.'",
       "release": "hotspot",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "cartaz"
+      }
     },
     {
       "id": "c_lacre",
@@ -1748,7 +1784,10 @@
       "title": "Relatório do lacre",
       "text": "Da coordenação: o lacre novo da urna é do lote guardado no armário do grêmio. Só a presidência do grêmio tem a chave.",
       "release": "t+240",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "urna"
+      }
     },
     {
       "id": "c_dep_kaua",
@@ -1757,7 +1796,10 @@
       "who": "kaua",
       "text": "O Téo tirou o Kauã da urna às 12h02 com um chamado 'urgente' e saiu para o lado da biblioteca.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "urna"
+      }
     },
     {
       "id": "c_dep_caio",
@@ -1766,7 +1808,10 @@
       "who": "caio",
       "text": "Caio emprestou ao Téo a chave do armário do grêmio na véspera, para um 'plano B'.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "chave"
+      }
     },
     {
       "id": "c_dep_bela",
@@ -1775,7 +1820,10 @@
       "who": "bela",
       "text": "A Bela não esperava ganhar: a pesquisa da chapa dela dava empate, não cento e quinze votos.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "urna"
+      }
     },
     {
       "id": "c_dep_rui",
@@ -1784,7 +1832,10 @@
       "who": "rui",
       "text": "Rui estava no comício do pátio das 12h às 12h20, no microfone.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "microfone"
+      }
     },
     {
       "id": "c_confissao",
@@ -1793,7 +1844,10 @@
       "who": "teo",
       "text": "Téo admite que tirou o mesário da urna às 12h02 'para pedir um salgado', mas nega ter tocado nas cédulas.",
       "release": "interrogatorio",
-      "deal": "team"
+      "deal": "team",
+      "visual": {
+        "model": "urna"
+      }
     }
   ],
   "hotspots": [
