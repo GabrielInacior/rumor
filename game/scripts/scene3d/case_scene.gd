@@ -148,6 +148,7 @@ func _build() -> void:
 
 	pivot = Node3D.new()
 	world.add_child(pivot)
+	_cam_base_ok = false
 	cam = Camera3D.new()
 	cam.fov = 62
 	pivot.add_child(cam)
@@ -2353,9 +2354,42 @@ func _process(dt: float) -> void:
 		# vitrine do menu: deriva lenta em yaw e pitch, como quem passeia na frente da escola
 		_yaw = sin(_t * 0.11) * _yaw_limit
 		_pitch = sin(_t * 0.07 + 1.0) * 0.05
-	if pivot:
-		pivot.rotation.y = lerpf(pivot.rotation.y, _yaw, 0.15)
-		pivot.rotation.x = lerpf(pivot.rotation.x, _pitch, 0.15)
+	_update_camera(dt)
+
+
+## Câmera de "virar a cabeça": ela NÃO sai do lugar (por isso nunca atravessa parede ou teto);
+## arrastar só muda para onde ela olha, com suavização, inércia ao soltar e limites macios.
+var _cam_base: Basis
+var _cam_base_ok := false
+var _yaw_s := 0.0
+var _pitch_s := 0.0
+var _vel := Vector2.ZERO
+const PITCH_MIN := -0.22
+const PITCH_MAX := 0.16
+
+
+func _update_camera(dt: float) -> void:
+	if cam == null or not cam.is_inside_tree():
+		return
+	if not _cam_base_ok:
+		_cam_base = cam.global_transform.basis.orthonormalized()
+		_cam_base_ok = true
+		_yaw = 0.0
+		_pitch = 0.0
+		_yaw_s = 0.0
+		_pitch_s = 0.0
+	if not _down and not _showcase:
+		# inércia: depois de soltar o dedo, a câmera ainda desliza um pouco e para
+		_yaw = clampf(_yaw + _vel.x * dt, -_yaw_limit, _yaw_limit)
+		_pitch = clampf(_pitch + _vel.y * dt, PITCH_MIN, PITCH_MAX)
+		_vel = _vel.lerp(Vector2.ZERO, clampf(dt * 5.0, 0.0, 1.0))
+	var k := clampf(dt * 10.0, 0.0, 1.0)
+	_yaw_s = lerpf(_yaw_s, _yaw, k)
+	_pitch_s = lerpf(_pitch_s, _pitch, k)
+	var b := Basis(Vector3.UP, _yaw_s) * _cam_base * Basis(Vector3.RIGHT, _pitch_s)
+	var t := cam.global_transform
+	t.basis = b
+	cam.global_transform = t
 
 
 func _gui_input(e: InputEvent) -> void:
@@ -2367,6 +2401,7 @@ func _gui_input(e: InputEvent) -> void:
 			_down = true
 			_moved = false
 			_press = mb.position
+			_vel = Vector2.ZERO
 		else:
 			_down = false
 			if not _moved:
@@ -2376,8 +2411,14 @@ func _gui_input(e: InputEvent) -> void:
 		var mm := e as InputEventMouseMotion
 		if mm.position.distance_to(_press) > 12.0:
 			_moved = true
-		_yaw = clampf(_yaw - mm.relative.x * 0.004, -_yaw_limit, _yaw_limit)
-		_pitch = clampf(_pitch - mm.relative.y * 0.002, -0.15, 0.12)
+		# mesma sensação no celular e no computador: proporcional à largura da tela
+		var sens := 2.2 / maxf(size.x, 1.0)
+		var dy := -mm.relative.x * sens
+		var dp := -mm.relative.y * sens * 0.7
+		_yaw = clampf(_yaw + dy, -_yaw_limit, _yaw_limit)
+		_pitch = clampf(_pitch + dp, PITCH_MIN, PITCH_MAX)
+		var dt := maxf(get_process_delta_time(), 0.001)
+		_vel = _vel.lerp(Vector2(dy, dp) / dt, 0.35)
 		accept_event()
 
 
