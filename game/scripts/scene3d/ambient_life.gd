@@ -6,7 +6,8 @@ extends Node3D
 const Character := preload("res://scripts/scene3d/character.gd")
 
 const SKINS := ["#f1c9a5", "#e0ac84", "#c98d6b", "#a8714f", "#8a5a3c", "#6b4430"]
-const HAIRS := ["curto", "longo", "coque", "cacheado", "raspado", "franja", "rabo"]
+const HAIRS_M := ["curto", "cacheado", "raspado", "franja"]
+const HAIRS_F := ["longo", "rabo", "coque", "trancas", "ondulado", "cacheado_longo"]
 const HAIR_COLORS := ["#1c1830", "#3a2a20", "#6b4a2a", "#2a2a3a", "#8a3a2a", "#c9a46b"]
 const TOPS := ["#3d5a8a", "#5a3d6b", "#2f6b5a", "#7a3d4a", "#4a4a5a", "#6b5a3d", "#2a4a6b", "#8a6a3d"]
 const ACCS := ["nenhum", "nenhum", "nenhum", "fones", "bone", "oculos"]
@@ -52,16 +53,18 @@ func populate(scene_id: String, spots: Dictionary) -> void:
 
 
 func _spawn(pos: Vector3) -> Node3D:
+	var fem := _rng.randf() < 0.5
+	var hairs: Array = HAIRS_F if fem else HAIRS_M
 	var look := {
 		"skin": SKINS[_rng.randi() % SKINS.size()],
-		"hair": HAIRS[_rng.randi() % HAIRS.size()],
+		"hair": hairs[_rng.randi() % hairs.size()],
 		"hair_color": HAIR_COLORS[_rng.randi() % HAIR_COLORS.size()],
 		"top": TOPS[_rng.randi() % TOPS.size()],
 		"accessory": ACCS[_rng.randi() % ACCS.size()],
 	}
 	var ch := Character.new()
 	add_child(ch)
-	ch.setup({"id": "", "look": look, "talk": {"mood": MOODS[_rng.randi() % MOODS.size()]}})
+	ch.setup({"id": "", "gender": "f" if fem else "m", "look": look, "talk": {"mood": MOODS[_rng.randi() % MOODS.size()]}})
 	ch.position = pos
 	ch.scale = Vector3.ONE * _rng.randf_range(0.94, 1.04)
 	return ch

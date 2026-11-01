@@ -40,9 +40,12 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
   ],
 
   "cards": [                          // tudo que pode ir pro quadro, menos pistas
-    {"id": "caio", "kind": "pessoa", "name": "Caio", "role": "presidente do grêmio",
+    {"id": "caio", "kind": "pessoa", "name": "Caio", "gender": "m", "role": "presidente do grêmio",
      "look": {"skin": "#8d5524", "hair": "raspado", "hair_color": "#1a1a1a", "top": "#2e7d32", "accessory": "bone"},
-     // hair: curto|longo|coque|cacheado|raspado|franja|rabo  accessory: nenhum|oculos|bone|fones|brinco|cachecol
+     // gender: "f" | "m" (escolhe o modelo 3D; adultos seguem a mesma regra)
+     // hair para "f" (sempre comprido): longo | rabo | coque | trancas | ondulado | cacheado_longo
+     // hair para "m": curto | raspado | franja | cacheado
+     // accessory: nenhum | oculos | bone | fones | brinco | cachecol
      "talk": {
        "greet": [{"text": "Eu? Tô só passando. Juro.", "expr": "nervoso", "anim": "negando"}],  // 1 a 2 falas, sem revelar nada
        "mood": "desconfiado",                                                                      // expressão padrão

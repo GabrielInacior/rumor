@@ -48,10 +48,11 @@
       "id": "sofia",
       "kind": "pessoa",
       "name": "Sofia",
+      "gender": "f",
       "role": "cuida dos objetos da peça",
       "look": {
         "skin": "#6b4423",
-        "hair": "franja",
+        "hair": "ondulado",
         "hair_color": "#1b1b1b",
         "top": "#4a148c",
         "accessory": "brinco"
@@ -256,10 +257,11 @@
       "id": "otavio",
       "kind": "pessoa",
       "name": "Sr. Otávio",
+      "gender": "m",
       "role": "diretor da escola",
       "look": {
         "skin": "#8a5a3c",
-        "hair": "curto",
+        "hair": "raspado",
         "hair_color": "#bdbdbd",
         "top": "#263238",
         "accessory": "oculos"
@@ -440,6 +442,7 @@
       "id": "vini",
       "kind": "pessoa",
       "name": "Vini",
+      "gender": "m",
       "role": "fotógrafo do anuário",
       "look": {
         "skin": "#e8b98f",
@@ -659,6 +662,7 @@
       "id": "gabriel",
       "kind": "pessoa",
       "name": "Gabriel",
+      "gender": "m",
       "role": "capitão do time que perdeu a final",
       "look": {
         "skin": "#f5d0b0",

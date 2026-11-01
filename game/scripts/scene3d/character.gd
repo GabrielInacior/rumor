@@ -75,6 +75,11 @@ func _build_model() -> void:
 	}
 	var hair := "Hair_" + str(look.get("hair", "curto"))
 	var acc := "Acc_" + str(look.get("accessory", "nenhum"))
+	var fem := is_female()
+	var has_f := model.find_child("Body_f", true, false) != null
+	# cabelo que ainda não existe no modelo cai para o parecido mais próximo (nunca fica careca)
+	if model.find_child(hair, true, false) == null:
+		hair = "Hair_" + str({"trancas": "rabo", "ondulado": "longo", "cacheado_longo": "cacheado"}.get(str(look.get("hair", "")), "longo" if fem else "curto"))
 	for mi in model.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		var n := String(m.name)
@@ -82,6 +87,9 @@ func _build_model() -> void:
 			m.visible = n == hair
 		elif n.begins_with("Acc_"):
 			m.visible = n == acc
+		elif has_f and (n.ends_with("_f") or n.ends_with("_m")):
+			# corpo, roupa e calça por gênero (o esqueleto é o mesmo para os dois)
+			m.visible = n.ends_with("_f") == fem
 		for s in m.mesh.get_surface_count():
 			var src := m.mesh.surface_get_material(s)
 			var mname := src.resource_name if src else ""
@@ -103,11 +111,22 @@ func _build_model() -> void:
 		anim = aps[0]
 
 
+## Gênero: explícito no caso ("gender"), senão pelo cabelo comprido.
+func is_female() -> bool:
+	var g := str(card.get("gender", ""))
+	if g != "":
+		return g == "f"
+	return str(_look().get("hair", "")) in ["longo", "rabo", "coque", "trancas", "ondulado", "cacheado_longo"]
+
+
 func _face_mat(src: Material, which: String) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = FACE
 	var tex: Texture2D = null
 	var p := "res://assets/characters/%s_atlas.png" % which
+	var pf := "res://assets/characters/%s_atlas_f.png" % which
+	if is_female() and ResourceLoader.exists(pf):
+		p = pf
 	if ResourceLoader.exists(p):
 		tex = load(p)
 	elif src is BaseMaterial3D:

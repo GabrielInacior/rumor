@@ -43,6 +43,7 @@
       "id": "joana",
       "kind": "pessoa",
       "name": "Joana",
+      "gender": "f",
       "role": "monitora da biblioteca",
       "look": {
         "skin": "#d9a066",
@@ -236,10 +237,11 @@
       "id": "lia",
       "kind": "pessoa",
       "name": "Lia",
+      "gender": "f",
       "role": "aluna do 2º ano, inventora do 'tá ligado??'",
       "look": {
         "skin": "#ffe0bd",
-        "hair": "rabo",
+        "hair": "trancas",
         "hair_color": "#7b4b2a",
         "top": "#8e24aa",
         "accessory": "brinco"
@@ -433,6 +435,7 @@
       "id": "pedro",
       "kind": "pessoa",
       "name": "Pedro",
+      "gender": "m",
       "role": "do time de vôlei, ou quase",
       "look": {
         "skin": "#c68642",
@@ -641,6 +644,7 @@
       "id": "rosa",
       "kind": "pessoa",
       "name": "Profa. Rosa",
+      "gender": "f",
       "role": "aplicou a recuperação",
       "look": {
         "skin": "#a86b4c",

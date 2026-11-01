@@ -47,6 +47,7 @@
       "id": "lucia",
       "kind": "pessoa",
       "name": "Profa. Lúcia",
+      "gender": "f",
       "role": "organiza a viagem",
       "look": {
         "skin": "#c98d6b",
@@ -70,6 +71,7 @@
       "id": "caio",
       "kind": "pessoa",
       "name": "Caio",
+      "gender": "m",
       "role": "presidente do grêmio",
       "look": {
         "skin": "#8d5524",
@@ -280,6 +282,7 @@
       "id": "duda",
       "kind": "pessoa",
       "name": "Duda",
+      "gender": "f",
       "role": "do grêmio, baterista da banda",
       "look": {
         "skin": "#f1c27d",
@@ -488,10 +491,11 @@
       "id": "bia",
       "kind": "pessoa",
       "name": "Bia",
+      "gender": "f",
       "role": "aluna do 2A, rainha do caps lock",
       "look": {
         "skin": "#e0ac69",
-        "hair": "cacheado",
+        "hair": "cacheado_longo",
         "hair_color": "#2b1d14",
         "top": "#e91e63",
         "accessory": "brinco"
@@ -670,6 +674,7 @@
       "id": "rafa",
       "kind": "pessoa",
       "name": "Rafa",
+      "gender": "m",
       "role": "rei dos memes",
       "look": {
         "skin": "#5c3a21",
