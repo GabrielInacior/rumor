@@ -194,6 +194,18 @@ static func short_name(n: String, max_len := 13) -> String:
 	return out
 
 
+## Quantos pixels reais cabem em cada ponto da interface (celular com tela fina: ~1,5 a 3).
+## As cenas 3D renderizam nessa escala para não ficarem embaçadas; no celular tem um teto.
+static func render_scale(tree: SceneTree) -> float:
+	var win := tree.root
+	var cs := Vector2(win.content_scale_size)
+	if cs.x <= 0.0 or cs.y <= 0.0:
+		return 1.0
+	var f := minf(win.size.x / cs.x, win.size.y / cs.y)
+	var mobile := OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
+	return clampf(f, 1.0, 1.5 if mobile else 2.0)
+
+
 ## Janela de confirmação por cima de tudo (sair do caso, fechar a sala...). Toque fora cancela.
 static func confirm(host: Node, title_text: String, body: String, yes_text: String, on_yes: Callable, no_text := "CONTINUAR AQUI") -> void:
 	var layer := CanvasLayer.new()

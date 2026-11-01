@@ -135,8 +135,17 @@ func _ready() -> void:
 	svc.stretch = true
 	svc.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(UI.full(svc))
+	# resolução real da tela (mesmo truque da cena): contêiner em pixels reais, reduzido
+	var hf := UI.render_scale(get_tree())
+	if hf > 1.01:
+		svc.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		svc.scale = Vector2.ONE / hf
+		var fit := func() -> void: svc.size = size * hf
+		resized.connect(fit)
+		fit.call_deferred()
 	_vp = SubViewport.new()
 	_vp.own_world_3d = true
+
 	svc.add_child(_vp)
 	_build_set()
 

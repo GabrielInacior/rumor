@@ -32,7 +32,9 @@ function validateBoard(caseData, board, culprit) {
     if (!hit) continue;
     cat.found += 1;
     const needs = edge.evidence || [];
-    if (needs.length === 0 || (hit.evidence && needs.includes(hit.evidence))) {
+    // qualquer uma das provas presas no fio serve (o fio pode ter até 3)
+    const proofs = Array.isArray(hit.proofs) ? hit.proofs : (hit.evidence ? [hit.evidence] : []);
+    if (needs.length === 0 || proofs.some((x) => needs.includes(x))) {
       cat.proved += 1;
       score += 100;
     } else {

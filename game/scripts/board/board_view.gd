@@ -65,18 +65,26 @@ var _ev_anim := {}      # link id -> {from: Vector2, t0: ms}
 var _prev_ev := {}
 
 
+## Provas presas num fio (até 3). Quadros antigos só tinham "evidence".
+static func proofs_of(l: Dictionary) -> Array:
+	var pr: Variant = l.get("proofs")
+	if pr is Array:
+		return pr
+	return [l["evidence"]] if l.get("evidence") != null else []
+
+
 func set_data(new_cards: Array, new_links: Array) -> void:
-	# prova recém-presa: a carta "voa" da posição dela até o fio
+	# prova recém-presa: a carta "voa" da posição dela até o lugar dela no leque do fio
 	for l in new_links:
-		var e = l.get("evidence")
-		if e != null and _prev_ev.get(l["id"]) != e:
-			var src := _card("c:" + str(e))
-			var from := Vector2(src["x"], src["y"]) * BOARD if not src.is_empty() else Vector2.ZERO
-			if not src.is_empty():
-				_ev_anim[l["id"]] = {"from": from, "t0": Time.get_ticks_msec()}
+		var before: Array = _prev_ev.get(l["id"], [])
+		for e in proofs_of(l):
+			if not before.has(e):
+				var src := _card("c:" + str(e))
+				if not src.is_empty():
+					_ev_anim[str(l["id"]) + "|" + str(e)] = {"from": Vector2(src["x"], src["y"]) * BOARD, "t0": Time.get_ticks_msec()}
 	_prev_ev.clear()
 	for l in new_links:
-		_prev_ev[l["id"]] = l.get("evidence")
+		_prev_ev[l["id"]] = proofs_of(l).duplicate()
 	# não sobrescreve a carta que este dedo está arrastando agora
 	if _dragging and _press_card != "":
 		var mine: Dictionary = {}
@@ -199,8 +207,9 @@ func _hit_link(bp: Vector2) -> String:
 	var bd := 46.0 / maxf(zoom, 0.4)
 	for l in links:
 		# a prova pendurada também conta como o fio (é onde o dedo vai)
-		if l.get("evidence") != null and _evidence_rect(l).grow(8).has_point(bp):
-			return l["id"]
+		for i in proofs_of(l).size():
+			if _evidence_rect(l, i).grow(8).has_point(bp):
+				return l["id"]
 		var d := _knot(l).distance_to(bp)
 		if d < bd:
 			bd = d
@@ -225,15 +234,19 @@ func _link_near(bp: Vector2) -> String:
 func _evidence_ids() -> Dictionary:
 	var out := {}
 	for l in links:
-		if l.get("evidence") != null:
-			out[str(l["evidence"])] = l["id"]
+		for e in proofs_of(l):
+			out[str(e)] = l["id"]
 	return out
 
 
-func _evidence_rect(l: Dictionary) -> Rect2:
-	# a própria carta da pista, em tamanho reduzido, pendurada no nó do fio
+## A carta da pista, reduzida, pendurada abaixo do nó do fio. Com várias provas elas abrem em
+## leque (a do meio mais alta, as das pontas um pouco abaixo), cada uma presa por um barbante.
+func _evidence_rect(l: Dictionary, i := 0) -> Rect2:
 	var k := _knot(l)
-	return Rect2(k + Vector2(-66, 6), Vector2(132, 90))
+	var n := maxi(1, proofs_of(l).size())
+	var off := float(i) - float(n - 1) / 2.0
+	var c := k + Vector2(off * 118.0, 51.0 + absf(off) * 26.0)
+	return Rect2(c - Vector2(66, 45), Vector2(132, 90))
 
 
 # ------------------------------------------------------------------ entrada
@@ -416,6 +429,11 @@ func _draw() -> void:
 		if ref.begins_with("c:") and ev.has(ref.substr(2)) and not (_dragging and ref == _press_card):
 			continue
 		_draw_card(c)
+	# provas penduradas nos fios, por cima das cartas soltas
+	for l in links:
+		var lp := _link_points(l)
+		if lp.size() > 10:
+			_draw_link_tag(l, lp, l["id"] == selected_link, "proofs")
 	if _dragging and _drop_card != "":
 		var dr := _card_rect(_card(_drop_card))
 		draw_rect(dr.grow(10), Color(UI.YELLOW, 0.25 + 0.15 * sin(_t * 8.0)), false, 6.0)
@@ -443,8 +461,13 @@ func _badge(center: Vector2, text: String) -> void:
 	draw_string(f, r.position + Vector2(14, 30), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 26, UI.INK)
 
 
-func _draw_link_tag(l: Dictionary, pts: PackedVector2Array, sel: bool) -> void:
+## part: "tag" = seta e etiqueta (desenhadas com o fio); "proofs" = provas penduradas (desenhadas
+## por cima das cartas soltas, para o leque nunca ficar escondido).
+func _draw_link_tag(l: Dictionary, pts: PackedVector2Array, sel: bool, part := "tag") -> void:
 	var k := pts[8]
+	if part == "proofs":
+		_draw_link_proofs(l, k, sel)
+		return
 	var dir := (pts[10] - pts[6]).normalized()
 	# seta de direção
 	var tip := k + dir * 30
@@ -458,21 +481,30 @@ func _draw_link_tag(l: Dictionary, pts: PackedVector2Array, sel: bool) -> void:
 	draw_rect(Rect2(r.position + Vector2(3, 3), r.size), Color(0, 0, 0, 0.3))
 	draw_rect(r, UI.PAPER if not sel else UI.YELLOW)
 	draw_string(f, r.position + Vector2(11, 25), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, UI.INK)
-	# prova presa no fio: bilhetinho amarelo com clipe
-	if l.get("evidence") != null:
-		# a carta da pista "foi" para o fio: mesmo visual da carta solta, menor, presa por tachinha
-		var clue := Net.clue_by_id(str(l["evidence"]))
-		var e := _evidence_rect(l)
+
+
+func _draw_link_proofs(l: Dictionary, k: Vector2, sel: bool) -> void:
+	# provas presas no fio: as cartas "foram" para o fio, em leque, cada uma com barbante até o nó
+	var plist := proofs_of(l)
+	for pi in plist.size():
+		var ev_id := str(plist[pi])
+		var clue := Net.clue_by_id(ev_id)
+		var e := _evidence_rect(l, pi)
 		var col := UI.clue_color(str(clue.get("kind", "")))
-		var tilt := (float(hash(str(l["evidence"])) % 7) - 3.0) * 0.02 + sin(_t * 1.6 + float(hash(str(l["id"])) % 10)) * 0.025
+		var tilt := (float(hash(ev_id) % 7) - 3.0) * 0.02 + (float(pi) - float(plist.size() - 1) / 2.0) * 0.07 \
+			+ sin(_t * 1.6 + float(hash(str(l["id"]) + ev_id) % 10)) * 0.025
 		var ctr := e.get_center()
-		if _ev_anim.has(l["id"]):
-			var an: Dictionary = _ev_anim[l["id"]]
+		var akey := str(l["id"]) + "|" + ev_id
+		if _ev_anim.has(akey):
+			var an: Dictionary = _ev_anim[akey]
 			var u := clampf((Time.get_ticks_msec() - int(an["t0"])) / 380.0, 0.0, 1.0)
 			var ease := 1.0 - pow(1.0 - u, 3.0)
 			ctr = (an["from"] as Vector2).lerp(ctr, ease) + Vector2(0, -sin(u * PI) * 60.0)
 			if u >= 1.0:
-				_ev_anim.erase(l["id"])
+				_ev_anim.erase(akey)
+		# barbante do nó até a tachinha da carta (forma a rede de provas)
+		var pin_at := ctr + Vector2(0, -42).rotated(tilt)
+		draw_line(offset + k * zoom, offset + pin_at * zoom, Color(UI.PAPER, 0.75), maxf(1.5, 2.5 * zoom), true)
 		draw_set_transform(offset + ctr * zoom, tilt, Vector2(zoom, zoom))
 		var lr := Rect2(-e.size / 2.0, e.size)
 		draw_rect(Rect2(lr.position + Vector2(4, 6), lr.size), Color(0, 0, 0, 0.35))
@@ -490,7 +522,14 @@ func _draw_link_tag(l: Dictionary, pts: PackedVector2Array, sel: bool) -> void:
 		draw_circle(Vector2(0, lr.position.y + 3) + Vector2(2, 3), 8, Color(0, 0, 0, 0.35))
 		draw_circle(Vector2(0, lr.position.y + 3), 8, UI.YELLOW.darkened(0.1))
 		draw_set_transform(offset, 0.0, Vector2(zoom, zoom))
-	else:
+	if plist.size() > 1:
+		# selo com a contagem: "3 PROVAS"
+		var tag := "%d PROVAS" % plist.size()
+		var tw := UI.font("title").get_string_size(tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 18).x + 14
+		var tr := Rect2(k + Vector2(-tw / 2.0, -10), Vector2(tw, 24))
+		draw_rect(tr, UI.GREEN.darkened(0.35))
+		draw_string(UI.font("title"), tr.position + Vector2(7, 19), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, UI.PAPER)
+	if plist.is_empty():
 		draw_circle(k + Vector2(0, 14), 9, Color(UI.PAPER, 0.85))
 		draw_circle(k + Vector2(0, 14), 5, UI.RED)
 

@@ -86,9 +86,10 @@ func _ready() -> void:
 	vp.msaa_3d = Viewport.MSAA_DISABLED
 	vp.own_world_3d = true
 	vp.handle_input_locally = false
-	# meia resolução: o celular agradece e o visual pintado esconde a diferença
-	stretch_shrink = 2 if OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios") else 1
+	# resolução perto da real da tela (antes era a metade no celular e ficava embaçado)
+	stretch_shrink = 1
 	add_child(vp)
+	_setup_hires.call_deferred()
 	world = Node3D.new()
 	vp.add_child(world)
 	_build()
@@ -2424,6 +2425,31 @@ func _update_camera(dt: float) -> void:
 	var t := cam.global_transform
 	t.basis = b
 	cam.global_transform = t
+
+
+## Resolução real da tela: o contêiner fica com o tamanho em pixels reais e é reduzido na mesma
+## proporção, então a imagem 3D chega 1:1 na tela (sem esticar = sem borrão).
+var _hires_f := 1.0
+
+
+func _setup_hires() -> void:
+	var par := get_parent() as Control
+	if par == null or not is_inside_tree():
+		return
+	_hires_f = UI.render_scale(get_tree())
+	if _hires_f <= 1.01:
+		return
+	set_anchors_preset(Control.PRESET_TOP_LEFT)
+	position = Vector2.ZERO
+	scale = Vector2.ONE / _hires_f
+	par.resized.connect(_fit_hires)
+	_fit_hires()
+
+
+func _fit_hires() -> void:
+	var par := get_parent() as Control
+	if par:
+		size = par.size * _hires_f
 
 
 func _gui_input(e: InputEvent) -> void:

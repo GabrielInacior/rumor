@@ -245,7 +245,10 @@ func _on_event(evt: Dictionary) -> void:
 		"clue_new":
 			Sfx.play("clue_new")
 			if Net.role == "player":
-				toast("Nova pista chegou: " + UI.strip_emoji(str(evt.get("title", ""))), UI.YELLOW)
+				if evt.get("timed", false):
+					toast("Chegou uma pista nova com o tempo: %s. Pistas assim aparecem para ajudar a investigação." % UI.strip_emoji(str(evt.get("title", ""))), UI.YELLOW)
+				else:
+					toast("Nova pista chegou: " + UI.strip_emoji(str(evt.get("title", ""))), UI.YELLOW)
 		"hotspot":
 			Sfx.play("hotspot_found")
 			if Net.role == "player":

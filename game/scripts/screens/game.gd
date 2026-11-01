@@ -315,7 +315,10 @@ func _open_map() -> void:
 	for room in locations:
 		var names := []
 		for pid in _people_in(str(room)):
-			names.append(_name_of(str(pid)))
+			# só aparece no mapa quem ESTE jogador já encontrou e conversou, e onde encontrou;
+			# se a pessoa mudou de lugar, some do mapa até ser achada de novo
+			if str(_met.get(str(pid), "")) == str(room):
+				names.append(_name_of(str(pid)))
 		if not names.is_empty():
 			ppl[room] = names
 	mp.people = ppl
@@ -339,8 +342,12 @@ func _narrate(text: String, important: bool) -> void:
 
 ## Conversa com quem está na cena: o depoimento só sai se a equipe já tem essa pista
 ## (alguém precisa ter achado ou recebido); antes disso, a pessoa desconversa.
+var _met := {}   # pessoa -> sala onde este jogador conversou com ela pela última vez
+
+
 func _talk_to(pid: String) -> void:
 	var card := Net.card_by_id(pid)
+	_met[pid] = loc
 	var lock_left := (float(person_locks.get(pid, 0)) - Time.get_ticks_msec()) / 1000.0
 	if lock_left > 0:
 		get_meta("main").toast("%s não quer falar agora. Tente de novo em %ds." % [_name_of(pid), int(ceil(lock_left))], UI.PINK)
@@ -555,6 +562,8 @@ func _clue_row(c: Dictionary, mine: bool, pinned: bool) -> Control:
 		h.add_child(_badge("SÓ VOCÊ", UI.PINK))
 	elif pinned:
 		h.add_child(_badge("NO QUADRO", UI.SKY))
+	elif str(c.get("release", "")).begins_with("t+"):
+		h.add_child(_badge("COM O TEMPO", UI.YELLOW))
 	b.add_child(h)
 	b.pressed.connect(func() -> void: _open_clue(c))
 	return b
@@ -968,15 +977,38 @@ func _on_link_tapped(id: String) -> void:
 	# o fio vira um quadrinho: quem fez, a ação, com quem/onde, a fala da prova e o carimbo
 	v.add_child(UI.label("Assim o seu quadro conta esta parte da história (pode estar certa ou errada):", 20, UI.MIST))
 	v.add_child(StoryPanel.panel(l))
-	if l.get("evidence") != null:
-		var rel := _relevance(Net.clue_by_id(str(l["evidence"])), l["a"], l["b"])
-		if int(rel[0]) == 0:
-			v.add_child(UI.label("Atenção: essa prova não cita ninguém deste fio. Ela prova mesmo isso?", 21, UI.PINK, "bold"))
+	# provas presas neste fio (até 3): cada uma com o que diz e um botão para tirar
+	var plist: Array = BoardView.proofs_of(l)
+	if not plist.is_empty():
+		v.add_child(UI.label("PROVAS NESTE FIO (%d de 3)" % plist.size(), 20, UI.YELLOW, "type"))
+		for pid in plist:
+			var pc := Net.clue_by_id(str(pid))
+			var prow := UI.hbox(10)
+			var pl := UI.label("%s  %s" % [UI.clue_tag(str(pc.get("kind", ""))), UI.strip_emoji(str(pc.get("title", "")))], 22, UI.PAPER, "bold")
+			pl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			pl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			prow.add_child(pl)
+			var rel := _relevance(pc, l["a"], l["b"])
+			if int(rel[0]) == 0:
+				var warn := UI.label("não cita ninguém", 18, UI.PINK, "bold")
+				warn.autowrap_mode = TextServer.AUTOWRAP_OFF
+				warn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+				prow.add_child(warn)
+			var rm := UI.button("Tirar", "ghost", 60)
+			rm.custom_minimum_size.x = 110
+			var cid := str(pid)
+			rm.pressed.connect(func() -> void:
+				Net.board_op({"k": "detach", "id": id, "clue": cid})
+				Sfx.play("ui_tap")
+				_close_sheet())
+			prow.add_child(rm)
+			v.add_child(prow)
 	v.add_child(UI.label("Cor do fio", 22, UI.PAPER, "bold"))
 	v.add_child(_color_row(str(l.get("color", "vermelho")), func(cname: String) -> void:
 		Net.board_op({"k": "recolor", "id": id, "color": cname})
 		_close_sheet()))
-	var prove := UI.button("PRENDER UMA PROVA" if l.get("evidence") == null else "TROCAR A PROVA", "primary")
+	var prove := UI.button("PRENDER UMA PROVA" if plist.is_empty() else ("PRENDER OUTRA PROVA" if plist.size() < 3 else "PRENDER OUTRA (a mais antiga volta ao quadro)"), "primary")
+	prove.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	prove.pressed.connect(func() -> void: _open_evidence_picker(id))
 	v.add_child(prove)
 	var row := UI.hbox(10)
@@ -1032,8 +1064,9 @@ func _open_link_picker_for_clue(clue_id: String) -> void:
 		v.add_child(UI.label("Ainda não há fios. Primeiro ligue duas cartas (arraste uma até a outra).", 24, UI.PAPER))
 	for l in links:
 		var txt := "%s  %s  %s" % [_name_of(l["a"]), Net.link_label(l["type"]).to_upper(), _name_of(l["b"])]
-		if l.get("evidence") != null:
-			txt += "   (já tem prova: trocar)"
+		var np := BoardView.proofs_of(l).size()
+		if np > 0:
+			txt += "   (%d prova%s%s)" % [np, "" if np == 1 else "s", ": a mais antiga volta ao quadro" if np >= 3 else ""]
 		var b := UI.button(txt, "ghost", 84)
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.add_theme_font_size_override("font_size", 24)
@@ -1057,8 +1090,8 @@ func _organize_board() -> void:
 	var loose := []
 	var ev := {}
 	for l in Net.state.get("board", {}).get("links", []):
-		if l.get("evidence") != null:
-			ev[str(l["evidence"])] = true
+		for e in BoardView.proofs_of(l):
+			ev[str(e)] = true
 	for c in cards:
 		var ref: String = c["ref"]
 		if ref.begins_with("c:"):
@@ -1571,7 +1604,7 @@ func refresh() -> void:
 		_load_location(loc)
 		for pid in before:
 			if not _loc_people.has(pid):
-				get_meta("main").toast("%s saiu daqui. Procure no MAPA." % _name_of(str(pid)), UI.YELLOW)
+				get_meta("main").toast("%s saiu daqui. Para onde será que foi?" % _name_of(str(pid)), UI.YELLOW)
 		for pid in _loc_people:
 			if not before.has(pid):
 				get_meta("main").toast("%s apareceu aqui!" % _name_of(str(pid)), UI.YELLOW)

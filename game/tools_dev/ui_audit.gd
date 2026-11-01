@@ -261,6 +261,20 @@ func _run() -> void:
 	await _shot("12_fio")
 	g._close_sheet()
 	await _shot("12c_fio_selecionado_quadro")
+	var bd3: Dictionary = Net.state["board"]
+	if not (bd3["links"] as Array).is_empty():
+		var cl3: Array = (Net.state.get("clues", full_case["clues"]) as Array)
+		bd3["links"][0]["proofs"] = [str(cl3[0]["id"]), str(cl3[1]["id"]), str(cl3[2]["id"])]
+		bd3["links"][0]["evidence"] = str(cl3[0]["id"])
+		g.board.set_data(bd3["cards"], bd3["links"])
+		var kp3: Vector2 = g.board._knot(bd3["links"][0])
+		g.board.zoom = 1.0
+		g.board.offset = g.board.size / 2.0 - kp3 * g.board.zoom
+		g.board.queue_redraw()
+		await _shot("12e_tres_provas")
+		g._on_link_tapped(str(bd3["links"][0]["id"]))
+		await _shot("12f_fio_tres_provas")
+		g._close_sheet()
 	g._open_evidence_picker("l1")
 	await _shot("12b_escolher_prova")
 	g._close_sheet()

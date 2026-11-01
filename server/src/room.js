@@ -1,4 +1,7 @@
 'use strict';
+const MAX_PROOFS = 3;
+// provas de um fio (compatível com quadros antigos que tinham só "evidence")
+function proofsOf(l) { return Array.isArray(l.proofs) ? [...l.proofs] : (l.evidence ? [l.evidence] : []); }
 // Uma sala de aula: professor (host), equipes, alunos, quadro compartilhado por equipe.
 // O servidor é a autoridade: guarda a solução, distribui pistas e valida teorias.
 const crypto = require('crypto');
@@ -265,7 +268,11 @@ class Room {
   timedClues() {
     return this.caseData.clues
       .filter((c) => typeof c.release === 'string' && c.release.startsWith('t+'))
-      .map((c) => ({ clue: c, at: parseInt(c.release.slice(2), 10) || 0 }))
+      // no solo a pista do tempo é ajuda para quem empacou: nunca antes de 40% do tempo do caso
+      .map((c) => {
+        const at = parseInt(c.release.slice(2), 10) || 0;
+        return { clue: c, at: this.solo ? Math.max(at, Math.round((this.settings.durationSec || 600) * 0.4)) : at };
+      })
       .sort((a, b) => a.at - b.at);
   }
 
@@ -290,7 +297,7 @@ class Room {
       }
     }
     if (!silent) {
-      this.emitEvent({ k: 'clue_new', clue: clue.id, title: clue.title });
+      this.emitEvent({ k: 'clue_new', clue: clue.id, title: clue.title, timed: true });
       this.log(null, null, `Nova pista liberada para todas as equipes: ${clue.title}`, 'sistema');
     }
   }
@@ -545,7 +552,7 @@ class Room {
     const ids = new Set(team.found);
     if (p) for (const c of p.clues) ids.add(c);
     for (const card of team.board.cards) if (card.ref.startsWith('c:')) ids.add(card.ref.slice(2));
-    for (const l of team.board.links) if (l.evidence) ids.add(l.evidence);
+    for (const l of team.board.links) for (const x of proofsOf(l)) ids.add(x);
     return ids;
   }
 
@@ -580,7 +587,7 @@ class Room {
           .filter((l) => l.b !== op.ref.slice(2) || !op.ref.startsWith('p:'));
         if (op.ref.startsWith('c:')) {
           const cid = op.ref.slice(2);
-          for (const l of b.links) if (l.evidence === cid) l.evidence = null;
+          for (const l of b.links) { l.proofs = proofsOf(l).filter((x) => x !== cid); l.evidence = l.proofs[0] || null; }
         }
         return true;
       }
@@ -592,7 +599,7 @@ class Room {
         if (b.links.some((l) => l.a === a && l.b === bb && l.type === op.type)) return false;
         b.seq += 1;
         const color = LINK_COLORS.includes(op.color) ? op.color : 'vermelho';
-        b.links.push({ id: 'l' + b.seq, a, b: bb, type: op.type, evidence: null, color, by: p.name });
+        b.links.push({ id: 'l' + b.seq, a, b: bb, type: op.type, evidence: null, proofs: [], color, by: p.name });
         return true;
       }
       case 'recolor': {
@@ -619,14 +626,37 @@ class Room {
         return b.links.length !== n;
       }
       case 'attach': {
+        // um fio guarda até 3 provas (a rede de provas); a 4ª entra no lugar da mais antiga
         const l = b.links.find((x) => x.id === op.id);
         if (!l) return false;
-        if (op.clue == null) { l.evidence = null; return true; }
+        if (op.clue == null) { l.proofs = []; l.evidence = null; return true; }
         if (!this.visibleClues(team, p).has(op.clue)) return false;
+        const list = proofsOf(l);
+        if (list.includes(op.clue)) return false;
+        list.push(op.clue);
+        // passou de 3: a prova mais antiga sai do fio e VOLTA para o quadro (perto do fio)
+        while (list.length > MAX_PROOFS) {
+          const out = list.shift();
+          if (!b.cards.some((x) => x.ref === 'c:' + out)) {
+            const ca = b.cards.find((x) => x.ref === 'p:' + l.a) || { x: 0.5, y: 0.5 };
+            const cb = b.cards.find((x) => x.ref === 'p:' + l.b) || { x: 0.5, y: 0.5 };
+            b.cards.push({ ref: 'c:' + out, x: clamp((ca.x + cb.x) / 2 + 0.12), y: clamp((ca.y + cb.y) / 2 + 0.16), by: p.name });
+          }
+        }
+        l.proofs = list;
+        l.evidence = list[0];
         // a carta da pista sai do quadro e vai para o fio (não fica cópia solta)
-        l.evidence = op.clue;
         b.cards = b.cards.filter((c) => c.ref !== 'c:' + op.clue);
         return true;
+      }
+      case 'detach': {
+        const l = b.links.find((x) => x.id === op.id);
+        if (!l) return false;
+        const list = proofsOf(l);
+        const n = list.length;
+        l.proofs = list.filter((x) => x !== op.clue);
+        l.evidence = l.proofs[0] || null;
+        return l.proofs.length !== n;
       }
       default:
         return false;
