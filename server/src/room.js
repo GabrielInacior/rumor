@@ -28,7 +28,8 @@ class Room {
     this.hostSecret = token();
     this.hostSock = null;
     this.phase = 'lobby';        // lobby | briefing | playing | reveal
-    this.settings = { caseId: [...cases.keys()][0], teamCount: 3, penaltySec: 45, durationSec: null, extraMin: 0 };
+    const firstMulti = [...cases.values()].find((c) => (c.mode || 'multi') !== 'solo');
+    this.settings = { caseId: firstMulti ? firstMulti.id : [...cases.keys()][0], teamCount: 3, penaltySec: 45, durationSec: null, extraMin: 0 };
     this.players = new Map();    // pid -> {id,name,teamId,secret,sock,clues:Set}
     this.teams = [];
     this.makeTeams();
@@ -135,7 +136,7 @@ class Room {
   hostCmd(msg) {
     const t = msg.t;
     if (t === 'host_settings' && this.phase === 'lobby') {
-      if (msg.caseId && this.cases.has(msg.caseId)) this.settings.caseId = msg.caseId;
+      if (msg.caseId && this.cases.has(msg.caseId) && (this.cases.get(msg.caseId).mode || 'multi') !== 'solo') this.settings.caseId = msg.caseId;
       if (msg.teamCount) {
         this.settings.teamCount = Math.max(2, Math.min(6, msg.teamCount | 0));
         this.makeTeams();
@@ -185,7 +186,7 @@ class Room {
     this.released = new Set();
     this.solvedOrder = [];
     this.phase = 'briefing';
-    this.phaseEndsAt = Date.now() + BRIEFING_SEC * 1000;
+    this.phaseEndsAt = Date.now() + (this.solo ? 20 : BRIEFING_SEC) * 1000;
     for (const p of this.players.values()) if (p.sock) this.send(p.sock, { t: 'case', case: publicCase(c) });
     if (this.hostSock) this.send(this.hostSock, { t: 'case', case: publicCase(c) });
   }
@@ -532,7 +533,7 @@ class Room {
 
   common() {
     return {
-      code: this.code, phase: this.phase, now: Date.now(), endsAt: this.phaseEndsAt,
+      code: this.code, phase: this.phase, now: Date.now(), endsAt: this.phaseEndsAt, solo: !!this.solo,
       startedAt: this.startedAt, settings: this.settings, teams: this.teamsSummary(),
       released: [...this.released],
     };
@@ -580,7 +581,7 @@ class Room {
         }];
       }));
     }
-    s.cases = [...this.cases.values()].map((c) => ({
+    s.cases = [...this.cases.values()].filter((c) => (c.mode || 'multi') !== 'solo').map((c) => ({
       id: c.id, title: c.title, tagline: c.tagline, difficulty: c.difficulty, duration_sec: this.durationFor(c),
     }));
     if (this.phase !== 'lobby') {

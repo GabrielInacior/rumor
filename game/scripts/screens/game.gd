@@ -37,6 +37,25 @@ var loc := ""
 var loc_strip: HBoxContainer
 var person_locks := {}
 var chosen_culprit := ""
+var hint_btn: Button
+var hints_used := 0
+
+
+func _show_solo_hint() -> void:
+	var hints: Array = Net.case_data.get("hints", [])
+	var v := UI.vbox(14)
+	v.add_child(UI.title("DICAS DO CASO", 46, UI.YELLOW))
+	if hints.is_empty():
+		v.add_child(UI.label("Este caso não tem dicas. Explore todos os lugares e converse com todo mundo!", 26, UI.PAPER))
+	else:
+		hints_used = clampi(hints_used + 1, 1, hints.size())
+		for i in hints_used:
+			var p := Paper.make("sticky")
+			p.add_child(UI.label("%d.  %s" % [i + 1, UI.strip_emoji(str(hints[i]))], 26, UI.INK, "marker"))
+			v.add_child(p)
+		if hints_used < hints.size():
+			v.add_child(UI.label("Toque em DICA de novo para uma dica mais forte (%d de %d)." % [hints_used, hints.size()], 21, UI.MIST))
+	_open_sheet(v)
 const LOC_NAMES := {
 	"corredor": "Corredor", "biblioteca": "Biblioteca", "teatro": "Teatro", "sala_aula": "Sala de aula",
 	"cantina": "Cantina", "patio": "Pátio", "sala_professores": "Sala dos profs", "quadra": "Quadra",
@@ -63,6 +82,14 @@ func _ready() -> void:
 	goal.max_lines_visible = 2
 	tv.add_child(goal)
 	th.add_child(tv)
+	# modo solo: sem professor, o próprio aluno pede dicas do caso (da mais sutil à mais forte)
+	hint_btn = UI.button("DICA", "ghost", 70)
+	hint_btn.add_theme_font_override("font", UI.font("title"))
+	hint_btn.add_theme_font_size_override("font_size", 28)
+	hint_btn.custom_minimum_size.x = 120
+	hint_btn.visible = false
+	hint_btn.pressed.connect(_show_solo_hint)
+	th.add_child(hint_btn)
 	root.add_child(top)
 
 	# ---- páginas
@@ -1072,7 +1099,12 @@ func _update_tab_labels() -> void:
 # ================================================================== estado
 func refresh() -> void:
 	var team := Net.my_team()
-	if not team.is_empty():
+	if Net.state.get("solo", false):
+		team_l.text = "INVESTIGAÇÃO SOLO"
+		team_l.add_theme_color_override("font_color", UI.YELLOW)
+		if hint_btn and not hint_btn.visible:
+			hint_btn.visible = true
+	elif not team.is_empty():
 		team_l.text = "EQUIPE %s" % str(team["name"]).to_upper()
 		team_l.add_theme_color_override("font_color", Color(str(team["color"])))
 	var bd: Dictionary = Net.state.get("board", {})

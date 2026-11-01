@@ -8,6 +8,7 @@ const BriefingScreen := preload("res://scripts/screens/briefing.gd")
 const GameScreen := preload("res://scripts/screens/game.gd")
 const HostScreen := preload("res://scripts/screens/host.gd")
 const RevealScreen := preload("res://scripts/screens/reveal.gd")
+const SoloScreen := preload("res://scripts/screens/solo.gd")
 
 var backdrop: ColorRect
 var holder: Control
@@ -51,7 +52,9 @@ func _ready() -> void:
 	Net.state_changed.connect(_route)
 	Net.case_loaded.connect(_route)
 	Net.revealed.connect(_route)
-	Net.joined.connect(func() -> void: forced = ""; _route())
+	Net.joined.connect(func() -> void:
+		forced = ""
+		_route())
 	Net.hosted.connect(_route)
 	Net.kicked.connect(func() -> void: toast("O professor removeu você da sala.", UI.RED); _route())
 	Net.error_msg.connect(func(t: String) -> void: toast(t, UI.RED))
@@ -163,6 +166,11 @@ func go_join() -> void:
 	_route()
 
 
+func go_solo() -> void:
+	forced = "solo"
+	_route()
+
+
 func go_home() -> void:
 	forced = ""
 	Net.forget_session()
@@ -174,6 +182,8 @@ func _route() -> void:
 	var phase := str(Net.state.get("phase", ""))
 	if forced == "join":
 		kind = "join"
+	elif forced == "solo" and Net.pid == "":
+		kind = "solo"
 	elif Net.role == "host" and Net.code != "":
 		kind = "reveal" if phase == "reveal" and not Net.reveal_data.is_empty() else "host"
 	elif Net.role == "player" and Net.pid != "":
@@ -197,6 +207,7 @@ func _swap(kind: String) -> void:
 	match kind:
 		"home": scr = HomeScreen.new()
 		"join": scr = JoinScreen.new()
+		"solo": scr = SoloScreen.new()
 		"lobby": scr = LobbyScreen.new()
 		"briefing": scr = BriefingScreen.new()
 		"game": scr = GameScreen.new()

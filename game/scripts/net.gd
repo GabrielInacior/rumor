@@ -13,6 +13,7 @@ signal joined
 signal hosted
 signal revealed
 signal kicked
+signal cases_listed(cases: Array)
 
 const RECONNECT_SEC := 2.0
 
@@ -213,6 +214,8 @@ func _on_message(m: Dictionary) -> void:
 		"kicked":
 			forget_session()
 			kicked.emit()
+		"cases":
+			cases_listed.emit(m.get("cases", []))
 		"error":
 			error_msg.emit(str(m.get("msg", "Erro.")))
 

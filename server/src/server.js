@@ -104,8 +104,34 @@ wss.on('connection', (sock) => {
   sock.on('close', () => { if (sock.room) sock.room.drop(sock); });
 });
 
+const modeOf = (c) => c.mode || 'multi';
+
 function handle(sock, msg) {
   if (msg.t === 'ping') { send(sock, { t: 'pong', now: Date.now() }); return; }
+  if (msg.t === 'list_cases') {
+    // lista pública (sem solução) para a tela de escolha do modo solo
+    send(sock, { t: 'cases', cases: [...cases.values()].map((c) => ({
+      id: c.id, title: c.title, tagline: c.tagline, difficulty: c.difficulty, duration_sec: c.duration_sec, mode: modeOf(c),
+    })) });
+    return;
+  }
+  if (msg.t === 'solo_start') {
+    // modo solo: uma sala particular, sem professor, com uma equipe de um aluno só, que começa na hora
+    const c = cases.get(String(msg.caseId));
+    if (!c) { send(sock, { t: 'error', msg: 'Caso não encontrado.' }); return; }
+    const room = new Room(newCode(), cases, send);
+    room.solo = true;
+    room.settings.caseId = c.id;
+    room.settings.teamCount = 1;
+    room.settings.penaltySec = 20;
+    room.makeTeams();
+    rooms.set(room.code, room);
+    const r = room.join(sock, msg.name || 'Detetive');
+    send(sock, { t: 'joined', code: room.code, pid: r.player.id, secret: r.player.secret, name: r.player.name, solo: true });
+    room.startRound();
+    room.broadcast();
+    return;
+  }
   if (msg.t === 'host_create') {
     if (cases.size === 0) { send(sock, { t: 'error', msg: 'Nenhum caso instalado no servidor.' }); return; }
     const room = new Room(newCode(), cases, send);

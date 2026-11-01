@@ -84,6 +84,12 @@ func _ready() -> void:
 	join.add_theme_font_size_override("font_size", 52)
 	join.pressed.connect(func() -> void: get_meta("main").go_join())
 	v.add_child(join)
+	var solo := UI.button("JOGAR SOZINHO", "ghost", 96)
+	solo.add_theme_font_override("font", UI.font("title"))
+	solo.add_theme_font_size_override("font_size", 40)
+	solo.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.8), UI.YELLOW, 3, 20))
+	solo.pressed.connect(func() -> void: get_meta("main").go_solo())
+	v.add_child(solo)
 	var host := UI.button("Sou professor: criar uma sala", "ghost")
 	host.pressed.connect(func() -> void:
 		Net.forget_session()
