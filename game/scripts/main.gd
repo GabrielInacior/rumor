@@ -247,7 +247,7 @@ func _on_event(evt: Dictionary) -> void:
 		"hint":
 			Sfx.play("phone_buzz")
 			if Net.role == "player":
-				toast("DICA DO PROF. AILSON: " + str(evt.get("text", "")), UI.PAPER)
+				_teacher_note(str(evt.get("text", "")))
 		"interrogated":
 			Sfx.play("clue_new")
 			if Net.role == "player":
@@ -261,6 +261,32 @@ func _on_event(evt: Dictionary) -> void:
 			Sfx.play("victory")
 	if current and current.has_method("on_event"):
 		current.on_event(evt)
+
+
+## Mensagem do professor: um bilhete que fica na tela até o aluno tocar em ENTENDI.
+func _teacher_note(text: String) -> void:
+	var layer := Control.new()
+	layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(UI.full(layer))
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.55)
+	layer.add_child(UI.full(dim))
+	var c := CenterContainer.new()
+	layer.add_child(UI.full(c))
+	var note := Paper.make("sticky", true)
+	note.custom_minimum_size = Vector2(minf(size.x - 60, 620), 0)
+	note.rotation = -0.02
+	var v := UI.vbox(14)
+	v.add_child(UI.title("MENSAGEM DO PROF. AILSON", 40, UI.RED))
+	v.add_child(UI.label(UI.strip_emoji(text), 32, UI.INK, "marker"))
+	var ok := UI.button("ENTENDI", "primary", 86)
+	ok.pressed.connect(func() -> void: layer.queue_free())
+	v.add_child(ok)
+	note.add_child(v)
+	c.add_child(note)
+	note.scale = Vector2(0.8, 0.8)
+	note.pivot_offset = note.custom_minimum_size / 2.0
+	create_tween().tween_property(note, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func toast(text: String, color := UI.YELLOW) -> void:

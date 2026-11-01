@@ -67,6 +67,26 @@ static func build(g: Dictionary) -> Control:
 			sv.add_child(_bullet(str(n), UI.strip_emoji(str(st))))
 	v.add_child(_section("CAMINHO DA SOLUÇÃO" if not steps.is_empty() else "LINHA DO TEMPO DA VERDADE", sv, true))
 
+	# plot twist: onde foi plantado (para o professor saber o que a turma vai "ler errado")
+	if tg.get("twist") != null and str(tg.get("twist", "")) != "":
+		var tw := UI.vbox(8)
+		tw.add_child(_para(str(tg["twist"])))
+		v.add_child(_section("O PLOT TWIST", tw, false))
+	if tg.get("pacing") != null:
+		var pv := UI.vbox(8)
+		var pc: Variant = tg["pacing"]
+		if pc is Array:
+			for item in pc:
+				if item is Dictionary:
+					pv.add_child(_bullet(str(item.get("when", "·")), UI.strip_emoji(str(item.get("what", item.get("text", ""))))))
+					if str(item.get("ask", "")) != "":
+						pv.add_child(UI.label("Se travar, pergunte: " + UI.strip_emoji(str(item["ask"])), 20, UI.YELLOW))
+				else:
+					pv.add_child(_bullet("·", UI.strip_emoji(str(item))))
+		else:
+			pv.add_child(_para(str(pc)))
+		v.add_child(_section("RITMO DA PARTIDA", pv, false))
+
 	# 3. quadro oficial (ligações exigidas e provas aceitas)
 	var bv := UI.vbox(8)
 	for e in sol.get("edges", []):
