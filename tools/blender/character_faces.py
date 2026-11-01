@@ -392,8 +392,8 @@ def draw_mouth(img, ox, oy, kind):
     cx, cy = ox + CELL / 2, oy + CELL * 0.52
     if ADULT:   # vinco do sorriso (nariz -> canto da boca)
         for sg in (-1, 1):
-            taper(d, quad_curve((cx + sg * 128, cy - 120), (cx + sg * 168, cy - 70), (cx + sg * 160, cy - 16), 10),
-                  W * 0.25, W * 0.55)
+            taper(d, quad_curve((cx + sg * 116, cy - 138), (cx + sg * 156, cy - 100), (cx + sg * 166, cy - 50), 10),
+                  W * 0.15, W * 0.38)
     if kind == "neutra":
         pts = quad_curve((cx - 105, cy + 2), (cx + 10, cy + 18), (cx + 100, cy - 6))
         if FEM:
