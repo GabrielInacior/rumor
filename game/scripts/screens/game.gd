@@ -860,6 +860,11 @@ func _on_card_tapped(ref: String) -> void:
 			get_meta("main").toast("Fios ligam pessoas, lugares e fatos. Pistas vão presas NO fio, como prova.", UI.YELLOW)
 			return
 		var from: String = board.link_from
+		# carta apagada: não liga com a origem (só um aviso; o modo ligar continua)
+		if board.link_ok.is_valid() and not board.link_ok.call(from, ref):
+			Sfx.play("wrong", -10.0)
+			get_meta("main").toast("%s não se liga a %s. Toque numa carta ACESA." % [_name_of(ref.substr(2)), _name_of(from.substr(2))], UI.YELLOW)
+			return
 		board.link_from = ""
 		link_banner.visible = false
 		_open_relation_picker(from.substr(2), ref.substr(2))

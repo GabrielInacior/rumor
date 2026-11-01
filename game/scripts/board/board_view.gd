@@ -193,6 +193,19 @@ func to_board(screen: Vector2) -> Vector2:
 	return (screen - offset) / zoom
 
 
+## No modo ligar (ou arrastando uma carta), o toque procura primeiro uma carta POSSÍVEL sob o dedo,
+## mesmo que outra (impossível) esteja por cima.
+func _hit_target(bp: Vector2, src: String) -> String:
+	if src != "" and link_ok.is_valid():
+		for i in range(cards.size() - 1, -1, -1):
+			var ref: String = cards[i]["ref"]
+			if ref == src or ref.begins_with("c:"):
+				continue
+			if _card_rect(cards[i]).grow(10).has_point(bp) and link_ok.call(src, ref):
+				return ref
+	return _hit_card(bp, src)
+
+
 func _hit_card(bp: Vector2, except := "") -> String:
 	var ev := _evidence_ids()
 	for i in range(cards.size() - 1, -1, -1):
@@ -325,8 +338,8 @@ func _gui_input(e: InputEvent) -> void:
 			if _press_card.begins_with("c:"):
 				_drop_link = _link_near(tp)
 			else:
-				var other := _hit_card(tp, _press_card)
-				if other != "" and not other.begins_with("c:"):
+				var other := _hit_target(tp, _press_card)
+				if other != "" and not other.begins_with("c:") and (not link_ok.is_valid() or link_ok.call(_press_card, other)):
 					_drop_card = other
 			queue_redraw()
 		elif _panning:
@@ -370,7 +383,7 @@ func _release(pos: Vector2) -> void:
 		return
 	var bp := to_board(pos)
 	var lk := _hit_link(bp)
-	var cr := _hit_card(bp)
+	var cr := _hit_target(bp, link_from) if link_from != "" else _hit_card(bp)
 	if cr != "":
 		card_tapped.emit(cr)
 	elif lk != "":
@@ -446,7 +459,7 @@ func _draw() -> void:
 		src = _press_card
 	if src != "" and link_ok.is_valid() and not _card(src).is_empty():
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-		draw_rect(Rect2(Vector2.ZERO, size), Color(0.02, 0.04, 0.1, 0.66))
+		draw_rect(Rect2(Vector2.ZERO, size), Color(0.01, 0.02, 0.06, 0.8))
 		draw_set_transform(offset, 0.0, Vector2(zoom, zoom))
 		var glow := 0.55 + 0.35 * sin(_t * 4.0)
 		for c in cards:
@@ -458,7 +471,11 @@ func _draw() -> void:
 				draw_rect(rr.grow(12), Color(UI.YELLOW, glow * 0.35))
 				_draw_card(c)
 				draw_set_transform(offset, 0.0, Vector2(zoom, zoom))
-				draw_rect(rr.grow(9), Color(UI.YELLOW, glow), false, 5.0)
+				draw_rect(rr.grow(9), Color(UI.YELLOW, glow), false, 7.0)
+				var tw := UI.font("title").get_string_size("TOQUE AQUI", HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x + 16
+				var tr := Rect2(Vector2(rr.get_center().x - tw / 2.0, rr.end.y + 8), Vector2(tw, 30))
+				draw_rect(tr, UI.YELLOW)
+				draw_string(UI.font("title"), tr.position + Vector2(8, 23), "TOQUE AQUI", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, UI.INK)
 		var sc := _card(src)
 		if not (_dragging and src == _press_card):
 			_draw_card(sc)
