@@ -413,7 +413,8 @@ func _moon(dir: Vector3, energy := 1.1) -> void:
 	var s := DirectionalLight3D.new()
 	s.light_color = Color("#9fb8ff")
 	s.light_energy = energy * 1.25
-	s.shadow_enabled = true
+	# sombra é cara no celular (e o visual pintado quase não depende dela)
+	s.shadow_enabled = not _is_mobile()
 	s.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	s.directional_shadow_max_distance = 22.0
 	world.add_child(s)
@@ -2375,6 +2376,7 @@ func _scene_fachada() -> void:
 # ------------------------------------------------------------------ interação
 func _process(dt: float) -> void:
 	_t += dt
+	_adapt_resolution(dt)
 	for g in _glows:
 		var r: Node3D = g["ring"]
 		if r.visible:
@@ -2443,18 +2445,29 @@ func _update_camera(dt: float) -> void:
 ## Resolução real da tela: o contêiner fica com o tamanho em pixels reais e é reduzido na mesma
 ## proporção, então a imagem 3D chega 1:1 na tela (sem esticar = sem borrão).
 var _hires_f := 1.0
+var _hires_max := 1.0
+var _hires_on := false
+var _fps_t := 0.0
+var _fps_frames := 0
+var _fps_good := 0
+
+
+static func _is_mobile() -> bool:
+	return OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
 
 
 func _setup_hires() -> void:
 	var par := get_parent() as Control
 	if par == null or not is_inside_tree():
 		return
-	_hires_f = UI.render_scale(get_tree())
-	if _hires_f <= 1.01:
+	_hires_max = UI.render_scale(get_tree())
+	if _hires_max <= 1.01:
 		return
+	# celular começa num meio-termo; a resolução se ajusta sozinha pela fluidez (ver abaixo)
+	_hires_f = minf(_hires_max, 1.5) if _is_mobile() else _hires_max
+	_hires_on = true
 	set_anchors_preset(Control.PRESET_TOP_LEFT)
 	position = Vector2.ZERO
-	scale = Vector2.ONE / _hires_f
 	par.resized.connect(_fit_hires)
 	_fit_hires()
 
@@ -2462,7 +2475,34 @@ func _setup_hires() -> void:
 func _fit_hires() -> void:
 	var par := get_parent() as Control
 	if par:
+		scale = Vector2.ONE / _hires_f
 		size = par.size * _hires_f
+
+
+## Resolução adaptativa: mede a fluidez a cada 1,5 s; se cair de ~40 quadros por segundo, baixa um
+## degrau; se ficar folgada por um tempo, sobe de novo (até a resolução real da tela).
+func _adapt_resolution(dt: float) -> void:
+	if not _hires_on or _showcase:
+		return
+	_fps_t += dt
+	_fps_frames += 1
+	if _fps_t < 1.5:
+		return
+	var fps := _fps_frames / _fps_t
+	_fps_t = 0.0
+	_fps_frames = 0
+	if fps < 40.0 and _hires_f > 1.0:
+		_hires_f = maxf(1.0, _hires_f - 0.25)
+		_fps_good = 0
+		_fit_hires()
+	elif fps > 56.0 and _hires_f < _hires_max:
+		_fps_good += 1
+		if _fps_good >= 3:
+			_hires_f = minf(_hires_max, _hires_f + 0.25)
+			_fps_good = 0
+			_fit_hires()
+	else:
+		_fps_good = 0
 
 
 func _gui_input(e: InputEvent) -> void:

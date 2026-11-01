@@ -219,8 +219,10 @@ func _on_message(m: Dictionary) -> void:
 			reveal_data = m["reveal"]
 			revealed.emit()
 		"resume_failed":
+			# a sala salva já não existe (servidor reiniciou ou a sala expirou): volta ao menu
+			# em silêncio, sem aviso de erro
 			forget_session()
-			error_msg.emit("A sala anterior terminou. Entre de novo com o código.")
+			state_changed.emit()
 		"kicked":
 			forget_session()
 			kicked.emit()

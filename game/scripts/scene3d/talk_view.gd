@@ -137,6 +137,8 @@ func _ready() -> void:
 	add_child(UI.full(svc))
 	# resolução real da tela (mesmo truque da cena): contêiner em pixels reais, reduzido
 	var hf := UI.render_scale(get_tree())
+	if OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios"):
+		hf = minf(hf, 1.5)  # na conversa 1,5x já fica nítido e mais leve
 	if hf > 1.01:
 		svc.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		svc.scale = Vector2.ONE / hf
