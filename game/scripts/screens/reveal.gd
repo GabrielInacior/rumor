@@ -3,6 +3,7 @@ extends Control
 ## No telão vira a conversa final da aula; no celular cada aluno vê onde a equipe acertou.
 
 const BoardView := preload("res://scripts/board/board_view.gd")
+const Victory := preload("res://scripts/ui/victory.gd")
 
 var tabs := {}
 var page_holder: Control
@@ -54,6 +55,11 @@ func _ready() -> void:
 		leave.pressed.connect(func() -> void: get_meta("main").go_home())
 		v.add_child(leave)
 	_show("placar")
+	# aluno: primeiro a tela de vitória (com compartilhar), depois a revelação completa
+	if Net.role == "player":
+		var vic := Victory.new()
+		vic.setup_from_reveal(r)
+		add_child(UI.full(vic))
 
 
 func _show(k: String) -> void:
