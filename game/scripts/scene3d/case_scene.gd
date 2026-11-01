@@ -469,11 +469,24 @@ func _auto_frame() -> void:
 	var asp := frame_aspect
 	var fmin := frame_fov_min
 	var vs := size if size.y > 0.0 else get_viewport_rect().size
+	var real_asp := vs.x / vs.y if vs.y > 0.0 else frame_aspect
+	var fmax := frame_fov_max
 	if vs.y > 0.0 and vs.x > vs.y * 1.05:
-		asp = vs.x / vs.y
+		asp = real_asp
 		fmin = 42.0
+	else:
+		# celular em pé: em vez de espremer o cômodo inteiro na largura estreita (fica tudo
+		# minúsculo), enquadra como se a tela fosse mais larga; as pontas ficam a um arrasto
+		asp = 0.85
+		fmin = 40.0
+		fmax = 58.0
 	var need_y := maxf(atan(tan(hx) / asp) / (1.0 - frame_margin_x), hy / (1.0 - frame_margin_y))
-	cam.fov = clampf(rad_to_deg(need_y * 2.0), fmin, frame_fov_max)
+	cam.fov = clampf(rad_to_deg(need_y * 2.0), fmin, fmax)
+	# o giro com o dedo precisa alcançar o que ficou fora da tela nas laterais
+	var half_h := atan(tan(deg_to_rad(cam.fov) * 0.5) * real_asp)
+	var falta := hx - half_h
+	if falta > 0.0:
+		_yaw_limit = maxf(_yaw_limit, falta + 0.08)
 
 
 ## extremos angulares (x mín, x máx, y mín, y máx) dos pontos vistos pela câmera

@@ -203,7 +203,7 @@ static func render_scale(tree: SceneTree) -> float:
 		return 1.0
 	var f := minf(win.size.x / cs.x, win.size.y / cs.y)
 	var mobile := OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
-	return clampf(f, 1.0, 1.5 if mobile else 2.0)
+	return clampf(f, 1.0, 2.0)
 
 
 ## Janela de confirmação por cima de tudo (sair do caso, fechar a sala...). Toque fora cancela.
