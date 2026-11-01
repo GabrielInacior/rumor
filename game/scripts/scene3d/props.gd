@@ -247,7 +247,7 @@ func papers(p: Vector3, n: int, spread := 0.3, seed := 3) -> void:
 	for i in n:
 		var a := float((seed + i * 37) % 100) / 100.0 * TAU
 		var r := spread * float((seed * 7 + i * 13) % 100) / 100.0
-		b(Vector3(cos(a) * r, 0.004 + i * 0.002, sin(a) * r), Vector3(0.21, 0.004, 0.29), PAPER if i % 3 else CREAM, Basis(Vector3.UP, a * 1.7))
+		b(Vector3(cos(a) * r, 0.004 + i * 0.002, sin(a) * r), Vector3(0.21, 0.004, 0.29), Color("#b8b2a2") if i % 3 else Color("#a8a292"), Basis(Vector3.UP, a * 1.7))
 
 
 ## arquivo de aço com gavetas
@@ -367,6 +367,9 @@ func dress(id: String) -> void:
 
 
 func _corredor() -> void:
+	# primeiro plano (chão vazio perto da câmera)
+	backpack(Vector3(-0.95, 0, -0.5), 2.2, BAGS[5], true)
+	papers(Vector3(-0.6, 0, -0.1), 3, 0.3, 11)
 	backpack(Vector3(-1.72, 0, -2.4), 0.6, BAGS[1])
 	backpack(Vector3(-1.75, 0, -7.9), -0.3, BAGS[2], true)
 	backpack(Vector3(-1.7, 0, -12.2), 1.2, BAGS[4])
@@ -382,6 +385,8 @@ func _corredor() -> void:
 
 
 func _biblioteca() -> void:
+	backpack(Vector3(0.15, 0, -0.95), 2.8, BAGS[1])
+	papers(Vector3(0.4, 0, -0.4), 2, 0.2, 12)
 	plant(Vector3(-4.4, 0, -0.6), true)
 	plant(Vector3(4.4, 0, -11.2), true)
 	books(Vector3(-0.75, 0.79, -3.75), 4, 0.4, 1)
@@ -412,6 +417,9 @@ func _teatro() -> void:
 
 
 func _sala_aula() -> void:
+	backpack(Vector3(-0.1, 0, 0.5), 2.6, BAGS[2], true)
+	books(Vector3(1.7, 0, 0.35), 4, 0.6, 8)
+	papers(Vector3(0.6, 0, 0.9), 3, 0.3, 13)
 	backpack(Vector3(-1.75, 0, -2.75), 0.4, BAGS[1])
 	backpack(Vector3(0.9, 0, -4.1), -0.6, BAGS[3], true)
 	backpack(Vector3(-2.6, 0, -1.2), 1.2, BAGS[4])
@@ -425,6 +433,9 @@ func _sala_aula() -> void:
 
 
 func _cantina() -> void:
+	cone(Vector3(-0.7, 0, -0.1))
+	papers(Vector3(-0.2, 0, 0.4), 2, 0.25, 14)
+	trash_bag(Vector3(1.6, 0, 0.1))
 	trash(Vector3(3.5, 0, -0.8), GREEN)
 	trash(Vector3(3.5, 0, -1.4), Color("#3d6a8a"))
 	plant(Vector3(-3.55, 0, -7.4), true)
@@ -437,6 +448,7 @@ func _cantina() -> void:
 
 
 func _patio() -> void:
+	backpack(Vector3(-0.95, 0, 0.6), 0.4, BAGS[3], true)
 	for x in [-5.2, 5.2]:
 		_at(Vector3(x, 0, -12.3), 0.0)
 		b(Vector3(0, 0.25, 0), Vector3(1.6, 0.5, 0.6), Color("#5a6a9e"))
@@ -451,6 +463,8 @@ func _patio() -> void:
 
 
 func _sala_professores() -> void:
+	cardboard(Vector3(-1.1, 0, 0.5), 0.3, 2)
+	papers(Vector3(-0.6, 0.6, 0.5), 3, 0.15, 15)
 	binder_shelf(Vector3(-3.15, 0, -1.0), PI / 2.0, 1.4)
 	plant(Vector3(3.1, 0, -0.6), true)
 	books(Vector3(0.6, 0.78, -3.3), 3, 0.5, 5)
@@ -464,6 +478,8 @@ func _sala_professores() -> void:
 
 
 func _quadra() -> void:
+	cone(Vector3(1.5, 0, -0.5))
+	ball(Vector3(0.5, 0, -0.9), CREAM)
 	for i in 4:
 		cone(Vector3(-5.8, 0, -2.5 - i * 1.2))
 	gym_mats(Vector3(-5.6, 0, -11.8), 5, 0.1)
@@ -480,6 +496,7 @@ func _quadra() -> void:
 
 
 func _sala_diretor() -> void:
+	books(Vector3(-0.95, 0, -1.1), 5, 0.3, 5)
 	file_cabinet(Vector3(-2.65, 0, -2.0), PI / 2.0)
 	plant(Vector3(-2.65, 0, -3.2), true)
 	books(Vector3(-0.35, 0.84, -4.6), 4, 0.2, 2)
@@ -494,6 +511,8 @@ func _sala_diretor() -> void:
 
 
 func _deposito() -> void:
+	paint_can(Vector3(0.85, 0, -0.4), Color("#4e6fc0"))
+	papers(Vector3(0.2, 0, -0.6), 3, 0.3, 16)
 	paint_can(Vector3(-2.1, 0, -5.6), TEAL)
 	paint_can(Vector3(-1.85, 0, -5.75), RED_D)
 	paint_can(Vector3(-2.05, 0.24, -5.65), YEL)
@@ -518,6 +537,8 @@ func _laboratorio() -> void:
 
 
 func _sala_musica() -> void:
+	ball(Vector3(-0.6, 0, -0.4), Color("#c9a24a"), 0.09)
+	papers(Vector3(-0.1, 0, -0.1), 3, 0.3, 17)
 	guitar(Vector3(1.7, 0, -5.2), -0.4, Color("#c84a5e"))
 	music_stand(Vector3(-1.9, 0, -2.0), 0.5)
 	music_stand(Vector3(1.9, 0, -2.6), -0.6)
@@ -534,7 +555,8 @@ func _sala_musica() -> void:
 
 
 func _fachada() -> void:
-	car(Vector3(-6.0, 0, 3.6), 0.05, Color("#3a4a7a"))
+	# carro parado na rua, cortando o canto de baixo do quadro (moldura de primeiro plano)
+	car(Vector3(2.7, 0, 3.0), PI / 2.0, Color("#3a4a7a"))
 	trash_bag(Vector3(1.9, 0.16, -0.7))
 	trash_bag(Vector3(1.2, 0.16, -0.9))
 	_at(Vector3(-4.6, 0.16, -1.2), 0.0)   # bicicleta presa no poste: duas rodas e quadro
