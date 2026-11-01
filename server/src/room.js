@@ -68,6 +68,9 @@ class Room {
         bestScore: 0,
         submissions: 0,
         solvedAt: 0,
+        finishedAt: 0,      // a equipe entregou o caso (resultado fica guardado, quadro trava)
+        finalResult: null,
+        vote: null,         // votação de entrega em andamento
         players: prev ? prev.players : [],
       };
     });
@@ -267,7 +270,8 @@ class Room {
     this.phase = 'reveal';
     // equipes sem entrega ainda são avaliadas pelo quadro atual, para o placar final
     for (const team of this.teams) {
-      if (!team.solvedAt) {
+      team.vote = null;
+      if (!team.finishedAt) {
         const r = validateBoard(this.caseData, team.board, team.lastCulprit);
         team.bestScore = Math.max(team.bestScore, r.score);
         team.finalResult = r;
@@ -290,12 +294,17 @@ class Room {
   }
 
   ranking() {
-    const solved = this.teams.filter((t) => t.solvedAt).sort((a, b) => a.solvedAt - b.solvedAt);
-    const rest = this.teams.filter((t) => !t.solvedAt).sort((a, b) => b.bestScore - a.bestScore);
-    return [...solved, ...rest].map((t, i) => ({
-      place: i + 1, id: t.id, name: t.name, color: t.color, solved: !!t.solvedAt,
-      timeSec: t.solvedAt ? Math.round((t.solvedAt - this.startedAt) / 1000) : null,
-      score: t.bestScore, submissions: t.submissions,
+    const rows = this.teams.filter((t) => t.players.length > 0 || t.finishedAt).map((t) => {
+      const r = t.finalResult || validateBoard(this.caseData, t.board, t.lastCulprit);
+      const o = this.objectives(r);
+      return { t, r, o, time: t.finishedAt ? t.finishedAt - this.startedAt : Infinity };
+    });
+    rows.sort((a, b) => (b.o.primary - a.o.primary) || (b.o.secDone - a.o.secDone) || (a.time - b.time) || (b.r.score - a.r.score));
+    return rows.map((x, i) => ({
+      place: i + 1, id: x.t.id, name: x.t.name, color: x.t.color, solved: !!x.r.correct,
+      finished: !!x.t.finishedAt, culpritOk: x.o.primary, objDone: x.o.secDone, objTotal: x.o.secTotal,
+      timeSec: x.t.finishedAt ? Math.round(x.time / 1000) : null,
+      score: x.r.score, submissions: x.t.submissions,
     }));
   }
 
@@ -308,6 +317,7 @@ class Room {
     for (const x of this.timedClues()) {
       if (!this.released.has(x.clue.id) && elapsed >= x.at) { this.releaseClue(x.clue, false); changed = true; }
     }
+    for (const t of this.teams) if (t.vote && now - t.vote.at > 90000) { t.vote = null; changed = true; }
     if (now >= this.phaseEndsAt) { this.toReveal(); changed = true; }
     if (changed) this.broadcast();
   }
@@ -391,33 +401,80 @@ class Room {
       return;
     }
     if (msg.t === 'board') {
+      if (team.finishedAt) return;
       const ok = this.applyBoardOp(team, p, msg.op || {});
       if (ok) this.logBoard(team, p, msg.op || {});
       if (ok) this.broadcastTeam(team, msg.op && msg.op.k === 'move' ? sock : null);
       return;
     }
-    if (msg.t === 'submit') {
-      const now = Date.now();
-      if (team.solvedAt || now < team.lockUntil) return;
-      team.lastCulprit = msg.culprit || null;
-      const r = validateBoard(this.caseData, team.board, team.lastCulprit);
-      team.submissions += 1;
-      team.lastResult = { ...r, by: p.name, at: now };
-      team.bestScore = Math.max(team.bestScore, r.score);
-      const cn = (this.caseData.cards.find((c) => c.id === team.lastCulprit) || {}).name;
-      const okParts = r.categories.filter((c) => c.status === 'ok').length;
-      this.log(team.id, p.name, `${p.name} apresentou a teoria${cn ? ' acusando ' + cn : ''}: ${r.correct ? 'CERTA' : okParts + ' de ' + r.categories.length + ' partes certas'}`, r.correct ? 'acerto' : 'teoria');
-      if (r.correct) {
-        team.solvedAt = now;
-        this.solvedOrder.push(team.id);
-        this.emitEvent({ k: 'solved', team: team.id, name: team.name, place: this.solvedOrder.length });
-        if (this.teams.every((t) => t.solvedAt || t.players.length === 0)) this.toReveal();
-      } else {
-        team.lockUntil = now + this.settings.penaltySec * 1000;
-        this.emitEvent({ k: 'wrong', team: team.id }, team.id);
-      }
+    // ENTREGAR O CASO: quem propõe já vota sim; com mais gente online, a equipe vota.
+    if ((msg.t === 'propose_finish' || msg.t === 'submit') && this.phase === 'playing') {
+      if (team.finishedAt) return;
+      if (team.vote) { this.castVote(team, p, true); return; }
+      const culprit = msg.culprit ? String(msg.culprit) : null;
+      const online = this.onlineOf(team);
+      if (this.solo || online.length <= 1) { this.finishTeam(team, culprit, p.name); return; }
+      team.vote = { culprit, by: p.name, byId: p.id, yes: [p.id], no: [], at: Date.now() };
+      const cn = (this.caseData.cards.find((c) => c.id === culprit) || {}).name;
+      this.log(team.id, p.name, `${p.name} propôs entregar o caso${cn ? ' acusando ' + cn : ''}`, 'teoria');
+      this.emitEvent({ k: 'vote_start', team: team.id, by: p.name }, team.id);
       this.broadcast();
+      return;
     }
+    if (msg.t === 'vote_finish' && team.vote) {
+      this.castVote(team, p, !!msg.yes);
+      return;
+    }
+  }
+
+  onlineOf(team) {
+    return team.players.filter((pid) => { const pl = this.players.get(pid); return pl && pl.sock; });
+  }
+
+  castVote(team, p, yes) {
+    const v = team.vote;
+    if (!v) return;
+    if (!yes) {
+      team.vote = null;
+      this.log(team.id, p.name, `${p.name} quer continuar investigando (entrega cancelada)`, 'teoria');
+      this.emitEvent({ k: 'vote_no', team: team.id, by: p.name }, team.id);
+      this.broadcast();
+      return;
+    }
+    if (!v.yes.includes(p.id)) v.yes.push(p.id);
+    const online = this.onlineOf(team);
+    if (online.every((pid) => v.yes.includes(pid))) this.finishTeam(team, v.culprit, v.by);
+    else this.broadcast();
+  }
+
+  /** Objetivos: principal = culpado; secundários = cada parte da história provada no quadro. */
+  objectives(r) {
+    const cul = r.categories.find((c) => c.id === 'culpado');
+    const sec = r.categories.filter((c) => c.id !== 'culpado');
+    return {
+      primary: cul ? cul.status === 'ok' : r.correct,
+      secDone: sec.filter((c) => c.status === 'ok').length,
+      secTotal: sec.length,
+    };
+  }
+
+  finishTeam(team, culprit, by) {
+    if (team.finishedAt) return;
+    const now = Date.now();
+    team.vote = null;
+    team.lastCulprit = culprit;
+    const r = validateBoard(this.caseData, team.board, culprit);
+    team.finishedAt = now;
+    team.finalResult = r;
+    team.lastResult = { ...r, by, at: now };
+    team.bestScore = r.score;
+    team.submissions = 1;
+    if (r.correct) { team.solvedAt = now; this.solvedOrder.push(team.id); }
+    const o = this.objectives(r);
+    this.log(team.id, by, `${team.name} entregou o caso: culpado ${o.primary ? 'CERTO' : 'errado'}, ${o.secDone} de ${o.secTotal} partes provadas`, o.primary ? 'acerto' : 'teoria');
+    this.emitEvent({ k: 'finished', team: team.id, name: team.name }, null);
+    if (this.teams.every((t) => t.finishedAt || t.players.length === 0)) this.toReveal();
+    this.broadcast();
   }
 
   logBoard(team, p, op) {
@@ -547,6 +604,7 @@ class Room {
         return { id, name: p.name, online: !!p.sock };
       }),
       solved: !!t.solvedAt, place: t.solvedAt ? this.solvedOrder.indexOf(t.id) + 1 : 0,
+      finished: !!t.finishedAt, voting: !!t.vote,
       submissions: t.submissions, score: t.bestScore,
       progress: t.lastResult ? t.lastResult.categories : null,
       cards: t.board.cards.length, links: t.board.links.length,
@@ -576,6 +634,15 @@ class Room {
       s.lockUntil = team.lockUntil;
       s.lastResult = team.lastResult;
       s.solved = !!team.solvedAt;
+      s.finished = !!team.finishedAt;
+      if (team.finishedAt) s.objectives = this.objectives(team.finalResult);
+      const online = this.onlineOf(team);
+      s.vote = team.vote ? {
+        culprit: team.vote.culprit, by: team.vote.by, mine: team.vote.yes.includes(p.id),
+        yes: team.vote.yes.length, need: online.length,
+      } : null;
+      s.teamsFinished = this.teams.filter((t) => t.finishedAt).length;
+      s.teamsPlaying = this.teams.filter((t) => t.players.length > 0).length;
     }
     return s;
   }
@@ -595,6 +662,10 @@ class Room {
         for (const pid of t.players) { const pl = this.players.get(pid); if (pl) for (const c of pl.clues) clues.add(c); }
         return [t.id, {
           edgesOk, edgesTotal, cluesFound: clues.size, cluesTotal: total, items: t.items.size,
+          // objetivos ao vivo (só o professor vê): partes da história já provadas no quadro
+          cats: cats.map((c) => ({ label: c.label, status: c.status })),
+          finished: !!t.finishedAt, voting: !!t.vote,
+          culpritOk: t.finishedAt ? this.objectives(t.finalResult).primary : null,
           lockLeft: Math.max(0, Math.round((t.lockUntil - now) / 1000)),
           members: t.players.map((pid) => {
             const pl = this.players.get(pid);

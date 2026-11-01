@@ -54,6 +54,26 @@ static func build(g: Dictionary) -> Control:
 	truth.add_child(_para(str(tg.get("summary", rv.get("explanation", "")))))
 	v.add_child(_section("A VERDADE", truth, true))
 
+	# objetivos e como a partida termina
+	var ov := UI.vbox(8)
+	if sol.get("culprit") != null:
+		ov.add_child(UI.label("PRINCIPAL", 20, UI.PINK, "bold"))
+		ov.add_child(_bullet("1", "%s  Resposta: %s." % [str(sol.get("culprit_question", "Quem é o culpado?")), str(names.get(sol["culprit"], sol["culprit"]))]))
+	ov.add_child(UI.label("SECUNDÁRIOS (cada parte provada no quadro, com a pista certa presa no fio)", 20, UI.PINK, "bold"))
+	var k := 0
+	for cat in sol.get("categories", []):
+		k += 1
+		var n_edges := 0
+		for e in sol.get("edges", []):
+			if e.get("category", "") == cat["id"]:
+				n_edges += 1
+		ov.add_child(_bullet(str(k), "%s  (%d fio%s)" % [str(cat["label"]), n_edges, "" if n_edges == 1 else "s"]))
+	ov.add_child(UI.label("COMO TERMINAR", 20, UI.PINK, "bold"))
+	ov.add_child(_para("A equipe toca em ENTREGAR O CASO, aponta o culpado e todos votam. Um voto contra cancela e a equipe continua investigando. Depois de entregue, o quadro fecha e a equipe vê os próprios resultados enquanto espera as outras."))
+	ov.add_child(_para("Placar: primeiro quem acertou o culpado; depois quem provou mais partes; no empate, quem entregou antes. Se o tempo acabar, vale o quadro que a equipe tiver. A revelação aparece quando todas entregam ou quando a partida for encerrada no botão ENCERRAR."))
+	ov.add_child(_para("No modo solo, o aluno confirma a entrega sozinho."))
+	v.add_child(_section("OBJETIVOS E COMO TERMINAR", ov, true))
+
 	# 2. caminho da solução
 	var steps: Array = tg.get("solution_steps", [])
 	var sv := UI.vbox(8)

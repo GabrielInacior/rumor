@@ -492,8 +492,16 @@ func _do_refresh_game() -> void:
 	UI.clear(page_box)
 	match game_tab:
 		"equipes":
+			# fichas lado a lado no PC; uma por linha no celular em pé
+			var tg := GridContainer.new()
+			var nt := (st.get("teams", []) as Array).size()
+			tg.columns = 1 if not _wide() else clampi(nt, 1, 3 if size.x >= 1500 else 2)
+			tg.add_theme_constant_override("h_separation", 14)
+			tg.add_theme_constant_override("v_separation", 14)
+			tg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			for t in st.get("teams", []):
-				page_box.add_child(_team_card(t))
+				tg.add_child(_team_card(t))
+			page_box.add_child(tg)
 		"aovivo":
 			_build_feed()
 		"guia":
@@ -538,91 +546,129 @@ func _bar(label: String, val: int, total: int, col: Color) -> Control:
 func _team_card(t: Dictionary) -> Control:
 	var col := Color(str(t["color"]))
 	var ins: Dictionary = Net.state.get("insight", {}).get(t["id"], {})
+	var wrap := UI.vbox(0)
+	wrap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# aba da ficha: nome da equipe + carimbo de situação
+	var tabrow := UI.hbox(0)
+	var tab := PanelContainer.new()
+	var tsb := UI.box(Color("#d9b977"), Color("#b8944f"), 2, 10, 10)
+	tsb.corner_radius_bottom_left = 0
+	tsb.corner_radius_bottom_right = 0
+	tsb.border_width_bottom = 0
+	tab.add_theme_stylebox_override("panel", tsb)
+	var th := UI.hbox(8)
+	var sw := ColorRect.new()
+	sw.color = col
+	sw.custom_minimum_size = Vector2(14, 14)
+	sw.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	th.add_child(sw)
+	var name := UI.title("EQUIPE " + str(t["name"]).to_upper(), 30, Color("#1b2140"))
+	name.autowrap_mode = TextServer.AUTOWRAP_OFF
+	th.add_child(name)
+	tab.add_child(th)
+	tabrow.add_child(tab)
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tabrow.add_child(sp)
+	var st_txt := "INVESTIGANDO"
+	var st_col := UI.MIST
+	if ins.get("finished", false):
+		st_txt = "ENTREGUE" + (" · CULPADO CERTO" if ins.get("culpritOk", false) else " · CULPADO ERRADO")
+		st_col = UI.GREEN if ins.get("culpritOk", false) else UI.PINK
+	elif ins.get("voting", false):
+		st_txt = "VOTANDO A ENTREGA"
+		st_col = UI.YELLOW
+	var stamp := PanelContainer.new()
+	stamp.add_theme_stylebox_override("panel", UI.box(Color(st_col, 0.14), st_col, 2, 6, 8))
+	stamp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var sl := UI.title(st_txt, 22, st_col)
+	sl.autowrap_mode = TextServer.AUTOWRAP_OFF
+	stamp.add_child(sl)
+	stamp.rotation = -0.03
+	tabrow.add_child(stamp)
+	wrap.add_child(tabrow)
+
 	var p := PanelContainer.new()
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	p.add_theme_stylebox_override("panel", UI.box(Color(col, 0.08), col, 3, 20, 18))
+	var psb := UI.box(Color(UI.NAVY, 0.95), Color("#b8944f"), 2, 12, 14)
+	psb.corner_radius_top_left = 0
+	psb.border_color = Color(col, 0.8)
+	p.add_theme_stylebox_override("panel", psb)
 	var v := UI.vbox(10)
-	var h := UI.hbox(10)
-	var name := UI.title(str(t["name"]).to_upper(), 46, col)
-	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name.clip_text = true
-	h.add_child(name)
-	if t.get("solved", false):
-		var stamp := PanelContainer.new()
-		stamp.add_theme_stylebox_override("panel", UI.box(Color(UI.GREEN, 0.15), UI.GREEN, 4, 6, 10))
-		stamp.add_child(UI.title("RESOLVIDO %dº" % int(t.get("place", 1)), 30, UI.GREEN))
-		h.add_child(stamp)
-	elif int(ins.get("lockLeft", 0)) > 0:
-		var lk := PanelContainer.new()
-		lk.add_theme_stylebox_override("panel", UI.box(Color(UI.PINK, 0.15), UI.PINK, 2, 6, 10))
-		var lkl := UI.label("errou · %ds" % int(ins["lockLeft"]), 20, UI.PINK, "bold")
-		lkl.autowrap_mode = TextServer.AUTOWRAP_OFF
-		lk.add_child(lkl)
-		h.add_child(lk)
-	v.add_child(h)
-	# progresso real (só o professor vê): pistas reunidas e ligações certas no quadro agora
-	v.add_child(_bar("Pistas reunidas", int(ins.get("cluesFound", 0)), int(ins.get("cluesTotal", 1)), UI.SKY))
-	v.add_child(_bar("Ligações certas no quadro (agora)", int(ins.get("edgesOk", 0)), int(ins.get("edgesTotal", 1)), UI.GREEN))
-	v.add_child(UI.label("%d cartas · %d fios · %d teoria%s · %d objeto%s na mochila" % [int(t["cards"]), int(t["links"]), int(t["submissions"]), "" if int(t["submissions"]) == 1 else "s", int(ins.get("items", 0)), "" if int(ins.get("items", 0)) == 1 else "s"], 20, UI.PAPER))
-	# alunos: ativo (verde), pensando (amarelo), parado ou fora (cinza/vermelho)
+	# três números que importam
+	var stats := UI.hbox(8)
+	stats.add_child(_stat("PISTAS", "%d/%d" % [int(ins.get("cluesFound", 0)), int(ins.get("cluesTotal", 0))], UI.SKY))
+	stats.add_child(_stat("PROVAS", "%d/%d" % [int(ins.get("edgesOk", 0)), int(ins.get("edgesTotal", 0))], UI.GREEN))
+	stats.add_child(_stat("OBJETOS", str(int(ins.get("items", 0))), UI.YELLOW))
+	v.add_child(stats)
+	# objetivos: cada parte da história (verde = provada no quadro agora)
+	var of := HFlowContainer.new()
+	of.add_theme_constant_override("h_separation", 6)
+	of.add_theme_constant_override("v_separation", 6)
+	for cat in ins.get("cats", []):
+		var ok: bool = cat["status"] == "ok"
+		var c2 := UI.GREEN if ok else (UI.RED if cat["status"] == "errado" else Color(UI.MIST, 0.7))
+		var chip := PanelContainer.new()
+		chip.add_theme_stylebox_override("panel", UI.box(Color(c2, 0.14), c2, 1, 8, 6))
+		var chl := UI.label(("OK  " if ok else "") + str(cat["label"]), 17, c2, "bold")
+		chl.autowrap_mode = TextServer.AUTOWRAP_OFF
+		chip.add_child(chl)
+		of.add_child(chip)
+	if of.get_child_count() > 0:
+		v.add_child(of)
+	# alunos: ativo (verde), pensando (amarelo), parado ou fora
 	var flow := HFlowContainer.new()
-	flow.add_theme_constant_override("h_separation", 8)
-	flow.add_theme_constant_override("v_separation", 8)
+	flow.add_theme_constant_override("h_separation", 6)
+	flow.add_theme_constant_override("v_separation", 6)
 	for mbr in ins.get("members", []):
 		var idle := int(mbr.get("idleSec", 0))
 		var dot := UI.GREEN if idle < 60 else (UI.YELLOW if idle < 180 else UI.RED)
 		if not mbr.get("online", true):
 			dot = UI.MIST.darkened(0.4)
-		var chip := PanelContainer.new()
-		chip.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.85), dot, 2, 26, 12))
+		var mc := PanelContainer.new()
+		mc.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.85), dot, 2, 20, 8))
 		var txt := str(mbr["name"])
 		if not mbr.get("online", true):
 			txt += "  fora"
 		elif idle >= 180:
 			txt += "  parado %dmin" % (idle / 60)
-		var cl := UI.label(txt, 20, UI.PAPER, "bold")
+		var cl := UI.label(txt, 18, UI.PAPER, "bold")
 		cl.autowrap_mode = TextServer.AUTOWRAP_OFF
-		chip.add_child(cl)
-		flow.add_child(chip)
+		mc.add_child(cl)
+		flow.add_child(mc)
 	v.add_child(flow)
-	var prog: Variant = t.get("progress")
-	if prog is Array:
-		var pf := HFlowContainer.new()
-		pf.add_theme_constant_override("h_separation", 8)
-		pf.add_theme_constant_override("v_separation", 8)
-		var ltl := UI.label("Última teoria:", 19, UI.MIST)
-		ltl.autowrap_mode = TextServer.AUTOWRAP_OFF
-		pf.add_child(ltl)
-		for cat in prog:
-			var ok: bool = cat["status"] == "ok"
-			var c2 := UI.GREEN if ok else (UI.RED if cat["status"] == "errado" else UI.YELLOW)
-			var chip2 := PanelContainer.new()
-			chip2.add_theme_stylebox_override("panel", UI.box(Color(c2, 0.2), c2, 2, 10, 8))
-			var chl := UI.label(str(cat["label"]), 18, c2, "bold")
-			chl.autowrap_mode = TextServer.AUTOWRAP_OFF
-			chip2.add_child(chl)
-			pf.add_child(chip2)
-		v.add_child(pf)
-	var row := UI.hbox(10)
-	var see := UI.button("Ver quadro", "ghost", 70)
-	see.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	see.pressed.connect(func() -> void: _open_viewer(t))
-	row.add_child(see)
-	var tip := UI.button("Mandar dica", "ghost", 70)
-	tip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tip.pressed.connect(func() -> void: _open_hint(str(t["id"])))
-	row.add_child(tip)
-	var log := UI.button("Ações", "ghost", 70)
-	log.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	log.pressed.connect(func() -> void:
-		feed_filter = str(t["id"])
-		game_tab = "aovivo"
-		_feed_len = -1
-		_refresh_game())
-	row.add_child(log)
+	var row := UI.hbox(8)
+	for spec in [["Quadro", func() -> void: _open_viewer(t)], ["Dica", func() -> void: _open_hint(str(t["id"]))],
+			["Ações", func() -> void:
+				feed_filter = str(t["id"])
+				game_tab = "aovivo"
+				_feed_len = -1
+				_refresh_game()]]:
+		var b := UI.button(spec[0], "ghost", 60)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.pressed.connect(spec[1])
+		row.add_child(b)
 	v.add_child(row)
 	p.add_child(v)
-	return p
+	wrap.add_child(p)
+	return wrap
+
+
+func _stat(label: String, value: String, col: Color) -> Control:
+	var pc := PanelContainer.new()
+	pc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	pc.add_theme_stylebox_override("panel", UI.box(Color(col, 0.1), Color(col, 0.5), 1, 10, 8))
+	var v := UI.vbox(0)
+	var vl := UI.title(value, 36, col)
+	vl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vl.autowrap_mode = TextServer.AUTOWRAP_OFF
+	v.add_child(vl)
+	var ll := UI.label(label, 15, UI.MIST, "type")
+	ll.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ll.autowrap_mode = TextServer.AUTOWRAP_OFF
+	v.add_child(ll)
+	pc.add_child(v)
+	return pc
 
 
 const FEED_COLORS := {"cena": Color("#ffc83d"), "conversa": Color("#6fd3ff"), "quadro": Color("#b9a3ff"), "teoria": Color("#ff9a4d"),

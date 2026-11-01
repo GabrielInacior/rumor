@@ -142,7 +142,13 @@ func _host_state(phase: String) -> Dictionary:
 		for pl in t["players"]:
 			mem.append({"name": pl["name"], "online": k != 3, "idleSec": [12, 95, 260, 30, 400][k % 5], "actions": 5 + k})
 			k += 1
-		s["insight"][t["id"]] = {"edgesOk": 1 + k % 3, "edgesTotal": 3, "cluesFound": 4 + k, "cluesTotal": 8, "items": k % 2, "lockLeft": 30 if t["id"] == "t3" else 0, "members": mem}
+		var cts := []
+		var q := 0
+		for cat in full_case["solution"]["categories"]:
+			cts.append({"label": cat["label"], "status": ["ok", "incompleto", "falta_prova"][(q + k) % 3]})
+			q += 1
+		s["insight"][t["id"]] = {"edgesOk": 1 + k % 3, "edgesTotal": 3, "cluesFound": 4 + k, "cluesTotal": 8, "items": k % 2, "lockLeft": 0, "members": mem,
+			"cats": cts, "finished": t["id"] == "t2", "voting": t["id"] == "t3", "culpritOk": true}
 	for t in s["teams"]:
 		t["progress"] = [{"label": "Por onde passou", "status": "ok"}, {"label": "Quem espalhou", "status": "incompleto"}, {"label": "Culpado", "status": "errado"}]
 	return s
@@ -256,9 +262,26 @@ func _run() -> void:
 	g._open_submit()
 	await _shot("14_apresentar")
 	g._close_sheet()
-	g._show_result({"correct": false, "by": "Lince", "categories": [{"label": "Por onde passou", "status": "ok"}, {"label": "Quem espalhou", "status": "falta_prova"}, {"label": "Culpado", "status": "errado"}]})
+	Net.state["vote"] = {"culprit": str(full_case["solution"].get("culprit", "")), "by": "Lince", "mine": false, "yes": 1, "need": 3}
+	g._open_vote()
+	await _shot("14b_votacao")
+	g._close_sheet()
+	Net.state["vote"] = null
+	var cats := []
+	var stt := ["ok", "falta_prova", "incompleto", "ok"]
+	var ci := 0
+	for cat in full_case["solution"]["categories"]:
+		cats.append({"id": cat["id"], "label": cat["label"], "status": stt[ci % 4]})
+		ci += 1
+	cats.append({"id": "culpado", "label": "Culpado", "status": "ok"})
+	Net.state["finished"] = true
+	Net.state["objectives"] = {"primary": true, "secDone": 2, "secTotal": cats.size() - 1}
+	Net.state["teamsFinished"] = 1
+	Net.state["teamsPlaying"] = 3
+	g._show_result({"correct": false, "by": "Lince", "categories": cats})
 	await _shot("15_resultado")
 	g._close_sheet()
+	Net.state["finished"] = false
 	# conversa com árvore
 	var person := {}
 	for c in full_case["cards"]:

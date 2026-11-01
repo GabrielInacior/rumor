@@ -702,19 +702,51 @@ func _build_board_page() -> Control:
 	action_bar = UI.hbox(10)
 	action_bar.visible = false
 	bottom.add_child(action_bar)
-	var story_btn := UI.button("LER A HISTÓRIA DO QUADRO", "ghost", 70)
-	story_btn.add_theme_font_override("font", UI.font("title"))
-	story_btn.add_theme_font_size_override("font_size", 30)
-	story_btn.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.85), UI.YELLOW, 2, 18))
+	var brow := UI.hbox(10)
+	var story_btn := Button.new()
+	story_btn.focus_mode = Control.FOCUS_NONE
+	story_btn.custom_minimum_size = Vector2(112, 96)
+	story_btn.tooltip_text = "Ler a história que o quadro conta"
+	story_btn.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.9), UI.YELLOW, 2, 20))
+	story_btn.add_theme_stylebox_override("hover", UI.box(Color(UI.BLUE, 0.6), UI.YELLOW, 2, 20))
+	story_btn.add_theme_stylebox_override("pressed", UI.box(Color(UI.YELLOW, 0.3), UI.YELLOW, 2, 20))
+	var ico := StoryIcon.new()
+	ico.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ico.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	story_btn.add_child(ico)
 	story_btn.pressed.connect(_open_story)
-	bottom.add_child(story_btn)
-	submit_btn = UI.button("APRESENTAR TEORIA", "primary", 96)
+	brow.add_child(story_btn)
+	submit_btn = UI.button("ENTREGAR O CASO", "primary", 96)
+	submit_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	submit_btn.add_theme_stylebox_override("normal", UI.box(UI.PINK, UI.INK, 0, 20))
 	submit_btn.add_theme_stylebox_override("hover", UI.box(UI.PINK.lightened(0.15), UI.INK, 0, 20))
-	submit_btn.pressed.connect(_open_submit)
-	bottom.add_child(submit_btn)
+	submit_btn.pressed.connect(_on_submit_btn)
+	brow.add_child(submit_btn)
+	bottom.add_child(brow)
 	page.add_child(bottom)
 	return page
+
+
+class StoryIcon extends Control:
+	func _draw() -> void:
+		var c := Vector2(size.x / 2, size.y / 2 - 10)
+		var w := 30.0
+		var h := 36.0
+		var paper := UI.PAPER
+		# duas páginas abertas, levemente inclinadas
+		draw_colored_polygon(PackedVector2Array([c + Vector2(-w - 2, -h / 2 + 4), c + Vector2(-2, -h / 2), c + Vector2(-2, h / 2), c + Vector2(-w - 2, h / 2 + 4)]), paper)
+		draw_colored_polygon(PackedVector2Array([c + Vector2(2, -h / 2), c + Vector2(w + 2, -h / 2 + 4), c + Vector2(w + 2, h / 2 + 4), c + Vector2(2, h / 2)]), paper.darkened(0.08))
+		for i in 4:
+			var y := -h / 2 + 9 + i * 7
+			draw_line(c + Vector2(-w + 4, y + 2), c + Vector2(-7, y), Color(UI.INK, 0.55), 2.0)
+			draw_line(c + Vector2(7, y), c + Vector2(w - 4, y + 2), Color(UI.INK, 0.55), 2.0)
+		# fio vermelho com alfinete (é a história do quadro)
+		draw_line(c + Vector2(-w + 2, h / 2 - 6), c + Vector2(w - 2, -h / 2 + 8), UI.RED, 3.0)
+		draw_circle(c + Vector2(w - 2, -h / 2 + 8), 4.5, UI.YELLOW)
+		var f := UI.font("title")
+		var t := "HISTÓRIA"
+		var tw := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x
+		draw_string(f, Vector2((size.x - tw) / 2, size.y - 12), t, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, UI.YELLOW)
 
 
 func _pinned_refs() -> Array:
@@ -1202,22 +1234,72 @@ func _open_story() -> void:
 	_open_sheet(StoryPanel.story(Net.state.get("board", {}).get("links", []), chosen_culprit))
 
 
+func _on_submit_btn() -> void:
+	if Net.state.get("finished", false):
+		_show_result(Net.state.get("lastResult", {}) if Net.state.get("lastResult") is Dictionary else {})
+	elif Net.state.get("vote") is Dictionary:
+		_open_vote()
+	else:
+		_open_submit()
+
+
+## Lista dos objetivos do caso: principal (o culpado) e secundários (provar cada parte).
+func _objectives_box(result: Dictionary = {}) -> Control:
+	var v := UI.vbox(8)
+	var status := {}
+	for cat in result.get("categories", []):
+		status[str(cat["id"])] = str(cat["status"])
+	var row := func(kind: String, text: String, st: String) -> void:
+		var h := UI.hbox(10)
+		var tag := PanelContainer.new()
+		var col: Color = UI.PINK if kind == "PRINCIPAL" else UI.SKY
+		tag.add_theme_stylebox_override("panel", UI.box(Color(col, 0.18), col, 2, 8, 6))
+		var tl := UI.label(kind, 16, col, "bold")
+		tl.autowrap_mode = TextServer.AUTOWRAP_OFF
+		tag.add_child(tl)
+		tag.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(tag)
+		var l := UI.label(text, 24, UI.PAPER, "bold")
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		h.add_child(l)
+		if st != "":
+			var ok := st == "ok"
+			var info: Array = {"ok": ["CUMPRIDO", UI.GREEN], "incompleto": ["FALTOU", UI.YELLOW], "falta_prova": ["SEM PROVA", Color("#ff9a4d")],
+				"errado": ["ERRADO", UI.RED]}.get(st, ["?", UI.MIST])
+			var stamp := PanelContainer.new()
+			stamp.add_theme_stylebox_override("panel", UI.box(Color(info[1], 0.15), info[1], 3, 6, 8))
+			var sl := UI.title(info[0], 24, info[1])
+			sl.autowrap_mode = TextServer.AUTOWRAP_OFF
+			stamp.add_child(sl)
+			stamp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			stamp.rotation = -0.04 if ok else 0.03
+			h.add_child(stamp)
+		v.add_child(h)
+	if Net.case_data.get("has_culprit", false):
+		row.call("PRINCIPAL", str(Net.case_data.get("culprit_question", "Quem é o responsável?")), status.get("culpado", ""))
+	for cat in Net.case_data.get("categories", []):
+		row.call("SECUNDÁRIO", str(cat["label"]), status.get(str(cat["id"]), ""))
+	return v
+
+
 func _open_submit() -> void:
 	var v := UI.vbox(14)
-	v.add_child(UI.title("APRESENTAR A TEORIA?", 50, UI.PINK))
-	v.add_child(UI.label("O quadro inteiro é a teoria da equipe. O caso pede:", 26, UI.PAPER))
+	var solo := bool(Net.state.get("solo", false))
+	v.add_child(UI.title("ENTREGAR O CASO?", 50, UI.PINK))
+	v.add_child(UI.label("O principal é apontar o culpado. Os secundários são as provas no quadro: cada fio importante com a pista que prova.", 23, UI.PAPER))
+	v.add_child(_objectives_box())
+	v.add_child(UI.label(("Depois de entregar, o quadro fecha e o resultado fica guardado." if solo else
+		"Toda a equipe vota. Depois de entregar, o quadro fecha. Ganha quem cumprir mais objetivos; no empate, quem entregou primeiro."), 21, UI.MIST))
 	var read := UI.button("Ler a história do quadro antes", "ghost", 70)
 	read.pressed.connect(func() -> void:
 		_close_sheet()
 		_open_story())
 	v.add_child(read)
-	for cat in Net.case_data.get("categories", []):
-		v.add_child(UI.label("·  " + str(cat["label"]), 28, UI.YELLOW, "bold"))
-	v.add_child(UI.label("Cada fio importante precisa de uma PROVA presa nele. Se errar, a equipe espera %d segundos para tentar de novo." % int(Net.state.get("settings", {}).get("penaltySec", 45)), 24, UI.MIST))
-	var go := UI.button("APRESENTAR AGORA", "primary", 110)
+	var verb := "ENTREGAR" if solo else "PEDIR O VOTO DA EQUIPE"
+	var go := UI.button("ENTREGAR AGORA" if solo else "PEDIR O VOTO DA EQUIPE", "primary", 110)
+	go.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	if Net.case_data.get("has_culprit", false):
-		# o momento alto: a equipe aponta o culpado, carta por carta
-		v.add_child(UI.title(str(Net.case_data.get("culprit_question", "Quem é o responsável?")).to_upper(), 44, UI.PINK))
+		v.add_child(UI.title(str(Net.case_data.get("culprit_question", "Quem é o responsável?")).to_upper(), 40, UI.PINK))
 		var grid := GridContainer.new()
 		grid.columns = 3
 		grid.add_theme_constant_override("h_separation", 12)
@@ -1237,46 +1319,66 @@ func _open_submit() -> void:
 					(o as Button).button_pressed = o == b
 				Sfx.play("card_pin")
 				go.disabled = false
-				go.text = "ACUSAR %s E APRESENTAR" % _name_of(cid).to_upper())
-			if b.pressed.get_connections().size() > 0:
-				pass
+				go.text = "ACUSAR %s E %s" % [_name_of(cid).to_upper(), verb])
 			grid.add_child(b)
 		v.add_child(grid)
 		go.disabled = chosen_culprit == ""
 		if chosen_culprit != "":
-			go.text = "ACUSAR %s E APRESENTAR" % _name_of(chosen_culprit).to_upper()
+			go.text = "ACUSAR %s E %s" % [_name_of(chosen_culprit).to_upper(), verb]
 	go.pressed.connect(func() -> void:
-		Net.send({"t": "submit", "culprit": chosen_culprit})
+		Net.send({"t": "propose_finish", "culprit": chosen_culprit})
 		Sfx.play("submit_stamp")
 		_close_sheet())
 	v.add_child(go)
 	_open_sheet(v)
 
 
+var _vote_open := false
+var _vote_seen := ""
+
+
+## Votação da equipe: alguém propôs entregar; cada um diz se concorda.
+func _open_vote() -> void:
+	var vt: Dictionary = Net.state.get("vote", {})
+	var v := UI.vbox(16)
+	v.add_child(UI.title("VOTAÇÃO DA EQUIPE", 52, UI.YELLOW))
+	var cn := _name_of(str(vt.get("culprit", ""))) if str(vt.get("culprit", "")) not in ["", "<null>"] else ""
+	v.add_child(UI.label("%s quer entregar o caso%s." % [str(vt.get("by", "Alguém")), (" acusando " + cn.to_upper()) if cn != "" else ""], 28, UI.PAPER, "bold"))
+	v.add_child(UI.label("Votos a favor: %d de %d" % [int(vt.get("yes", 0)), int(vt.get("need", 1))], 24, UI.MIST, "bold"))
+	if bool(vt.get("mine", false)):
+		v.add_child(UI.label("Você já votou SIM. Esperando o resto da equipe.", 24, UI.GREEN, "bold"))
+		var back := UI.button("VOLTAR AO QUADRO", "ghost", 84)
+		back.pressed.connect(_close_sheet)
+		v.add_child(back)
+	else:
+		var yes := UI.button("SIM, ENTREGAR", "primary", 104)
+		yes.pressed.connect(func() -> void:
+			Net.send({"t": "vote_finish", "yes": true})
+			Sfx.play("submit_stamp")
+			_close_sheet())
+		v.add_child(yes)
+		var no := UI.button("AINDA NÃO, VAMOS INVESTIGAR MAIS", "ghost", 90)
+		no.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		no.pressed.connect(func() -> void:
+			Net.send({"t": "vote_finish", "yes": false})
+			_close_sheet())
+		v.add_child(no)
+	_open_sheet(v)
+	_vote_open = true  # depois do _open_sheet, que fecha a folha anterior
+
+
 func _show_result(r: Dictionary) -> void:
 	var v := UI.vbox(14)
-	if r.get("correct", false):
-		v.add_child(UI.title("CASO RESOLVIDO!", 72, UI.GREEN))
-		v.add_child(UI.label("A teoria de vocês fecha. Esperem a revelação no telão.", 28, UI.PAPER, "bold"))
-	else:
-		v.add_child(UI.title("AINDA NÃO FECHA", 64, UI.PINK))
-		v.add_child(UI.label("Teoria apresentada por %s. Olhem o que falta:" % str(r.get("by", "alguém")), 24, UI.MIST))
-	for cat in r.get("categories", []):
-		var st := str(cat["status"])
-		var info: Array = {
-			"ok": ["CERTO", UI.GREEN], "incompleto": ["FALTA LIGAÇÃO", UI.YELLOW],
-			"falta_prova": ["FALTA PROVA", Color("#ff9a4d")], "errado": ["TEM UM ERRO AQUI", UI.RED],
-		}.get(st, ["?", UI.MIST])
-		var row := UI.hbox(12)
-		var l := UI.label(str(cat["label"]), 26, UI.PAPER, "bold")
-		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		row.add_child(l)
-		var stamp := PanelContainer.new()
-		stamp.add_theme_stylebox_override("panel", UI.box(Color(info[1], 0.15), info[1], 4, 6, 12))
-		stamp.add_child(UI.title(info[0], 30, info[1]))
-		row.add_child(stamp)
-		v.add_child(row)
-	var ok := UI.button("VOLTAR AO QUADRO", "ghost")
+	var o: Dictionary = Net.state.get("objectives", {})
+	var done := int(o.get("secDone", 0)) + (1 if o.get("primary", false) else 0)
+	var total := int(o.get("secTotal", 0)) + (1 if Net.case_data.get("has_culprit", false) else 0)
+	v.add_child(UI.title("CASO ENTREGUE!" if not r.get("correct", false) else "CASO RESOLVIDO!", 64, UI.GREEN if r.get("correct", false) else UI.YELLOW))
+	v.add_child(UI.label("%d de %d objetivos cumpridos" % [done, total], 30, UI.PAPER, "bold"))
+	v.add_child(_objectives_box(r))
+	if not bool(Net.state.get("solo", false)):
+		v.add_child(UI.label("Aguardando as outras equipes: %d de %d já entregaram. A revelação aparece no fim." % [
+			int(Net.state.get("teamsFinished", 0)), int(Net.state.get("teamsPlaying", 1))], 22, UI.MIST))
+	var ok := UI.button("VER O QUADRO", "ghost")
 	ok.pressed.connect(_close_sheet)
 	v.add_child(ok)
 	_open_sheet(v)
@@ -1328,6 +1430,7 @@ func _open_sheet(content: Control) -> void:
 
 
 func _close_sheet() -> void:
+	_vote_open = false
 	UI.clear(sheet_layer)
 
 
@@ -1359,7 +1462,7 @@ func _board_tutorial() -> void:
 		h.add_child(sv)
 		row.add_child(h)
 		v.add_child(row)
-	v.add_child(UI.label("Depois, aponte o culpado e toque em APRESENTAR TEORIA. O quadro inteiro é a teoria da equipe.", 23, UI.PAPER))
+	v.add_child(UI.label("Depois, aponte o culpado e toque em ENTREGAR O CASO. A equipe vota e o quadro inteiro vira a resposta.", 23, UI.PAPER))
 	var ok := UI.button("ENTENDI", "primary", 100)
 	ok.pressed.connect(_close_sheet)
 	v.add_child(ok)
@@ -1430,6 +1533,16 @@ func refresh() -> void:
 		for pid in _loc_people:
 			if not before.has(pid):
 				get_meta("main").toast("%s apareceu aqui!" % _name_of(str(pid)), UI.YELLOW)
+	var vt: Variant = Net.state.get("vote")
+	if vt is Dictionary and not bool(vt.get("mine", false)) and str(vt.get("by", "")) + str(vt.get("culprit", "")) != _vote_seen:
+		# abre a votação uma vez por proposta (quem fechar pode votar pelo botão de baixo)
+		_vote_seen = str(vt.get("by", "")) + str(vt.get("culprit", ""))
+		Sfx.play("ui_tap")
+		_open_vote()
+	elif not (vt is Dictionary):
+		_vote_seen = ""
+		if _vote_open:
+			_close_sheet()
 	var lr: Variant = Net.state.get("lastResult")
 	if lr is Dictionary and float(lr.get("at", 0)) > last_result_at:
 		var first := last_result_at == 0.0 and Time.get_ticks_msec() < 3000
@@ -1441,6 +1554,8 @@ func refresh() -> void:
 
 
 func on_event(evt: Dictionary) -> void:
+	if str(evt.get("k", "")) == "vote_no":
+		get_meta("main").toast("%s quer continuar investigando." % str(evt.get("by", "Alguém")), UI.YELLOW)
 	if str(evt.get("k", "")) == "hotspot":
 		scene3d.mark_found(str(evt.get("id", "")))
 
@@ -1462,7 +1577,7 @@ func _update_guide() -> void:
 	elif proved == 0:
 		txt = "PASSO 3 de 3   ARRASTE uma pista até o fio para prender a PROVA."
 	elif Net.state.get("lastResult") == null:
-		txt = "Isso! Liguem o resto da história e toquem em APRESENTAR TEORIA."
+		txt = "Isso! Liguem o resto da história, apontem o culpado e toquem em ENTREGAR O CASO."
 		# a última dica fica só alguns segundos: depois o quadro ganha o espaço todo
 		if _guide_done_at == 0:
 			_guide_done_at = Time.get_ticks_msec()
@@ -1475,17 +1590,14 @@ func _update_guide() -> void:
 
 
 func _update_submit() -> void:
-	var lock := float(Net.state.get("lockUntil", 0))
-	var left := int(ceil((lock - Net.server_now_ms()) / 1000.0))
-	if Net.state.get("solved", false):
-		submit_btn.text = "CASO RESOLVIDO"
-		submit_btn.disabled = true
-	elif left > 0:
-		submit_btn.text = "NOVA TEORIA EM %ds" % left
-		submit_btn.disabled = true
+	var vt: Variant = Net.state.get("vote")
+	submit_btn.disabled = false
+	if Net.state.get("finished", false):
+		submit_btn.text = "ENTREGUE · VER RESULTADO"
+	elif vt is Dictionary:
+		submit_btn.text = "VOTAÇÃO: %d DE %d" % [int(vt.get("yes", 0)), int(vt.get("need", 1))]
 	else:
-		submit_btn.text = "APRESENTAR TEORIA"
-		submit_btn.disabled = false
+		submit_btn.text = "ENTREGAR O CASO"
 
 
 func _process(_dt: float) -> void:

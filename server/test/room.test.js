@@ -116,12 +116,21 @@ test('rodada completa', async () => {
   a.send({ t: 'board', op: { k: 'link', a: 'ana', b: 'bia', type: 'contou' } });
   a.send({ t: 'board', op: { k: 'link', a: 'rafa', b: 'versao', type: 'criou' } });
   await a.next((m) => m.t === 'state' && m.board.links.length === 2);
-  a.send({ t: 'submit' });
-  const wr = await a.next((m) => m.t === 'state' && m.lastResult);
-  assert.strictEqual(wr.lastResult.correct, false);
-  const dist = wr.lastResult.categories.find((x) => x.id === 'dist');
-  assert.strictEqual(dist.status, 'errado');
-  assert.strictEqual(wr.lastResult.categories.find((x) => x.id === 'origem').status, 'falta_prova');
+  // entrega: com dois online, vira votação; um "não" cancela
+  a.send({ t: 'propose_finish' });
+  const vb = await b.next((m) => m.t === 'state' && m.vote);
+  assert.strictEqual(vb.vote.mine, false);
+  assert.strictEqual(vb.vote.need, 2);
+  b.send({ t: 'vote_finish', yes: false });
+  const vc = await a.next((m) => m.t === 'state' && m.vote === null);
+  assert.strictEqual(vc.finished, false);
+  // a regra de correção continua a mesma (armadilha = errado, sem prova = falta prova)
+  const { validateBoard } = require('../src/validate');
+  const room2 = require('../src/server').rooms.get(hosted.code);
+  const wr = validateBoard(room2.caseData, room2.teams[0].board, null);
+  assert.strictEqual(wr.correct, false);
+  assert.strictEqual(wr.categories.find((x) => x.id === 'dist').status, 'errado');
+  assert.strictEqual(wr.categories.find((x) => x.id === 'origem').status, 'falta_prova');
 
   // conserta: prova, remove armadilha, acha hotspot, liga bia->versao com prova
   const st = await a.wait((m) => m.t === 'state' && m.board.links.length === 2);
@@ -135,10 +144,12 @@ test('rodada completa', async () => {
   const l2 = s2.board.links.find((l) => l.a === 'bia');
   a.send({ t: 'board', op: { k: 'attach', id: l2.id, clue: 'c4' } });
   await a.next((m) => m.t === 'state' && m.board.links.some((l) => l.evidence === 'c4'));
-  await new Promise((r) => setTimeout(r, 1100)); // passa o bloqueio de 1 s
-  a.send({ t: 'submit' });
-  const ok = await a.next((m) => m.t === 'state' && m.solved);
+  a.send({ t: 'propose_finish' });
+  await b.next((m) => m.t === 'state' && m.vote);
+  b.send({ t: 'vote_finish', yes: true });
+  const ok = await a.next((m) => m.t === 'state' && m.finished);
   assert.strictEqual(ok.lastResult.correct, true);
+  assert.strictEqual(ok.objectives.secDone, ok.objectives.secTotal);
   const rel = await a.wait((m) => m.t === 'state' && m.released.includes('c5'), 2000);
   assert.ok(rel.clues.some((x) => x.id === 'c5'), 'pista com tempo liberada');
 

@@ -92,13 +92,14 @@ func _build_ranking(r: Dictionary) -> Control:
 		var tv := UI.vbox(2)
 		tv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		tv.add_child(UI.title("EQUIPE " + str(row["name"]).to_upper() + ("  (vocês)" if row["id"] == mine else ""), 50 if first else 40, UI.PAPER))
-		var info := ""
-		if row["solved"]:
-			info = "Resolveu em %s" % UI.fmt_time(int(row["timeSec"]))
-		else:
-			info = "Não fechou o caso · %d pontos de dedução" % int(row["score"])
-		info += " · %d teoria%s" % [int(row["submissions"]), "" if int(row["submissions"]) == 1 else "s"]
-		tv.add_child(UI.label(info, 26, UI.GREEN if row["solved"] else UI.MIST, "bold"))
+		# objetivos: culpado (principal) + partes provadas (secundários) + tempo de entrega
+		var info := ("Culpado certo" if row.get("culpritOk", false) else "Culpado errado")
+		info += " · %d de %d provas" % [int(row.get("objDone", 0)), int(row.get("objTotal", 0))]
+		if row.get("timeSec") != null:
+			info += " · entregou em %s" % UI.fmt_time(int(row["timeSec"]))
+		elif not row.get("finished", true):
+			info += " · não entregou a tempo"
+		tv.add_child(UI.label(info, 26, UI.GREEN if row.get("culpritOk", false) else UI.MIST, "bold"))
 		h.add_child(tv)
 		p.add_child(h)
 		v.add_child(p)

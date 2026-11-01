@@ -27,9 +27,8 @@ func setup_from_reveal(r: Dictionary) -> void:
 			place = int(row.get("place", 0))
 			team_name = str(row.get("name", ""))
 			team_color = Color(str(row.get("color", "#ffc83d")))
-			var subs := int(row.get("submissions", 1))
-			# estrelas: resolver de primeira vale 3; resolver com mais tentativas 2; não resolver 1
-			stars = (3 if subs <= 1 else 2) if solved else 1
+			# estrelas: tudo cumprido 3; culpado certo 2; senão 1
+			stars = 3 if solved else (2 if row.get("culpritOk", false) else 1)
 
 
 func _ready() -> void:

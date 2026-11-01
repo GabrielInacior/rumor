@@ -185,7 +185,14 @@ function solveBoard(c, room, socks, team) {
       if (team.board.links.find((x) => x.id === l.id).evidence !== proof) problems.push(`não conseguiu prender a prova ${proof}`);
     }
   }
-  room.playerCmd(socks[1], { t: 'submit', culprit: sol.culprit });
+  // entrega com votação: um propõe, os outros concordam
+  room.playerCmd(socks[1], { t: 'propose_finish', culprit: sol.culprit });
+  if (!team.vote && !team.finishedAt) problems.push('a votação de entrega não começou');
+  room.playerCmd(socks[0], { t: 'vote_finish', yes: true });
+  room.playerCmd(socks[2], { t: 'vote_finish', yes: true });
+  if (!team.finishedAt) problems.push('a equipe votou sim e o caso não foi entregue');
+  room.playerCmd(socks[0], { t: 'board', op: { k: 'unpin', ref: 'p:' + sol.culprit } });
+  if (!team.board.cards.some((x) => x.ref === 'p:' + sol.culprit) && ids.has(sol.culprit)) problems.push('o quadro mudou depois da entrega');
   const r = team.lastResult;
   if (!r || !r.correct) problems.push('teoria certa NÃO foi aceita: ' + JSON.stringify(r && r.categories));
   return problems;
@@ -211,11 +218,18 @@ function concurrency(c) {
   // movimentar carta inexistente / fio inexistente não quebra
   room.playerCmd(socks[2], { t: 'board', op: { k: 'move', ref: 'p:nao_existe', x: 0.1, y: 0.1 } });
   room.playerCmd(socks[2], { t: 'board', op: { k: 'retype', id: 'l999', type: lt } });
-  // apresentar duas vezes no mesmo instante: conta 1 (com bloqueio)
-  room.settings.penaltySec = 30;
-  room.playerCmd(socks[0], { t: 'submit', culprit: ppl[0] });
-  room.playerCmd(socks[1], { t: 'submit', culprit: ppl[0] });
-  if (team.submissions !== 1) out.push(`duas teorias contadas no mesmo instante (${team.submissions})`);
+  // votação: um "não" cancela; dois propondo ao mesmo tempo viram um voto só
+  room.playerCmd(socks[0], { t: 'propose_finish', culprit: ppl[0] });
+  room.playerCmd(socks[1], { t: 'vote_finish', yes: false });
+  if (team.vote || team.finishedAt) out.push('um "não" na votação não cancelou a entrega');
+  room.playerCmd(socks[0], { t: 'propose_finish', culprit: ppl[0] });
+  room.playerCmd(socks[1], { t: 'propose_finish', culprit: ppl[1] });
+  if (team.finishedAt) out.push('entregou sem todos concordarem');
+  room.playerCmd(socks[2], { t: 'vote_finish', yes: true });
+  room.playerCmd(socks[2], { t: 'vote_finish', yes: true });
+  if (!team.finishedAt) out.push('todos votaram sim e não entregou');
+  if (team.submissions !== 1) out.push(`entrega contada mais de uma vez (${team.submissions})`);
+  team.finishedAt = 0; // reabre só para os testes seguintes do quadro
   // mesma prova em dois fios: fica só no último
   room.playerCmd(socks[0], { t: 'board', op: { k: 'pin', ref: 'p:' + ppl[0], x: 0.2, y: 0.2 } });
   room.playerCmd(socks[0], { t: 'board', op: { k: 'pin', ref: 'p:' + ppl[2], x: 0.2, y: 0.7 } });
