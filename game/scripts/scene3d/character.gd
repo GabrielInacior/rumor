@@ -79,7 +79,29 @@ func _build_model() -> void:
 	var has_f := model.find_child("Body_f", true, false) != null
 	# cabelo que ainda não existe no modelo cai para o parecido mais próximo (nunca fica careca)
 	if model.find_child(hair, true, false) == null:
-		hair = "Hair_" + str({"trancas": "rabo", "ondulado": "longo", "cacheado_longo": "cacheado"}.get(str(look.get("hair", "")), "longo" if fem else "curto"))
+		hair = "Hair_" + str({"trancas": "rabo", "ondulado": "longo", "cacheado_longo": "cacheado", "calvo": "raspado",
+			"grisalho_curto": "curto", "coque_baixo": "coque", "chanel": "longo"}.get(str(look.get("hair", "")), "longo" if fem else "curto"))
+	# peças do corpo/roupa que este personagem usa (adolescente x adulto, gênero, uniforme)
+	var adult := bool(card.get("adult", false))
+	var g := "f" if fem else "m"
+	var outfit := str(look.get("outfit", "formal"))
+	var want := {}
+	var pick := func(options: Array) -> void:
+		for o in options:
+			if model.find_child(o, true, false) != null:
+				want[o] = true
+				return
+	pick.call(["Body_adult_" + g, "Body_" + g, "Body"] if adult else ["Body_" + g, "Body"])
+	if adult and outfit == "uniforme":
+		pick.call(["Top_uniform", "Top_adult_" + g, "Top_" + g, "Top"])
+	else:
+		pick.call(["Top_adult_" + g, "Top_" + g, "Top"] if adult else ["Top_" + g, "Top"])
+	pick.call(["Pants_adult_" + g, "Pants_" + g, "Pants"] if adult else ["Pants_" + g, "Pants"])
+	pick.call(["Shoes_adult", "Shoes"] if adult else ["Shoes"])
+	var fh := str(look.get("facial_hair", "nenhum"))
+	if adult and not fem and fh != "nenhum":
+		pick.call(["Face_" + fh])
+	var garments := ["Body", "Top", "Pants", "Shoes"]
 	for mi in model.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		var n := String(m.name)
@@ -87,9 +109,12 @@ func _build_model() -> void:
 			m.visible = n == hair
 		elif n.begins_with("Acc_"):
 			m.visible = n == acc
-		elif has_f and (n.ends_with("_f") or n.ends_with("_m")):
-			# corpo, roupa e calça por gênero (o esqueleto é o mesmo para os dois)
-			m.visible = n.ends_with("_f") == fem
+		elif n.begins_with("Face_") and n != "Face_eyes" and n != "Face_mouth":
+			m.visible = want.has(n)
+		else:
+			for gp in garments:
+				if n == gp or n.begins_with(gp + "_"):
+					m.visible = want.has(n)
 		for s in m.mesh.get_surface_count():
 			var src := m.mesh.surface_get_material(s)
 			var mname := src.resource_name if src else ""
@@ -106,6 +131,8 @@ func _build_model() -> void:
 						key = k
 				var col: Color = colors.get(key, Color("#7a86b0"))
 				m.set_surface_override_material(s, _toon(col, 0.008))
+	if bool(card.get("adult", false)):
+		model.scale = Vector3.ONE * 1.07
 	var aps := model.find_children("*", "AnimationPlayer", true, false)
 	if aps.size() > 0:
 		anim = aps[0]
