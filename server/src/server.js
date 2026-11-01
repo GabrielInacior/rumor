@@ -112,6 +112,11 @@ function handle(sock, msg) {
     // lista pública (sem solução) para a tela de escolha do modo solo
     send(sock, { t: 'cases', cases: [...cases.values()].map((c) => ({
       id: c.id, title: c.title, tagline: c.tagline, difficulty: c.difficulty, duration_sec: c.duration_sec, mode: modeOf(c),
+      // capa do arquivo: uma testemunha (nunca o culpado), onde começa e quantos envolvidos
+      cover: ((c.cards || []).find((x) => x.kind === 'pessoa' && x.id !== (c.solution || {}).culprit) || {}).id || '',
+      cover_name: ((c.cards || []).find((x) => x.kind === 'pessoa' && x.id !== (c.solution || {}).culprit) || {}).name || '',
+      place: ((c.cards || []).find((x) => x.kind === 'lugar') || {}).name || '',
+      people: (c.cards || []).filter((x) => x.kind === 'pessoa').length,
     })) });
     return;
   }

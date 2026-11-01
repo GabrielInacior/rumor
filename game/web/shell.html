@@ -17,14 +17,17 @@ body { color:white; background:var(--night); overflow:hidden; touch-action:none;
 #cover { position:fixed; inset:0; z-index:5; display:flex; flex-direction:column; align-items:center; justify-content:center;
   background: radial-gradient(circle at 78% 14%, rgba(255,200,61,.22), transparent 22%), linear-gradient(#26407a, #0b1430 55%, #060c1f);
   overflow:hidden; font-family:'Special Elite', monospace; transition: opacity .6s; }
-#cover.hide { opacity:0; pointer-events:none; }
+#cover.hide { display:none; }
+/* ao tocar em entrar tudo para de animar: o navegador fica livre para iniciar o jogo */
+#cover.still *, #cover.still::before { animation: none !important; transition: none !important; }
+#cover.still .rain { display:none; }
 /* retícula de quadrinho */
 #cover::before { content:""; position:absolute; inset:0; background-image: radial-gradient(rgba(0,0,0,.35) 1.2px, transparent 1.6px);
-  background-size: 7px 7px; transform: rotate(45deg) scale(1.6); opacity:.6; pointer-events:none; }
+  background-size: 7px 7px; opacity:.5; pointer-events:none; }
 /* chuva */
 .rain { position:absolute; inset:-20% 0 0 0; pointer-events:none; }
 .rain i { position:absolute; top:-20%; width:1.5px; height:90px; background:linear-gradient(transparent, rgba(160,190,255,.55));
-  animation: fall linear infinite; transform: rotate(14deg); }
+  animation: fall linear infinite; transform: rotate(14deg); will-change: transform; }
 @keyframes fall { to { transform: translateY(140vh) rotate(14deg); } }
 /* poste de luz */
 .lamp { position:absolute; right:12%; top:0; width:42vmin; height:70vmin; background: radial-gradient(ellipse at 50% 0, rgba(255,210,120,.28), transparent 65%);
@@ -85,7 +88,7 @@ const engine = new Engine(GODOT_CONFIG);
 (function () {
   // chuva em CSS (leve)
   const rain = document.getElementById('rain');
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < 36; i++) {
     const d = document.createElement('i');
     d.style.left = (Math.random() * 110 - 5) + '%';
     d.style.animationDuration = (0.6 + Math.random() * 0.7) + 's';
@@ -106,7 +109,7 @@ const engine = new Engine(GODOT_CONFIG);
   let ti = Math.floor(Math.random() * tips.length);
   const showTip = () => { tipEl.innerHTML = tips[ti % tips.length]; ti++; };
   showTip();
-  setInterval(showTip, 4200);
+  const tipTimer = setInterval(showTip, 4200);
   const labels = ['Abrindo o arquivo do caso...', 'Revirando os armários...', 'Interrogando testemunhas...', 'Pendurando o barbante vermelho...', 'Revelando as fotos...'];
   let li = 0;
   const labelEl = document.getElementById('label');
@@ -144,12 +147,14 @@ const engine = new Engine(GODOT_CONFIG);
     const go = function () {
       enter.disabled = true;
       enter.textContent = 'ENTRANDO...';
+      clearInterval(tipTimer);
+      cover.classList.add('still');
       // o toque destrava o áudio: a trilha já começa no menu
       try { const AC = window.AudioContext || window.webkitAudioContext; if (AC) { const ac = new AC(); ac.resume(); setTimeout(() => ac.close(), 500); } } catch (e) {}
-      engine.start().then(function () {
-        cover.classList.add('hide');
-        setTimeout(() => cover.remove(), 700);
-      }, fail);
+      // espera a tela desenhar o "ENTRANDO..." antes do trabalho pesado de iniciar
+      requestAnimationFrame(() => setTimeout(() => {
+        engine.start().then(function () { cover.remove(); }, fail);
+      }, 30));
     };
     enter.addEventListener('click', go, { once: true });
   }, fail);
