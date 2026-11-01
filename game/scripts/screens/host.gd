@@ -238,22 +238,22 @@ func _build_game() -> void:
 	var v := UI.vbox(12)
 	m.add_child(v)
 	var top := UI.hbox(16)
-	timer_l = UI.title("0:00", 110 if wide else 88, UI.YELLOW)
+	timer_l = UI.title("0:00", 96 if wide else 68, UI.YELLOW)
 	top.add_child(timer_l)
 	var tv := UI.vbox(0)
 	tv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	tv.add_child(UI.label("SALA %s  ·  PROF. AILSON" % Net.code, 22, UI.MIST, "bold"))
-	var tt := UI.title(str(Net.case_data.get("title", "")).to_upper(), 46 if wide else 38, UI.PAPER)
+	var tt := UI.title(str(Net.case_data.get("title", "")).to_upper(), 44 if wide else 32, UI.PAPER)
 	tt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tv.add_child(tt)
 	top.add_child(tv)
 	v.add_child(top)
 	var tabs := UI.hbox(8)
 	for k in [["equipes", "EQUIPES"], ["aovivo", "AO VIVO"], ["quadros", "QUADROS"]]:
-		var b := UI.button(k[1], "ghost", 76)
+		var b := UI.button(k[1], "ghost", 64)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.add_theme_font_override("font", UI.font("title"))
-		b.add_theme_font_size_override("font_size", 32)
+		b.add_theme_font_size_override("font_size", 28)
 		b.pressed.connect(func() -> void:
 			game_tab = k[0]
 			_feed_len = -1
@@ -265,34 +265,51 @@ func _build_game() -> void:
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.name = "PageScroll"
+	page_scroll = scroll
+	# enquanto o dedo rola, a tela não se refaz (senão a rolagem trava ou pula)
+	scroll.get_v_scroll_bar().value_changed.connect(func(_v: float) -> void: _touch_scroll())
+	scroll.gui_input.connect(func(_e: InputEvent) -> void: _touch_scroll())
 	page_box = UI.vbox(12)
 	page_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(page_box)
 	v.add_child(scroll)
-	var ctrl := GridContainer.new()
-	ctrl.columns = 4 if wide else 2
-	ctrl.add_theme_constant_override("h_separation", 10)
-	ctrl.add_theme_constant_override("v_separation", 10)
-	var hint := UI.button("Dica para todos", "ghost", 76)
-	hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hint.pressed.connect(func() -> void: _open_hint(""))
-	ctrl.add_child(hint)
-	var rel := UI.button("Liberar pista", "ghost", 76)
-	rel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	rel.pressed.connect(func() -> void: Net.send({"t": "host_release"}))
-	ctrl.add_child(rel)
-	var more := UI.button("+1 minuto", "ghost", 76)
-	more.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	more.pressed.connect(func() -> void: Net.send({"t": "host_add_time"}))
-	ctrl.add_child(more)
-	var end := UI.button("ENCERRAR", "danger", 76)
-	end.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	end.pressed.connect(func() -> void: Net.send({"t": "host_end"}))
-	ctrl.add_child(end)
+	# controles numa fileira só (rótulos curtos): sobra mais tela para a lista
+	var ctrl := UI.hbox(8)
+	for spec in [["DICA", "ghost", "hint"], ["PISTA", "ghost", "rel"], ["+1 MIN", "ghost", "more"], ["ENCERRAR", "danger", "end"]]:
+		var b := UI.button(spec[0], spec[1], 64)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_override("font", UI.font("title"))
+		b.add_theme_font_size_override("font_size", 26)
+		match spec[2]:
+			"hint": b.pressed.connect(func() -> void: _open_hint(""))
+			"rel": b.pressed.connect(func() -> void: Net.send({"t": "host_release"}))
+			"more": b.pressed.connect(func() -> void: Net.send({"t": "host_add_time"}))
+			"end": b.pressed.connect(func() -> void: Net.send({"t": "host_end"}))
+		ctrl.add_child(b)
 	v.add_child(ctrl)
 
 
+var page_scroll: ScrollContainer
+var _busy_until := 0
+var _pending := false
+
+
+func _touch_scroll() -> void:
+	_busy_until = Time.get_ticks_msec() + 1400
+
+
 func _refresh_game() -> void:
+	if page_scroll and Time.get_ticks_msec() < _busy_until:
+		_pending = true
+		return
+	_pending = false
+	var keep := page_scroll.scroll_vertical if page_scroll else 0
+	_do_refresh_game()
+	if page_scroll:
+		page_scroll.set_deferred("scroll_vertical", keep)
+
+
+func _do_refresh_game() -> void:
 	var st := Net.state
 	for k in tab_btns:
 		var on: bool = k == game_tab
@@ -359,6 +376,7 @@ func _team_card(t: Dictionary) -> Control:
 	var h := UI.hbox(10)
 	var name := UI.title(str(t["name"]).to_upper(), 46, col)
 	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name.clip_text = true
 	h.add_child(name)
 	if t.get("solved", false):
 		var stamp := PanelContainer.new()
@@ -368,7 +386,9 @@ func _team_card(t: Dictionary) -> Control:
 	elif int(ins.get("lockLeft", 0)) > 0:
 		var lk := PanelContainer.new()
 		lk.add_theme_stylebox_override("panel", UI.box(Color(UI.PINK, 0.15), UI.PINK, 2, 6, 10))
-		lk.add_child(UI.label("errou, espera %ds" % int(ins["lockLeft"]), 20, UI.PINK, "bold"))
+		var lkl := UI.label("errou · %ds" % int(ins["lockLeft"]), 20, UI.PINK, "bold")
+		lkl.autowrap_mode = TextServer.AUTOWRAP_OFF
+		lk.add_child(lkl)
 		h.add_child(lk)
 	v.add_child(h)
 	# progresso real (só o professor vê): pistas reunidas e ligações certas no quadro agora
@@ -654,6 +674,8 @@ func _open_viewer(t: Dictionary) -> void:
 
 
 func _process(_dt: float) -> void:
+	if _pending and Time.get_ticks_msec() >= _busy_until and phase_built == "game":
+		_refresh_game()
 	if phase_built == "game" and timer_l and str(Net.state.get("phase", "")) == "playing":
 		var s := Net.seconds_left()
 		timer_l.text = UI.fmt_time(s)

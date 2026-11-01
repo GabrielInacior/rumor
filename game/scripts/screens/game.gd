@@ -291,6 +291,9 @@ func _build_clues_page() -> Control:
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	clue_scroll = scroll
+	scroll.get_v_scroll_bar().value_changed.connect(func(_v: float) -> void: _clue_busy_until = Time.get_ticks_msec() + 1400)
+	scroll.gui_input.connect(func(_e: InputEvent) -> void: _clue_busy_until = Time.get_ticks_msec() + 1400)
 	clue_list = UI.vbox(14)
 	clue_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(clue_list)
@@ -298,7 +301,24 @@ func _build_clues_page() -> Control:
 	return m
 
 
+var clue_scroll: ScrollContainer
+var _clue_busy_until := 0
+var _clue_pending := false
+
+
 func _refresh_clues() -> void:
+	# não refaz a lista no meio de uma rolagem; guarda a posição quando refaz
+	if Time.get_ticks_msec() < _clue_busy_until:
+		_clue_pending = true
+		return
+	_clue_pending = false
+	var keep := clue_scroll.scroll_vertical if clue_scroll else 0
+	_build_clue_list()
+	if clue_scroll:
+		clue_scroll.set_deferred("scroll_vertical", keep)
+
+
+func _build_clue_list() -> void:
 	UI.clear(clue_list)
 	var clues: Array = Net.state.get("clues", [])
 	var mine: Array = Net.state.get("mine", [])
@@ -1125,6 +1145,8 @@ func _update_submit() -> void:
 
 
 func _process(_dt: float) -> void:
+	if _clue_pending and tab == "pistas" and Time.get_ticks_msec() >= _clue_busy_until:
+		_refresh_clues()
 	var s := Net.seconds_left()
 	timer_l.text = UI.fmt_time(s)
 	if s != _last_sec:
