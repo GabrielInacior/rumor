@@ -944,17 +944,28 @@ func _open_sheet(content: Control) -> void:
 	var side := maxf(10.0, (size.x - 860.0) / 2.0)
 	panel.offset_left = side; panel.offset_right = -side; panel.offset_bottom = -10
 	panel.offset_top = -minf(size.y * 0.82, 1080)
+	# botão VOLTAR fixo no topo (fora da rolagem): sempre visível, mesmo em pista longa no celular em pé
+	var frame := UI.vbox(10)
+	var back := UI.button("VOLTAR", "ghost", 72)
+	back.add_theme_font_override("font", UI.font("title"))
+	back.add_theme_font_size_override("font_size", 32)
+	back.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	back.custom_minimum_size.x = 220
+	back.pressed.connect(_close_sheet)
+	frame.add_child(back)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(content)
-	panel.add_child(scroll)
+	frame.add_child(scroll)
+	panel.add_child(frame)
 	sheet_layer.add_child(panel)
 	# encolhe para o tamanho do conteúdo quando ele é pequeno
 	await get_tree().process_frame
 	if not is_instance_valid(panel):
 		return
-	var want := content.get_combined_minimum_size().y + 60
+	var want := content.get_combined_minimum_size().y + 150
 	panel.offset_top = -minf(want, size.y * 0.82)
 	panel.position.y += 60
 	panel.create_tween().tween_property(panel, "position:y", panel.position.y - 60, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

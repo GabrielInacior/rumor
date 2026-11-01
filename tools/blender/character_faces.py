@@ -34,6 +34,8 @@ TEETH = (252, 250, 244, 255)
 SWEAT = (150, 196, 255, 255)
 BLUSH = (232, 92, 92, 255)
 W = 22                     # traço base (em px do desenho 4x)
+LIP = (184, 92, 104, 255)  # lábio feminino: rosa discreto
+FEM = False                # variante feminina: olho amendoado com cílios, sobrancelha fina, lábio com cor
 
 EYE_NAMES = ["neutro", "feliz", "surpreso", "bravo", "desconfiado", "triste", "nervoso", "piscando"]
 MOUTH_NAMES = ["neutra", "sorriso", "aberta A", "aberta O", "triste", "torta", "nervosa", "meio-aberta E"]
@@ -139,7 +141,18 @@ def eye(img, cx, cy, rx, ry, top=None, bottom=None, look=(0.0, 0.08), iris=0.62,
     """Olho de animação: esclera branca, íris grande escura, brilho, pálpebra superior grossa.
     top/bottom: pares de pontos RELATIVOS (fração de rx, ry) para recortar a pálpebra."""
     d = ImageDraw.Draw(img)
-    poly = ellipse_pts(cx, cy, rx, ry, squash_top=0.96)
+    outer = -1 if (cx % CELL) < CELL / 2 else 1
+    if FEM:
+        rx, ry = rx * 1.07, ry * 0.93
+        poly = []
+        for i in range(72):
+            t = 2 * math.pi * i / 72
+            c, sn = math.cos(t), math.sin(t)
+            k = 1 - 0.42 * max(0.0, c * outer) ** 2          # afina no canto de fora (amendoado)
+            lift = -0.18 * ry * max(0.0, c * outer) ** 3       # canto de fora levemente erguido
+            poly.append((cx + c * rx, cy + sn * ry * k * (0.96 if sn < 0 else 1.0) + lift))
+    else:
+        poly = ellipse_pts(cx, cy, rx, ry, squash_top=0.96)
     if top:
         (a, b), (c, e) = top
         poly = keep_below(poly, (cx + a * rx, cy + b * ry), (cx + c * rx, cy + e * ry))
@@ -170,11 +183,32 @@ def eye(img, cx, cy, rx, ry, top=None, bottom=None, look=(0.0, 0.08), iris=0.62,
     upper = [p for p in poly if p[1] <= cy + ry * 0.12]
     upper.sort(key=lambda p: p[0])
     if len(upper) > 2:
-        taper(d, upper, W * 0.9, W * lid_w)
+        if FEM and outer < 0:
+            upper = upper[::-1]
+        taper(d, upper, W * 0.9, W * lid_w * (1.35 if FEM else 1.0))
+        if FEM:
+            lashes(d, upper[-1], outer, rx)
+
+
+def lashes(d, p, outer, rx):
+    """Três cílios saindo do canto de fora da pálpebra."""
+    x, y = p
+    for k, (dx, dy, L) in enumerate(((0.10, -0.55, 0.42), (0.38, -0.42, 0.46), (0.55, -0.12, 0.40))):
+        x0 = x - outer * rx * (0.30 - 0.15 * k)
+        y0 = y - 6 + 4 * k
+        tip = (x0 + outer * rx * dx * 1.6, y0 + rx * dy * L * 2.1)
+        mid = ((x0 + tip[0]) / 2 + outer * 4, (y0 + tip[1]) / 2 + 6)
+        taper(d, quad_curve((x0, y0), mid, tip, 8), W * 1.25, W * 0.3)
 
 
 def happy_eye(d, cx, cy, rx, ry):
     stroke(d, quad_curve((cx - rx, cy + ry * 0.25), (cx, cy - ry * 1.05), (cx + rx, cy + ry * 0.25)), W * 1.35)
+    if FEM:
+        outer = -1 if (cx % CELL) < CELL / 2 else 1
+        ex = cx + outer * rx
+        for k in range(2):
+            taper(d, quad_curve((ex - outer * 6 * k, cy + ry * 0.2 - 10 * k), (ex + outer * 16, cy - 2 - 14 * k),
+                                (ex + outer * 34, cy - 18 - 18 * k), 8), W * 0.9, W * 0.25)
 
 
 def closed_eye(d, cx, cy, rx, ry, outer):
@@ -182,9 +216,17 @@ def closed_eye(d, cx, cy, rx, ry, outer):
     stroke(d, pts, W * 1.3)
     ox = cx + outer * rx
     stroke(d, [(ox, cy - ry * 0.05), (ox + outer * rx * 0.32, cy - ry * 0.32)], W * 0.8)
+    if FEM:
+        for k in range(3):
+            x = cx + outer * rx * (0.15 + 0.3 * k)
+            y = cy + ry * (0.42 - 0.14 * k)
+            taper(d, [(x, y), (x + outer * 8, y + 22), (x + outer * 14, y + 36)], W * 0.8, W * 0.25)
 
 
 def brow(d, p0, p1, p2, w0=W * 1.9, w1=W * 0.9):
+    if FEM:   # sobrancelha mais fina e arqueada
+        w0, w1 = w0 * 0.55, w1 * 0.5
+        p1 = (p1[0], p1[1] - 10)
     taper(d, quad_curve(p0, p1, p2), w0, w1)
 
 
@@ -281,8 +323,33 @@ def draw_eyes(img, ox, oy, kind):
 
 
 # ------------------------------------------------------------------ boca
+def grow(poly, px):
+    cx = sum(p[0] for p in poly) / len(poly)
+    cy = sum(p[1] for p in poly) / len(poly)
+    out = []
+    for x, y in poly:
+        dx, dy = x - cx, y - cy
+        L = math.hypot(dx, dy) or 1.0
+        out.append((x + dx / L * px, y + dy / L * px * 0.8))
+    return out
+
+
+def lip_line(d, pts, thick=30):
+    """Boca fechada feminina: lábio de baixo (cheio) e de cima (fino) em rosa sob o traço."""
+    n = len(pts)
+    low = [(x, y + thick * math.sin(math.pi * i / (n - 1)) ** 0.8) for i, (x, y) in enumerate(pts)]
+    up = [(x, y - thick * 0.45 * math.sin(math.pi * i / (n - 1)) ** 0.8) for i, (x, y) in enumerate(pts)]
+    d.polygon(pts + low[::-1], fill=LIP)
+    d.polygon(pts + up[::-1], fill=LIP)
+    d.line(low, fill=INK, width=int(W * 0.35), joint="curve")
+
+
 def mouth_shape(img, poly, teeth_top=None, tongue=None, teeth_lines=None, wavy=False):
     d = ImageDraw.Draw(img)
+    if FEM:
+        g = grow(poly, 20)
+        d.polygon(g, fill=LIP)
+        d.line(g + [g[0]], fill=INK, width=int(W * 0.45), joint="curve")
     d.polygon(poly, fill=MOUTH_IN)
 
     def paint(dd):
@@ -298,7 +365,7 @@ def mouth_shape(img, poly, teeth_top=None, tongue=None, teeth_lines=None, wavy=F
                 dd.line(seg, fill=INK, width=int(W * 0.45))
     masked(img, poly, paint)
     d = ImageDraw.Draw(img)
-    d.line(poly + [poly[0]], fill=INK, width=W, joint="curve")
+    d.line(poly + [poly[0]], fill=INK, width=int(W * (0.5 if FEM else 1.0)), joint="curve")
 
 
 def corner(d, x, y, dx, dy):
@@ -310,7 +377,10 @@ def draw_mouth(img, ox, oy, kind):
     cx, cy = ox + CELL / 2, oy + CELL * 0.52
     if kind == "neutra":
         pts = quad_curve((cx - 105, cy + 2), (cx + 10, cy + 18), (cx + 100, cy - 6))
-        stroke(d, pts, W * 1.15)
+        if FEM:
+            pts = quad_curve((cx - 90, cy + 2), (cx + 6, cy + 14), (cx + 86, cy - 4))
+            lip_line(d, pts)
+        stroke(d, pts, W * (0.9 if FEM else 1.15))
         corner(d, cx - 112, cy - 6, -8, 14)
     elif kind == "sorriso":
         top = quad_curve((cx - 140, cy - 46), (cx, cy - 18), (cx + 140, cy - 46), 30)
@@ -335,11 +405,15 @@ def draw_mouth(img, ox, oy, kind):
     elif kind == "triste":
         pts = quad_curve((cx - 100, cy + 46), (cx - 4, cy - 52), (cx + 100, cy + 40))
         pts = [(x, y + math.sin(i * 0.9) * 2.5) for i, (x, y) in enumerate(pts)]
-        stroke(d, pts, W * 1.2)
+        if FEM:
+            lip_line(d, pts, 24)
+        stroke(d, pts, W * (0.95 if FEM else 1.2))
         corner(d, cx - 108, cy + 52, -6, 14)
     elif kind == "torta":
         pts = [(cx - 100, cy + 18)] + quad_curve((cx - 40, cy + 22), (cx + 70, cy + 24), (cx + 112, cy - 40), 18)
-        stroke(d, pts, W * 1.2)
+        if FEM:
+            lip_line(d, pts, 26)
+        stroke(d, pts, W * (0.95 if FEM else 1.2))
         corner(d, cx + 118, cy - 48, 20, -6)
         stroke(d, quad_curve((cx + 132, cy - 70), (cx + 150, cy - 40), (cx + 140, cy - 6), 8), W * 0.6)
     elif kind == "nervosa":
@@ -403,7 +477,7 @@ def contact_sheet(eyes, mouth, path):
     ft = font(34)
     y = 14
     for title, atlas, names in (("OLHOS  eyes_atlas.png", eyes, EYE_NAMES), ("BOCA  mouth_atlas.png", mouth, MOUTH_NAMES)):
-        d.text((pad, y), title, font=ft, fill=(255, 200, 61, 255))
+        d.text((pad, y), title.replace(".png", "_f.png") if FEM else title, font=ft, fill=(255, 200, 61, 255))
         y += 50
         for i, n in enumerate(names):
             c, r = i % 4, i // 4
@@ -422,13 +496,17 @@ def contact_sheet(eyes, mouth, path):
 
 
 def cmd_atlas():
+    global FEM
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(DOCS, exist_ok=True)
-    eyes = build_atlas(draw_eyes, EYE_NAMES)
-    mouth = build_atlas(draw_mouth, MOUTH_NAMES)
-    eyes.save(os.path.join(OUT, "eyes_atlas.png"))
-    mouth.save(os.path.join(OUT, "mouth_atlas.png"))
-    contact_sheet(eyes, mouth, os.path.join(DOCS, "expressoes_folha.png"))
+    for fem, suf in ((False, ""), (True, "_f")):
+        FEM = fem
+        eyes = build_atlas(draw_eyes, EYE_NAMES)
+        mouth = build_atlas(draw_mouth, MOUTH_NAMES)
+        eyes.save(os.path.join(OUT, "eyes_atlas%s.png" % suf))
+        mouth.save(os.path.join(OUT, "mouth_atlas%s.png" % suf))
+        contact_sheet(eyes, mouth, os.path.join(DOCS, "expressoes_folha%s.png" % suf))
+    FEM = False
     print("atlas ok")
 
 
@@ -493,9 +571,56 @@ def cmd_sheet(tiles):
     print("sheet ok", out)
 
 
+def cmd_sheet_mf(tiles):
+    """docs/arte_exploracao/personagem_m_f.png: masculino x feminino (frente, 3/4, rostos, cabelos)."""
+    def tile(name, w, h, label, floor=True):
+        im = Image.open(os.path.join(tiles, name + ".png")).convert("RGBA").resize((w, h), Image.LANCZOS)
+        if floor:
+            bg = painted_bg(w, h)
+        else:
+            bg = Image.new("RGBA", (w, h))
+            d = ImageDraw.Draw(bg)
+            for i in range(h):
+                t = i / h
+                d.line([(0, i), (w, i)], fill=(int(14 + 30 * (1 - t)), int(24 + 46 * (1 - t)), int(58 + 80 * (1 - t)), 255))
+        bg.alpha_composite(im)
+        ImageDraw.Draw(bg).text((14, 8), label, font=font(28 if w > 400 else 22), fill=(255, 200, 61, 255))
+        return bg
+
+    big, sm = 640, 320
+    rows = [
+        [("m1_front", "MASC  frente"), ("m1_q34", "MASC  3/4  curto + fones"),
+         ("f1_front", "FEM  frente"), ("f1_q34", "FEM  3/4  ondulado + brinco")],
+        [("m1_face", "masc  feliz / sorriso"), ("f1_face", "fem ondulado  neutro / sorriso"),
+         ("f2_face", "fem trancas  desconfiado / torta"), ("f3_face", "fem cachos longos  surpreso / O")],
+    ]
+    small = [("back_longo", "longo (costas)"), ("back_ondulado", "ondulado (costas)"),
+             ("back_trancas", "trancas (costas)"), ("back_cacheado_longo", "cachos longos"),
+             ("f4_q", "longo  feliz / fala A"), ("f_rabo", "rabo  triste"),
+             ("m_bravo", "masc franja  bravo"), ("f_nervosa", "fem coque  nervosa")]
+    W_, H_ = 4 * big, 2 * big + sm
+    sheet = Image.new("RGBA", (W_, H_), (6, 12, 31, 255))
+    for r, row in enumerate(rows):
+        for c, (n, lab) in enumerate(row):
+            sheet.alpha_composite(tile(n, big, big, lab, floor=(r == 0)), (c * big, r * big))
+    for c, (n, lab) in enumerate(small):
+        sheet.alpha_composite(tile(n, sm, sm, lab, floor=False), (c * sm, 2 * big))
+    d = ImageDraw.Draw(sheet)
+    for i in range(1, 4):
+        d.line([(i * big, 0), (i * big, 2 * big)], fill=(6, 12, 31, 255), width=4)
+    for y in (big, 2 * big):
+        d.line([(0, y), (W_, y)], fill=(6, 12, 31, 255), width=4)
+    d.line([(2 * big, 0), (2 * big, 2 * big)], fill=(255, 200, 61, 255), width=4)
+    out = os.path.join(DOCS, "personagem_m_f.png")
+    sheet.convert("RGB").save(out)
+    print("sheet ok", out)
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "atlas"
     if cmd == "atlas":
         cmd_atlas()
     elif cmd == "sheet":
         cmd_sheet(sys.argv[2])
+    elif cmd == "sheet_mf":
+        cmd_sheet_mf(sys.argv[2])

@@ -137,6 +137,17 @@ func _ready() -> void:
 		tv.add_child(UI.label(str(card["role"]), 22, UI.PAPER))
 	top.add_child(tv)
 	add_child(top)
+	# saída sempre visível: dá para largar a conversa a qualquer momento
+	var quit := UI.button("SAIR", "ghost", 68)
+	quit.add_theme_font_override("font", UI.font("title"))
+	quit.add_theme_font_size_override("font_size", 30)
+	quit.custom_minimum_size.x = 150
+	quit.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	quit.offset_left = -170; quit.offset_right = -18; quit.offset_top = 22; quit.offset_bottom = 90
+	quit.pressed.connect(func() -> void:
+		node_id = ""
+		_finish())
+	add_child(quit)
 
 	# balão de fala estilo quadrinho
 	var bubble := PanelContainer.new()

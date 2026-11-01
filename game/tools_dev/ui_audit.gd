@@ -171,13 +171,14 @@ func _run() -> void:
 	var g: Node = main.current
 	g._set_tab("pistas")
 	await _shot("07_pistas")
-	var kinds := {}
-	for c in Net.state["clues"]:
-		if not kinds.has(c["kind"]):
-			kinds[c["kind"]] = c
-	for k in kinds:
-		g._open_clue(kinds[k])
-		await _shot("08_pista_" + str(k))
+	# todas as pistas do caso (não só uma por tipo): pega quebra de layout em qualquer uma
+	var all_clues: Array = full_case["clues"]
+	Net.state["clues"] = all_clues
+	var n := 0
+	for c in all_clues:
+		g._open_clue(c)
+		n += 1
+		await _shot("08_pista_%02d_%s" % [n, str(c["kind"])])
 		g._close_sheet()
 	g._set_tab("quadro")
 	await _wait(4.0)
