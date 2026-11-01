@@ -12,7 +12,73 @@ static func person_name(who: String) -> String:
 	return UI.strip_emoji(str(c.get("name", who)))
 
 
+## Ícone 3D (assets/items) que representa a pista no quadro e na mochila.
+static func icon_kind(clue: Dictionary) -> String:
+	var vis: Dictionary = clue.get("visual", {}) if clue.get("visual") is Dictionary else {}
+	if vis.has("model"):
+		return str(vis["model"])
+	match str(vis.get("art", "")):
+		"ransom": return "recorte"
+		"cctv": return "camera_seg"
+		"pix": return "celular"
+	return {"mensagem": "mensagem", "post": "celular", "depoimento": "microfone", "registro": "prancheta",
+		"bilhete": "papel", "objeto": "caixa"}.get(str(clue.get("kind", "")), "papel")
+
+
+## Imagem da pista (objeto 3D, bilhete recortado, câmera de segurança, Pix) no topo da ficha.
+static func visual_block(clue: Dictionary, h := 300.0) -> Control:
+	var vis: Dictionary = clue.get("visual", {}) if clue.get("visual") is Dictionary else {}
+	if vis.is_empty():
+		return null
+	var art := str(vis.get("art", ""))
+	if art == "ransom":
+		var rn := RansomNote.new()
+		rn.text = UI.strip_emoji(str(vis.get("text", clue.get("text", ""))))
+		rn.custom_minimum_size = Vector2(0, h)
+		return rn
+	if art == "cctv":
+		var cf := CctvFrame.new()
+		cf.stamp = str(vis.get("stamp", clue.get("time", "")))
+		cf.label = UI.strip_emoji(str(vis.get("caption", clue.get("title", ""))))
+		cf.custom_minimum_size = Vector2(0, h)
+		return cf
+	if art == "pix":
+		var px := PixReceipt.new()
+		px.valor = str(vis.get("valor", ""))
+		px.de = str(vis.get("de", ""))
+		px.para = str(vis.get("para", ""))
+		px.hora = str(vis.get("hora", clue.get("time", "")))
+		px.custom_minimum_size = Vector2(0, h + 40)
+		return px
+	if vis.has("model"):
+		var frame := PanelContainer.new()
+		frame.add_theme_stylebox_override("panel", UI.box(Color("#fbfaf6"), Color.TRANSPARENT, 0, 4, 10))
+		var tr := TextureRect.new()
+		tr.texture = Snap.get_tex("item:" + str(vis["model"]))
+		tr.custom_minimum_size = Vector2(0, h)
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		frame.add_child(tr)
+		return frame
+	return null
+
+
 static func build(clue: Dictionary) -> Control:
+	var base := _build_base(clue)
+	var vb := visual_block(clue)
+	if vb == null or str(clue.get("kind", "")) == "objeto" or clue.has("post"):
+		return base
+	# imagem em cima, o documento embaixo (a pista se entende de longe, sem ler tudo)
+	var v := UI.vbox(14)
+	var c := CenterContainer.new()
+	vb.custom_minimum_size.x = 520
+	c.add_child(vb)
+	v.add_child(c)
+	v.add_child(base)
+	return v
+
+
+static func _build_base(clue: Dictionary) -> Control:
 	var kind := str(clue.get("kind", ""))
 	if clue.has("chat") or kind == "mensagem":
 		return _chat(clue)
@@ -233,11 +299,15 @@ static func _polaroid(clue: Dictionary) -> Control:
 	var page := Paper.make("polaroid", true)
 	page.custom_minimum_size = Vector2(540, 0)
 	var v := UI.vbox(14)
-	var photo := Photo.new()
-	photo.caption = UI.strip_emoji(str(clue.get("title", "")))
-	photo.evidence = true
-	photo.custom_minimum_size = Vector2(0, 300)
-	v.add_child(photo)
+	var vb := visual_block(clue)
+	if vb:
+		v.add_child(vb)
+	else:
+		var photo := Photo.new()
+		photo.caption = UI.strip_emoji(str(clue.get("title", "")))
+		photo.evidence = true
+		photo.custom_minimum_size = Vector2(0, 300)
+		v.add_child(photo)
 	var l := UI.label(UI.strip_emoji(str(clue.get("text", ""))), 26, Color("#1b2140"), "type")
 	v.add_child(l)
 	page.add_child(v)
@@ -292,6 +362,108 @@ class Photo extends Control:
 			var tag := Rect2(r.size.x - 190, r.size.y - 60, 170, 44)
 			draw_rect(tag, UI.YELLOW)
 			draw_string(UI.font("title"), tag.position + Vector2(12, 34), "EVIDÊNCIA", HORIZONTAL_ALIGNMENT_LEFT, -1, 32, UI.INK)
+
+
+## Bilhete de letras recortadas de revista: cada letra num pedaço de papel de cor/tamanho diferente.
+class RansomNote extends Control:
+	var text := ""
+
+	func _draw() -> void:
+		var r := Rect2(Vector2.ZERO, size)
+		draw_rect(r, Color("#f4efe2"))
+		draw_rect(r, Color(0, 0, 0, 0.15), false, 2.0)
+		var rng := RandomNumberGenerator.new()
+		rng.seed = hash(text)
+		var fonts := [UI.font("title"), UI.font("type"), UI.font("marker"), UI.font("bold")]
+		var bgs := [Color("#ffffff"), Color("#ffe27a"), Color("#e2384f"), Color("#4e9bff"), Color("#1b2140"), Color("#efe8d6"), Color("#5fd38a")]
+		var words := text.to_upper().split(" ", false)
+		var x := 16.0
+		var y := 18.0
+		var line_h := 0.0
+		for w in words:
+			var ww := 0.0
+			var cells := []
+			for ch in w:
+				var fs := rng.randi_range(26, 40)
+				var f: Font = fonts[rng.randi() % fonts.size()]
+				var cw := f.get_string_size(ch, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x + 10
+				cells.append([ch, fs, f, cw])
+				ww += cw + 2
+			if x + ww > r.size.x - 12:
+				x = 16.0
+				y += line_h + 10
+				line_h = 0.0
+			if y > r.size.y - 30:
+				break
+			for cell in cells:
+				var bg: Color = bgs[rng.randi() % bgs.size()]
+				var fg := UI.INK if bg.get_luminance() > 0.5 else Color.WHITE
+				var cr := Rect2(x, y + rng.randf_range(-4, 4), cell[3], cell[1] + 10)
+				draw_set_transform(cr.get_center(), rng.randf_range(-0.12, 0.12))
+				draw_rect(Rect2(-cr.size / 2 + Vector2(2, 3), cr.size), Color(0, 0, 0, 0.18))
+				draw_rect(Rect2(-cr.size / 2, cr.size), bg)
+				draw_string(cell[2], Vector2(-cr.size.x / 2 + 5, cr.size.y / 2 - 7), cell[0], HORIZONTAL_ALIGNMENT_LEFT, -1, cell[1], fg)
+				draw_set_transform(Vector2.ZERO, 0.0)
+				x += cell[3] + 2
+				line_h = maxf(line_h, cell[1] + 10)
+			x += 14
+
+
+## Quadro de câmera de segurança: granulado, REC, data e hora, uma silhueta no corredor.
+class CctvFrame extends Control:
+	var stamp := ""
+	var label := ""
+
+	func _draw() -> void:
+		var r := Rect2(Vector2.ZERO, size)
+		draw_rect(r, Color("#1a2a22"))
+		# corredor em perspectiva
+		var c := Vector2(r.size.x * 0.5, r.size.y * 0.42)
+		draw_colored_polygon(PackedVector2Array([Vector2(0, r.size.y), Vector2(r.size.x, r.size.y), c + Vector2(60, 40), c + Vector2(-60, 40)]), Color("#2c4236"))
+		draw_line(Vector2(0, 0), c + Vector2(-60, -50), Color("#3f5a4a"), 3.0)
+		draw_line(Vector2(r.size.x, 0), c + Vector2(60, -50), Color("#3f5a4a"), 3.0)
+		draw_rect(Rect2(c + Vector2(-60, -50), Vector2(120, 90)), Color("#22362c"))
+		# silhueta
+		var s := Vector2(r.size.x * 0.58, r.size.y * 0.62)
+		draw_circle(s + Vector2(0, -70), 16, Color("#0b1410"))
+		draw_colored_polygon(PackedVector2Array([s + Vector2(-26, -50), s + Vector2(26, -50), s + Vector2(30, 40), s + Vector2(-30, 40)]), Color("#0b1410"))
+		var rng := RandomNumberGenerator.new()
+		rng.seed = hash(stamp + label)
+		for i in 900:
+			draw_rect(Rect2(rng.randf() * r.size.x, rng.randf() * r.size.y, 2, 2), Color(1, 1, 1, rng.randf() * 0.12))
+		for yy in range(0, int(r.size.y), 4):
+			draw_line(Vector2(0, yy), Vector2(r.size.x, yy), Color(0, 0, 0, 0.18), 1.0)
+		var f := UI.font("type")
+		draw_circle(Vector2(26, 26), 8, Color("#e2384f"))
+		draw_string(f, Vector2(42, 34), "REC", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color("#e2384f"))
+		draw_string(f, Vector2(r.size.x - 220, 34), "CAM 02  " + stamp, HORIZONTAL_ALIGNMENT_LEFT, 210, 20, Color("#cfe8d6"))
+		draw_string(f, Vector2(16, r.size.y - 16), label, HORIZONTAL_ALIGNMENT_LEFT, r.size.x - 32, 20, Color("#cfe8d6"))
+
+
+## Comprovante de Pix (tela do banco): valor grande, de, para, horário.
+class PixReceipt extends Control:
+	var valor := ""
+	var de := ""
+	var para := ""
+	var hora := ""
+
+	func _draw() -> void:
+		var r := Rect2(Vector2.ZERO, size)
+		draw_rect(r, Color("#f7f8fb"))
+		draw_rect(Rect2(0, 0, r.size.x, 70), Color("#2fb38a"))
+		var ft := UI.font("title")
+		var fb := UI.font("bold")
+		draw_string(ft, Vector2(20, 48), "PIX ENVIADO", HORIZONTAL_ALIGNMENT_LEFT, -1, 34, Color.WHITE)
+		draw_circle(Vector2(r.size.x - 44, 35), 20, Color.WHITE)
+		draw_polyline(PackedVector2Array([Vector2(r.size.x - 54, 35), Vector2(r.size.x - 46, 43), Vector2(r.size.x - 33, 27)]), Color("#2fb38a"), 4.0)
+		draw_string(fb, Vector2(20, 112), "Valor", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#7a8094"))
+		draw_string(ft, Vector2(20, 162), valor, HORIZONTAL_ALIGNMENT_LEFT, -1, 52, Color("#16182a"))
+		var y := 200.0
+		for row in [["De", de], ["Para", para], ["Horário", hora]]:
+			draw_line(Vector2(20, y), Vector2(r.size.x - 20, y), Color(0, 0, 0, 0.1), 1.0)
+			draw_string(fb, Vector2(20, y + 30), str(row[0]), HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#7a8094"))
+			draw_string(fb, Vector2(140, y + 30), str(row[1]), HORIZONTAL_ALIGNMENT_LEFT, r.size.x - 160, 22, Color("#16182a"))
+			y += 44
 
 
 class IconRow extends Control:

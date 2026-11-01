@@ -516,8 +516,7 @@ func _draw_link_proofs(l: Dictionary, k: Vector2, sel: bool) -> void:
 		draw_rect(lr, UI.PAPER)
 		draw_rect(Rect2(lr.position, Vector2(lr.size.x, 22)), col)
 		draw_string(UI.font("title"), lr.position + Vector2(7, 18), "PROVA · " + UI.clue_tag(str(clue.get("kind", ""))), HORIZONTAL_ALIGNMENT_LEFT, lr.size.x - 10, 17, UI.INK)
-		var ik: String = {"mensagem": "mensagem", "post": "celular", "depoimento": "microfone", "registro": "prancheta",
-			"bilhete": "papel", "objeto": "caixa"}.get(str(clue.get("kind", "")), "papel")
+		var ik: String = ClueView.icon_kind(clue)
 		var itex: Texture2D = Snap.get_tex("item:" + ik)
 		if itex:
 			draw_texture_rect(itex, Rect2(lr.end.x - 42, lr.position.y + 26, 36, 27), false)
@@ -611,10 +610,11 @@ func _draw_card(c: Dictionary) -> void:
 			draw_rect(Rect2(lr.position, Vector2(lr.size.x, 30)), col)
 			draw_string(UI.font("title"), lr.position + Vector2(10, 24), UI.clue_tag(str(clue.get("kind", ""))) + ("  " + str(clue.get("time", "")) if clue.get("time", "") != "" else ""), HORIZONTAL_ALIGNMENT_LEFT, lr.size.x - 16, 23, UI.INK)
 			# mini foto 3D do tipo da pista, no canto (leitura de relance)
-			var ik: String = {"mensagem": "mensagem", "post": "celular", "depoimento": "microfone", "registro": "prancheta",
-				"bilhete": "papel", "objeto": "caixa"}.get(str(clue.get("kind", "")), "papel")
+			var ik: String = ClueView.icon_kind(clue)
 			var itex: Texture2D = Snap.get_tex("item:" + ik)
-			var ir := Rect2(lr.end.x - 66, lr.position.y + 38, 58, 44)
+			# com imagem própria (visual da pista) a foto fica maior na carta
+			var has_vis := clue.get("visual") is Dictionary
+			var ir := Rect2(lr.end.x - (96 if has_vis else 66), lr.position.y + 36, 88 if has_vis else 58, 66 if has_vis else 44)
 			if itex:
 				draw_texture_rect(itex, ir, false)
 				draw_rect(ir, Color(0, 0, 0, 0.25), false, 2.0)

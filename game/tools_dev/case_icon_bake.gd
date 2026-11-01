@@ -2,10 +2,23 @@ extends Node
 ## Gera a "foto de evidência" de cada caso (objeto 3D do campo cover_icon) para as pastas do
 ## solo e a janela de casos do professor. Nunca mostra uma pessoa (não entrega pista).
 ##   godot --audio-driver Dummy --path . --resolution 640x480 res://tools_dev/case_icon_bake.tscn
-const FLAT := ["carta", "papel", "prancheta", "celular", "mensagem"]
+const FLAT := ["carta", "papel", "prancheta", "celular", "mensagem", "recorte", "revista", "prova", "envelope", "cracha", "ingresso", "pegada"]
+
+
+const KINDS := ["celular", "mensagem", "onibus", "trofeu", "livro", "carta", "chocolate", "carregador", "baqueta", "fita",
+	"computador", "pizza", "chave", "mochila", "coroa", "camera", "papel", "microfone", "bola", "prancheta", "caixa",
+	"cartaz", "wifi", "relogio", "sacola", "cofre", "urna", "microscopio", "spray", "cadeado", "revista", "recorte",
+	"dinheiro", "tenis", "pegada", "pendrive", "envelope", "cracha", "camera_seg", "impressora", "prova", "luva",
+	"bolsa", "ingresso"]
 
 
 func _ready() -> void:
+	# fotos de todos os objetos (pistas, mochila, quadro): geradas uma vez, nada de 3D no celular
+	var items_dir := ProjectSettings.globalize_path("res://assets/items")
+	for k in KINDS:
+		var im := await _render(k)
+		im.save_png(items_dir.path_join(k + ".png"))
+	print("objetos ", KINDS.size())
 	var dir := ProjectSettings.globalize_path("res://").path_join("../server/cases")
 	var out := ProjectSettings.globalize_path("res://assets/case_icons")
 	for f in DirAccess.get_files_at(dir):

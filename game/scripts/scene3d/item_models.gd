@@ -222,6 +222,94 @@ static func build(kind: String) -> Node3D:
 			_add(r, torus(0.1, 0.14), Vector3(0, 0.32, 0), Color("#c9ced9"), Vector3(PI / 2, 0, 0))
 			_add(r, cyl(0.03, 0.02), Vector3(0, 0.15, 0.075), Color("#0b0f1c"), Vector3(PI / 2, 0, 0))
 			_add(r, box(Vector3(0.02, 0.06, 0.02)), Vector3(0, 0.11, 0.08), Color("#0b0f1c"))
+		"revista":
+			# revista aberta com buracos retangulares onde as letras foram recortadas
+			var pg := Color("#efe6d2")
+			_add(r, box(Vector3(0.42, 0.02, 0.56)), Vector3(-0.22, 0.01, 0), pg, Vector3(0, 0, 0.05))
+			_add(r, box(Vector3(0.42, 0.02, 0.56)), Vector3(0.22, 0.01, 0), pg.darkened(0.05), Vector3(0, 0, -0.05))
+			_add(r, box(Vector3(0.36, 0.022, 0.12)), Vector3(-0.22, 0.02, -0.19), Color("#e2384f"))
+			_add(r, box(Vector3(0.3, 0.022, 0.2)), Vector3(0.22, 0.02, -0.12), Color("#4e9bff"))
+			for k in 6:
+				var hx := -0.32 + (k % 3) * 0.1
+				var hz := 0.02 + (k / 3) * 0.12
+				_add(r, box(Vector3(0.06, 0.024, 0.07)), Vector3(hx, 0.02, hz), Color("#0b0f1c"))
+			_add(r, box(Vector3(0.12, 0.024, 0.05)), Vector3(0.18, 0.02, 0.12), Color("#0b0f1c"))
+			# tesoura em cima
+			_add(r, box(Vector3(0.03, 0.02, 0.22)), Vector3(0.24, 0.05, 0.08), Color("#c9ced9"), Vector3(0, 0.5, 0))
+			_add(r, box(Vector3(0.03, 0.02, 0.22)), Vector3(0.28, 0.05, 0.08), Color("#c9ced9"), Vector3(0, -0.3, 0))
+			_add(r, torus(0.025, 0.045), Vector3(0.2, 0.05, 0.2), Color("#e2384f"))
+			_add(r, torus(0.025, 0.045), Vector3(0.32, 0.05, 0.19), Color("#e2384f"))
+		"recorte":
+			# bilhete com letras recortadas coladas (cores e tamanhos diferentes)
+			_add(r, box(Vector3(0.5, 0.02, 0.36)), Vector3.ZERO, Color("#f4efe2"))
+			var cols := [Color("#e2384f"), Color("#4e9bff"), Color("#ffc83d"), Color("#2f8f55"), Color("#1b2140"), Color("#ff6fae")]
+			for k in 10:
+				var lx := -0.2 + (k % 5) * 0.1
+				var lz := -0.08 + (k / 5) * 0.14
+				_add(r, box(Vector3(0.07, 0.024, 0.09)), Vector3(lx, 0.015, lz), cols[k % cols.size()], Vector3(0, (k % 3 - 1) * 0.25, 0))
+		"dinheiro":
+			for k in 3:
+				_add(r, box(Vector3(0.42, 0.05, 0.2)), Vector3(0, 0.03 + k * 0.055, 0), Color("#7cc48a").darkened(k * 0.05), Vector3(0, k * 0.15, 0))
+				_add(r, box(Vector3(0.06, 0.052, 0.21)), Vector3(0, 0.03 + k * 0.055, 0), Color("#e8e3d4"), Vector3(0, k * 0.15, 0))
+		"tenis":
+			_add(r, box(Vector3(0.22, 0.06, 0.52)), Vector3(0, 0.03, 0), Color("#f4efe2"))
+			_add(r, box(Vector3(0.2, 0.14, 0.42)), Vector3(0, 0.12, -0.03), Color("#e2384f"))
+			_add(r, box(Vector3(0.18, 0.06, 0.16)), Vector3(0, 0.08, 0.2), Color("#e2384f").darkened(0.15))
+			for k in 4:
+				_add(r, box(Vector3(0.16, 0.012, 0.02)), Vector3(0, 0.2, -0.12 + k * 0.06), Color("#f4efe2"))
+		"pegada":
+			_add(r, box(Vector3(0.6, 0.01, 0.6)), Vector3.ZERO, Color("#3a4a7a"))
+			_add(r, box(Vector3(0.18, 0.012, 0.32)), Vector3(-0.08, 0.008, 0.02), Color("#0b0f1c"), Vector3(0, 0.2, 0))
+			_add(r, box(Vector3(0.14, 0.012, 0.12)), Vector3(-0.04, 0.008, -0.2), Color("#0b0f1c"), Vector3(0, 0.2, 0))
+			for k in 4:
+				_add(r, box(Vector3(0.16, 0.014, 0.012)), Vector3(-0.08, 0.009, -0.05 + k * 0.06), Color("#3a4a7a"), Vector3(0, 0.2, 0))
+		"pendrive":
+			_add(r, box(Vector3(0.12, 0.05, 0.34)), Vector3(0, 0.03, 0), Color("#1b2140"))
+			_add(r, box(Vector3(0.08, 0.03, 0.1)), Vector3(0, 0.03, -0.21), Color("#c9ced9"))
+			_add(r, box(Vector3(0.1, 0.052, 0.1)), Vector3(0, 0.032, 0.08), Y)
+		"envelope":
+			_add(r, box(Vector3(0.56, 0.02, 0.36)), Vector3.ZERO, Color("#e6d3a3"))
+			_add(r, box(Vector3(0.4, 0.022, 0.3)), Vector3(0, 0.012, -0.05), Color("#d9b977"), Vector3(0, PI / 4.0, 0), Vector3(0.7, 1, 0.7))
+			_add(r, cyl(0.05, 0.02, 0.05, 14), Vector3(0, 0.02, 0.02), Color("#c42c3f"))
+		"cracha":
+			_add(r, box(Vector3(0.28, 0.02, 0.4)), Vector3.ZERO, Color("#f4efe2"))
+			_add(r, box(Vector3(0.28, 0.022, 0.08)), Vector3(0, 0.002, -0.16), Color("#2f6fb0"))
+			_add(r, box(Vector3(0.1, 0.024, 0.12)), Vector3(-0.06, 0.004, 0.0), Color("#9fb2e6"))
+			_add(r, box(Vector3(0.1, 0.024, 0.03)), Vector3(0.07, 0.004, -0.02), NAVY)
+			_add(r, box(Vector3(0.1, 0.024, 0.03)), Vector3(0.07, 0.004, 0.04), NAVY)
+			_add(r, box(Vector3(0.03, 0.01, 0.3)), Vector3(0, 0.01, -0.36), Color("#e2384f"))
+		"camera_seg":
+			_add(r, box(Vector3(0.18, 0.16, 0.42)), Vector3(0, 0.4, 0), Color("#e8e3d4"), Vector3(0.35, 0, 0))
+			_add(r, cyl(0.06, 0.04, 0.06, 16), Vector3(0, 0.33, 0.21), Color("#0b0f1c"), Vector3(PI / 2 + 0.35, 0, 0))
+			_add(r, cyl(0.03, 0.045, 0.03, 12), Vector3(0, 0.33, 0.235), Color("#4e9bff"), Vector3(PI / 2 + 0.35, 0, 0), Vector3.ONE, 1.0)
+			_add(r, box(Vector3(0.04, 0.3, 0.04)), Vector3(0, 0.2, -0.16), Color("#9aa3b8"))
+			_add(r, box(Vector3(0.2, 0.04, 0.2)), Vector3(0, 0.03, -0.16), Color("#9aa3b8"))
+			_add(r, cyl(0.015, 0.02, 0.015, 8), Vector3(0.06, 0.48, 0.12), Color("#e2384f"), Vector3.ZERO, Vector3.ONE, 1.5)
+		"impressora":
+			_add(r, box(Vector3(0.56, 0.22, 0.4)), Vector3(0, 0.11, 0), Color("#d9dde6"))
+			_add(r, box(Vector3(0.4, 0.03, 0.06)), Vector3(0, 0.2, 0.2), NAVY)
+			_add(r, box(Vector3(0.32, 0.01, 0.3)), Vector3(0, 0.23, 0.3), PAPER, Vector3(-0.3, 0, 0))
+			_add(r, box(Vector3(0.08, 0.02, 0.04)), Vector3(0.2, 0.225, -0.12), Color("#5fd38a"), Vector3.ZERO, Vector3.ONE, 1.0)
+		"prova":
+			# folha de prova com a grade do gabarito marcada
+			_add(r, box(Vector3(0.44, 0.02, 0.58)), Vector3.ZERO, PAPER)
+			for k in 8:
+				for q in 4:
+					var on := (k * 7 + q * 3) % 4 == 0
+					_add(r, cyl(0.022, 0.022, 0.022, 10), Vector3(-0.1 + q * 0.07, 0.012, -0.22 + k * 0.06), Color("#1b2140") if on else Color("#c9bfa5"))
+			_add(r, box(Vector3(0.14, 0.022, 0.04)), Vector3(-0.12, 0.012, -0.26), Color("#c42c3f"))
+		"luva":
+			_add(r, box(Vector3(0.22, 0.06, 0.26)), Vector3(0, 0.03, 0.04), Color("#1b2140"))
+			for k in 4:
+				_add(r, box(Vector3(0.045, 0.05, 0.16)), Vector3(-0.08 + k * 0.055, 0.03, -0.16), Color("#1b2140"))
+			_add(r, box(Vector3(0.05, 0.05, 0.12)), Vector3(0.14, 0.03, 0.02), Color("#1b2140"), Vector3(0, -0.6, 0))
+		"bolsa":
+			_add(r, box(Vector3(0.46, 0.3, 0.18)), Vector3(0, 0.15, 0), Color("#c42c3f"))
+			_add(r, torus(0.12, 0.15), Vector3(0, 0.32, 0), Color("#8a1f2c"), Vector3(PI / 2, 0, 0), Vector3(1.2, 1, 1))
+			_add(r, box(Vector3(0.08, 0.06, 0.02)), Vector3(0, 0.22, 0.095), Y)
+		"ingresso":
+			_add(r, box(Vector3(0.5, 0.02, 0.22)), Vector3.ZERO, Y, Vector3(0, 0.15, 0))
+			_add(r, box(Vector3(0.012, 0.022, 0.22)), Vector3(0.14, 0.002, 0.02), Color("#1b2140"), Vector3(0, 0.15, 0))
 		_:
 			_add(r, box(Vector3(0.5, 0.36, 0.4)), Vector3(0, 0.18, 0), Color("#a07a4a"))
 			_add(r, box(Vector3(0.52, 0.04, 0.12)), Vector3(0, 0.37, 0), Color("#c9a46b"))
