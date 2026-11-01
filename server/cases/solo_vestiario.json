@@ -1,0 +1,1180 @@
+{
+  "id": "solo_vestiario",
+  "mode": "solo",
+  "title": "Três Mil no Vestiário",
+  "tagline": "Um cadeado intacto. Um amigo de infância. Um preço na internet.",
+  "difficulty": 2,
+  "duration_sec": 960,
+  "scene": "quadra",
+  "locations": [
+    "quadra",
+    "corredor",
+    "sala_aula",
+    "cantina"
+  ],
+  "scene_people": [
+    {
+      "id": "gabriel",
+      "scene": "quadra"
+    },
+    {
+      "id": "ivo",
+      "scene": "quadra"
+    },
+    {
+      "id": "gui",
+      "scene": "corredor"
+    },
+    {
+      "id": "kaua",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "pedro",
+      "scene": "cantina"
+    }
+  ],
+  "briefing": "10h05. O celular de três mil reais do Gabriel sumiu do armário do vestiário. Cadeado fechado, sem arrombamento: quem abriu sabia o segredo. A turma já escolheu o culpado, o Kauã, que apareceu de tênis novo ontem. Fácil demais. E injusto demais.",
+  "goal": "Descubra quem pegou o celular do Gabriel e onde cada suspeito estava.",
+  "link_types": [
+    {
+      "id": "pegou",
+      "label": "pegou",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "gabriel",
+      "kind": "pessoa",
+      "name": "Gabriel",
+      "gender": "m",
+      "role": "dono do celular",
+      "look": {
+        "skin": "#f5d0b0",
+        "hair": "curto",
+        "hair_color": "#3b2a1a",
+        "top": "#c62828",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Três mil reais, mano.",
+            "expr": "bravo",
+            "anim": "negando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "gabriel_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Três mil reais, mano. E o cadeado tava FECHADO. Alguém sabia meu segredo.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem sabe o segredo do seu cadeado?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você perdeu o celular e tá culpando os outros!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Ninguém. Quer dizer... é o aniversário da Mari, minha namorada. Só quem me conhece sabe.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Tipo o Gui. A gente é amigo desde os cinco anos.",
+                  "expr": "neutro",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Perdi? Num armário trancado? Vai embora.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "gabriel_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:gabriel_bravo} disse que eu perdi. Me deixa em paz.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "ivo",
+      "kind": "pessoa",
+      "name": "Prof. Ivo",
+      "gender": "m",
+      "role": "professor de educação física",
+      "look": {
+        "skin": "#e5b48f",
+        "hair": "raspado",
+        "hair_color": "#3a3a3a",
+        "top": "#1b5e20",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Na minha aula ninguém some. Ou sumia.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "ivo_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Na minha aula ninguém sai sem eu anotar. E hoje dois saíram cedo.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem saiu mais cedo?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor deixou o vestiário aberto!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "O Gui, 9h40, dor de barriga. O Pedro, 9h45, sei lá. O Kauã ficou até o fim, suando.",
+                  "expr": "neutro",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu?! Vestiário tem cadeado, garoto. Fora da quadra.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "ivo_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:ivo_bravo} me acusou de descuido. Sem conversa hoje.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "gui",
+      "kind": "pessoa",
+      "name": "Gui",
+      "gender": "m",
+      "role": "melhor amigo do Gabriel",
+      "look": {
+        "skin": "#ecc19c",
+        "hair": "franja",
+        "hair_color": "#6d4c41",
+        "top": "#0277bd",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Tô arrasado pelo meu brother.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "gui_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "gui_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "gui_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Tô arrasado pelo meu brother. Quem faz isso com um amigo, né?",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o papel do seu armário",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_papel"
+                  ]
+                },
+                {
+                  "text": "Por que você saiu mais cedo da aula?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você roubou seu melhor amigo!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Dor de barriga. Fui ao banheiro. Depois fui pra cantina. Normal.",
+                  "expr": "nervoso",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o papel do seu armário",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_papel"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Eu devo mil e duzentos num site de skins. Me ameaçaram de expor minha conta.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Ele tem tudo, mano. Celular, namorada, time. Eu só peguei um. Ia devolver. Mentira, não ia.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "gui_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? Eu sou o padrinho do cachorro dele! Sai.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "gui_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:gui_bravo} me acusou. Agora só com prova.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o anúncio do celular",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_anuncio"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "kaua",
+      "kind": "pessoa",
+      "name": "Kauã",
+      "gender": "m",
+      "role": "suspeito de sempre",
+      "look": {
+        "skin": "#6e4528",
+        "hair": "raspado",
+        "hair_color": "#121212",
+        "top": "#f9a825",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Já sei por que vocês vieram.",
+            "expr": "bravo",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "kaua_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "kaua_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "kaua_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Já sei. Tênis novo, menino pobre, então foi eu. Que surpresa.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o recibo do seu tênis",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_recibo"
+                  ]
+                },
+                {
+                  "text": "Confessa, Kauã, o tênis te entregou!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Bolsa Atleta da prefeitura. Treino sete anos pra ganhar isso. E ainda tenho que provar.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "E eu fiquei na quadra até 10h, o professor viu. Pergunta pra quem saiu cedo.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "kaua_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kaua"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Entregou o quê? Que eu treino? Não falo mais com você.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kaua_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:kaua_bravo} me julgou pelo tênis. Traz o recibo e a gente conversa.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o recibo do seu tênis",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_recibo"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "pedro",
+      "kind": "pessoa",
+      "name": "Pedro",
+      "gender": "m",
+      "role": "saiu cedo da aula",
+      "look": {
+        "skin": "#c68642",
+        "hair": "curto",
+        "hair_color": "#1e1208",
+        "top": "#37474f",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Não vi nada. Quase nada.",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "pedro_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "pedro_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "pedro_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Saí cedo, sim. Tava matando aula de física na cantina. Não conta pra ninguém.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a comanda da cantina",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_comanda"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, pra coragem",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Você roubou e foi comer coxinha!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "9h46 eu tava aqui, pedindo coxinha. E vi uma coisa antes.",
+                  "expr": "nervoso",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "9h41 o Gui tava no vestiário, abrindo um armário com a lanterna do celular. Não era o dele.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "pedro_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, pra coragem",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_pedro"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu roubo aula, não celular! Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "pedro_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:pedro_bravo} me acusou. Só falo com chocolate. Preciso de açúcar.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, pra coragem",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate da coragem. Tá bom, eu conto.",
+                  "expr": "nervoso",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "9h41 o Gui tava abrindo um armário do vestiário com a lanterna. Não era o dele. Era o do Gabriel.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "pedro_falou",
+                "pedro_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_pedro"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "quadra",
+      "kind": "lugar",
+      "name": "Quadra e vestiário"
+    },
+    {
+      "id": "cantina",
+      "kind": "lugar",
+      "name": "Cantina"
+    },
+    {
+      "id": "celular",
+      "kind": "fato",
+      "name": "O celular do Gabriel",
+      "icon": "celular"
+    }
+  ],
+  "items": [
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "Do mural da cantina. Alguém precisa de coragem.",
+      "icon": "chocolate"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_alerta",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da turma",
+      "time": "10h06",
+      "text": "Gabriel denuncia o furto e a turma culpa o Kauã pelo tênis novo.",
+      "chat": {
+        "group": "2º A 🔥",
+        "lines": [
+          {
+            "who": "gabriel",
+            "text": "ROUBARAM MEU CELULAR NO VESTIÁRIO 😡",
+            "time": "10h06"
+          },
+          {
+            "who": "Bento",
+            "text": "o Kauã apareceu de tênis novo ontem né 👀",
+            "time": "10h07"
+          },
+          {
+            "who": "gui",
+            "text": "que absurdo, tô contigo mano 🙏",
+            "time": "10h07"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_cadeado",
+      "kind": "objeto",
+      "title": "Armário 12",
+      "text": "Armário 12 do vestiário, do Gabriel: cadeado aberto com o segredo, sem arrombamento. O celular sumiu, a carteira ficou.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_lista",
+      "kind": "registro",
+      "title": "Chamada da aula",
+      "text": "Educação física, 9h às 10h. Saíram cedo: Gui às 9h40 ('dor de barriga') e Pedro às 9h45. Kauã ficou até o fim.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_papel",
+      "kind": "objeto",
+      "title": "Armário do Gui",
+      "text": "Armário do Gui: um papel com '12 = 0408 (niver da Mari)'. 0408 é o segredo do cadeado do Gabriel.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_recibo",
+      "kind": "registro",
+      "title": "Mochila do Kauã",
+      "text": "Na mochila do Kauã, o recibo do tênis: pago com o cartão 'Bolsa Atleta Municipal', segunda.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_comanda",
+      "kind": "registro",
+      "title": "Comanda da cantina",
+      "time": "9h46",
+      "text": "Comanda: 9h46, Pedro, uma coxinha. 9h50, Gui pediu um saco plástico 'pra guardar uma coisa'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_anuncio",
+      "kind": "post",
+      "title": "Anúncio na internet",
+      "time": "11h20",
+      "text": "Às 11h20, um perfil anuncia um celular igual ao do Gabriel, com o adesivo dele na capinha.",
+      "post": {
+        "user": "@g.games.store",
+        "caption": "celular top, sem caixa, R$ 1.200, retirada perto da escola 📱",
+        "likes": 3,
+        "image": "um celular com capinha preta e um adesivo de leão rasgado no canto",
+        "comments": [
+          {
+            "user": "@g.games.store",
+            "text": "chama no direct"
+          }
+        ]
+      },
+      "release": "t+240",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_kaua",
+      "kind": "depoimento",
+      "title": "Fala do Kauã",
+      "who": "kaua",
+      "text": "Kauã comprou o tênis com a Bolsa Atleta e ficou na quadra até as 10h.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_pedro",
+      "kind": "depoimento",
+      "title": "Fala do Pedro",
+      "who": "pedro",
+      "text": "Pedro viu, às 9h41, o Gui abrindo o armário do Gabriel com a lanterna do celular.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão do Gui",
+      "who": "gui",
+      "text": "Gui pegou o celular do melhor amigo para pagar uma dívida num site de skins e anunciou na internet.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_vest",
+      "scene": "quadra",
+      "object": "vestiario_porta",
+      "label": "Vestiário",
+      "clue": "c_cadeado"
+    },
+    {
+      "id": "hs_arq",
+      "scene": "quadra",
+      "object": "arquibancada",
+      "label": "Chamada",
+      "clue": "c_lista"
+    },
+    {
+      "id": "hs_arm_gui",
+      "scene": "corredor",
+      "object": "armario_aberto",
+      "label": "Armário do Gui",
+      "clue": "c_papel"
+    },
+    {
+      "id": "hs_mochila",
+      "scene": "sala_aula",
+      "object": "mochila",
+      "label": "Mochila do Kauã",
+      "clue": "c_recibo"
+    },
+    {
+      "id": "hs_balcao",
+      "scene": "cantina",
+      "object": "balcao",
+      "label": "Balcão",
+      "clue": "c_comanda"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "cantina",
+      "object": "mural_cantina",
+      "label": "Mural da cantina",
+      "item": "chocolate"
+    }
+  ],
+  "solution": {
+    "culprit": "gui",
+    "culprit_question": "Quem pegou o celular do Gabriel?",
+    "culprit_evidence": [
+      "c_papel",
+      "c_anuncio",
+      "c_dep_pedro",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "furto",
+        "label": "Quem pegou"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava às 9h41"
+      }
+    ],
+    "edges": [
+      {
+        "from": "gui",
+        "to": "celular",
+        "type": "pegou",
+        "category": "furto",
+        "evidence": [
+          "c_papel",
+          "c_anuncio",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "gui",
+        "to": "quadra",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_lista",
+          "c_dep_pedro"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "cantina",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_comanda",
+          "c_dep_pedro"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "kaua",
+        "to": "celular",
+        "type": "pegou",
+        "category": "furto"
+      },
+      {
+        "from": "pedro",
+        "to": "celular",
+        "type": "pegou",
+        "category": "furto"
+      }
+    ]
+  },
+  "hints": [
+    "Um cadeado aberto sem força: quem sabia o segredo?",
+    "Um tênis novo não é prova. Como foi pago?",
+    "Quem saiu da aula antes das 10h?",
+    "O amigo mais solidário do grupo pode ser o mais perto do armário.",
+    "O que um ladrão faz com um celular caro?"
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "9h40",
+        "text": "Gui sai da aula com 'dor de barriga'."
+      },
+      {
+        "time": "9h41",
+        "text": "Gui abre o armário do Gabriel com o segredo 0408."
+      },
+      {
+        "time": "9h46",
+        "text": "Pedro, matando aula, chega à cantina."
+      },
+      {
+        "time": "9h50",
+        "text": "Gui pede um saco plástico na cantina."
+      },
+      {
+        "time": "10h06",
+        "text": "Gui consola o Gabriel no grupo."
+      },
+      {
+        "time": "11h20",
+        "text": "O celular aparece à venda na internet."
+      }
+    ],
+    "explanation": "A turma acusou o Kauã por preconceito, mas o tênis foi pago com a Bolsa Atleta. Quem sabia o segredo era o melhor amigo. O aha: o papel '12 = 0408' no armário do Gui, o anúncio com o adesivo de leão e o Pedro, que matava aula e viu tudo.",
+    "refuted": [
+      "Kauã comprou o tênis com a Bolsa Atleta e ficou na quadra até as 10h.",
+      "Pedro saiu para matar aula na cantina, não para roubar."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "O Gui deve dinheiro num site de skins de jogo. Sabia o segredo do cadeado do melhor amigo, que é o aniversário da namorada. Saiu da educação física às 9h40, abriu o armário do Gabriel, guardou o celular e anunciou na internet. O Kauã foi acusado só por ter aparecido de tênis novo.",
+    "twist": "Plantado no cadeado aberto sem força (o ladrão conhecia o Gabriel), na chamada (quem saiu cedo) e no Gui consolando o amigo no grupo. O anúncio (t+) com o adesivo de leão fecha. Segundo giro: a testemunha, Pedro, também mentia, para esconder que matava aula.",
+    "solution_steps": [
+      "Ler o grupo: a turma culpa o Kauã pelo tênis novo.",
+      "No vestiário, o cadeado foi aberto com o segredo: o ladrão conhecia o Gabriel.",
+      "A chamada mostra quem saiu cedo: Gui às 9h40 e Pedro às 9h45.",
+      "Na mochila do Kauã, o recibo mostra o tênis pago com a Bolsa Atleta.",
+      "No armário do Gui, o papel com o segredo 0408.",
+      "Na cantina, a comanda põe o Pedro lá às 9h46; com chocolate, ele conta que viu o Gui no vestiário.",
+      "O anúncio (chega com o tempo) mostra o celular com o adesivo do Gabriel. Apontar o Gui."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 4 min",
+        "aha": "O preconceito aponta o Kauã.",
+        "if_stuck": "Como o tênis foi pago?"
+      },
+      {
+        "when": "4 a 10 min",
+        "aha": "Aha 1: o segredo do cadeado é íntimo; o amigo de infância sabe.",
+        "if_stuck": "Quem saiu da aula antes das 10h?"
+      },
+      {
+        "when": "10 min em diante",
+        "aha": "Aha 2: o papel com '0408' e o anúncio entregam o Gui.",
+        "if_stuck": "O que uma pessoa endividada faria com um celular caro?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_alerta",
+        "where": "Já no início, para todos",
+        "proves": "Apresenta o furto e a acusação injusta contra o Kauã."
+      },
+      {
+        "clue": "c_cadeado",
+        "where": "Quadra: tocar em 'Vestiário'",
+        "proves": "Abriram com o segredo: o ladrão conhecia o Gabriel."
+      },
+      {
+        "clue": "c_lista",
+        "where": "Quadra: tocar em 'Chamada'",
+        "proves": "Prova a linha: Gui estava em Quadra e vestiário."
+      },
+      {
+        "clue": "c_papel",
+        "where": "Corredor: tocar em 'Armário do Gui'",
+        "proves": "Prova a linha: Gui pegou O celular do Gabriel. Aponta para Gui."
+      },
+      {
+        "clue": "c_recibo",
+        "where": "Sala de aula: tocar em 'Mochila do Kauã'",
+        "proves": "Derruba a acusação contra o Kauã: o tênis veio da Bolsa Atleta."
+      },
+      {
+        "clue": "c_comanda",
+        "where": "Cantina: tocar em 'Balcão'",
+        "proves": "Prova a linha: Pedro estava em Cantina."
+      },
+      {
+        "clue": "c_anuncio",
+        "where": "Chega sozinha aos 4 min",
+        "proves": "Prova a linha: Gui pegou O celular do Gabriel. Aponta para Gui."
+      },
+      {
+        "clue": "c_dep_kaua",
+        "where": "mostrar 'Mochila do Kauã' para Kauã",
+        "proves": "O Kauã explica o tênis e confirma que ficou na quadra."
+      },
+      {
+        "clue": "c_dep_pedro",
+        "where": "mostrar 'Comanda da cantina' para Pedro; ou trocar 'Barra de chocolate' com Pedro",
+        "proves": "Prova a linha: Gui estava em Quadra e vestiário; Pedro estava em Cantina. Aponta para Gui."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Armário do Gui' para Gui; ou mostrar 'Anúncio na internet' para Gui",
+        "proves": "Prova a linha: Gui pegou O celular do Gabriel. Aponta para Gui."
+      }
+    ],
+    "red_herrings": [
+      "O tênis novo do Kauã: foi pago com a Bolsa Atleta.",
+      "O Pedro saiu cedo, mas foi matar aula na cantina."
+    ],
+    "faq": [
+      {
+        "q": "Foi o Kauã, ele apareceu de tênis novo!",
+        "a": "Como o tênis foi pago? Tem um recibo na mochila dele."
+      },
+      {
+        "q": "Como alguém abriu sem quebrar?",
+        "a": "Que segredo o Gabriel usa? Quem conhece ele tão bem?"
+      },
+      {
+        "q": "O Gui está do lado do Gabriel.",
+        "a": "Onde o Gui estava às 9h41? Ele saiu da aula?"
+      },
+      {
+        "q": "O Pedro não fala.",
+        "a": "Ele está com medo de ser pego matando aula. Um chocolate ajuda."
+      },
+      {
+        "q": "Como saber que é o celular dele?",
+        "a": "Esperem o anúncio. Comparem a capinha."
+      }
+    ],
+    "talking_points": [
+      "Por que a turma acusou o Kauã primeiro? O que isso diz sobre preconceito?",
+      "Dívida justifica trair um amigo?",
+      "O Pedro também mentia. A mentira dele atrapalhou a investigação?"
+    ]
+  }
+}

@@ -1,0 +1,1918 @@
+{
+  "id": "cofre_formatura",
+  "mode": "multi",
+  "title": "O Cofre da Formatura",
+  "tagline": "Quatro mil e oitocentos reais, um alarme às 23h17 e um bilhete com nome.",
+  "difficulty": 1,
+  "duration_sec": 1800,
+  "scene": "sala_diretor",
+  "locations": [
+    "sala_diretor",
+    "corredor",
+    "sala_professores",
+    "cantina",
+    "biblioteca"
+  ],
+  "scene_people": [
+    {
+      "id": "otavio",
+      "scene": "sala_diretor"
+    },
+    {
+      "id": "caio",
+      "scene": "corredor"
+    },
+    {
+      "id": "rafa",
+      "scene": "corredor"
+    },
+    {
+      "id": "jorge",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "cida",
+      "scene": "cantina"
+    },
+    {
+      "id": "bia",
+      "scene": "cantina"
+    },
+    {
+      "id": "lari",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "joana",
+      "scene": "biblioteca"
+    }
+  ],
+  "briefing": "Às 23h17 o alarme da escola disparou. Na manhã seguinte, o cofre do grêmio estava vazio: quatro mil e oitocentos reais da formatura. Lá dentro, só um bilhete: 'Obrigado, Caio 😉'. O Caio é o tesoureiro. E a câmera pegou um vulto à noite.",
+  "goal": "Descubra quando o cofre foi aberto de verdade, quem estava onde e quem levou o dinheiro.",
+  "link_types": [
+    {
+      "id": "pegou",
+      "label": "pegou",
+      "directed": true
+    },
+    {
+      "id": "escreveu",
+      "label": "escreveu",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "otavio",
+      "kind": "pessoa",
+      "name": "Sr. Otávio",
+      "gender": "m",
+      "role": "diretor",
+      "look": {
+        "skin": "#8a5a3c",
+        "hair": "raspado",
+        "hair_color": "#bdbdbd",
+        "top": "#263238",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Quero um nome até o almoço.",
+            "expr": "bravo",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "otavio_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "O dinheiro da formatura. No MEU cofre. Quero um nome até o almoço.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem tem o código do cofre?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor tem o código, então foi o senhor!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Eu e a tesouraria do grêmio: Caio e Lari. O cofre é digital, registra cada abertura.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                },
+                {
+                  "text": "Pedi o relatório ao técnico. Chega daqui a pouco.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? Fora da minha sala. Agora.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "otavio_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:otavio_bravo} me acusou. A diretoria está fechada.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "caio",
+      "kind": "pessoa",
+      "name": "Caio",
+      "gender": "m",
+      "role": "presidente e tesoureiro do grêmio",
+      "look": {
+        "skin": "#8d5524",
+        "hair": "raspado",
+        "hair_color": "#1a1a1a",
+        "top": "#2e7d32",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Parabéns pra mim, né?",
+            "expr": "bravo",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "caio_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "caio_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "caio_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Cofre vazio, bilhete com o meu nome. Parabéns pra mim. Eu nem sei abrir aquilo sem a planilha.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a ata da assembleia",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ata"
+                  ]
+                },
+                {
+                  "text": "Quem ganha te culpando?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O bilhete é seu, Caio!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Sei lá. Quem escreve 'obrigado' com emoji de piscadinha tem raiva, não pressa.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a ata da assembleia",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ata"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "17h30 às 18h30 eu tava na cantina, na frente de oitenta alunos, brigando por cor de beca.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "O código da tesouraria é meu e da Lari. A gente terminou mês passado. Ela não aceitou bem.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "caio_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_caio"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Ah, claro, eu deixei um bilhete pra mim mesmo. Gênio. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "caio_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:caio_bravo} me chamou de ladrão. Traz a ata da assembleia ou some.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a ata da assembleia",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ata"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rafa",
+      "kind": "pessoa",
+      "name": "Rafa",
+      "gender": "m",
+      "role": "o vulto das 23h17",
+      "look": {
+        "skin": "#5c3a21",
+        "hair": "curto",
+        "hair_color": "#0f0f0f",
+        "top": "#ff9800",
+        "accessory": "cachecol"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu não peguei dinheiro nenhum.",
+            "expr": "nervoso",
+            "anim": "negando"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "rafa_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "rafa_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "rafa_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Antes que pergunte: eu tava na escola à noite, sim. Dinheiro? Não. Eu tenho princípios. Poucos, mas tenho.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o armário dos celulares arrombado",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_armario_cel"
+                  ]
+                },
+                {
+                  "text": "O que você fez ontem à noite?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você é o ladrão da formatura!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Dormi cedo. Tipo um anjo. Um anjo de moletom laranja. Próxima pergunta.",
+                  "expr": "nervoso",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o armário dos celulares arrombado",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_armario_cel"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "A professora confiscou meu celular. Minha mãe ia me matar. Pulei o muro 23h e arrombei o armário.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Diretoria? Nem passei perto. Olha a câmera: eu entro na sala dos professores e saio.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "rafa_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_rafa"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Ladrão de CELULAR, e era o meu! Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "rafa_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:rafa_bravo} me acusou. Só falo se mostrarem a câmera.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o print da câmera",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_camera"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "jorge",
+      "kind": "pessoa",
+      "name": "Seu Jorge",
+      "gender": "m",
+      "role": "zelador",
+      "look": {
+        "skin": "#7a4b2a",
+        "hair": "raspado",
+        "hair_color": "#cfcfcf",
+        "top": "#546e7a",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Levei bronca por um alarme.",
+            "expr": "bravo",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "jorge_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "jorge_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "O alarme tocou 23h17 e eu levei bronca. Eu, que tava em casa dormindo. Perdi até minhas chaves reserva.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei suas chaves no escaninho",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chave"
+                  ],
+                  "ifnot": [
+                    "jorge_troca"
+                  ]
+                },
+                {
+                  "text": "O alarme tocou onde?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor desligou o alarme!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Na sala dos professores, não na diretoria. A diretoria ficou quietinha a noite inteira.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei suas chaves no escaninho",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chave"
+                  ],
+                  "ifnot": [
+                    "jorge_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu tava DORMINDO. Fora.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "jorge_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:jorge_bravo} me acusou. Só falo se acharem minhas chaves.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei suas chaves no escaninho",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chave"
+                  ],
+                  "ifnot": [
+                    "jorge_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Minhas chaves! Você é um anjo.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Retribuo: ontem 17h55 a Lari saiu da diretoria com a mochila estufada. Disse que era rifa.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "jorge_falou",
+                "jorge_troca"
+              ],
+              "take_item": "chave",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_jorge"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "cida",
+      "kind": "pessoa",
+      "name": "Tia Cida",
+      "gender": "f",
+      "role": "cantineira, viu a assembleia",
+      "look": {
+        "skin": "#9c6644",
+        "hair": "coque",
+        "hair_color": "#2e2e2e",
+        "top": "#ffffff",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Briga por cor de beca!",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "cida_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Ontem teve assembleia da formatura aqui. Gritaria! Briga por cor de beca. Vinho ou azul-marinho.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem saiu cedo da assembleia?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora sabe de tudo e esconde!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "A Lari, 17h45, 'pra buscar as rifas'. Nunca voltou. O Caio ficou até o fim, rouco.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu sei de tudo e conto tudo! Mas não pra você. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "cida_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:cida_bravo} me ofendeu. Hoje sem fofoca.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "bia",
+      "kind": "pessoa",
+      "name": "Bia",
+      "gender": "f",
+      "role": "melhor amiga da Lari",
+      "look": {
+        "skin": "#e0ac69",
+        "hair": "cacheado_longo",
+        "hair_color": "#2b1d14",
+        "top": "#e91e63",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Deixa a Lari em paz.",
+            "expr": "bravo",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "bia_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "bia_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "bia_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "A Lari é minha melhor amiga e tá destruída. Deixa ela em paz, detetive.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar sua DM com a Lari",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_dm_bia_lari"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, a gente precisa conversar",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "bia_troca"
+                  ]
+                },
+                {
+                  "text": "Você ajudou a Lari a roubar!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Tá. Ela pegou oitocentos da formatura pra festa de quinze dela. Disse que ia repor até sexta.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Eu fiquei quieta. Amiga não entrega amiga. Ou entrega?",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "bia_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, a gente precisa conversar",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "bia_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_bia"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu?! Eu só guardei um segredo. Sai.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "bia_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:bia_bravo} me acusou. Não falo mais da minha amiga.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, a gente precisa conversar",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "bia_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate... golpe baixo. Funciona.",
+                  "expr": "triste",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "A Lari pegou oitocentos pra festa de quinze. A prestação de contas era hoje. Ela tava em pânico.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "bia_falou",
+                "bia_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_bia"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "lari",
+      "kind": "pessoa",
+      "name": "Lari",
+      "gender": "f",
+      "role": "vice-tesoureira do grêmio",
+      "look": {
+        "skin": "#ffd7b5",
+        "hair": "ondulado",
+        "hair_color": "#a1662f",
+        "top": "#43a047",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu sempre desconfiei do Caio.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "lari_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "lari_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "lari_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Tô arrasada. Tanto trabalho... E o bilhete com o nome do Caio, né? Eu sempre desconfiei dele.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o cofre das 17h52 e a impressora",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_log_cofre",
+                    "c_impressora"
+                  ]
+                },
+                {
+                  "text": "Onde você tava às 17h50?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você roubou a formatura, Lari!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Contando rifas. Sozinha. Na biblioteca. Por quê? Alguém disse alguma coisa?",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o cofre das 17h52 e a impressora",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_log_cofre",
+                    "c_impressora"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Eu peguei oitocentos pra minha festa de quinze. Ia devolver. Não deu.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Então levei tudo e deixei o nome dele. Ele terminou comigo por mensagem, sabia? Por MENSAGEM.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "lari_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Que absurdo. Eu sou a vítima aqui, junto com todo mundo.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "lari_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:lari_bravo} me acusou. Só falo com prova.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o rascunho da mesa de estudo",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_rascunho",
+                    "c_log_cofre"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "joana",
+      "kind": "pessoa",
+      "name": "Joana",
+      "gender": "f",
+      "role": "monitora da biblioteca",
+      "look": {
+        "skin": "#d9a066",
+        "hair": "longo",
+        "hair_color": "#2c1b10",
+        "top": "#00897b",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Shhh.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "joana_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Shhh. Biblioteca. Ontem a Lari ficou aqui até tarde. Esquisita.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem usou a impressora ontem?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você imprimiu o bilhete!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "A Lari, 17h40. Uma folha só. Dobrou e enfiou no bolso. Rifa não se esconde assim.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_joana",
+              "sets": [
+                "joana_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu imprimo silêncio. Shhh e tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "joana_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:joana_bravo} me acusou. Biblioteca fechada pra você.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "sala_diretor",
+      "kind": "lugar",
+      "name": "Sala do diretor"
+    },
+    {
+      "id": "cantina",
+      "kind": "lugar",
+      "name": "Cantina"
+    },
+    {
+      "id": "sala_professores",
+      "kind": "lugar",
+      "name": "Sala dos professores"
+    },
+    {
+      "id": "dinheiro",
+      "kind": "fato",
+      "name": "R$ 4.800 da formatura",
+      "icon": "caixa"
+    },
+    {
+      "id": "bilhete",
+      "kind": "fato",
+      "name": "Bilhete 'Obrigado, Caio'",
+      "icon": "carta"
+    }
+  ],
+  "items": [
+    {
+      "id": "chave",
+      "name": "Chaves reserva do zelador",
+      "desc": "No escaninho, com chaveiro de vassoura.",
+      "icon": "chave"
+    },
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "No balcão da cantina. Amolece qualquer amiga leal.",
+      "icon": "chocolate"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_alerta",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da formatura",
+      "time": "7h10",
+      "text": "O cofre amanhece vazio, com um bilhete para o Caio, e a câmera pegou alguém às 23h17.",
+      "chat": {
+        "group": "Formatura 3º ano 🎓",
+        "lines": [
+          {
+            "who": "caio",
+            "text": "O COFRE TÁ VAZIO",
+            "time": "7h10"
+          },
+          {
+            "who": "Lu",
+            "text": "e o bilhete com seu nome, Caio?? 👀",
+            "time": "7h11"
+          },
+          {
+            "who": "Duda",
+            "text": "a câmera pegou alguém 23h17!!",
+            "time": "7h12"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_formatura",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Assembleia",
+      "time": "17h35",
+      "text": "Às 17h35 o Caio abre a assembleia na cantina.",
+      "chat": {
+        "group": "Formatura 3º ano 🎓",
+        "lines": [
+          {
+            "who": "caio",
+            "text": "assembleia começando na cantina, cola todo mundo",
+            "time": "17h35"
+          },
+          {
+            "who": "lari",
+            "text": "vou buscar as rifas e já volto",
+            "time": "17h44"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dm_bia_lari",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM da Bia",
+      "time": "quarta",
+      "text": "A Bia cobra da Lari os oitocentos reais da formatura usados na festa de quinze.",
+      "chat": {
+        "group": "Bia 💜",
+        "lines": [
+          {
+            "who": "bia",
+            "text": "amiga e os 800 da formatura que vc usou na festa? 😬",
+            "time": "21h00"
+          },
+          {
+            "who": "lari",
+            "text": "relaxa, até sexta eu resolvo",
+            "time": "21h02"
+          },
+          {
+            "who": "lari",
+            "text": "de um jeito ou de outro",
+            "time": "21h02"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_chat_rafa",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM do Rafa",
+      "time": "22h50",
+      "text": "Às 22h50 o Rafa diz que vai buscar o celular confiscado na escola.",
+      "chat": {
+        "group": "Téo",
+        "lines": [
+          {
+            "who": "rafa",
+            "text": "vou buscar meu celular na escola, a profa confiscou",
+            "time": "22h50"
+          },
+          {
+            "who": "Téo",
+            "text": "à noite?? tá louco",
+            "time": "22h51"
+          },
+          {
+            "who": "rafa",
+            "text": "minha mãe vai me matar se descobrir",
+            "time": "22h51"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_auditoria",
+      "kind": "registro",
+      "title": "Aviso do grêmio",
+      "text": "Aviso: 'Prestação de contas da formatura SEXTA, 8h, com a coordenação. Tesouraria: Caio e Lari.'",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_bilhete",
+      "kind": "bilhete",
+      "title": "Dentro do cofre",
+      "text": "No cofre vazio, um bilhete impresso: 'Obrigado, Caio 😉'. Papel timbrado do grêmio.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_codigos",
+      "kind": "registro",
+      "title": "Gaveta do diretor",
+      "text": "Códigos do cofre: 'Diretoria (Otávio). Tesouraria (Caio e Lari), código compartilhado.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_camera",
+      "kind": "objeto",
+      "title": "Print da câmera",
+      "time": "23h17",
+      "text": "Câmera do corredor, 23h17: vulto de moletom laranja entra na sala dos professores e sai com algo pequeno. Não chega perto da diretoria.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_armario_cel",
+      "kind": "objeto",
+      "title": "Armário dos confiscados",
+      "text": "Armário dos celulares confiscados: arrombado. Falta um só: o do Rafa.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_ata",
+      "kind": "registro",
+      "title": "Ata da assembleia",
+      "text": "Ata, quinta 17h30 às 18h30, na cantina: 'Caio conduziu do começo ao fim. Lari saiu às 17h45 para buscar as rifas.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_impressora",
+      "kind": "registro",
+      "title": "Fila da impressora",
+      "time": "17h40",
+      "text": "Fila da impressora da biblioteca: quinta 17h40, 'obrigado_caio.docx', usuário lari.gremio.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_rascunho",
+      "kind": "objeto",
+      "title": "Mesa de estudo",
+      "text": "Rascunho rasgado: 'Caixa 4.800. Festa 15: menos 800. Repor até sexta??' riscado várias vezes.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_log_cofre",
+      "kind": "registro",
+      "title": "Relatório do cofre",
+      "text": "Do técnico: o cofre foi aberto quinta 17h52 com o código da TESOURARIA. Nenhuma abertura depois. O alarme das 23h17 foi na sala dos professores.",
+      "release": "t+240",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_caio",
+      "kind": "depoimento",
+      "title": "Fala do Caio",
+      "who": "caio",
+      "text": "Caio conduziu a assembleia na cantina das 17h30 às 18h30. Divide o código da tesouraria com a Lari, sua ex.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_rafa",
+      "kind": "depoimento",
+      "title": "Fala do Rafa",
+      "who": "rafa",
+      "text": "Rafa invadiu a escola às 23h para pegar o próprio celular confiscado. Não passou pela diretoria.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_jorge",
+      "kind": "depoimento",
+      "title": "Fala do Seu Jorge",
+      "who": "jorge",
+      "text": "Seu Jorge viu a Lari sair da diretoria às 17h55 com a mochila estufada, dizendo que eram rifas.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_bia",
+      "kind": "depoimento",
+      "title": "Fala da Bia",
+      "who": "bia",
+      "text": "Bia sabia que a Lari tinha usado oitocentos reais da formatura na festa de quinze, e ficou quieta.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_joana",
+      "kind": "depoimento",
+      "title": "Fala da Joana",
+      "who": "joana",
+      "text": "Joana viu a Lari imprimir uma folha às 17h40 e esconder no bolso.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão da Lari",
+      "who": "lari",
+      "text": "Lari usou oitocentos reais na festa, não conseguiu repor e levou tudo às 17h52, deixando o nome do ex.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_cofre",
+      "scene": "sala_diretor",
+      "object": "cofre",
+      "label": "Cofre",
+      "clue": "c_bilhete"
+    },
+    {
+      "id": "hs_gaveta",
+      "scene": "sala_diretor",
+      "object": "gaveta",
+      "label": "Gaveta",
+      "clue": "c_codigos"
+    },
+    {
+      "id": "hs_quadro",
+      "scene": "corredor",
+      "object": "quadro_avisos",
+      "label": "Print da câmera",
+      "clue": "c_camera"
+    },
+    {
+      "id": "hs_armario",
+      "scene": "sala_professores",
+      "object": "armario_prof",
+      "label": "Armário dos confiscados",
+      "clue": "c_armario_cel"
+    },
+    {
+      "id": "hs_escaninho",
+      "scene": "sala_professores",
+      "object": "escaninho",
+      "label": "Escaninho",
+      "item": "chave"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "cantina",
+      "object": "mural_cantina",
+      "label": "Ata no mural",
+      "clue": "c_ata"
+    },
+    {
+      "id": "hs_balcao",
+      "scene": "cantina",
+      "object": "balcao",
+      "label": "Balcão",
+      "item": "chocolate"
+    },
+    {
+      "id": "hs_comp",
+      "scene": "biblioteca",
+      "object": "computador",
+      "label": "Impressora",
+      "clue": "c_impressora"
+    },
+    {
+      "id": "hs_mesa",
+      "scene": "biblioteca",
+      "object": "mesa_estudo",
+      "label": "Mesa de estudo",
+      "clue": "c_rascunho"
+    }
+  ],
+  "solution": {
+    "culprit": "lari",
+    "culprit_question": "Quem esvaziou o cofre da formatura?",
+    "culprit_evidence": [
+      "c_log_cofre",
+      "c_impressora",
+      "c_rascunho",
+      "c_dm_bia_lari",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "cofre",
+        "label": "Quem pegou e quem escreveu o bilhete"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava"
+      }
+    ],
+    "edges": [
+      {
+        "from": "lari",
+        "to": "dinheiro",
+        "type": "pegou",
+        "category": "cofre",
+        "evidence": [
+          "c_log_cofre",
+          "c_rascunho",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "lari",
+        "to": "bilhete",
+        "type": "escreveu",
+        "category": "cofre",
+        "evidence": [
+          "c_impressora",
+          "c_dep_joana",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "lari",
+        "to": "sala_diretor",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_log_cofre",
+          "c_ata",
+          "c_dep_jorge"
+        ]
+      },
+      {
+        "from": "caio",
+        "to": "cantina",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_ata",
+          "c_chat_formatura",
+          "c_dep_caio"
+        ]
+      },
+      {
+        "from": "rafa",
+        "to": "sala_professores",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_camera",
+          "c_armario_cel",
+          "c_dep_rafa"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "caio",
+        "to": "dinheiro",
+        "type": "pegou",
+        "category": "cofre"
+      },
+      {
+        "from": "rafa",
+        "to": "dinheiro",
+        "type": "pegou",
+        "category": "cofre"
+      }
+    ]
+  },
+  "hints": [
+    "Um alarme às 23h17 prova que alguém entrou à noite. Prova que o dinheiro saiu à noite?",
+    "Para onde vai o vulto da câmera?",
+    "Quem saiu cedo da assembleia e nunca voltou?",
+    "Quem deixa um bilhete com o nome do ex dentro de um cofre?",
+    "O cofre é digital. Ele lembra quando foi aberto.",
+    "Uma melhor amiga sabe o que a outra fez com oitocentos reais."
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "Quarta",
+        "text": "Bia cobra da Lari os R$ 800 usados na festa de quinze."
+      },
+      {
+        "time": "17h30",
+        "text": "Caio abre a assembleia na cantina."
+      },
+      {
+        "time": "17h40",
+        "text": "Lari imprime 'Obrigado, Caio' na biblioteca."
+      },
+      {
+        "time": "17h45",
+        "text": "Lari sai da assembleia 'para buscar as rifas'."
+      },
+      {
+        "time": "17h52",
+        "text": "Lari abre o cofre com o código da tesouraria e leva tudo."
+      },
+      {
+        "time": "17h55",
+        "text": "Seu Jorge a vê sair da diretoria com a mochila estufada."
+      },
+      {
+        "time": "23h17",
+        "text": "Rafa pula o muro e arromba o armário dos confiscados. O alarme toca."
+      }
+    ],
+    "explanation": "O alarme das 23h17 era a cortina de fumaça perfeita: o Rafa só foi buscar o próprio celular. O cofre tinha sido aberto seis horas antes, às 17h52, com o código da tesouraria, enquanto o Caio comandava a assembleia. A Lari tinha um rombo de oitocentos reais, uma prestação de contas na sexta e um ex para punir.",
+    "refuted": [
+      "Caio estava na assembleia, diante de oitenta alunos.",
+      "Rafa invadiu a escola, mas só pegou o próprio celular."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "A Lari, vice-tesoureira, usou oitocentos reais da formatura na própria festa de quinze e não conseguiu repor antes da prestação de contas. Na quinta, saiu da assembleia às 17h45, imprimiu um bilhete 'Obrigado, Caio' para incriminar o ex-namorado e abriu o cofre às 17h52 com o código da tesouraria. À noite, o Rafa invadiu a escola só para recuperar o próprio celular confiscado e disparou o alarme, o que fez todos pensarem num roubo noturno.",
+    "twist": "Plantado em três pistas: a câmera mostra o vulto indo para a sala dos professores, e não para a diretoria; a ata mostra a Lari saindo às 17h45; e a impressão 'obrigado_caio' é das 17h40. O relatório do cofre (t+240) só confirma que o roubo foi à tarde. Segundo giro: a melhor amiga, Bia, sabia do rombo e escondeu.",
+    "solution_steps": [
+      "Ler o alerta: o bilhete aponta o Caio e a câmera aponta um vulto à noite.",
+      "No corredor, a câmera mostra o vulto indo para a sala dos professores, não para a diretoria.",
+      "Na sala dos professores, o armário dos confiscados foi arrombado: falta só o celular do Rafa.",
+      "Na cantina, a ata mostra o Caio na assembleia e a Lari saindo às 17h45.",
+      "Na biblioteca, a impressora mostra 'obrigado_caio.docx' do usuário lari.gremio às 17h40; na mesa, o rascunho do rombo.",
+      "As pistas só de um aluno (DM da Bia, aviso da auditoria) mostram o motivo: alguém da equipe precisa contar.",
+      "O relatório do cofre (por volta dos 4 min) mostra a abertura às 17h52 com o código da tesouraria.",
+      "Mostrar o relatório e a impressão à Lari, montar as 5 linhas e apontá-la."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 5 min",
+        "aha": "O bilhete e o vulto parecem resolver tudo. A turma acusa o Caio ou o Rafa.",
+        "if_stuck": "Para onde vai o vulto? E por que alguém deixaria o próprio nome no cofre?"
+      },
+      {
+        "when": "5 a 12 min",
+        "aha": "Aha 1: o vulto era o Rafa atrás do celular, e o Caio estava na assembleia.",
+        "if_stuck": "Quem saiu da assembleia e nunca voltou?"
+      },
+      {
+        "when": "12 a 20 min",
+        "aha": "Aha 2: o relatório do cofre move o roubo para 17h52. A impressora e o rascunho apontam a Lari.",
+        "if_stuck": "Quem tinha o código da tesouraria além do Caio?"
+      },
+      {
+        "when": "20 min em diante",
+        "aha": "Aha 3: a DM da Bia revela o motivo e o segredo da amiga.",
+        "if_stuck": "Por que a Lari escolheria o nome do Caio?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_alerta",
+        "where": "Já no início, para todos",
+        "proves": "Apresenta o caso e as duas pistas falsas: o bilhete e o vulto."
+      },
+      {
+        "clue": "c_chat_formatura",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Prova a linha: Caio estava em Cantina."
+      },
+      {
+        "clue": "c_dm_bia_lari",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Aponta para Lari."
+      },
+      {
+        "clue": "c_chat_rafa",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Mostra por que o Rafa entrou na escola à noite: o celular."
+      },
+      {
+        "clue": "c_auditoria",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Mostra o prazo que deixou a Lari em pânico: sexta, 8h."
+      },
+      {
+        "clue": "c_bilhete",
+        "where": "Sala do diretor: tocar em 'Cofre'",
+        "proves": "O bilhete foi feito para incriminar o Caio."
+      },
+      {
+        "clue": "c_codigos",
+        "where": "Sala do diretor: tocar em 'Gaveta'",
+        "proves": "Só a diretoria e a tesouraria (Caio e Lari) abrem o cofre."
+      },
+      {
+        "clue": "c_camera",
+        "where": "Corredor: tocar em 'Print da câmera'",
+        "proves": "Prova a linha: Rafa estava em Sala dos professores."
+      },
+      {
+        "clue": "c_armario_cel",
+        "where": "Sala dos professores: tocar em 'Armário dos confiscados'",
+        "proves": "Prova a linha: Rafa estava em Sala dos professores."
+      },
+      {
+        "clue": "c_ata",
+        "where": "Cantina: tocar em 'Ata no mural'",
+        "proves": "Prova a linha: Lari estava em Sala do diretor; Caio estava em Cantina."
+      },
+      {
+        "clue": "c_impressora",
+        "where": "Biblioteca: tocar em 'Impressora'",
+        "proves": "Prova a linha: Lari escreveu Bilhete 'Obrigado, Caio'. Aponta para Lari."
+      },
+      {
+        "clue": "c_rascunho",
+        "where": "Biblioteca: tocar em 'Mesa de estudo'",
+        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura. Aponta para Lari."
+      },
+      {
+        "clue": "c_log_cofre",
+        "where": "Chega sozinha aos 4 min",
+        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura; Lari estava em Sala do diretor. Aponta para Lari."
+      },
+      {
+        "clue": "c_dep_caio",
+        "where": "mostrar 'Ata da assembleia' para Caio",
+        "proves": "Prova a linha: Caio estava em Cantina."
+      },
+      {
+        "clue": "c_dep_rafa",
+        "where": "mostrar 'Armário dos confiscados' para Rafa; ou mostrar 'Print da câmera' para Rafa",
+        "proves": "Prova a linha: Rafa estava em Sala dos professores."
+      },
+      {
+        "clue": "c_dep_jorge",
+        "where": "trocar 'Chaves reserva do zelador' com Seu Jorge",
+        "proves": "Prova a linha: Lari estava em Sala do diretor."
+      },
+      {
+        "clue": "c_dep_bia",
+        "where": "mostrar 'DM da Bia' para Bia; ou trocar 'Barra de chocolate' com Bia",
+        "proves": "Mostra o motivo da Lari (o rombo de R$ 800) e o silêncio da amiga."
+      },
+      {
+        "clue": "c_dep_joana",
+        "where": "conversar com Joana ('Quem usou a impressora ontem?')",
+        "proves": "Prova a linha: Lari escreveu Bilhete 'Obrigado, Caio'."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Relatório do cofre' + 'Fila da impressora' para Lari; ou mostrar 'Mesa de estudo' + 'Relatório do cofre' para Lari",
+        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura; Lari escreveu Bilhete 'Obrigado, Caio'. Aponta para Lari."
+      }
+    ],
+    "red_herrings": [
+      "O vulto das 23h17: era o Rafa, buscando o próprio celular.",
+      "O bilhete com o nome do Caio: foi escrito para incriminá-lo."
+    ],
+    "faq": [
+      {
+        "q": "Foi o vulto da câmera!",
+        "a": "Para onde o vulto vai? Ele passa pela diretoria?"
+      },
+      {
+        "q": "O bilhete diz Caio, então é o Caio.",
+        "a": "Quem deixaria o próprio nome no cofre? Quem tem raiva dele?"
+      },
+      {
+        "q": "Quando o dinheiro sumiu?",
+        "a": "O cofre é digital. Esperem o relatório do técnico."
+      },
+      {
+        "q": "A Lari parece tão triste...",
+        "a": "Onde ela estava entre 17h45 e 18h? Olhem a ata."
+      },
+      {
+        "q": "A Bia não quer falar.",
+        "a": "Ela protege a amiga. Um chocolate e a DM certa ajudam."
+      },
+      {
+        "q": "Meu colega tem uma DM que eu não vi.",
+        "a": "Peçam para fixar no quadro. Pistas só suas existem para vocês conversarem."
+      }
+    ],
+    "talking_points": [
+      "Por que um alarme à noite fez todo mundo esquecer a tarde?",
+      "A Bia sabia do rombo e ficou quieta. Isso também é culpa?",
+      "O Rafa invadiu a escola. Ele deve ser punido mesmo sem ter roubado?"
+    ]
+  }
+}

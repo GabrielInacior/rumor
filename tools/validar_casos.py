@@ -23,8 +23,8 @@ HAIR = {"f": set("longo rabo coque trancas ondulado cacheado_longo".split()), "m
 ACC = set("nenhum oculos bone fones brinco cachecol".split())
 # limites por modo
 RULES = {
- "solo":  {"locs": (2, 4), "people": (3, 5), "clues": (5, 14), "edges": (2, 4), "trades": 1, "dur": (600, 1200)},
- "multi": {"locs": (4, 5), "people": (6, 8), "clues": (14, 20), "edges": (5, 7), "trades": 2, "dur": (1500, 2100)},
+ "solo":  {"locs": (2, 5), "people": (3, 6), "clues": (5, 20), "edges": (2, 5), "trades": 1, "dur": (600, 1500)},
+ "multi": {"locs": (5, 7), "people": (8, 10), "clues": (18, 28), "edges": (5, 7), "trades": 2, "dur": (1500, 2400)},
 }
 W = lambda s: len(s.split())
 
@@ -100,7 +100,7 @@ def check(p):
         if "who" in c and c["who"] not in cards: err.append("who " + c["id"])
         for l in c.get("chat", {}).get("lines", []):
             if W(l["text"]) > 35: err.append("chat longo")
-            if l["who"].islower() and l["who"] not in cards: err.append("chat who " + l["who"])
+            if l["who"].islower() and not l["who"].startswith("@") and l["who"] not in cards: err.append("chat who " + l["who"])
         if "post" in c and c["post"].get("who") and c["post"]["who"] not in cards: err.append("post who " + c["id"])
         r = c["release"]
         if not (r in ("start", "hotspot", "interrogatorio") or re.fullmatch(r"t\+\d+", r)): err.append("release " + c["id"])
@@ -219,6 +219,19 @@ def check(p):
     ce = sol.get("culprit_evidence", [])
     if not ce or any(x not in clues for x in ce): err.append("culprit_evidence")
     elif not any(clues[x]["release"] != "interrogatorio" and x in worst for x in ce): err.append("culpado sem prova no pior caminho")
+    tg = d.get("teacher_guide")
+    if not tg: err.append("sem teacher_guide")
+    else:
+        for k in ("summary", "twist"):
+            if not tg.get(k): err.append("teacher_guide." + k)
+        if not 5 <= len(tg.get("solution_steps", [])) <= 8: err.append("solution_steps")
+        if not 3 <= len(tg.get("pacing", [])) <= 6 or any(not all(x.get(k) for k in ("when", "aha", "if_stuck")) for x in tg.get("pacing", [])): err.append("pacing")
+        cm = tg.get("clue_map", [])
+        if {x["clue"] for x in cm} != set(clues) or any(not x.get("where") or not x.get("proves") for x in cm): err.append("clue_map incompleto")
+        if not tg.get("red_herrings"): err.append("red_herrings")
+        if not 4 <= len(tg.get("faq", [])) <= 6: err.append("faq")
+        if len(tg.get("talking_points", [])) != 3: err.append("talking_points")
+        if "—" in json.dumps(tg, ensure_ascii=False): err.append("travessão no guia")
     print("%-18s %-5s dif %d %4ds | locs %d pessoas %d pistas %2d split %d itens %d edges %d | %s" % (
         n, mode, d["difficulty"], d["duration_sec"], len(locs), len(people), len(clues), splits, len(items), len(sol["edges"]), err or "OK"))
     return not err

@@ -1,0 +1,1907 @@
+{
+  "id": "gabarito_vazado",
+  "mode": "multi",
+  "title": "O Gabarito",
+  "tagline": "Vinte reais no Pix. Uma prova cancelada. Um fantasma com e-mail.",
+  "difficulty": 2,
+  "duration_sec": 2100,
+  "scene": "sala_professores",
+  "locations": [
+    "sala_professores",
+    "quadra",
+    "biblioteca",
+    "sala_aula",
+    "cantina"
+  ],
+  "scene_people": [
+    {
+      "id": "nico",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "rosa",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "pedro",
+      "scene": "quadra"
+    },
+    {
+      "id": "ivo",
+      "scene": "quadra"
+    },
+    {
+      "id": "lia",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "joana",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "kaua",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "mari",
+      "scene": "cantina"
+    }
+  ],
+  "briefing": "Domingo, 18h. Um perfil começa a vender o gabarito da prova final de matemática: vinte reais no Pix. Segunda, a prova é cancelada e trinta alunos fingem surpresa. O dinheiro caiu na conta de alguém. Mas quem recebe nem sempre é quem rouba.",
+  "goal": "Descubra quem tirou o gabarito, quem vendeu e onde cada suspeito estava na hora da impressão.",
+  "link_types": [
+    {
+      "id": "pegou",
+      "label": "pegou",
+      "directed": true
+    },
+    {
+      "id": "entregou",
+      "label": "repassou para",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "nico",
+      "kind": "pessoa",
+      "name": "Nico",
+      "gender": "m",
+      "role": "ajudante da coordenação",
+      "look": {
+        "skin": "#4a2c17",
+        "hair": "cacheado",
+        "hair_color": "#111111",
+        "top": "#fbc02d",
+        "accessory": "fones"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu imprimo e não pergunto.",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nico_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "nico_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "nico_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Ajudante da coordenação. Eu imprimo, grampeio e não pergunto. Que crise, hein?",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o e-mail do @fantasma e a impressora",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_email",
+                    "c_log_impressora"
+                  ]
+                },
+                {
+                  "text": "Quem usa a impressora da coordenação?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você é o @fantasma, Nico!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Professores, a coordenadora, eu. Mas quinta à tarde? Só eu. Por quê?",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o e-mail do @fantasma e a impressora",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_email",
+                    "c_log_impressora"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Tá. Imprimi quinta 13h48, sozinho. Vinte reais por cabeça dava um computador novo.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "E a Profa. Rosa me reprovou ano passado. Cancelar a prova dela foi bônus. Doce bônus.",
+                  "expr": "bravo",
+                  "anim": "rindo"
+                }
+              ],
+              "sets": [
+                "nico_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Fantasma? Eu sou de carne, osso e muito ofendido. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nico_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nico_bravo} me chamou de fantasma. Só falo com prova de verdade.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a foto do gabarito e a impressora",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_foto_gabarito",
+                    "c_log_impressora"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rosa",
+      "kind": "pessoa",
+      "name": "Profa. Rosa",
+      "gender": "f",
+      "role": "professora de matemática",
+      "look": {
+        "skin": "#a86b4c",
+        "hair": "coque",
+        "hair_color": "#5d5d5d",
+        "top": "#c2185b",
+        "accessory": "cachecol"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Dois meses de trabalho no lixo.",
+            "expr": "bravo",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "rosa_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "rosa_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "rosa_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Minha prova final vazou. Dois meses de trabalho no lixo. Alguém vai responder por isso.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da impressora",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_log_impressora"
+                  ]
+                },
+                {
+                  "text": "Onde fica a sua cópia?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora deixou a prova vazar!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Na minha gaveta, trancada. Imprimi uma só, quinta às 7h. O arquivo fica no computador da coordenação.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da impressora",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_log_impressora"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "13h48? Eu estava em aula! Nesse horário só o Nico fica na coordenação.",
+                  "expr": "surpreso",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Reprovei esse menino ano passado. Ele nunca me perdoou.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "rosa_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_rosa"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "EU? Saia da sala dos professores.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "rosa_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:rosa_bravo} me acusou. Hoje não atendo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da impressora",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_log_impressora"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "pedro",
+      "kind": "pessoa",
+      "name": "Pedro",
+      "gender": "m",
+      "role": "vendeu o gabarito, ou quase",
+      "look": {
+        "skin": "#c68642",
+        "hair": "curto",
+        "hair_color": "#1e1208",
+        "top": "#37474f",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu mal sei a tabuada.",
+            "expr": "nervoso",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "pedro_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "pedro_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "pedro_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu? Vendendo gabarito? Eu mal sei a tabuada. Como ia vender gabarito de matemática?",
+                  "expr": "nervoso",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o comprovante do Pix do Kauã",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_comprovante"
+                  ]
+                },
+                {
+                  "text": "Toma um carregador, seu celular tá morto",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Você roubou o gabarito, Pedro!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Tá, o Pix caiu pra mim. Mas eu só vendia. Quem me passava era um tal de @fantasma.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Nunca vi a cara dele. Ele ficava com setenta por cento. Eu era o laranja, tá ligado?",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "pedro_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um carregador, seu celular tá morto",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_pedro"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Roubar? Eu nem sei onde fica a coordenação! Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "pedro_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:pedro_bravo} me acusou. Só falo se carregarem meu celular.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um carregador, seu celular tá morto",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Ligou! Olha minha conversa com o @fantasma.",
+                  "expr": "nervoso",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "'Vc vende, eu forneço. Nunca fala meu nome.' Eu só vendi, juro. O fornecedor é ele.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "pedro_falou",
+                "pedro_troca"
+              ],
+              "take_item": "carregador",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_pedro"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "ivo",
+      "kind": "pessoa",
+      "name": "Prof. Ivo",
+      "gender": "m",
+      "role": "técnico de vôlei",
+      "look": {
+        "skin": "#e5b48f",
+        "hair": "raspado",
+        "hair_color": "#3a3a3a",
+        "top": "#1b5e20",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "O Pedro tá rico de repente.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "ivo_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "O Pedro faltou o treino a semana toda. Agora sei por quê: tava empreendendo.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "O Pedro anda com dinheiro?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor acoberta o Pedro!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Segunda pagou lanche pro time inteiro. O Pedro! Que nunca tem nem pra água.",
+                  "expr": "surpreso",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu dou falta até pra mim mesmo. Sai da quadra.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "ivo_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:ivo_bravo} me chamou de cúmplice. Sem conversa.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "lia",
+      "kind": "pessoa",
+      "name": "Lia",
+      "gender": "f",
+      "role": "melhor aluna da turma",
+      "look": {
+        "skin": "#ffe0bd",
+        "hair": "trancas",
+        "hair_color": "#7b4b2a",
+        "top": "#8e24aa",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu não preciso de gabarito.",
+            "expr": "desconfiado",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "lia_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "lia_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "lia_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Antes que perguntem: eu NÃO preciso de gabarito. Eu preciso de silêncio pra estudar.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da biblioteca",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_registro_bib"
+                  ]
+                },
+                {
+                  "text": "Por que você se ofereceu pra refazer a prova?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A queridinha da professora vazou a prova!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Porque eu sou a melhor da turma. E porque sou ambiciosa. Próxima.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da biblioteca",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_registro_bib"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Quinta, 13h às 15h, aqui, estudando pra olimpíada. Saí 15h02, tá escrito.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "E ofereci ajuda pra refazer a prova porque quero uma carta de recomendação. Ambição não é crime.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "sets": [
+                "lia_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_lia"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Queridinha? Eu sou é a única que estuda. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "lia_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:lia_bravo} me acusou. Mostra o registro da biblioteca.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da biblioteca",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_registro_bib"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "joana",
+      "kind": "pessoa",
+      "name": "Joana",
+      "gender": "f",
+      "role": "monitora da biblioteca",
+      "look": {
+        "skin": "#d9a066",
+        "hair": "longo",
+        "hair_color": "#2c1b10",
+        "top": "#00897b",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Shhh.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "joana_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Shhh. A Lia passou a quinta à tarde aqui. Nem foi ao banheiro. Esquisita, mas honesta.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mais alguém estudou com a Lia?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você ajudou a Lia a fugir daqui!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Ninguém. Ela não divide mesa. Nem caneta.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Fugir pra onde? Pra estudar mais? Shhh e tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "joana_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:joana_bravo} me acusou. Biblioteca fechada.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "kaua",
+      "kind": "pessoa",
+      "name": "Kauã",
+      "gender": "m",
+      "role": "comprou o gabarito",
+      "look": {
+        "skin": "#6e4528",
+        "hair": "raspado",
+        "hair_color": "#121212",
+        "top": "#f9a825",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Paguei vinte e me ferrei.",
+            "expr": "triste",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "kaua_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Comprei, tá? Vinte reais. Veio borrado e a prova foi cancelada. Pior investimento da vida.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "De quem você comprou?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você também é culpado, Kauã!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Pix pro Pedro. Mas ele mesmo disse: 'não sou eu que tiro, tenho um fornecedor'.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kaua",
+              "sets": [
+                "kaua_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Sou, comprei. Mas não roubei. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kaua_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:kaua_bravo} me julgou. Não falo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mari",
+      "kind": "pessoa",
+      "name": "Mari",
+      "gender": "f",
+      "role": "quem denunciou",
+      "look": {
+        "skin": "#e6b48c",
+        "hair": "longo",
+        "hair_color": "#4a2c1a",
+        "top": "#2e7d32",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Fui eu que denunciei. Depois de comprar.",
+            "expr": "triste",
+            "anim": "pensando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "mari_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "mari_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Fui eu que denunciei. Quer dizer... depois de comprar. Eu sei, eu sei.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "mari_troca"
+                  ]
+                },
+                {
+                  "text": "Por que você denunciou?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você denunciou pra se livrar!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Porque não dormi. Comprar resposta é comprar uma mentira. Mas eu comprei, né.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "mari_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Talvez. Mas denunciei. E você? Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "mari_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:mari_bravo} me julgou. Só com chocolate.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "mari_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate da culpa. Tá bom.",
+                  "expr": "triste",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "O grupo 'Salvação 3B' foi criado pelo Pedro, mas a foto do gabarito veio sempre de um tal @fantasma.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "mari_falou",
+                "mari_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_mari"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "coordenacao",
+      "kind": "lugar",
+      "name": "Coordenação",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "biblioteca",
+      "kind": "lugar",
+      "name": "Biblioteca"
+    },
+    {
+      "id": "gabarito",
+      "kind": "fato",
+      "name": "O gabarito da prova final",
+      "icon": "papel"
+    }
+  ],
+  "items": [
+    {
+      "id": "carregador",
+      "name": "Carregador de celular",
+      "desc": "Na arquibancada. Alguém precisa ligar o celular.",
+      "icon": "carregador"
+    },
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "No balcão da cantina.",
+      "icon": "chocolate"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_venda",
+      "kind": "post",
+      "title": "Perfil de venda",
+      "time": "dom 18h",
+      "text": "Um perfil anuncia o gabarito da prova final por vinte reais no Pix.",
+      "post": {
+        "user": "@resolvidos.3b",
+        "caption": "GABARITO DA FINAL DE MAT 💸 R$ 20 no pix, chama no direct",
+        "likes": 88,
+        "image": "foto borrada de uma folha de respostas",
+        "comments": [
+          {
+            "user": "@kaua.carteiro",
+            "text": "chegou meio borrado kkk"
+          },
+          {
+            "user": "@lia.top",
+            "text": "isso é crime, gente"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_aviso",
+      "kind": "registro",
+      "title": "Aviso da coordenação",
+      "text": "Segunda, 7h: 'Prova final de matemática CANCELADA. O gabarito vazou. Quem souber, fale com a coordenação.'",
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_dm_fantasma",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM do @fantasma",
+      "time": "sáb 21h",
+      "text": "Um tal @fantasma propõe ao Pedro: ele fornece, o Pedro vende, e nunca diz o nome dele.",
+      "chat": {
+        "group": "@fantasma 👻",
+        "lines": [
+          {
+            "who": "@fantasma",
+            "text": "vc vende, eu forneço. 70% pra mim",
+            "time": "21h00"
+          },
+          {
+            "who": "@fantasma",
+            "text": "e nunca fala meu nome",
+            "time": "21h00"
+          },
+          {
+            "who": "pedro",
+            "text": "fechou 🤝",
+            "time": "21h03"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_story_nico",
+      "kind": "post",
+      "title": "Story do Nico",
+      "time": "sáb",
+      "text": "O Nico anuncia um computador gamer novo 'chegando semana que vem'.",
+      "post": {
+        "user": "@nico.ajuda",
+        "caption": "setup novo chegando semana que vem 🎮💸",
+        "likes": 40,
+        "image": "caixa de placa de vídeo com um chaveiro de controle pendurado no dedo",
+        "comments": [
+          {
+            "user": "@pedro.saque",
+            "text": "patrocinador kkk"
+          }
+        ],
+        "who": "nico"
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_grupo",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo Salvação 3B",
+      "time": "dom 19h",
+      "text": "No grupo de compradores, todos pagam ao Pedro e alguém pergunta de onde vem o gabarito.",
+      "chat": {
+        "group": "Salvação 3B 🆘",
+        "lines": [
+          {
+            "who": "kaua",
+            "text": "paguei 20",
+            "time": "19h03"
+          },
+          {
+            "who": "Juca",
+            "text": "o pix foi pro Pedro né?",
+            "time": "19h04"
+          },
+          {
+            "who": "mari",
+            "text": "gente isso é errado...",
+            "time": "19h06"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_chat_lia",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM da Lia",
+      "time": "dom 20h",
+      "text": "A Lia oferece à professora ajuda para refazer a prova.",
+      "chat": {
+        "group": "Profa. Rosa",
+        "lines": [
+          {
+            "who": "lia",
+            "text": "profa, se precisar refazer a prova eu ajudo a montar uma nova 🙂",
+            "time": "20h00"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_log_impressora",
+      "kind": "registro",
+      "title": "Impressora da coordenação",
+      "time": "13h48",
+      "text": "Impressora da coordenação: quinta 13h48, 'final_mat_GABARITO.pdf', impresso por nico.ajudante. Cópia autorizada: só Profa. Rosa, 7h.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_escala",
+      "kind": "registro",
+      "title": "Escala da coordenação",
+      "text": "Coordenação, quinta 13h às 14h: 'só o ajudante Nico. Coordenadora em reunião fora.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_celular_pedro",
+      "kind": "objeto",
+      "title": "Bolsa do Pedro",
+      "text": "Na bolsa do Pedro, o celular sem senha: 27 Pix de R$ 20 recebidos no domingo.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_registro_bib",
+      "kind": "registro",
+      "title": "Registro da biblioteca",
+      "text": "Biblioteca, quinta 13h às 15h: Lia, estudando para a olimpíada. Saída: 15h02.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_comprovante",
+      "kind": "registro",
+      "title": "Mochila do Kauã",
+      "text": "Comprovante do Kauã: Pix de R$ 20 para 'Pedro H. Souza', domingo 19h03.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_foto_gabarito",
+      "kind": "objeto",
+      "title": "Foto impressa",
+      "text": "A foto original do gabarito: no canto aparece a bandeja 'IMPRESSORA 2, COORDENAÇÃO' e um chaveiro de controle de videogame.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_classificado",
+      "kind": "objeto",
+      "title": "Mural da cantina",
+      "text": "Papel meio arrancado do mural: 'Precisa de nota? Chama o @fantasma 👻'. Letra de impressora.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_email",
+      "kind": "registro",
+      "title": "Recado da coordenação",
+      "text": "Da coordenação: o perfil @fantasma foi criado com o e-mail nico.ajudante.2026. O mesmo usuário da impressora.",
+      "release": "t+270",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_pedro",
+      "kind": "depoimento",
+      "title": "Fala do Pedro",
+      "who": "pedro",
+      "text": "Pedro vendia o gabarito, mas recebia do @fantasma, que ficava com 70% e exigia anonimato.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_rosa",
+      "kind": "depoimento",
+      "title": "Fala da Profa. Rosa",
+      "who": "rosa",
+      "text": "Às 13h48 a professora estava em aula; só o Nico fica na coordenação. Ela o reprovou no ano passado.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_lia",
+      "kind": "depoimento",
+      "title": "Fala da Lia",
+      "who": "lia",
+      "text": "Lia estudava na biblioteca das 13h às 15h02 e ofereceu ajuda à professora por uma carta de recomendação.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_kaua",
+      "kind": "depoimento",
+      "title": "Fala do Kauã",
+      "who": "kaua",
+      "text": "Kauã pagou ao Pedro, que disse ter 'um fornecedor'.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_mari",
+      "kind": "depoimento",
+      "title": "Fala da Mari",
+      "who": "mari",
+      "text": "Mari conta que a foto do gabarito sempre vinha de um tal @fantasma.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão do Nico",
+      "who": "nico",
+      "text": "Nico imprimiu o gabarito às 13h48, criou o @fantasma e usou o Pedro como vendedor. Queria dinheiro e se vingar da professora.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_comp",
+      "scene": "sala_professores",
+      "object": "computador_prof",
+      "label": "Impressora da coordenação",
+      "clue": "c_log_impressora"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "sala_professores",
+      "object": "mural_recados",
+      "label": "Escala",
+      "clue": "c_escala"
+    },
+    {
+      "id": "hs_bolsa",
+      "scene": "quadra",
+      "object": "bolsa_esportiva",
+      "label": "Bolsa do Pedro",
+      "clue": "c_celular_pedro"
+    },
+    {
+      "id": "hs_arq",
+      "scene": "quadra",
+      "object": "arquibancada",
+      "label": "Arquibancada",
+      "item": "carregador"
+    },
+    {
+      "id": "hs_bib",
+      "scene": "biblioteca",
+      "object": "computador",
+      "label": "Registro da biblioteca",
+      "clue": "c_registro_bib"
+    },
+    {
+      "id": "hs_mochila",
+      "scene": "sala_aula",
+      "object": "mochila",
+      "label": "Mochila do Kauã",
+      "clue": "c_comprovante"
+    },
+    {
+      "id": "hs_carteira",
+      "scene": "sala_aula",
+      "object": "carteira_fundo",
+      "label": "Foto impressa",
+      "clue": "c_foto_gabarito"
+    },
+    {
+      "id": "hs_balcao",
+      "scene": "cantina",
+      "object": "balcao",
+      "label": "Balcão",
+      "item": "chocolate"
+    },
+    {
+      "id": "hs_mural_c",
+      "scene": "cantina",
+      "object": "mural_cantina",
+      "label": "Mural da cantina",
+      "clue": "c_classificado"
+    }
+  ],
+  "solution": {
+    "culprit": "nico",
+    "culprit_question": "Quem roubou o gabarito?",
+    "culprit_evidence": [
+      "c_log_impressora",
+      "c_foto_gabarito",
+      "c_email",
+      "c_story_nico",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "caminho",
+        "label": "Caminho do gabarito"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava às 13h48"
+      }
+    ],
+    "edges": [
+      {
+        "from": "nico",
+        "to": "gabarito",
+        "type": "pegou",
+        "category": "caminho",
+        "evidence": [
+          "c_log_impressora",
+          "c_foto_gabarito",
+          "c_email",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "nico",
+        "to": "pedro",
+        "type": "entregou",
+        "category": "caminho",
+        "evidence": [
+          "c_dm_fantasma",
+          "c_email",
+          "c_dep_pedro"
+        ]
+      },
+      {
+        "from": "pedro",
+        "to": "kaua",
+        "type": "entregou",
+        "category": "caminho",
+        "evidence": [
+          "c_comprovante",
+          "c_celular_pedro",
+          "c_dep_kaua"
+        ]
+      },
+      {
+        "from": "nico",
+        "to": "coordenacao",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_escala",
+          "c_log_impressora",
+          "c_dep_rosa"
+        ]
+      },
+      {
+        "from": "lia",
+        "to": "biblioteca",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_registro_bib",
+          "c_dep_lia"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "pedro",
+        "to": "gabarito",
+        "type": "pegou",
+        "category": "caminho"
+      },
+      {
+        "from": "lia",
+        "to": "gabarito",
+        "type": "pegou",
+        "category": "caminho"
+      }
+    ]
+  },
+  "hints": [
+    "Quem recebe o Pix vende. Quem vende precisa ter de onde tirar.",
+    "Um fornecedor que exige 'nunca fala meu nome' tem nome a esconder.",
+    "Olhe o canto da foto do gabarito. De que impressora ela saiu?",
+    "Quem estava sozinho na coordenação às 13h48?",
+    "Um computador gamer novo custa caro. Quem anunciou um?",
+    "Perfis anônimos também precisam de e-mail."
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "Quinta, 13h",
+        "text": "Lia começa a estudar na biblioteca, onde fica até 15h02."
+      },
+      {
+        "time": "Quinta, 13h48",
+        "text": "Sozinho na coordenação, Nico imprime o gabarito."
+      },
+      {
+        "time": "Sábado, 21h",
+        "text": "Como @fantasma, Nico recruta o Pedro para vender."
+      },
+      {
+        "time": "Domingo, 18h",
+        "text": "O perfil de venda aparece. 27 Pix caem na conta do Pedro."
+      },
+      {
+        "time": "Segunda, 7h",
+        "text": "A prova é cancelada."
+      }
+    ],
+    "explanation": "O Pix entrega o Pedro, e quase toda turma para aí. Mas o Pedro era só o laranja: o @fantasma fornecia e exigia anonimato. A foto mostra a bandeja da impressora da coordenação, a impressão das 13h48 é do usuário do Nico, e o e-mail do @fantasma é dele. Motivo: dinheiro para um computador e vingança contra a professora que o reprovou.",
+    "refuted": [
+      "Pedro vendeu, mas não tinha acesso à prova.",
+      "Lia estava na biblioteca, mas só queria uma carta de recomendação."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "O Nico, ajudante da coordenação, ficou sozinho lá na quinta e imprimiu o gabarito às 13h48. Criou o perfil @fantasma e recrutou o Pedro como vendedor, ficando com 70% e exigindo anonimato. O dinheiro caiu na conta do Pedro, que virou o suspeito óbvio. O Nico queria um computador gamer e se vingar da Profa. Rosa, que o reprovou.",
+    "twist": "Plantado na DM do @fantasma ('nunca fala meu nome'), no story do Nico (computador novo, chaveiro de controle) e no canto da foto (bandeja da coordenação e o mesmo chaveiro). Quem acha o comprovante do Pix para cedo demais no Pedro. Segundo giro: a Mari, que denunciou, também comprou.",
+    "solution_steps": [
+      "Ver o perfil de venda e o aviso: a prova foi cancelada.",
+      "Na sala de aula, o comprovante do Kauã mostra o Pix para o Pedro. Na quadra, o celular do Pedro tem 27 Pix.",
+      "Mostrar o comprovante ao Pedro (ou carregar o celular dele): ele diz que vendia para o @fantasma.",
+      "As pistas só de um aluno mostram a DM do @fantasma ('nunca fala meu nome') e o story do Nico com o computador novo.",
+      "Na foto impressa, a bandeja da impressora da coordenação e o chaveiro de videogame.",
+      "Na coordenação, a impressora registra nico.ajudante às 13h48 e a escala mostra o Nico sozinho. Na biblioteca, o álibi da Lia.",
+      "O recado da coordenação (cerca de 4 min 30 s) liga o e-mail do @fantasma ao Nico.",
+      "Montar as 5 linhas e apontar o Nico."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 6 min",
+        "aha": "O Pix aponta o Pedro, e a DM da Lia levanta suspeita sobre ela.",
+        "if_stuck": "O Pedro tinha acesso à prova? Quem estava na coordenação na quinta?"
+      },
+      {
+        "when": "6 a 14 min",
+        "aha": "Aha 1: o Pedro é o laranja; existe um @fantasma fornecedor.",
+        "if_stuck": "Como descobrir quem é um perfil anônimo?"
+      },
+      {
+        "when": "14 a 22 min",
+        "aha": "Aha 2: a foto e a impressora apontam a coordenação e o Nico.",
+        "if_stuck": "Quem tinha motivo contra a Profa. Rosa?"
+      },
+      {
+        "when": "22 min em diante",
+        "aha": "Aha 3: o e-mail do @fantasma (t+) confirma o Nico.",
+        "if_stuck": "Por que o Nico precisava de alguém para vender?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_venda",
+        "where": "Já no início, para todos",
+        "proves": "Apresenta a venda do gabarito."
+      },
+      {
+        "clue": "c_aviso",
+        "where": "Já no início, para todos",
+        "proves": "A prova foi cancelada por causa do vazamento."
+      },
+      {
+        "clue": "c_dm_fantasma",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Prova a linha: Nico repassou para Pedro."
+      },
+      {
+        "clue": "c_story_nico",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Aponta para Nico."
+      },
+      {
+        "clue": "c_grupo",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Todos pagaram ao Pedro, e alguém pergunta de onde vem o gabarito."
+      },
+      {
+        "clue": "c_chat_lia",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Pista falsa: a Lia parece querer a prova cancelada."
+      },
+      {
+        "clue": "c_log_impressora",
+        "where": "Sala dos professores: tocar em 'Impressora da coordenação'",
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final; Nico estava em Coordenação. Aponta para Nico."
+      },
+      {
+        "clue": "c_escala",
+        "where": "Sala dos professores: tocar em 'Escala'",
+        "proves": "Prova a linha: Nico estava em Coordenação."
+      },
+      {
+        "clue": "c_celular_pedro",
+        "where": "Quadra: tocar em 'Bolsa do Pedro'",
+        "proves": "Prova a linha: Pedro repassou para Kauã."
+      },
+      {
+        "clue": "c_registro_bib",
+        "where": "Biblioteca: tocar em 'Registro da biblioteca'",
+        "proves": "Prova a linha: Lia estava em Biblioteca."
+      },
+      {
+        "clue": "c_comprovante",
+        "where": "Sala de aula: tocar em 'Mochila do Kauã'",
+        "proves": "Prova a linha: Pedro repassou para Kauã."
+      },
+      {
+        "clue": "c_foto_gabarito",
+        "where": "Sala de aula: tocar em 'Foto impressa'",
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final. Aponta para Nico."
+      },
+      {
+        "clue": "c_classificado",
+        "where": "Cantina: tocar em 'Mural da cantina'",
+        "proves": "O @fantasma já oferecia 'nota' antes: ele é o fornecedor."
+      },
+      {
+        "clue": "c_email",
+        "where": "Chega sozinha aos 4 min 30 s",
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final; Nico repassou para Pedro. Aponta para Nico."
+      },
+      {
+        "clue": "c_dep_pedro",
+        "where": "mostrar 'Mochila do Kauã' para Pedro; ou trocar 'Carregador de celular' com Pedro",
+        "proves": "Prova a linha: Nico repassou para Pedro."
+      },
+      {
+        "clue": "c_dep_rosa",
+        "where": "mostrar 'Impressora da coordenação' para Profa. Rosa",
+        "proves": "Prova a linha: Nico estava em Coordenação."
+      },
+      {
+        "clue": "c_dep_lia",
+        "where": "mostrar 'Registro da biblioteca' para Lia",
+        "proves": "Prova a linha: Lia estava em Biblioteca."
+      },
+      {
+        "clue": "c_dep_kaua",
+        "where": "conversar com Kauã ('De quem você comprou?')",
+        "proves": "Prova a linha: Pedro repassou para Kauã."
+      },
+      {
+        "clue": "c_dep_mari",
+        "where": "trocar 'Barra de chocolate' com Mari",
+        "proves": "O gabarito sempre vinha do @fantasma, não do Pedro."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Recado da coordenação' + 'Impressora da coordenação' para Nico; ou mostrar 'Foto impressa' + 'Impressora da coordenação' para Nico",
+        "proves": "Prova a linha: Nico pegou O gabarito da prova final. Aponta para Nico."
+      }
+    ],
+    "red_herrings": [
+      "O Pix na conta do Pedro: ele vendia, não roubava.",
+      "A Lia bajulando a professora: era por uma carta de recomendação."
+    ],
+    "faq": [
+      {
+        "q": "Foi o Pedro, o dinheiro caiu pra ele!",
+        "a": "O Pedro tinha acesso à prova? De quem ele recebia?"
+      },
+      {
+        "q": "Foi a Lia, ela queria refazer a prova!",
+        "a": "Onde ela estava às 13h48?"
+      },
+      {
+        "q": "Quem é o @fantasma?",
+        "a": "Olhem o canto da foto do gabarito. E quem estava sozinho na coordenação?"
+      },
+      {
+        "q": "O Pedro não fala.",
+        "a": "O celular dele morreu. Procurem um carregador."
+      },
+      {
+        "q": "Por que o Nico faria isso?",
+        "a": "Vejam o story dele. E perguntem à Profa. Rosa sobre o ano passado."
+      }
+    ],
+    "talking_points": [
+      "Comprar um gabarito também é participar do crime?",
+      "Por que é tão fácil acusar quem aparece no Pix?",
+      "O que a Mari fez depois de comprar muda o que ela fez antes?"
+    ]
+  }
+}

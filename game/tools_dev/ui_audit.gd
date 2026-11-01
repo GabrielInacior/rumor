@@ -16,7 +16,7 @@ func _ready() -> void:
 		only = Array(OS.get_environment("AUDIT_ONLY").split(","))
 	var cid := OS.get_environment("AUDIT_CASE")
 	if cid == "":
-		cid = "rumor_1017"
+		cid = "cofre_formatura"
 	var path := ProjectSettings.globalize_path("res://").path_join("../server/cases/%s.json" % cid)
 	full_case = JSON.parse_string(FileAccess.get_file_as_string(path))
 	main = load("res://scenes/main.tscn").instantiate()
@@ -107,8 +107,11 @@ func _host_state(phase: String) -> Dictionary:
 	s.erase("me")
 	s["host"] = true
 	s["cases"] = []
-	for f in ["rumor_1017", "ninguem", "objeto_trocado"]:
-		var p := ProjectSettings.globalize_path("res://").path_join("../server/cases/%s.json" % f)
+	var cdir := ProjectSettings.globalize_path("res://").path_join("../server/cases")
+	for fn in DirAccess.get_files_at(cdir):
+		if not fn.ends_with(".json"):
+			continue
+		var p := cdir.path_join(fn)
 		var c: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(p))
 		s["cases"].append({"id": c["id"], "title": c["title"], "tagline": c["tagline"], "difficulty": c["difficulty"], "duration_sec": c["duration_sec"]})
 	s["clues"] = full_case["clues"]
@@ -221,6 +224,10 @@ func _run() -> void:
 	await _shot("12c_fio_selecionado_quadro")
 	g._open_evidence_picker("l1")
 	await _shot("12b_escolher_prova")
+	g._close_sheet()
+	g._open_story()
+	await _wait(1.5)
+	await _shot("12d_historia")
 	g._close_sheet()
 	g._open_relation_picker(str(Net.state["board"]["links"][0]["a"]), str(Net.state["board"]["links"][0]["b"]))
 	await _shot("13_tipo_ligacao")

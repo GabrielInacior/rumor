@@ -668,6 +668,12 @@ func _build_board_page() -> Control:
 	action_bar = UI.hbox(10)
 	action_bar.visible = false
 	bottom.add_child(action_bar)
+	var story_btn := UI.button("LER A HISTÓRIA DO QUADRO", "ghost", 70)
+	story_btn.add_theme_font_override("font", UI.font("title"))
+	story_btn.add_theme_font_size_override("font_size", 30)
+	story_btn.add_theme_stylebox_override("normal", UI.box(Color(UI.NIGHT, 0.85), UI.YELLOW, 2, 18))
+	story_btn.pressed.connect(_open_story)
+	bottom.add_child(story_btn)
 	submit_btn = UI.button("APRESENTAR TEORIA", "primary", 96)
 	submit_btn.add_theme_stylebox_override("normal", UI.box(UI.PINK, UI.INK, 0, 20))
 	submit_btn.add_theme_stylebox_override("hover", UI.box(UI.PINK.lightened(0.15), UI.INK, 0, 20))
@@ -852,22 +858,13 @@ func _on_link_tapped(id: String) -> void:
 		return
 	Sfx.play("ui_tap")
 	var v := UI.vbox(14)
-	# bilhete de caderno: o que este fio afirma e o que a prova diz (a "colher de chá")
-	var note := Paper.make("notebook")
-	var nv := UI.vbox(6)
-	nv.add_child(UI.label("ESTE FIO DIZ QUE", 18, Color(UI.INK, 0.6), "type"))
-	nv.add_child(UI.label(_sentence(l) + ".", 30, UI.INK, "marker"))
+	# o fio vira um quadrinho: quem fez, a ação, com quem/onde, a fala da prova e o carimbo
+	v.add_child(UI.label("Assim o seu quadro conta esta parte da história (pode estar certa ou errada):", 20, UI.MIST))
+	v.add_child(StoryPanel.panel(l))
 	if l.get("evidence") != null:
-		var ev := Net.clue_by_id(str(l["evidence"]))
-		nv.add_child(UI.label("PROVA: " + UI.strip_emoji(str(ev.get("title", "?"))), 22, UI.RED, "bold"))
-		nv.add_child(UI.label("\"" + _first_sentence(str(ev.get("text", ""))) + "\"", 20, Color("#1b2140"), "type"))
-		var rel := _relevance(ev, l["a"], l["b"])
-		var rl := UI.label(("A pista " + str(rel[1]) + ".") if int(rel[0]) > 0 else "Atenção: a pista não cita ninguém deste fio. Ela prova mesmo isso?", 20, Color("#2f6b3a") if int(rel[0]) == 2 else (Color("#8a6a1a") if int(rel[0]) == 1 else Color("#8a2a3a")), "bold")
-		nv.add_child(rl)
-	else:
-		nv.add_child(UI.label("Sem prova ainda. Um fio sem prova é só um palpite.", 20, Color("#8a2a3a"), "bold"))
-	note.add_child(nv)
-	v.add_child(note)
+		var rel := _relevance(Net.clue_by_id(str(l["evidence"])), l["a"], l["b"])
+		if int(rel[0]) == 0:
+			v.add_child(UI.label("Atenção: essa prova não cita ninguém deste fio. Ela prova mesmo isso?", 21, UI.PINK, "bold"))
 	v.add_child(UI.label("Cor do fio", 22, UI.PAPER, "bold"))
 	v.add_child(_color_row(str(l.get("color", "vermelho")), func(cname: String) -> void:
 		Net.board_op({"k": "recolor", "id": id, "color": cname})
@@ -1166,10 +1163,20 @@ func _pin(ref: String) -> void:
 	_close_sheet()
 
 
+func _open_story() -> void:
+	Sfx.play("paper_flip")
+	_open_sheet(StoryPanel.story(Net.state.get("board", {}).get("links", []), chosen_culprit))
+
+
 func _open_submit() -> void:
 	var v := UI.vbox(14)
 	v.add_child(UI.title("APRESENTAR A TEORIA?", 50, UI.PINK))
 	v.add_child(UI.label("O quadro inteiro é a teoria da equipe. O caso pede:", 26, UI.PAPER))
+	var read := UI.button("Ler a história do quadro antes", "ghost", 70)
+	read.pressed.connect(func() -> void:
+		_close_sheet()
+		_open_story())
+	v.add_child(read)
 	for cat in Net.case_data.get("categories", []):
 		v.add_child(UI.label("·  " + str(cat["label"]), 28, UI.YELLOW, "bold"))
 	v.add_child(UI.label("Cada fio importante precisa de uma PROVA presa nele. Se errar, a equipe espera %d segundos para tentar de novo." % int(Net.state.get("settings", {}).get("penaltySec", 45)), 24, UI.MIST))

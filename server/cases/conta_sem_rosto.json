@@ -1,0 +1,1873 @@
+{
+  "id": "conta_sem_rosto",
+  "mode": "multi",
+  "title": "A Conta Sem Rosto",
+  "tagline": "Cinquenta reais até sexta. Ou o seu segredo é o próximo.",
+  "difficulty": 2,
+  "duration_sec": 2100,
+  "scene": "biblioteca",
+  "locations": [
+    "biblioteca",
+    "corredor",
+    "quadra",
+    "sala_aula",
+    "sala_professores",
+    "cantina"
+  ],
+  "scene_people": [
+    {
+      "id": "joana",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "caique",
+      "scene": "corredor"
+    },
+    {
+      "id": "kevin",
+      "scene": "quadra"
+    },
+    {
+      "id": "lia",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "pedro",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "nico",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "cida",
+      "scene": "cantina"
+    },
+    {
+      "id": "juju",
+      "scene": "cantina"
+    }
+  ],
+  "briefing": "Terça, 14h05. A @ninguém posta o primeiro segredo: 'o Kevin colou na olimpíada'. Minutos depois, seis alunos recebem a DM: 'R$ 50 até sexta ou o seu é o próximo 🙂'. Ninguém sabe quem é a @ninguém. Mas ela sabe tudo de todo mundo.",
+  "goal": "Descubra quem é a @ninguém, de onde ela tira os segredos e quem tem álibi.",
+  "link_types": [
+    {
+      "id": "postou",
+      "label": "postou como",
+      "directed": true
+    },
+    {
+      "id": "leu",
+      "label": "leu",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "joana",
+      "kind": "pessoa",
+      "name": "Joana",
+      "gender": "f",
+      "role": "monitora da biblioteca",
+      "look": {
+        "skin": "#d9a066",
+        "hair": "longo",
+        "hair_color": "#2c1b10",
+        "top": "#00897b",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "A conta é da monitoria. Eu sei.",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "joana_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "joana_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "joana_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Já sei o que vão dizer: a conta usa o computador da monitoria. Que é meu. Ótimo.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o atestado do dentista",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_atestado"
+                  ]
+                },
+                {
+                  "text": "Quem sabe a senha da monitoria?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você é a @ninguém, Joana!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Ninguém. Quer dizer... eu colei num post-it no monitor. Todo mundo que sentou ali, né.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o atestado do dentista",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_atestado"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Terça eu tava no dentista, 13h às 15h30. Canal. Ainda tô com a boca torta.",
+                  "expr": "triste",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Quem cobriu meu plantão foi o Caíque. E minha senha tava num post-it. Burra, eu.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "joana_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_joana"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu tava com a boca aberta no dentista! Sai.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "joana_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:joana_bravo} me acusou. Volta com meu atestado na mão.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o atestado do dentista",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_atestado"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "caique",
+      "kind": "pessoa",
+      "name": "Caíque",
+      "gender": "m",
+      "role": "monitor do corredor e dos achados e perdidos",
+      "look": {
+        "skin": "#8c5a3c",
+        "hair": "raspado",
+        "hair_color": "#101010",
+        "top": "#26a69a",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Vejo tudo. Não conto nada.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "caique_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "caique_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "caique_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Monitor do corredor e dos achados e perdidos. Vejo tudo. Não conto nada. Pra ninguém. Tá ligado??",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o rastreio e a troca de escala",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_coord_log",
+                    "c_escala_troca"
+                  ]
+                },
+                {
+                  "text": "O que tem nos achados e perdidos?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você é a @ninguém, confessa!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Coisas que as pessoas esquecem. E coisas que elas preferiam esquecer.",
+                  "expr": "desconfiado",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o rastreio e a troca de escala",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_coord_log",
+                    "c_escala_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Os celulares perdidos chegam desbloqueados. Diários. Bilhetes. Eu só... lia.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "O Kevin me zoou no grupo do 9º ano inteiro. Eu fiz ele pagar. Depois quis que todo mundo pagasse.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "caique_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Prova. Cadê? Monitor também tem direitos.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "caique_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:caique_bravo} me acusou. Só falo com prova de verdade.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o bilhete na bolsa do Kevin",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bilhete_kevin",
+                    "c_coord_log"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "kevin",
+      "kind": "pessoa",
+      "name": "Kevin",
+      "gender": "m",
+      "role": "primeiro exposto",
+      "look": {
+        "skin": "#5b3a24",
+        "hair": "curto",
+        "hair_color": "#0c0c0c",
+        "top": "#ffeb3b",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu colei, tá. E aí?",
+            "expr": "bravo",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "kevin_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "kevin_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "kevin_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Tá, eu colei na olimpíada. Agora a escola inteira sabe. Quem contou vai pagar caro.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o bilhete da sua bolsa",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bilhete_kevin"
+                  ]
+                },
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Você mereceu ser exposto, Kevin!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Semana passada perdi o celular. Apareceu nos achados. Desbloqueado.",
+                  "expr": "surpreso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "A cola tava numa foto. Só quem abriu meu celular sabia. E o bilhete é assinado 'C.'.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "kevin_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kevin"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Mereci? Vai embora antes que eu esqueça a educação.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kevin_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:kevin_bravo} riu de mim. Só com prova. Ou carregador.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Valeu. Olha o histórico: desbloqueado terça passada, 9h12, nos achados.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Quem cuida dos achados é o Caíque. Que eu zoei no grupo do 9º. Ah, não.",
+                  "expr": "surpreso",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "kevin_falou",
+                "kevin_troca"
+              ],
+              "take_item": "carregador",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kevin"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "lia",
+      "kind": "pessoa",
+      "name": "Lia",
+      "gender": "f",
+      "role": "dona do 'tá ligado??'",
+      "look": {
+        "skin": "#ffe0bd",
+        "hair": "trancas",
+        "hair_color": "#7b4b2a",
+        "top": "#8e24aa",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Metade da escola escreve assim.",
+            "expr": "desconfiado",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "lia_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "lia_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "lia_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "A @ninguém escreve 'tá ligado??' igual a mim. Que honra. Mas eu tava em aula, detetive.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a chamada da aula de redação",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chamada_aula"
+                  ]
+                },
+                {
+                  "text": "Seu 'tá ligado??' te entregou!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "13h30 às 14h30, redação, primeira fila. A professora não deixa nem piscar.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "E 'tá ligado??' virou moda. Até o Caíque escreve assim agora. Me copia.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "lia_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_lia"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Escrita não é digital, gênio. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "lia_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:lia_bravo} me acusou. Mostra a chamada.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a chamada da aula de redação",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chamada_aula"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "pedro",
+      "kind": "pessoa",
+      "name": "Pedro",
+      "gender": "m",
+      "role": "recebeu a DM e jura que não pagou",
+      "look": {
+        "skin": "#c68642",
+        "hair": "curto",
+        "hair_color": "#1e1208",
+        "top": "#37474f",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu não paguei ninguém.",
+            "expr": "nervoso",
+            "anim": "negando"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "pedro_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "pedro_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "pedro_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Recebi a DM, sim. Paguei? Claro que não. Eu não negocio com terrorista de Instagram.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar seu comprovante de Pix",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_pix_pedro"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, respira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Você é a @ninguém se fingindo de vítima!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Paguei. Cinquenta. 14h30. Meu segredo é que eu vou repetir de ano e ninguém sabe.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "A chave do Pix era aleatória. Mas o nome que apareceu foi 'C. Monteiro'.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "pedro_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, respira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_pedro"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu sou vítima e ainda paguei! Sai.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "pedro_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:pedro_bravo} me acusou. Agora só com chocolate.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, respira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Tá. Eu paguei. Cinquenta reais.",
+                  "expr": "triste",
+                  "anim": "negando"
+                },
+                {
+                  "text": "O nome do recebedor era 'C. Monteiro'. Só a letra C me ajuda, eu sei.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "pedro_falou",
+                "pedro_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_pedro"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "nico",
+      "kind": "pessoa",
+      "name": "Nico",
+      "gender": "m",
+      "role": "ajudante da coordenação",
+      "look": {
+        "skin": "#4a2c17",
+        "hair": "cacheado",
+        "hair_color": "#111111",
+        "top": "#fbc02d",
+        "accessory": "fones"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "A coordenação rastreou o post.",
+            "expr": "feliz",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nico_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Ajudante da coordenação. A coordenadora mandou rastrear a @ninguém. Spoiler: vai dar ruim pra alguém.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem entregou atestado na terça?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você vazou o rastreio!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "A Joana. Dentista, 13h às 15h30. Tá arquivado aqui.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? Eu sou um túmulo. Um túmulo ofendido. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nico_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nico_bravo} me acusou. Sem conversa.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "cida",
+      "kind": "pessoa",
+      "name": "Tia Cida",
+      "gender": "f",
+      "role": "cantineira",
+      "look": {
+        "skin": "#9c6644",
+        "hair": "coque",
+        "hair_color": "#2e2e2e",
+        "top": "#ffffff",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Fofoca quentinha.",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "cida_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Suco saindo! E fofoca de @ninguém, a mais quente do mês.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Viu alguém estranho às 14h?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora é a @ninguém!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "O Caíque, 14h, perguntando se o wifi da biblioteca era bom 'pra postar umas coisas'. Hum.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu nem sei mexer no Instagram! Tchau.",
+                  "expr": "bravo",
+                  "anim": "rindo"
+                }
+              ],
+              "sets": [
+                "cida_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:cida_bravo} me ofendeu. Hoje sem suco.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "juju",
+      "kind": "pessoa",
+      "name": "Juju",
+      "gender": "f",
+      "role": "recebeu a DM e não pagou",
+      "look": {
+        "skin": "#f5c6a5",
+        "hair": "trancas",
+        "hair_color": "#3b2414",
+        "top": "#ab47bc",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu não paguei. E agora?",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "juju_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu não paguei. Sexta meu segredo vai pro ar. Tô contando as horas.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem saberia o seu segredo?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Seu segredo deve ser grave, né?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Eu perdi meu diário semana passada. Voltou dos achados com o cadeado aberto.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Que horror de pergunta. Sai.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "juju_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:juju_bravo} foi cruel comigo. Não falo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "biblioteca",
+      "kind": "lugar",
+      "name": "Biblioteca"
+    },
+    {
+      "id": "dentista",
+      "kind": "lugar",
+      "name": "Dentista",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "sala_aula",
+      "kind": "lugar",
+      "name": "Aula de redação"
+    },
+    {
+      "id": "ninguem",
+      "kind": "fato",
+      "name": "A conta @ninguém",
+      "icon": "celular"
+    },
+    {
+      "id": "segredos",
+      "kind": "fato",
+      "name": "Os segredos dos achados e perdidos",
+      "icon": "caixa"
+    }
+  ],
+  "items": [
+    {
+      "id": "carregador",
+      "name": "Carregador de celular",
+      "desc": "Na estante da biblioteca.",
+      "icon": "carregador"
+    },
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "No mural da cantina.",
+      "icon": "chocolate"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_post",
+      "kind": "post",
+      "title": "Post da @ninguém",
+      "time": "14h05",
+      "text": "A @ninguém expõe que o Kevin colou na olimpíada e promete o próximo segredo para sexta.",
+      "post": {
+        "user": "@ninguem",
+        "caption": "olimpíada de mat: o Kevin COLOU 🤫 próximo segredo sexta. tá ligado??",
+        "likes": 701,
+        "image": "foto de uma cola escrita na palma de uma mão",
+        "comments": [
+          {
+            "user": "@juju.9a",
+            "text": "mds 😳"
+          },
+          {
+            "user": "@leo_2b",
+            "text": "esse 'tá ligado??' é a cara da Lia kkk"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_dm_ameaca",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM da @ninguém",
+      "time": "14h12",
+      "text": "Seis alunos recebem a mesma ameaça: cinquenta reais até sexta.",
+      "chat": {
+        "group": "@ninguém",
+        "lines": [
+          {
+            "who": "@ninguém",
+            "text": "R$ 50 no pix até sexta ou o seu é o próximo 🙂",
+            "time": "14h12"
+          },
+          {
+            "who": "@ninguém",
+            "text": "tá ligado??",
+            "time": "14h12"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_lia",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da sala",
+      "time": "13h20",
+      "text": "A Lia escreve 'tá ligado??' igualzinho à @ninguém.",
+      "chat": {
+        "group": "2º ano 📚",
+        "lines": [
+          {
+            "who": "lia",
+            "text": "redação daqui a pouco, tá ligado?? 😩",
+            "time": "13h20"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_escala_troca",
+      "kind": "registro",
+      "title": "Troca de escala",
+      "text": "Troca de escala, terça: 'Joana (dentista, atestado) troca com Caíque. Biblioteca 13h às 15h: CAÍQUE.'",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_pix_pedro",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Comprovante do Pedro",
+      "time": "14h30",
+      "text": "O Pedro, que diz não ter pago, tem um Pix de cinquenta reais para 'C. Monteiro'.",
+      "chat": {
+        "group": "Banco",
+        "lines": [
+          {
+            "who": "Banco",
+            "text": "Pix enviado: R$ 50,00 para C. Monteiro, 14h30",
+            "time": "14h30"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_story_caique",
+      "kind": "post",
+      "title": "Story do Caíque",
+      "time": "segunda",
+      "text": "O Caíque posta que logo vai ter dinheiro para o show do ano.",
+      "post": {
+        "user": "@caique.monitor",
+        "caption": "logo logo show do ano 🎟️ quem riu de mim vai pagar o ingresso kkk",
+        "likes": 22,
+        "image": "foto de um ingresso de show desfocado",
+        "comments": [
+          {
+            "user": "@kevin.arte",
+            "text": "?"
+          }
+        ],
+        "who": "caique"
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_senha",
+      "kind": "objeto",
+      "title": "Monitor da biblioteca",
+      "text": "Post-it no monitor: 'senha monitoria: biblio2026 (NÃO ESQUECER, J.)'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_achados",
+      "kind": "objeto",
+      "title": "Achados e perdidos",
+      "text": "Caixa de achados: dois celulares desbloqueados, um diário com o cadeado aberto, bilhetes dobrados. Etiqueta: 'Responsável: Caíque'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_bilhete_kevin",
+      "kind": "bilhete",
+      "title": "Bolsa do Kevin",
+      "text": "Na bolsa do Kevin, um bilhete: 'Devolvi teu celular dos achados. Abri só pra ver de quem era 😉 C.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_chamada_aula",
+      "kind": "registro",
+      "title": "Chamada da redação",
+      "text": "Aula de redação, terça 13h30 às 14h30. Presentes: Lia (1ª fila), Pedro e mais 28.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_atestado",
+      "kind": "registro",
+      "title": "Atestado arquivado",
+      "text": "Atestado: Joana, consultório dentário, terça das 13h às 15h30.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_comanda",
+      "kind": "registro",
+      "title": "Comanda da cantina",
+      "time": "14h00",
+      "text": "Comanda: 14h00, Caíque, um suco. Anotação da Tia Cida: 'perguntou se o wifi da biblioteca é bom pra postar'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_coord_log",
+      "kind": "registro",
+      "title": "Rastreio da coordenação",
+      "text": "Da coordenação: os posts e as DMs da @ninguém saíram do computador da biblioteca, conta 'monitoria', às 14h05 e 14h12.",
+      "release": "t+300",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_joana",
+      "kind": "depoimento",
+      "title": "Fala da Joana",
+      "who": "joana",
+      "text": "Joana estava no dentista na terça. O Caíque cobriu o plantão dela, e a senha estava num post-it.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_kevin",
+      "kind": "depoimento",
+      "title": "Fala do Kevin",
+      "who": "kevin",
+      "text": "O celular do Kevin passou pelos achados desbloqueado; a foto da cola só estava nele. O bilhete é assinado 'C.'.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_lia",
+      "kind": "depoimento",
+      "title": "Fala da Lia",
+      "who": "lia",
+      "text": "Lia estava na aula de redação das 13h30 às 14h30. Diz que o Caíque copia o 'tá ligado??' dela.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_pedro",
+      "kind": "depoimento",
+      "title": "Fala do Pedro",
+      "who": "pedro",
+      "text": "Pedro pagou cinquenta reais às 14h30, para 'C. Monteiro'. Escondia que vai repetir de ano.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão do Caíque",
+      "who": "caique",
+      "text": "Caíque lia os celulares e diários dos achados. Cobrindo o plantão da Joana, usou a senha dela para postar e chantagear.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_monitor",
+      "scene": "biblioteca",
+      "object": "computador",
+      "label": "Monitor da biblioteca",
+      "clue": "c_senha"
+    },
+    {
+      "id": "hs_estante",
+      "scene": "biblioteca",
+      "object": "estante",
+      "label": "Estante",
+      "item": "carregador"
+    },
+    {
+      "id": "hs_achados",
+      "scene": "corredor",
+      "object": "armario_aberto",
+      "label": "Achados e perdidos",
+      "clue": "c_achados"
+    },
+    {
+      "id": "hs_bolsa",
+      "scene": "quadra",
+      "object": "bolsa_esportiva",
+      "label": "Bolsa do Kevin",
+      "clue": "c_bilhete_kevin"
+    },
+    {
+      "id": "hs_lousa",
+      "scene": "sala_aula",
+      "object": "lousa",
+      "label": "Chamada da redação",
+      "clue": "c_chamada_aula"
+    },
+    {
+      "id": "hs_arquivo",
+      "scene": "sala_professores",
+      "object": "computador_prof",
+      "label": "Atestados",
+      "clue": "c_atestado"
+    },
+    {
+      "id": "hs_balcao",
+      "scene": "cantina",
+      "object": "balcao",
+      "label": "Balcão",
+      "clue": "c_comanda"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "cantina",
+      "object": "mural_cantina",
+      "label": "Mural",
+      "item": "chocolate"
+    }
+  ],
+  "solution": {
+    "culprit": "caique",
+    "culprit_question": "Quem é a @ninguém?",
+    "culprit_evidence": [
+      "c_coord_log",
+      "c_escala_troca",
+      "c_achados",
+      "c_bilhete_kevin",
+      "c_comanda",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "conta",
+        "label": "Quem postou e de onde vêm os segredos"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava às 14h05"
+      }
+    ],
+    "edges": [
+      {
+        "from": "caique",
+        "to": "ninguem",
+        "type": "postou",
+        "category": "conta",
+        "evidence": [
+          "c_coord_log",
+          "c_escala_troca",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "caique",
+        "to": "segredos",
+        "type": "leu",
+        "category": "conta",
+        "evidence": [
+          "c_achados",
+          "c_bilhete_kevin",
+          "c_dep_kevin"
+        ]
+      },
+      {
+        "from": "caique",
+        "to": "biblioteca",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_escala_troca",
+          "c_comanda",
+          "c_dep_joana"
+        ]
+      },
+      {
+        "from": "joana",
+        "to": "dentista",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_atestado",
+          "c_dep_joana"
+        ]
+      },
+      {
+        "from": "lia",
+        "to": "sala_aula",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_chamada_aula",
+          "c_dep_lia"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "joana",
+        "to": "ninguem",
+        "type": "postou",
+        "category": "conta"
+      },
+      {
+        "from": "lia",
+        "to": "ninguem",
+        "type": "postou",
+        "category": "conta"
+      }
+    ]
+  },
+  "hints": [
+    "Todos os segredos expostos têm algo em comum: por onde essas coisas passaram?",
+    "Uma conta de computador não prova quem estava sentado nele.",
+    "Quem estava no plantão da biblioteca na terça? Confira as trocas.",
+    "Um bilhete assinado só com uma letra ainda é uma assinatura.",
+    "Uma vítima que diz que não pagou pode estar mentindo por vergonha.",
+    "Quem riu de quem, antes de tudo isso começar?"
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "Semana passada",
+        "text": "O celular do Kevin e o diário da Juju passam pelos achados. Voltam abertos."
+      },
+      {
+        "time": "Segunda",
+        "text": "Caíque posta que alguém 'vai pagar o ingresso'."
+      },
+      {
+        "time": "13h00",
+        "text": "Joana vai ao dentista. Caíque cobre o plantão."
+      },
+      {
+        "time": "14h00",
+        "text": "Caíque pergunta na cantina se o wifi da biblioteca é bom."
+      },
+      {
+        "time": "14h05",
+        "text": "Com a senha do post-it, posta como @ninguém."
+      },
+      {
+        "time": "14h12",
+        "text": "Manda a ameaça para seis alunos."
+      },
+      {
+        "time": "14h30",
+        "text": "Pedro paga em segredo."
+      }
+    ],
+    "explanation": "O rastreio aponta a conta da monitoria, e a turma crava a Joana. Mas a Joana estava no dentista, e quem cobria o plantão era o Caíque, que tinha a senha à vista num post-it. Os segredos vinham da caixa de achados que ele cuida. O motivo: vingança contra o Kevin, que o humilhou, e depois dinheiro.",
+    "refuted": [
+      "Joana estava no dentista com atestado.",
+      "Lia estava na aula de redação.",
+      "Pedro era vítima e escondeu que pagou."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "O Caíque cuida dos achados e perdidos e lia os celulares e diários que chegavam lá. Humilhado pelo Kevin no grupo do 9º ano, decidiu se vingar. Na terça cobriu o plantão da Joana na biblioteca, usou a senha dela, que estava num post-it, e postou como @ninguém às 14h05. Depois mandou ameaças de cinquenta reais para seis alunos. O Pedro pagou e escondeu.",
+    "twist": "O rastreio (t+300) parece fechar o caso contra a Joana: é a isca. Ele foi preparado pela troca de escala (split), pelo post-it da senha e pela etiqueta 'Responsável: Caíque' nos achados, que estavam no quadro antes. Segundo giro: o Pedro, que jurava não ter pago, pagou, e o recebedor era 'C. Monteiro'.",
+    "solution_steps": [
+      "Ler o post e a DM: a escrita 'tá ligado??' aponta a Lia.",
+      "Na sala de aula, a chamada da redação dá o álibi da Lia.",
+      "O rastreio da coordenação (cerca de 5 min) aponta a conta da monitoria: a turma pensa na Joana.",
+      "Na sala dos professores, o atestado mostra a Joana no dentista; a troca de escala (só um aluno) mostra o Caíque no plantão.",
+      "Na biblioteca, a senha num post-it explica como ele entrou na conta.",
+      "No corredor, os achados com celulares e diário abertos (responsável: Caíque); na quadra, o bilhete 'C.' na bolsa do Kevin.",
+      "Na cantina, o Caíque perguntou sobre o wifi às 14h. O Pedro (com chocolate) admite o Pix para 'C. Monteiro'.",
+      "Montar as 5 linhas e apontar o Caíque."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 6 min",
+        "aha": "A escrita aponta a Lia.",
+        "if_stuck": "Escrever igual prova alguma coisa? Onde a Lia estava às 14h05?"
+      },
+      {
+        "when": "6 a 14 min",
+        "aha": "Aha 1: os segredos vêm dos achados e perdidos.",
+        "if_stuck": "O que o Kevin e a Juju perderam na semana passada?"
+      },
+      {
+        "when": "14 a 22 min",
+        "aha": "Isca: o rastreio aponta a conta da Joana.",
+        "if_stuck": "Uma conta prova quem estava sentado ali? Alguém trocou de plantão?"
+      },
+      {
+        "when": "22 min em diante",
+        "aha": "Aha 2: o atestado e a troca de escala viram o caso para o Caíque.",
+        "if_stuck": "Quem tinha motivo contra o Kevin?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_post",
+        "where": "Já no início, para todos",
+        "proves": "Apresenta a @ninguém e a pista falsa da escrita da Lia."
+      },
+      {
+        "clue": "c_dm_ameaca",
+        "where": "Já no início, para todos",
+        "proves": "A chantagem: cinquenta reais até sexta."
+      },
+      {
+        "clue": "c_chat_lia",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Pista falsa: a Lia escreve 'tá ligado??'."
+      },
+      {
+        "clue": "c_escala_troca",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Prova a linha: Caíque postou como A conta @ninguém; Caíque estava em Biblioteca. Aponta para Caíque."
+      },
+      {
+        "clue": "c_pix_pedro",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "O Pedro pagou e mentiu."
+      },
+      {
+        "clue": "c_story_caique",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Mostra o motivo: o Caíque queria que 'quem riu dele' pagasse."
+      },
+      {
+        "clue": "c_senha",
+        "where": "Biblioteca: tocar em 'Monitor da biblioteca'",
+        "proves": "A senha da monitoria estava à vista: qualquer um no plantão podia usar."
+      },
+      {
+        "clue": "c_achados",
+        "where": "Corredor: tocar em 'Achados e perdidos'",
+        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos. Aponta para Caíque."
+      },
+      {
+        "clue": "c_bilhete_kevin",
+        "where": "Quadra: tocar em 'Bolsa do Kevin'",
+        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos. Aponta para Caíque."
+      },
+      {
+        "clue": "c_chamada_aula",
+        "where": "Sala de aula: tocar em 'Chamada da redação'",
+        "proves": "Prova a linha: Lia estava em Aula de redação."
+      },
+      {
+        "clue": "c_atestado",
+        "where": "Sala dos professores: tocar em 'Atestados'",
+        "proves": "Prova a linha: Joana estava em Dentista."
+      },
+      {
+        "clue": "c_comanda",
+        "where": "Cantina: tocar em 'Balcão'",
+        "proves": "Prova a linha: Caíque estava em Biblioteca. Aponta para Caíque."
+      },
+      {
+        "clue": "c_coord_log",
+        "where": "Chega sozinha aos 5 min",
+        "proves": "Prova a linha: Caíque postou como A conta @ninguém. Aponta para Caíque."
+      },
+      {
+        "clue": "c_dep_joana",
+        "where": "mostrar 'Atestado arquivado' para Joana",
+        "proves": "Prova a linha: Caíque estava em Biblioteca; Joana estava em Dentista."
+      },
+      {
+        "clue": "c_dep_kevin",
+        "where": "mostrar 'Bolsa do Kevin' para Kevin; ou trocar 'Carregador de celular' com Kevin",
+        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos."
+      },
+      {
+        "clue": "c_dep_lia",
+        "where": "mostrar 'Chamada da redação' para Lia",
+        "proves": "Prova a linha: Lia estava em Aula de redação."
+      },
+      {
+        "clue": "c_dep_pedro",
+        "where": "mostrar 'Comprovante do Pedro' para Pedro; ou trocar 'Barra de chocolate' com Pedro",
+        "proves": "Uma vítima pagou e mentiu; o recebedor 'C. Monteiro' aponta para um 'C.'."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Rastreio da coordenação' + 'Troca de escala' para Caíque; ou mostrar 'Bolsa do Kevin' + 'Rastreio da coordenação' para Caíque",
+        "proves": "Prova a linha: Caíque postou como A conta @ninguém. Aponta para Caíque."
+      }
+    ],
+    "red_herrings": [
+      "O 'tá ligado??' da Lia: virou moda, e ela estava em aula.",
+      "A conta 'monitoria' da Joana: ela estava no dentista."
+    ],
+    "faq": [
+      {
+        "q": "Foi a Lia, a escrita é dela!",
+        "a": "Escrever parecido prova autoria? Onde ela estava às 14h05?"
+      },
+      {
+        "q": "O rastreio mostra a conta da Joana!",
+        "a": "A conta prova quem estava sentado no computador? Onde a Joana estava?"
+      },
+      {
+        "q": "De onde vêm os segredos?",
+        "a": "O Kevin e a Juju perderam coisas na semana passada. Para onde vão objetos perdidos?"
+      },
+      {
+        "q": "O Pedro diz que não pagou.",
+        "a": "Ele tem vergonha. Um chocolate e uma conversa sem julgamento ajudam."
+      },
+      {
+        "q": "Meu colega tem a troca de escala.",
+        "a": "Peçam para fixar no quadro. É uma das pistas mais importantes."
+      }
+    ],
+    "talking_points": [
+      "Por que chantagem prende tanto as vítimas no silêncio?",
+      "Quem tem acesso às coisas dos outros tem mais responsabilidade?",
+      "Uma humilhação justifica uma vingança? Onde termina uma e começa a outra?"
+    ]
+  }
+}

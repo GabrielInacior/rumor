@@ -1,0 +1,1812 @@
+{
+  "id": "urna_gremio",
+  "mode": "multi",
+  "title": "A Urna",
+  "tagline": "Cento e noventa e oito assinaturas. Duzentos e doze votos. Alguém ganhou perdendo.",
+  "difficulty": 1,
+  "duration_sec": 1800,
+  "scene": "biblioteca",
+  "locations": [
+    "biblioteca",
+    "sala_aula",
+    "patio",
+    "sala_professores",
+    "cantina"
+  ],
+  "scene_people": [
+    {
+      "id": "kaua",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "joana",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "teo",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "caio",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "bela",
+      "scene": "patio"
+    },
+    {
+      "id": "rui",
+      "scene": "patio"
+    },
+    {
+      "id": "vera",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "cida",
+      "scene": "cantina"
+    }
+  ],
+  "briefing": "Eleição do grêmio. A Chapa Rosa vence por dezoito votos. Um problema: votaram cento e noventa e oito alunos e a urna tinha duzentas e doze cédulas. O Caio, que perdeu, grita fraude. Todo mundo olha para a chapa que ganhou. Quase todo mundo.",
+  "goal": "Descubra quem colocou as cédulas falsas, como a urna foi aberta e quem ganhava com isso.",
+  "link_types": [
+    {
+      "id": "colocou",
+      "label": "colocou",
+      "directed": true
+    },
+    {
+      "id": "entregou",
+      "label": "entregou a chave para",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "kaua",
+      "kind": "pessoa",
+      "name": "Kauã",
+      "gender": "m",
+      "role": "mesário da urna",
+      "look": {
+        "skin": "#6e4528",
+        "hair": "raspado",
+        "hair_color": "#121212",
+        "top": "#f9a825",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu só fui almoçar dez minutos.",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "kaua_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "kaua_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "kaua_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu só saí dez minutos! Dez! Me chamaram urgente na cantina. Agora eu sou o vilão da democracia.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a comanda da cantina",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_comanda"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, mesário",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kaua_troca"
+                  ]
+                },
+                {
+                  "text": "Você vendeu a urna, Kauã!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "12h02 o Téo me chamou: 'urgente, cantina'. Cheguei lá e ele saiu correndo pro lado da biblioteca.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Voltei 12h10. A urna parecia igual. Parecia.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "kaua_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, mesário",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kaua_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kaua"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Vendi? Eu ganho zero reais pra ser mesário! Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kaua_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:kaua_bravo} me acusou. Agora só com chocolate. Muito.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, mesário",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kaua_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate de mesário injustiçado. Aceito.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Quem me tirou da urna às 12h02 foi o Téo, da Chapa Azul. Disse que era urgente. Não era.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "kaua_falou",
+                "kaua_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kaua"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "joana",
+      "kind": "pessoa",
+      "name": "Joana",
+      "gender": "f",
+      "role": "monitora da biblioteca",
+      "look": {
+        "skin": "#d9a066",
+        "hair": "longo",
+        "hair_color": "#2c1b10",
+        "top": "#00897b",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Shhh. Urna em biblioteca, que ideia.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "joana_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Shhh. Puseram a urna na MINHA biblioteca. Barulho o dia inteiro. Democracia é barulhenta.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Alguém mexeu na urna no almoço?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você deixou fraudarem a urna!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Vi o Téo, da Azul, perto da mesa às 12h05. Envelope pardo na mão. Achei que era panfleto.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu cuido de livro, não de urna. Shhh e tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "joana_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:joana_bravo} me acusou. Biblioteca fechada pra você.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "teo",
+      "kind": "pessoa",
+      "name": "Téo",
+      "gender": "m",
+      "role": "vice da Chapa Azul",
+      "look": {
+        "skin": "#ffdbac",
+        "hair": "franja",
+        "hair_color": "#d4a94f",
+        "top": "#1565c0",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Fraude da Rosa, óbvio.",
+            "expr": "bravo",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "teo_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "teo_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "teo_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Fraude, claro. Da Chapa Rosa. Quer prova maior que catorze votos a mais pra elas?",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o bloco da sua mochila",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bloco"
+                  ]
+                },
+                {
+                  "text": "Onde você tava às 12h05?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você fraudou a urna, Téo!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Na cantina. Almoçando. Com testemunhas. Pergunta pra Tia Cida.",
+                  "expr": "nervoso",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o bloco da sua mochila",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bloco"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...A gente ia perder por pouco. Se tivesse mais voto que assinatura, a eleição era anulada.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Pus catorze votos pra Rosa. Pra elas parecerem as fraudadoras. E o Caio... o Caio me deu a chave.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "teo_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? A gente PERDEU, gênio. Quem frauda pra perder?",
+                  "expr": "bravo",
+                  "anim": "rindo"
+                }
+              ],
+              "sets": [
+                "teo_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:teo_bravo} me acusou. Só falo com prova.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar as cédulas e o regulamento",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_cedulas",
+                    "c_regra"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "caio",
+      "kind": "pessoa",
+      "name": "Caio",
+      "gender": "m",
+      "role": "candidato da Chapa Azul, o que perdeu",
+      "look": {
+        "skin": "#8d5524",
+        "hair": "raspado",
+        "hair_color": "#1a1a1a",
+        "top": "#2e7d32",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Isso foi roubo.",
+            "expr": "bravo",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "caio_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "caio_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "caio_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Isso foi roubo. Cento e noventa e oito assinaturas, duzentos e doze votos. A matemática não mente.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o relatório do lacre",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_lacre"
+                  ]
+                },
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "caio_troca"
+                  ]
+                },
+                {
+                  "text": "Você perdeu e quer melar a eleição!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "O lacre é do armário do grêmio? Só eu tenho a chave... e eu emprestei pro Téo ontem.",
+                  "expr": "surpreso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Ele disse 'plano B'. Eu não perguntei qual. Eu não QUIS perguntar.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "caio_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "caio_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_caio"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu quero JUSTIÇA. Sai daqui.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "caio_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:caio_bravo} me acusou. Sem conversa.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "caio_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Valeu. Olha minhas mensagens com o Téo ontem.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "'Me empresta a chave do armário do grêmio, é pro plano B.' E eu emprestei. Que vergonha.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "caio_falou",
+                "caio_troca"
+              ],
+              "take_item": "carregador",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_caio"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "bela",
+      "kind": "pessoa",
+      "name": "Bela",
+      "gender": "f",
+      "role": "candidata da Chapa Rosa, a que venceu",
+      "look": {
+        "skin": "#f3cfae",
+        "hair": "ondulado",
+        "hair_color": "#f2c14e",
+        "top": "#ec407a",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu nem esperava ganhar.",
+            "expr": "surpreso",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "surpreso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "bela_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu ganhei e tô sendo tratada como criminosa. Honestamente? Eu nem esperava tantos votos.",
+                  "expr": "surpreso",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Por que você não esperava ganhar?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Sua chapa fraudou a urna!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "A pesquisa da minha chapa dava empate. Cento e quinze votos? Nem minha mãe acreditou.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_bela",
+              "sets": [
+                "bela_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Fraudar pra ganhar de muito? Seria a fraude mais burra da história. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "bela_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:bela_bravo} me chamou de fraudadora. Não falo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rui",
+      "kind": "pessoa",
+      "name": "Rui",
+      "gender": "m",
+      "role": "coordenador de campanha da Chapa Rosa",
+      "look": {
+        "skin": "#b98a62",
+        "hair": "curto",
+        "hair_color": "#2a1b10",
+        "top": "#00838f",
+        "accessory": "fones"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu tava no microfone.",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "rui_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "rui_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "rui_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Coordenador da Rosa. Sim, eu mandei mensagem pro mesário. Era pra pedir que ele não deixasse ninguém fraudar.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o cartaz do comício",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_cartaz"
+                  ]
+                },
+                {
+                  "text": "Você subornou o mesário!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "12h às 12h20 eu tava no comício, aqui no pátio, gritando no microfone. Cem pessoas viram.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Ironia: eu pedi pro Kauã cuidar da urna. Quem tirou ele de lá não fui eu.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "rui_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_rui"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Com o quê? Com um 'tmj'? Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "rui_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:rui_bravo} me acusou. Mostra o cartaz do comício e a gente conversa.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o cartaz do comício",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_cartaz"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "vera",
+      "kind": "pessoa",
+      "name": "Dona Vera",
+      "gender": "f",
+      "role": "coordenadora, cuidou da apuração",
+      "look": {
+        "skin": "#5d3a22",
+        "hair": "cacheado_longo",
+        "hair_color": "#2a1a10",
+        "top": "#880e4f",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu separei as cédulas.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "vera_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Separei as catorze cédulas estranhas. Papel mais grosso, borda torta. E um detalhe que ninguém percebeu.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Que detalhe?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora contou errado!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Tirando as catorze, a Rosa ganha do mesmo jeito: cento e um a noventa e sete.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Então me diga: quem coloca votos falsos pra quem já ia ganhar?",
+                  "expr": "neutro",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Contei três vezes. Saia da coordenação.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "vera_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:vera_bravo} duvidou de mim. Sem conversa hoje.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "cida",
+      "kind": "pessoa",
+      "name": "Tia Cida",
+      "gender": "f",
+      "role": "cantineira",
+      "look": {
+        "skin": "#9c6644",
+        "hair": "coque",
+        "hair_color": "#2e2e2e",
+        "top": "#ffffff",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Salgado saindo!",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "cida_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Salgado saindo! E fofoca de eleição, a mais quente do ano.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "O Téo almoçou aqui às 12h?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora tá protegendo alguém!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Almoçou nada. Chamou o mesário 12h02 e sumiu com um envelope pardo pro lado da biblioteca.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu protejo coxinha. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "cida_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:cida_bravo} me ofendeu. Sem fofoca.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "biblioteca",
+      "kind": "lugar",
+      "name": "Biblioteca (urna)"
+    },
+    {
+      "id": "cantina",
+      "kind": "lugar",
+      "name": "Cantina"
+    },
+    {
+      "id": "patio",
+      "kind": "lugar",
+      "name": "Pátio (comício)"
+    },
+    {
+      "id": "cedulas",
+      "kind": "fato",
+      "name": "As 14 cédulas falsas",
+      "icon": "papel"
+    }
+  ],
+  "items": [
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "No banco do pátio. Mesário gosta.",
+      "icon": "chocolate"
+    },
+    {
+      "id": "carregador",
+      "name": "Carregador de celular",
+      "desc": "Na estante da biblioteca.",
+      "icon": "carregador"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_resultado",
+      "kind": "post",
+      "title": "Resultado oficial",
+      "time": "16h00",
+      "text": "A Rosa vence por 115 a 97, mas são 212 votos para 198 assinaturas, e o Caio grita fraude.",
+      "post": {
+        "user": "@gremio.eleicao",
+        "caption": "RESULTADO: Rosa 115 x Azul 97 🌸 Bela presidente!",
+        "likes": 520,
+        "image": "a urna aberta e cédulas espalhadas na mesa",
+        "comments": [
+          {
+            "user": "@caio.azul",
+            "text": "198 assinaturas. 212 votos. FRAUDE."
+          },
+          {
+            "user": "@bela.rosa",
+            "text": "????"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_azul",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da Chapa Azul",
+      "time": "seg 22h",
+      "text": "Na véspera, o Téo diz que a Azul ia perder e sugere um 'ou não'.",
+      "chat": {
+        "group": "Chapa Azul 💙",
+        "lines": [
+          {
+            "who": "teo",
+            "text": "pesquisa interna: a gente perde por 4 😬",
+            "time": "22h00"
+          },
+          {
+            "who": "caio",
+            "text": "se perder, perdeu",
+            "time": "22h01"
+          },
+          {
+            "who": "teo",
+            "text": "ou não 😏 tenho um plano B",
+            "time": "22h02"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dm_rui",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM do Rui",
+      "time": "8h00",
+      "text": "O Rui pede ao mesário para 'cuidar bem' da urna.",
+      "chat": {
+        "group": "Kauã",
+        "lines": [
+          {
+            "who": "rui",
+            "text": "cuida bem da urna hoje, mesário 😎",
+            "time": "8h00"
+          },
+          {
+            "who": "kaua",
+            "text": "pode deixar",
+            "time": "8h01"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_assinaturas",
+      "kind": "registro",
+      "title": "Lista de votação",
+      "text": "Lista de votação: 198 assinaturas. Nenhuma rasura.",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_story_bela",
+      "kind": "post",
+      "title": "Story da Bela",
+      "time": "16h10",
+      "text": "A Bela comemora surpresa: nem ela esperava tantos votos.",
+      "post": {
+        "user": "@bela.rosa",
+        "caption": "obrigada pelos 115 votos!! 🌸 nem eu esperava tantos 😳",
+        "likes": 233,
+        "image": "Bela chorando de rir com a faixa de presidente",
+        "comments": [
+          {
+            "user": "@rui.rosa",
+            "text": "a gente nem precisava de tudo isso kkk"
+          }
+        ],
+        "who": "bela"
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_urna",
+      "kind": "objeto",
+      "title": "Mesa da urna",
+      "text": "Urna com lacre de outra cor. Ata do mesário: 'Urna sozinha das 12h02 às 12h10, almoço.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_bloco",
+      "kind": "objeto",
+      "title": "Mochila do Téo",
+      "text": "Na mochila do Téo, um bloco de papel grosso com 14 folhas faltando e uma tesoura. As bordas foram cortadas tortas.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_lousa",
+      "kind": "registro",
+      "title": "Lousa do grêmio",
+      "text": "Na lousa da sala do grêmio, apagado pela metade: 'PLANO B: ANULAR'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_regra",
+      "kind": "registro",
+      "title": "Regulamento",
+      "text": "Regulamento: 'Se houver mais votos que assinaturas, a eleição é ANULADA e refeita em 30 dias.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_cedulas",
+      "kind": "objeto",
+      "title": "Cédulas separadas",
+      "text": "As 14 cédulas estranhas: papel grosso, borda torta, todas votando Rosa. Sem elas: Rosa 101, Azul 97. A Rosa vence igual.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_comanda",
+      "kind": "registro",
+      "title": "Comanda da cantina",
+      "time": "12h02",
+      "text": "Comanda: 12h02, Kauã (mesário), um salgado, 'chamado pelo Téo, urgente'. O Téo não comeu e saiu na hora.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_cartaz",
+      "kind": "registro",
+      "title": "Cartaz do comício",
+      "text": "Cartaz: 'COMÍCIO DA ROSA, 12h às 12h20, no pátio. No microfone: Rui.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_lacre",
+      "kind": "registro",
+      "title": "Relatório do lacre",
+      "text": "Da coordenação: o lacre novo da urna é do lote guardado no armário do grêmio. Só a presidência do grêmio tem a chave.",
+      "release": "t+240",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_kaua",
+      "kind": "depoimento",
+      "title": "Fala do Kauã",
+      "who": "kaua",
+      "text": "O Téo tirou o Kauã da urna às 12h02 com um chamado 'urgente' e saiu para o lado da biblioteca.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_caio",
+      "kind": "depoimento",
+      "title": "Fala do Caio",
+      "who": "caio",
+      "text": "Caio emprestou ao Téo a chave do armário do grêmio na véspera, para um 'plano B'.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_bela",
+      "kind": "depoimento",
+      "title": "Fala da Bela",
+      "who": "bela",
+      "text": "A Bela não esperava ganhar: a pesquisa da chapa dela dava empate, não cento e quinze votos.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_rui",
+      "kind": "depoimento",
+      "title": "Fala do Rui",
+      "who": "rui",
+      "text": "Rui estava no comício do pátio das 12h às 12h20, no microfone.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão do Téo",
+      "who": "teo",
+      "text": "Téo colocou 14 cédulas falsas para a Rosa, para a eleição ser anulada. Usou a chave que o Caio emprestou.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_urna",
+      "scene": "biblioteca",
+      "object": "mesa_estudo",
+      "label": "Mesa da urna",
+      "clue": "c_urna"
+    },
+    {
+      "id": "hs_estante",
+      "scene": "biblioteca",
+      "object": "estante",
+      "label": "Estante",
+      "item": "carregador"
+    },
+    {
+      "id": "hs_mochila",
+      "scene": "sala_aula",
+      "object": "mochila",
+      "label": "Mochila do Téo",
+      "clue": "c_bloco"
+    },
+    {
+      "id": "hs_lousa",
+      "scene": "sala_aula",
+      "object": "lousa",
+      "label": "Lousa do grêmio",
+      "clue": "c_lousa"
+    },
+    {
+      "id": "hs_banco",
+      "scene": "patio",
+      "object": "banco_patio",
+      "label": "Banco do pátio",
+      "item": "chocolate"
+    },
+    {
+      "id": "hs_poste",
+      "scene": "patio",
+      "object": "poste",
+      "label": "Cartaz do comício",
+      "clue": "c_cartaz"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "sala_professores",
+      "object": "mural_recados",
+      "label": "Regulamento",
+      "clue": "c_regra"
+    },
+    {
+      "id": "hs_escaninho",
+      "scene": "sala_professores",
+      "object": "escaninho",
+      "label": "Cédulas separadas",
+      "clue": "c_cedulas"
+    },
+    {
+      "id": "hs_balcao",
+      "scene": "cantina",
+      "object": "balcao",
+      "label": "Balcão",
+      "clue": "c_comanda"
+    }
+  ],
+  "solution": {
+    "culprit": "teo",
+    "culprit_question": "Quem fraudou a urna?",
+    "culprit_evidence": [
+      "c_bloco",
+      "c_cedulas",
+      "c_regra",
+      "c_lousa",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "fraude",
+        "label": "Quem fraudou e com qual chave"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava às 12h05"
+      }
+    ],
+    "edges": [
+      {
+        "from": "teo",
+        "to": "cedulas",
+        "type": "colocou",
+        "category": "fraude",
+        "evidence": [
+          "c_bloco",
+          "c_lousa",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "caio",
+        "to": "teo",
+        "type": "entregou",
+        "category": "fraude",
+        "evidence": [
+          "c_lacre",
+          "c_chat_azul",
+          "c_dep_caio"
+        ]
+      },
+      {
+        "from": "teo",
+        "to": "biblioteca",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_comanda",
+          "c_dep_kaua"
+        ]
+      },
+      {
+        "from": "kaua",
+        "to": "cantina",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_comanda",
+          "c_urna",
+          "c_dep_kaua"
+        ]
+      },
+      {
+        "from": "rui",
+        "to": "patio",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_cartaz",
+          "c_dep_rui"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "rui",
+        "to": "cedulas",
+        "type": "colocou",
+        "category": "fraude"
+      },
+      {
+        "from": "bela",
+        "to": "cedulas",
+        "type": "colocou",
+        "category": "fraude"
+      }
+    ]
+  },
+  "hints": [
+    "Tire as cédulas falsas da conta. Quem ganha?",
+    "Quem ganha quando uma eleição é ANULADA?",
+    "Quem tirou o mesário da urna no almoço?",
+    "Lacre de outra cor veio de algum armário. De quem é a chave?",
+    "Quem grita 'fraude' mais alto às vezes sabe demais."
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "Seg, 22h",
+        "text": "Téo avisa a Chapa Azul que vão perder e fala num 'plano B'."
+      },
+      {
+        "time": "Seg, noite",
+        "text": "Caio empresta ao Téo a chave do armário do grêmio."
+      },
+      {
+        "time": "12h00",
+        "text": "Rui começa o comício no pátio."
+      },
+      {
+        "time": "12h02",
+        "text": "Téo chama o mesário à cantina, 'urgente'."
+      },
+      {
+        "time": "12h05",
+        "text": "Téo abre a urna, põe 14 cédulas para a Rosa e troca o lacre."
+      },
+      {
+        "time": "16h00",
+        "text": "Contagem: 212 votos para 198 assinaturas. Caio grita fraude."
+      }
+    ],
+    "explanation": "Todos acusaram quem venceu. Mas, sem as 14 cédulas falsas, a Rosa ganha do mesmo jeito: ninguém frauda para ganhar por mais. A fraude era para ANULAR a eleição, e só quem perdia queria isso. O Téo tirou o mesário da urna e usou o lacre do armário do grêmio, cuja chave o Caio emprestou.",
+    "refuted": [
+      "Rui estava no microfone do comício.",
+      "Bela venceria mesmo sem as cédulas falsas."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "O Téo, vice da Chapa Azul, sabia pela pesquisa interna que ia perder. O regulamento anula a eleição se houver mais votos que assinaturas. Ele recortou 14 cédulas, todas votando na Rosa, tirou o mesário da urna às 12h02 com um chamado falso, colocou as cédulas e trocou o lacre usando a chave do armário do grêmio. A chave foi emprestada pelo Caio, que fingiu não saber do 'plano B'.",
+    "twist": "Plantado nas cédulas separadas (a Rosa vence sem elas) e no regulamento (anulação). As duas estão no começo, e quase toda turma lê sem fazer a conta. O 'ou não 😏' do Téo e a lousa 'PLANO B' confirmam. Segundo giro: o Caio, que grita fraude, emprestou a chave do armário.",
+    "solution_steps": [
+      "Ver o resultado: 212 votos para 198 assinaturas. Todos acusam a chapa vencedora.",
+      "Na sala dos professores, as cédulas separadas mostram que a Rosa vence mesmo sem elas, e o regulamento diz que a eleição seria anulada.",
+      "Na biblioteca, a ata da urna: sozinha das 12h02 às 12h10.",
+      "Na cantina, a comanda: o Téo chamou o mesário 'urgente' e saiu.",
+      "Na sala do grêmio, a mochila do Téo tem o bloco com 14 folhas faltando, e a lousa diz 'PLANO B: ANULAR'.",
+      "No pátio, o cartaz do comício dá o álibi do Rui.",
+      "O relatório do lacre (cerca de 4 min) aponta o armário do grêmio. Mostrar ao Caio: ele emprestou a chave.",
+      "Montar as 5 linhas e apontar o Téo."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 5 min",
+        "aha": "A turma acusa a Chapa Rosa ou o Rui (DM ao mesário).",
+        "if_stuck": "Se tirarmos as cédulas falsas, quem ganha?"
+      },
+      {
+        "when": "5 a 12 min",
+        "aha": "Aha 1: a Rosa vence de qualquer jeito, então a fraude era para anular.",
+        "if_stuck": "Quem ganha com uma eleição anulada?"
+      },
+      {
+        "when": "12 a 20 min",
+        "aha": "Aha 2: a comanda e a mochila apontam o Téo.",
+        "if_stuck": "Quem tirou o mesário da urna?"
+      },
+      {
+        "when": "20 min em diante",
+        "aha": "Aha 3: o lacre vem do armário do grêmio, e o Caio emprestou a chave.",
+        "if_stuck": "De quem é a chave do armário do grêmio?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_resultado",
+        "where": "Já no início, para todos",
+        "proves": "Apresenta o problema: mais votos que assinaturas."
+      },
+      {
+        "clue": "c_chat_azul",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Prova a linha: Caio entregou a chave para Téo."
+      },
+      {
+        "clue": "c_dm_rui",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Pista falsa: parece suborno, mas é um pedido de cuidado."
+      },
+      {
+        "clue": "c_assinaturas",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Confirma que só 198 alunos votaram."
+      },
+      {
+        "clue": "c_story_bela",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Até a Bela estranhou tantos votos."
+      },
+      {
+        "clue": "c_urna",
+        "where": "Biblioteca: tocar em 'Mesa da urna'",
+        "proves": "Prova a linha: Kauã estava em Cantina."
+      },
+      {
+        "clue": "c_bloco",
+        "where": "Sala de aula: tocar em 'Mochila do Téo'",
+        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas. Aponta para Téo."
+      },
+      {
+        "clue": "c_lousa",
+        "where": "Sala de aula: tocar em 'Lousa do grêmio'",
+        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas. Aponta para Téo."
+      },
+      {
+        "clue": "c_regra",
+        "where": "Sala dos professores: tocar em 'Regulamento'",
+        "proves": "Mostra o motivo: com mais votos que assinaturas, a eleição é anulada."
+      },
+      {
+        "clue": "c_cedulas",
+        "where": "Sala dos professores: tocar em 'Cédulas separadas'",
+        "proves": "A Rosa venceria mesmo sem as cédulas: a fraude não era para ela ganhar."
+      },
+      {
+        "clue": "c_comanda",
+        "where": "Cantina: tocar em 'Balcão'",
+        "proves": "Prova a linha: Téo estava em Biblioteca (urna); Kauã estava em Cantina."
+      },
+      {
+        "clue": "c_cartaz",
+        "where": "Pátio: tocar em 'Cartaz do comício'",
+        "proves": "Prova a linha: Rui estava em Pátio (comício)."
+      },
+      {
+        "clue": "c_lacre",
+        "where": "Chega sozinha aos 4 min",
+        "proves": "Prova a linha: Caio entregou a chave para Téo."
+      },
+      {
+        "clue": "c_dep_kaua",
+        "where": "mostrar 'Comanda da cantina' para Kauã; ou trocar 'Barra de chocolate' com Kauã",
+        "proves": "Prova a linha: Téo estava em Biblioteca (urna); Kauã estava em Cantina."
+      },
+      {
+        "clue": "c_dep_caio",
+        "where": "mostrar 'Relatório do lacre' para Caio; ou trocar 'Carregador de celular' com Caio",
+        "proves": "Prova a linha: Caio entregou a chave para Téo."
+      },
+      {
+        "clue": "c_dep_bela",
+        "where": "conversar com Bela ('Por que você não esperava ganhar?')",
+        "proves": "Até a vencedora estranhou tantos votos: a fraude não era dela."
+      },
+      {
+        "clue": "c_dep_rui",
+        "where": "mostrar 'Cartaz do comício' para Rui",
+        "proves": "Prova a linha: Rui estava em Pátio (comício)."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Mochila do Téo' para Téo; ou mostrar 'Cédulas separadas' + 'Regulamento' para Téo",
+        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas. Aponta para Téo."
+      }
+    ],
+    "red_herrings": [
+      "A DM do Rui ao mesário parece suborno, mas ele pedia cuidado com a urna.",
+      "A Bela venceu, mas venceria sem as cédulas falsas."
+    ],
+    "faq": [
+      {
+        "q": "Foi a Chapa Rosa, ganhou com fraude!",
+        "a": "Façam a conta sem as 14 cédulas. Quem ganha?"
+      },
+      {
+        "q": "Por que alguém frauda a favor do adversário?",
+        "a": "Leiam o regulamento. O que acontece quando há mais votos que assinaturas?"
+      },
+      {
+        "q": "Quem abriu a urna?",
+        "a": "Quem tirou o mesário de lá às 12h02?"
+      },
+      {
+        "q": "O Caio é a vítima.",
+        "a": "De quem é a chave do armário de onde veio o lacre?"
+      },
+      {
+        "q": "O Rui mandou mensagem pro mesário!",
+        "a": "Leiam a mensagem inteira. E onde o Rui estava ao meio-dia?"
+      }
+    ],
+    "talking_points": [
+      "Quem 'grita fraude' sempre é inocente?",
+      "O Caio não fez a fraude, mas emprestou a chave sem perguntar. Isso é culpa?",
+      "Por que a gente olha primeiro para quem ganhou?"
+    ]
+  }
+}

@@ -106,6 +106,18 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
     ]
   },
 
+  // Guia do professor (o cliente do aluno não recebe). Linguagem simples.
+  "teacher_guide": {
+    "summary": "A verdade em 3 a 4 frases.",
+    "twist": "Onde o plot twist foi plantado: quais pistas o jogador viu e leu errado, e o segundo giro.",
+    "solution_steps": ["5 a 8 passos do caminho ótimo, citando pista, lugar e pessoa"],
+    "pacing": [{"when": "0 a 5 min", "aha": "o que costuma acontecer", "if_stuck": "pergunta para destravar"}],  // 3 a 6
+    "clue_map": [{"clue": "c_id", "where": "como se obtém (cena+objeto, quem dá, t+, troca)", "proves": "o que prova"}],  // TODAS as pistas
+    "red_herrings": ["pista falsa e por que é falsa"],
+    "faq": [{"q": "dúvida comum", "a": "como ajudar sem entregar"}],  // 4 a 6
+    "talking_points": ["pergunta para a revelação (raciocínio, fontes, boatos)"]  // exatamente 3
+  },
+
   // 4 a 6 dicas DESTE caso, da mais sutil para a mais forte, sem entregar o culpado de cara.
   // multi: o professor manda. solo: o jogador pede (uma por vez, na ordem).
   "hints": ["Alguém leu só o começo de uma mensagem. Quem estava com pressa?", "..."],
@@ -203,13 +215,13 @@ ou que é aberto por uma entry com essa flag em `if`.
 
 | | solo | multi |
 |---|---|---|
-| locations | 2 a 4 (muito fácil 2, difícil 4) | 4 a 5 |
-| pessoas | 3 a 5 | 6 a 8 |
-| pistas | 5 a 14 | 14 a 20 |
+| locations | 2 a 5 | 5 a 7 |
+| pessoas | 3 a 6 | 8 a 10 |
+| pistas | 5 a 20 | 18 a 28 |
 | `deal: "split"` | proibido (tudo `team`) | obrigatório (pelo menos 2, só em start ou t+) |
-| linhas exigidas | 2 a 4 | 5 a 7 |
+| linhas exigidas | 2 a 5 | 5 a 7 |
 | trocas (`take_item`) | pelo menos 1 | pelo menos 2, cada item usado por uma pessoa só |
-| duration_sec | 600 a 1200 | 1500 a 2100 (o servidor ainda soma 50%) |
+| duration_sec | 600 a 1500 | 1500 a 2400 (o servidor ainda soma 50%) |
 
 Comum aos dois: 2 a 3 link_types, até 3 categorias, 1 a 3 armadilhas, pelo menos 1 pista `t+150..300`,
 1 a 2 hotspots por cena, 1 a 3 pessoas por cena.
@@ -226,6 +238,10 @@ com prova alcançável no pior caminho.
 
 ## Regras de escrita
 
+- Mistério de verdade: transgressão real (furto, fraude, chantagem, vazamento, sabotagem, perfil falso, armação),
+  culpado com intenção e motivo forte. Nada de violência gráfica, sexo, drogas ou morte.
+- Um plot twist forte e justo por caso, plantado em pistas que o jogador já viu, e de preferência um segundo giro
+  (cúmplice, vítima que mentiu, motivo escondido). A pista t+ costuma ser a isca ou a confirmação do twist.
 - Público com pouca experiência em jogos: nada complexo, mas o culpado não pode ser óbvio.
   2 suspeitos plausíveis + o verdadeiro, uma pista falsa justa, uma reviravolta que se encaixa, um "aha" deduzível.
 - Uma informação clara por pista (limites de quantidade na tabela "Solo x multi"). Pelo menos 1 pista `t+` (150 a 300) que vira o jogo.

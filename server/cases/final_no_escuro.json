@@ -1,0 +1,2390 @@
+{
+  "id": "final_no_escuro",
+  "mode": "multi",
+  "title": "A Final no Escuro",
+  "tagline": "Cinco mil reais de bolsa. Dez minutos de escuro. Uma voz que não estava lá.",
+  "difficulty": 3,
+  "duration_sec": 2400,
+  "scene": "teatro",
+  "locations": [
+    "teatro",
+    "deposito",
+    "sala_musica",
+    "cantina",
+    "corredor",
+    "sala_professores"
+  ],
+  "scene_people": [
+    {
+      "id": "iris",
+      "scene": "teatro"
+    },
+    {
+      "id": "marta",
+      "scene": "teatro"
+    },
+    {
+      "id": "jorge",
+      "scene": "deposito"
+    },
+    {
+      "id": "enzo",
+      "scene": "sala_musica"
+    },
+    {
+      "id": "gabi",
+      "scene": "sala_musica"
+    },
+    {
+      "id": "kevin",
+      "scene": "cantina"
+    },
+    {
+      "id": "juju",
+      "scene": "cantina"
+    },
+    {
+      "id": "nina",
+      "scene": "corredor"
+    },
+    {
+      "id": "helio",
+      "scene": "sala_professores"
+    }
+  ],
+  "briefing": "20h12, final do Festival Estudantil, bolsa de cinco mil em jogo. Os Ácaros, favoritos, sobem ao palco e tudo apaga. Dez minutos de escuro, e a Dança do 9º leva o prêmio. No camarim da banda, um bilhete: 'QUEM CANTA DE MENTIRA, CAI NO ESCURO.'",
+  "goal": "Descubra quem desligou o disjuntor, quem tem álibi e qual segredo o bilhete queria usar.",
+  "link_types": [
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    },
+    {
+      "id": "pegou",
+      "label": "pegou",
+      "directed": true
+    },
+    {
+      "id": "inventou",
+      "label": "inventou",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "iris",
+      "kind": "pessoa",
+      "name": "Íris",
+      "gender": "f",
+      "role": "técnica de luz",
+      "look": {
+        "skin": "#e9be98",
+        "hair": "rabo",
+        "hair_color": "#2b2b2b",
+        "top": "#455a64",
+        "accessory": "fones"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Não fui eu. A mesa também apagou.",
+            "expr": "bravo",
+            "anim": "negando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "iris_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "iris_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "iris_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Antes que pergunte: não fui eu. A mesa de luz desligou junto. Até ela é vítima.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da mesa de luz",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_log_luz"
+                  ]
+                },
+                {
+                  "text": "Você controla toda a luz?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você apagou a luz de propósito!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "A mesa, sim. A energia, não. Essa fica no depósito, e a chave é do Seu Jorge.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da mesa de luz",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_log_luz"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "20h12 caiu tudo. Gabi e Nina no palco. A voz do Enzo vinha do camarim, mas... parecia repetida.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Quem derruba energia tem que ir ao disjuntor, no depósito. Eu não saí da cabine.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "iris_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_iris"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu ensaiei essa luz um mês! Sai da minha cabine.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "iris_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:iris_bravo} me acusou. Traz o registro da mesa.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da mesa de luz",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_log_luz"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "marta",
+      "kind": "pessoa",
+      "name": "Profa. Marta",
+      "gender": "f",
+      "role": "organizadora do festival",
+      "look": {
+        "skin": "#b5835a",
+        "hair": "longo",
+        "hair_color": "#9e9e9e",
+        "top": "#00695c",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Três meses organizando. Três!",
+            "expr": "triste",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "marta_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "marta_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "marta_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Três meses organizando esse festival. E na hora H, escuro. Que tragédia. Que tragédia.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar sua bolsa e as notas dos jurados",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bolsa_marta",
+                    "c_notas"
+                  ]
+                },
+                {
+                  "text": "Quem tinha motivo pra estragar o show?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora sabotou o próprio festival!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "O Kevin vivia dizendo que a dança ganharia 'de qualquer jeito'. E o Enzo... coitado, canta de mentira, sabia?",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar sua bolsa e as notas dos jurados",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bolsa_marta",
+                    "c_notas"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Os Ácaros iam ganhar. A Juju é minha filha. Ela ensaiou um ano pra essa bolsa.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Peguei as chaves do Jorge, desliguei o disjuntor e deixei aquele bilhete pro Enzo levar a culpa. Ela não sabe de nada.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "marta_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu?! Eu chorei no ensaio geral! Retire-se.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "marta_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:marta_bravo} me ofendeu. Fale com a direção.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar sua bolsa e as notas dos jurados",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bolsa_marta",
+                    "c_notas"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "jorge",
+      "kind": "pessoa",
+      "name": "Seu Jorge",
+      "gender": "m",
+      "role": "zelador, dono das chaves do depósito",
+      "look": {
+        "skin": "#7a4b2a",
+        "hair": "raspado",
+        "hair_color": "#cfcfcf",
+        "top": "#546e7a",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Minhas chaves sumiram.",
+            "expr": "bravo",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "jorge_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "jorge_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "jorge_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Minhas chaves sumiram às 19h40 e o teatro apagou às 20h12. Coincidência? Eu tenho cinquenta anos, não nasci ontem.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o aviso do corredor encerado",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_balde"
+                  ]
+                },
+                {
+                  "text": "O disjuntor desliga sozinho?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor desligou a luz, Seu Jorge!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Nunca. Alguém puxou com a mão. E a porta dos fundos foi aberta com chave, a minha.",
+                  "expr": "desconfiado",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o aviso do corredor encerado",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_balde"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Encerei o corredor das 20h às 20h30 e fiquei de guarda. Ninguém passou. Ninguém.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "As chaves eu deixei na mesa da sala dos professores, 19h40. Quem tava lá era a organizadora.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "jorge_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_jorge"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Trinta anos de escola e me acusam de apagão? Fora.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "jorge_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:jorge_bravo} me acusou. Traz o aviso do corredor.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o aviso do corredor encerado",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_balde"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "enzo",
+      "kind": "pessoa",
+      "name": "Enzo",
+      "gender": "m",
+      "role": "vocalista d'Os Ácaros",
+      "look": {
+        "skin": "#f2c9a1",
+        "hair": "cacheado",
+        "hair_color": "#3a2412",
+        "top": "#212121",
+        "accessory": "cachecol"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Tô ótimo. Super ótimo.",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "enzo_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "enzo_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "enzo_falou"
+              ]
+            },
+            {
+              "if": [
+                "gabi_falou"
+              ],
+              "node": "reage",
+              "ifnot": [
+                "enzo_falou",
+                "enzo_bravo"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Oi. Tô ótimo. Super ótimo. Por que todo mundo tá me olhando? É o bilhete, né?",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "O áudio do camarim é gravado",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_audio"
+                  ]
+                },
+                {
+                  "text": "Onde você tava às 20h12?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você sabotou a própria banda!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "No camarim, aquecendo a voz. Mi mi mi. Todo mundo ouviu.",
+                  "expr": "nervoso",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "O áudio do camarim é gravado",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_audio"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_enzo",
+              "sets": [
+                "enzo_papo"
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Eu canto de playback. Desde sempre. Minha voz trava ao vivo. O áudio era o teste do playback.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Às 20h06 eu fui vomitar no banheiro de nervoso. Disjuntor? Eu nem sei onde fica.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "enzo_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_enzo_verdade"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? Eu... vou aquecer a voz. Em outro lugar.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "enzo_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:enzo_bravo} me pressionou. Não consigo. Só com prova.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o armário dele, sem balas",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_kit_enzo"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "reage": {
+              "lines": [
+                {
+                  "text": "A Gabi falou com {por:gabi_falou}, né? Ela sabe do playback. Ela sempre soube.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "O áudio do camarim é gravado",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_audio"
+                  ]
+                },
+                {
+                  "text": "Onde você tava às 20h12?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "gabi",
+      "kind": "pessoa",
+      "name": "Gabi",
+      "gender": "f",
+      "role": "guitarrista d'Os Ácaros",
+      "look": {
+        "skin": "#9a6240",
+        "hair": "cacheado_longo",
+        "hair_color": "#160e08",
+        "top": "#7b1fa2",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Meu vocalista tá verde.",
+            "expr": "desconfiado",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "gabi_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "gabi_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "gabi_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Meu vocalista tá verde e alguém escreveu que ele 'canta de mentira'. Que maravilha de noite.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o quadro de horários",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ordem"
+                  ]
+                },
+                {
+                  "text": "O Enzo canta de verdade?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você sabotou pra fazer carreira solo!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "...Não vou responder isso. Ele é meu amigo.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o quadro de horários",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ordem"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Às 20h10 a Profa. Marta passou aqui 'conferindo a ordem'. Saiu pelos fundos, do lado do depósito.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "E as balas de mel? É ela que distribui pros cantores. Sempre leva um saco na bolsa.",
+                  "expr": "neutro",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "gabi_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_gabi"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Carreira solo de guitarra num festival de escola? Sai.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "gabi_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:gabi_bravo} me acusou. Traz o quadro de horários.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o quadro de horários",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ordem"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "kevin",
+      "kind": "pessoa",
+      "name": "Kevin",
+      "gender": "m",
+      "role": "líder da Dança do 9º",
+      "look": {
+        "skin": "#5b3a24",
+        "hair": "curto",
+        "hair_color": "#0c0c0c",
+        "top": "#ffeb3b",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Campeão, prazer.",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "kevin_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "kevin_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "kevin_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Campeão, prazer. Sim, eu disse que a gente ia ganhar 'de qualquer jeito'. Era confiança, não plano.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a comanda dos sucos",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_comanda"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, campeão",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Você comprou a vitória no escuro!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "20h08 a gente já tava aqui, brindando. Nove sucos, eu paguei.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Ganhar no escuro? Sem graça. A Juju tá até chorando. Diz que a mãe dela tava estranha.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "kevin_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, campeão",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kevin"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Comprei suco, não vitória. Pode ir embora.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kevin_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:kevin_bravo} me chamou de trapaceiro. Só com chocolate.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, campeão",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate de campeão! Valeu.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Fofoca: 19h50 a Profa. Marta disse pra Juju 'hoje é seu dia, confia na mãe'. A Juju ficou com medo.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "kevin_falou",
+                "kevin_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kevin"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "juju",
+      "kind": "pessoa",
+      "name": "Juju",
+      "gender": "f",
+      "role": "dançarina da Dança do 9º, filha da organizadora",
+      "look": {
+        "skin": "#f5c6a5",
+        "hair": "trancas",
+        "hair_color": "#3b2414",
+        "top": "#ab47bc",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Ganhei e tô com vergonha.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "juju_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "if": [
+                "marta_falou"
+              ],
+              "node": "reage",
+              "ifnot": [
+                "juju_bravo"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "A gente ganhou e eu tô com vergonha. Ninguém ganha uma bolsa no escuro.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Sua mãe é a organizadora, né?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você e sua mãe armaram tudo!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "É. Ela me disse 'hoje é seu dia, confia na mãe'. Eu achei bonito. Agora acho estranho.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_juju",
+              "sets": [
+                "juju_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu não sabia de NADA. Sai.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "juju_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:juju_bravo} me acusou. Não falo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "reage": {
+              "lines": [
+                {
+                  "text": "Já sei que {por:marta_falou} falou com a minha mãe. Por favor, me diz que não foi ela.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Sua mãe é a organizadora, né?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "nina",
+      "kind": "pessoa",
+      "name": "Nina",
+      "gender": "f",
+      "role": "baterista d'Os Ácaros",
+      "look": {
+        "skin": "#7d4a2a",
+        "hair": "trancas",
+        "hair_color": "#120c08",
+        "top": "#00acc1",
+        "accessory": "fones"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Fiquei presa no corredor encerado.",
+            "expr": "triste",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nina_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Cheguei pelo pátio porque o corredor tava encerado. Às 20h12 eu tava no palco. E aí, escuro.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Viu alguém indo para o depósito?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você está encobrindo o Enzo!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Do palco não dá pra ver. Mas a porta dos fundos bateu antes do apagão. Eu ouvi.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Encobrindo? Eu tô é preocupada com ele. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nina_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nina_bravo} me acusou. Hoje não falo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "helio",
+      "kind": "pessoa",
+      "name": "Prof. Hélio",
+      "gender": "m",
+      "role": "jurado e professor de música",
+      "look": {
+        "skin": "#c08a64",
+        "hair": "curto",
+        "hair_color": "#9e9e9e",
+        "top": "#5d4037",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu sabia do playback.",
+            "expr": "triste",
+            "anim": "pensando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "helio_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "helio_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "helio_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Sou jurado. E professor da banda. Eu sabia que o Enzo canta de playback. Contei para uma pessoa só.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar as notas dos jurados",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_notas"
+                  ]
+                },
+                {
+                  "text": "Achei seu relógio no armário do corredor",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "relogio"
+                  ],
+                  "ifnot": [
+                    "helio_troca"
+                  ]
+                },
+                {
+                  "text": "O senhor manipulou as notas!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Às 19h55 Os Ácaros tinham 9,7. A Dança, 9,1. Banda que não se apresenta leva zero.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Contei do playback para a organizadora, a Marta. Às 19h58 ela me perguntou: 'e se faltar luz?'",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "helio_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Achei seu relógio no armário do corredor",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "relogio"
+                  ],
+                  "ifnot": [
+                    "helio_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_helio"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Manipulei? Eu dei nota pelo que ouvi! Saia.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "helio_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:helio_bravo} me ofendeu. Volte com as notas.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei seu relógio no armário do corredor",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "relogio"
+                  ],
+                  "ifnot": [
+                    "helio_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Meu relógio de maestro! Obrigado.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Vou ser honesto: contei do playback do Enzo para a Marta. Ela quis saber até o horário da banda.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "helio_falou",
+                "helio_troca"
+              ],
+              "take_item": "relogio",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_helio"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "deposito",
+      "kind": "lugar",
+      "name": "Depósito"
+    },
+    {
+      "id": "teatro",
+      "kind": "lugar",
+      "name": "Teatro"
+    },
+    {
+      "id": "cantina",
+      "kind": "lugar",
+      "name": "Cantina"
+    },
+    {
+      "id": "corredor",
+      "kind": "lugar",
+      "name": "Corredor"
+    },
+    {
+      "id": "chaves",
+      "kind": "fato",
+      "name": "As chaves do zelador",
+      "icon": "chave"
+    },
+    {
+      "id": "alibi_audio",
+      "kind": "fato",
+      "name": "A voz no camarim",
+      "icon": "microfone"
+    }
+  ],
+  "items": [
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "No mural da cantina.",
+      "icon": "chocolate"
+    },
+    {
+      "id": "relogio",
+      "name": "Relógio de maestro",
+      "desc": "Prateado, com uma clave de sol. No armário do corredor.",
+      "icon": "relogio"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_post_show",
+      "kind": "post",
+      "title": "Post do festival",
+      "time": "20h30",
+      "text": "O festival posta o apagão e os comentários culpam o Kevin e a Íris.",
+      "post": {
+        "user": "@festival.estudantil",
+        "caption": "APAGÃO NA FINAL 😱 Dança do 9º leva a bolsa de R$ 5 mil",
+        "likes": 812,
+        "image": "palco escuro iluminado por lanternas de celular",
+        "comments": [
+          {
+            "user": "@fa.dos.acaros",
+            "text": "claro que foi o Kevin 💀"
+          },
+          {
+            "user": "@juju.9a",
+            "text": "a luz é da Íris né"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_bilhete_camarim",
+      "kind": "bilhete",
+      "title": "Bilhete no camarim",
+      "text": "No espelho do camarim d'Os Ácaros, impresso: 'QUEM CANTA DE MENTIRA, CAI NO ESCURO.'",
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_banda",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da banda",
+      "time": "19h55",
+      "text": "O Enzo está pálido e soltou um 'se der ruim, deu ruim'.",
+      "chat": {
+        "group": "Os Ácaros 🎸",
+        "lines": [
+          {
+            "who": "gabi",
+            "text": "enzo vc tá bem? tá verde",
+            "time": "19h55"
+          },
+          {
+            "who": "enzo",
+            "text": "tô ótimo 🙂 vou testar o retorno no camarim",
+            "time": "19h56"
+          },
+          {
+            "who": "enzo",
+            "text": "se der ruim, deu ruim",
+            "time": "20h01"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_chat_danca",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da dança",
+      "time": "20h09",
+      "text": "A Dança do 9º sai do palco e vai comemorar na cantina.",
+      "chat": {
+        "group": "Dança do 9º 💃",
+        "lines": [
+          {
+            "who": "kevin",
+            "text": "dançamos!!! bora pra cantina 🧃",
+            "time": "20h09"
+          },
+          {
+            "who": "juju",
+            "text": "bora... minha mãe tá estranha",
+            "time": "20h09"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_story_iris",
+      "kind": "post",
+      "title": "Story da Íris",
+      "time": "20h00",
+      "text": "Íris posta da cabine de luz às 20h.",
+      "post": {
+        "user": "@iris.luz",
+        "caption": "cabine pronta 💡 hoje nada dá errado",
+        "likes": 31,
+        "image": "a mesa de luz cheia de botões coloridos",
+        "comments": [],
+        "who": "iris"
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dm_marta",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM da Profa. Marta",
+      "time": "19h50",
+      "text": "A organizadora manda à filha: 'hoje é seu dia, confia na mãe'.",
+      "chat": {
+        "group": "Mãe ❤️",
+        "lines": [
+          {
+            "who": "marta",
+            "text": "filha, hoje é seu dia. confia na mãe ❤️",
+            "time": "19h50"
+          },
+          {
+            "who": "juju",
+            "text": "?? mãe vc tá estranha",
+            "time": "19h51"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_caixinha",
+      "kind": "objeto",
+      "title": "Atrás do figurino",
+      "text": "Atrás das roupas do camarim, uma caixinha de som tocando em loop a voz do Enzo: 'mi mi mi, lá lá lá'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_log_luz",
+      "kind": "registro",
+      "title": "Mesa de luz",
+      "time": "20h12",
+      "text": "Mesa de luz: 20h12, queda total. Anotação da Íris: 'Gabi e Nina no palco. Enzo no camarim. Caiu tudo, até a mesa.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_bala",
+      "kind": "objeto",
+      "title": "Caixa de fusíveis",
+      "text": "Disjuntor do teatro desligado à mão. No chão, a embalagem de uma bala 'Mel & Garganta'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_porta",
+      "kind": "objeto",
+      "title": "Porta dos fundos",
+      "text": "Porta dos fundos do depósito aberta com chave, sem arrombamento. Ela dá para o lado da sala de música.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_kit_enzo",
+      "kind": "objeto",
+      "title": "Armário da banda",
+      "text": "Prateleira do Enzo: fone de retorno e um pendrive 'PLAYBACK_FINAL'. Nenhuma bala de mel.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_ordem",
+      "kind": "registro",
+      "title": "Quadro de horários",
+      "text": "Ordem: 20h00 Dança do 9º, 20h12 Os Ácaros. Rodapé: 'Balas de mel para os cantores: pegar com a Profa. Marta.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_comanda",
+      "kind": "registro",
+      "title": "Comanda da cantina",
+      "time": "20h08",
+      "text": "20h08 às 20h25: nove sucos para a Dança do 9º. Kevin pagou.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_balde",
+      "kind": "registro",
+      "title": "Aviso no balde",
+      "text": "Aviso: 'Corredor encerado das 20h às 20h30. NÃO PISAR. Jorge.' O chão brilha, sem nenhuma pegada.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_notas",
+      "kind": "registro",
+      "title": "Notas dos jurados",
+      "text": "Notas parciais, 19h55: Os Ácaros 9,7. Dança do 9º 9,1. Regra: 'atração que não se apresentar recebe zero'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_bolsa_marta",
+      "kind": "objeto",
+      "title": "Bolsa da organizadora",
+      "text": "Na bolsa da Profa. Marta: o molho de chaves do zelador e um saco de balas 'Mel & Garganta' pela metade.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_audio",
+      "kind": "registro",
+      "title": "Celular da caixinha",
+      "text": "Íris examinou a caixinha: arquivo 'teste_playback_enzo.mp3', gravado sexta, tocando em repetição desde 20h05.",
+      "release": "t+240",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_iris",
+      "kind": "depoimento",
+      "title": "Fala da Íris",
+      "who": "iris",
+      "text": "Íris não saiu da cabine. Às 20h12, Gabi e Nina estavam no palco e a voz do Enzo parecia repetida.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_jorge",
+      "kind": "depoimento",
+      "title": "Fala do Seu Jorge",
+      "who": "jorge",
+      "text": "Ninguém passou pelo corredor encerado. As chaves do zelador sumiram às 19h40 da mesa onde estava a organizadora.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_enzo",
+      "kind": "depoimento",
+      "title": "Fala do Enzo",
+      "who": "enzo",
+      "text": "Enzo diz que estava no camarim aquecendo a voz às 20h12.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_enzo_verdade",
+      "kind": "depoimento",
+      "title": "Segredo do Enzo",
+      "who": "enzo",
+      "text": "Enzo canta de playback. O áudio era um teste. Às 20h06 foi ao banheiro, passando mal de nervoso.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_gabi",
+      "kind": "depoimento",
+      "title": "Fala da Gabi",
+      "who": "gabi",
+      "text": "Às 20h10 a Profa. Marta passou pela sala de música e saiu pelos fundos. Ela distribui as balas de mel.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_kevin",
+      "kind": "depoimento",
+      "title": "Fala do Kevin",
+      "who": "kevin",
+      "text": "Kevin e a dança estavam na cantina desde 20h08. A Juju achou a mãe estranha.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_juju",
+      "kind": "depoimento",
+      "title": "Fala da Juju",
+      "who": "juju",
+      "text": "A mãe da Juju, a organizadora, disse 'hoje é seu dia, confia na mãe'. A Juju não sabia de nada.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_helio",
+      "kind": "depoimento",
+      "title": "Fala do Prof. Hélio",
+      "who": "helio",
+      "text": "O Prof. Hélio contou à Marta sobre o playback. Às 19h58 ela perguntou: 'e se faltar luz?'.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão da Profa. Marta",
+      "who": "marta",
+      "text": "A organizadora pegou as chaves do zelador, desligou o disjuntor pela porta dos fundos e deixou o bilhete para o Enzo levar a culpa.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_arara",
+      "scene": "teatro",
+      "object": "arara_figurino",
+      "label": "Arara de figurinos",
+      "clue": "c_caixinha"
+    },
+    {
+      "id": "hs_quadro",
+      "scene": "teatro",
+      "object": "quadro_teatro",
+      "label": "Mesa de luz",
+      "clue": "c_log_luz"
+    },
+    {
+      "id": "hs_fusiveis",
+      "scene": "deposito",
+      "object": "caixa_fusiveis",
+      "label": "Caixa de fusíveis",
+      "clue": "c_bala"
+    },
+    {
+      "id": "hs_porta",
+      "scene": "deposito",
+      "object": "porta_fundos",
+      "label": "Porta dos fundos",
+      "clue": "c_porta"
+    },
+    {
+      "id": "hs_armario",
+      "scene": "sala_musica",
+      "object": "armario_instrumentos",
+      "label": "Armário da banda",
+      "clue": "c_kit_enzo"
+    },
+    {
+      "id": "hs_horarios",
+      "scene": "sala_musica",
+      "object": "quadro_horarios",
+      "label": "Quadro de horários",
+      "clue": "c_ordem"
+    },
+    {
+      "id": "hs_balcao",
+      "scene": "cantina",
+      "object": "balcao",
+      "label": "Balcão",
+      "clue": "c_comanda"
+    },
+    {
+      "id": "hs_mural_c",
+      "scene": "cantina",
+      "object": "mural_cantina",
+      "label": "Mural",
+      "item": "chocolate"
+    },
+    {
+      "id": "hs_balde",
+      "scene": "corredor",
+      "object": "lixeira",
+      "label": "Balde do zelador",
+      "clue": "c_balde"
+    },
+    {
+      "id": "hs_arm_corr",
+      "scene": "corredor",
+      "object": "armario_aberto",
+      "label": "Armário do corredor",
+      "item": "relogio"
+    },
+    {
+      "id": "hs_mural_p",
+      "scene": "sala_professores",
+      "object": "mural_recados",
+      "label": "Notas dos jurados",
+      "clue": "c_notas"
+    },
+    {
+      "id": "hs_bolsa",
+      "scene": "sala_professores",
+      "object": "armario_prof",
+      "label": "Bolsa da organizadora",
+      "clue": "c_bolsa_marta"
+    }
+  ],
+  "solution": {
+    "culprit": "marta",
+    "culprit_question": "Quem apagou as luzes da final?",
+    "culprit_evidence": [
+      "c_bolsa_marta",
+      "c_ordem",
+      "c_notas",
+      "c_dep_gabi",
+      "c_dep_helio",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "apagao",
+        "label": "Quem foi ao disjuntor e com qual chave"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava às 20h12"
+      },
+      {
+        "id": "isca",
+        "label": "O álibi falso"
+      }
+    ],
+    "edges": [
+      {
+        "from": "marta",
+        "to": "deposito",
+        "type": "estava",
+        "category": "apagao",
+        "evidence": [
+          "c_bala",
+          "c_porta",
+          "c_bolsa_marta",
+          "c_dep_gabi",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "marta",
+        "to": "chaves",
+        "type": "pegou",
+        "category": "apagao",
+        "evidence": [
+          "c_bolsa_marta",
+          "c_dep_jorge"
+        ]
+      },
+      {
+        "from": "enzo",
+        "to": "alibi_audio",
+        "type": "inventou",
+        "category": "isca",
+        "evidence": [
+          "c_audio",
+          "c_caixinha",
+          "c_dep_enzo_verdade"
+        ]
+      },
+      {
+        "from": "kevin",
+        "to": "cantina",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_comanda",
+          "c_chat_danca",
+          "c_dep_kevin"
+        ]
+      },
+      {
+        "from": "iris",
+        "to": "teatro",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_log_luz",
+          "c_story_iris",
+          "c_dep_iris"
+        ]
+      },
+      {
+        "from": "jorge",
+        "to": "corredor",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_balde",
+          "c_dep_jorge"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "enzo",
+        "to": "deposito",
+        "type": "estava",
+        "category": "apagao"
+      },
+      {
+        "from": "kevin",
+        "to": "deposito",
+        "type": "estava",
+        "category": "apagao"
+      },
+      {
+        "from": "iris",
+        "to": "deposito",
+        "type": "estava",
+        "category": "apagao"
+      }
+    ]
+  },
+  "hints": [
+    "Disjuntor não desliga sozinho, e a porta dos fundos foi aberta com chave. De quem é a chave?",
+    "O corredor estava encerado e sem pegadas. Qual foi o caminho?",
+    "Uma voz no camarim prova que a pessoa estava lá? E um segredo prova culpa?",
+    "Quem distribui as balas de mel?",
+    "Quem sabia do segredo do Enzo para escrever aquele bilhete?",
+    "Quem ganhava se a banda favorita levasse zero?"
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "19h40",
+        "text": "As chaves do zelador somem da mesa da sala dos professores."
+      },
+      {
+        "time": "19h50",
+        "text": "Marta escreve à filha: 'hoje é seu dia, confia na mãe'."
+      },
+      {
+        "time": "19h55",
+        "text": "Notas parciais: Os Ácaros na frente."
+      },
+      {
+        "time": "19h58",
+        "text": "Marta pergunta ao jurado: 'e se faltar luz?'."
+      },
+      {
+        "time": "20h05",
+        "text": "O teste de playback do Enzo toca sozinho no camarim."
+      },
+      {
+        "time": "20h06",
+        "text": "Enzo vai ao banheiro, passando mal de nervoso."
+      },
+      {
+        "time": "20h10",
+        "text": "Marta passa pela sala de música e sai pelos fundos."
+      },
+      {
+        "time": "20h12",
+        "text": "Com as chaves do zelador, ela desliga o disjuntor. Deixa cair uma bala de mel."
+      }
+    ],
+    "explanation": "Primeiro todos culpam o rival e a técnica. Depois o áudio falso e a bala de mel transformam o Enzo no culpado perfeito, e era exatamente esse o plano. Mas o armário do Enzo não tem bala nenhuma: quem distribui as balas é a organizadora, e as chaves do zelador estavam na bolsa dela. A Profa. Marta usou o segredo do playback, contado pelo jurado, para pôr a culpa no Enzo e dar a bolsa à filha.",
+    "refuted": [
+      "Kevin estava na cantina desde 20h08.",
+      "Íris não saiu da cabine.",
+      "Enzo mentiu sobre o camarim, mas só para esconder o playback.",
+      "Juju não sabia do plano da mãe."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "A Profa. Marta, organizadora do festival, viu pelas notas parciais que Os Ácaros iam vencer a filha dela, Juju. O jurado Hélio tinha contado a ela que o vocalista Enzo canta de playback. Ela pegou as chaves do zelador às 19h40, saiu pelos fundos às 20h10 e desligou o disjuntor às 20h12, deixando cair uma das balas de mel que ela mesma distribui. Antes, deixou no camarim o bilhete 'QUEM CANTA DE MENTIRA, CAI NO ESCURO' para o Enzo levar a culpa.",
+    "twist": "Duas camadas. Primeira: o áudio falso (t+240) e a bala de mel transformam o Enzo no culpado perfeito; essa é a isca, preparada pelo bilhete do camarim. Segunda: o armário do Enzo não tem balas, o quadro diz que quem distribui é a Profa. Marta, e as chaves do zelador estão na bolsa dela. Giro final: o jurado contou o segredo do playback para a organizadora, e a filha dela não sabia de nada.",
+    "solution_steps": [
+      "Ler o post e o bilhete: o rival e a técnica são os primeiros suspeitos.",
+      "Cantina e teatro: a comanda e a mesa de luz dão álibi ao Kevin e à Íris.",
+      "Corredor: o balde mostra o chão encerado e sem pegadas. Depósito: a porta dos fundos foi aberta com chave e há uma bala de mel no disjuntor.",
+      "O áudio (cerca de 4 min) mostra que a voz do Enzo era gravação: ele vira o suspeito. Com calma, ele conta o playback e onde estava.",
+      "Sala de música: o armário do Enzo não tem bala nenhuma, e o quadro diz que as balas são distribuídas pela Profa. Marta. A Gabi viu a Marta sair pelos fundos às 20h10.",
+      "Sala dos professores: as notas mostram o motivo, e a bolsa da Marta tem as chaves do zelador. O Hélio conta que revelou o playback a ela.",
+      "Pistas só de um aluno (DM da Marta à filha, grupo da dança) ligam a Marta à Juju.",
+      "Montar as 6 linhas, incluindo o álibi falso do Enzo, e apontar a Profa. Marta."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 6 min",
+        "aha": "Rival e técnica são os suspeitos.",
+        "if_stuck": "Onde o Kevin e a Íris estavam às 20h12?"
+      },
+      {
+        "when": "6 a 14 min",
+        "aha": "Aha 1: o caminho para o disjuntor foi pelos fundos, com chave.",
+        "if_stuck": "De quem são as chaves do depósito? E quando sumiram?"
+      },
+      {
+        "when": "14 a 22 min",
+        "aha": "Isca: o áudio e a bala de mel apontam o Enzo.",
+        "if_stuck": "O armário do Enzo tem bala de mel? Quem distribui as balas?"
+      },
+      {
+        "when": "22 a 30 min",
+        "aha": "Aha 2: as chaves na bolsa e as notas apontam a Profa. Marta.",
+        "if_stuck": "Quem sabia do playback para escrever o bilhete?"
+      },
+      {
+        "when": "30 min em diante",
+        "aha": "Giro final: a DM à filha e a fala do Hélio fecham o motivo.",
+        "if_stuck": "A Juju sabia do plano?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_post_show",
+        "where": "Já no início, para todos",
+        "proves": "Apresenta o apagão e as suspeitas falsas sobre o Kevin e a Íris."
+      },
+      {
+        "clue": "c_bilhete_camarim",
+        "where": "Já no início, para todos",
+        "proves": "O bilhete foi feito para culpar o Enzo usando o segredo dele."
+      },
+      {
+        "clue": "c_chat_banda",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Mostra o nervosismo do Enzo, que vira isca."
+      },
+      {
+        "clue": "c_chat_danca",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Prova a linha: Kevin estava em Cantina."
+      },
+      {
+        "clue": "c_story_iris",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Prova a linha: Íris estava em Teatro."
+      },
+      {
+        "clue": "c_dm_marta",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "A organizadora prometeu à filha que 'hoje é seu dia'."
+      },
+      {
+        "clue": "c_caixinha",
+        "where": "Teatro: tocar em 'Arara de figurinos'",
+        "proves": "Prova a linha: Enzo inventou A voz no camarim."
+      },
+      {
+        "clue": "c_log_luz",
+        "where": "Teatro: tocar em 'Mesa de luz'",
+        "proves": "Prova a linha: Íris estava em Teatro."
+      },
+      {
+        "clue": "c_bala",
+        "where": "Depósito: tocar em 'Caixa de fusíveis'",
+        "proves": "Prova a linha: Profa. Marta estava em Depósito."
+      },
+      {
+        "clue": "c_porta",
+        "where": "Depósito: tocar em 'Porta dos fundos'",
+        "proves": "Prova a linha: Profa. Marta estava em Depósito."
+      },
+      {
+        "clue": "c_kit_enzo",
+        "where": "Sala de música: tocar em 'Armário da banda'",
+        "proves": "O Enzo tem playback, mas nenhuma bala de mel: a bala não é dele."
+      },
+      {
+        "clue": "c_ordem",
+        "where": "Sala de música: tocar em 'Quadro de horários'",
+        "proves": "Aponta para Profa. Marta."
+      },
+      {
+        "clue": "c_comanda",
+        "where": "Cantina: tocar em 'Balcão'",
+        "proves": "Prova a linha: Kevin estava em Cantina."
+      },
+      {
+        "clue": "c_balde",
+        "where": "Corredor: tocar em 'Balde do zelador'",
+        "proves": "Prova a linha: Seu Jorge estava em Corredor."
+      },
+      {
+        "clue": "c_notas",
+        "where": "Sala dos professores: tocar em 'Notas dos jurados'",
+        "proves": "Mostra o motivo: Os Ácaros iam vencer."
+      },
+      {
+        "clue": "c_bolsa_marta",
+        "where": "Sala dos professores: tocar em 'Bolsa da organizadora'",
+        "proves": "Prova a linha: Profa. Marta estava em Depósito; Profa. Marta pegou As chaves do zelador. Aponta para Profa. Marta."
+      },
+      {
+        "clue": "c_audio",
+        "where": "Chega sozinha aos 4 min",
+        "proves": "Prova a linha: Enzo inventou A voz no camarim."
+      },
+      {
+        "clue": "c_dep_iris",
+        "where": "mostrar 'Mesa de luz' para Íris",
+        "proves": "Prova a linha: Íris estava em Teatro."
+      },
+      {
+        "clue": "c_dep_jorge",
+        "where": "mostrar 'Aviso no balde' para Seu Jorge",
+        "proves": "Prova a linha: Profa. Marta pegou As chaves do zelador; Seu Jorge estava em Corredor."
+      },
+      {
+        "clue": "c_dep_enzo",
+        "where": "conversar com Enzo ('Onde você tava às 20h12?')",
+        "proves": "O álibi falso do Enzo."
+      },
+      {
+        "clue": "c_dep_enzo_verdade",
+        "where": "mostrar 'Celular da caixinha' para Enzo; ou mostrar 'Armário da banda' para Enzo",
+        "proves": "Prova a linha: Enzo inventou A voz no camarim."
+      },
+      {
+        "clue": "c_dep_gabi",
+        "where": "mostrar 'Quadro de horários' para Gabi",
+        "proves": "Prova a linha: Profa. Marta estava em Depósito. Aponta para Profa. Marta."
+      },
+      {
+        "clue": "c_dep_kevin",
+        "where": "mostrar 'Comanda da cantina' para Kevin; ou trocar 'Barra de chocolate' com Kevin",
+        "proves": "Prova a linha: Kevin estava em Cantina."
+      },
+      {
+        "clue": "c_dep_juju",
+        "where": "conversar com Juju ('Sua mãe é a organizadora, né?')",
+        "proves": "A Juju não sabia de nada."
+      },
+      {
+        "clue": "c_dep_helio",
+        "where": "mostrar 'Notas dos jurados' para Prof. Hélio; ou trocar 'Relógio de maestro' com Prof. Hélio",
+        "proves": "Aponta para Profa. Marta."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Bolsa da organizadora' + 'Notas dos jurados' para Profa. Marta",
+        "proves": "Prova a linha: Profa. Marta estava em Depósito. Aponta para Profa. Marta."
+      }
+    ],
+    "red_herrings": [
+      "O Kevin ganhou, mas estava na cantina.",
+      "A Íris cuida da luz, mas o disjuntor fica no depósito.",
+      "O Enzo inventou um álibi, mas só para esconder o playback."
+    ],
+    "faq": [
+      {
+        "q": "Foi o Kevin, ele queria ganhar!",
+        "a": "Onde o Kevin estava às 20h12?"
+      },
+      {
+        "q": "O áudio prova que foi o Enzo!",
+        "a": "O áudio prova que ele mentiu. Prova que ele foi ao depósito? O armário dele tem bala de mel?"
+      },
+      {
+        "q": "Como alguém chegou ao depósito?",
+        "a": "O corredor estava encerado. O depósito tem outra porta?"
+      },
+      {
+        "q": "De quem é a bala de mel?",
+        "a": "Leiam o rodapé do quadro de horários."
+      },
+      {
+        "q": "Quem escreveu o bilhete?",
+        "a": "Quem sabia do playback? Perguntem ao jurado."
+      },
+      {
+        "q": "A Juju sabia?",
+        "a": "Conversem com ela com cuidado. E leiam a DM da mãe."
+      }
+    ],
+    "talking_points": [
+      "Um adulto que usa o segredo de um aluno para culpá-lo: por que isso é tão grave?",
+      "O Enzo mentiu. A mentira dele quase condenou um inocente: ele mesmo. O que aprendemos?",
+      "Por que a pista mais 'óbvia' foi plantada?"
+    ]
+  }
+}

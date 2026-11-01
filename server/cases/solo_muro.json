@@ -1,0 +1,1112 @@
+{
+  "id": "solo_muro",
+  "mode": "solo",
+  "title": "O Recado no Muro",
+  "tagline": "Spray vermelho, dois metros de raiva e nenhuma assinatura.",
+  "difficulty": 1,
+  "duration_sec": 780,
+  "scene": "patio",
+  "locations": [
+    "patio",
+    "deposito",
+    "sala_professores"
+  ],
+  "scene_people": [
+    {
+      "id": "nogueira",
+      "scene": "patio"
+    },
+    {
+      "id": "kevin",
+      "scene": "patio"
+    },
+    {
+      "id": "jorge",
+      "scene": "deposito"
+    },
+    {
+      "id": "thiago",
+      "scene": "sala_professores"
+    }
+  ],
+  "briefing": "Segunda, 6h50. No muro do pátio, em spray vermelho: 'NOGUEIRA LADRÃO DE NOTA'. O professor está pálido. A escola olha pro Kevin, que grafita a cidade inteira. Só que o Kevin assina tudo. Esse recado não tem assinatura. Tem raiva.",
+  "goal": "Descubra quem pichou o muro e por onde entrou na escola.",
+  "link_types": [
+    {
+      "id": "pichou",
+      "label": "pichou",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "nogueira",
+      "kind": "pessoa",
+      "name": "Prof. Nogueira",
+      "gender": "m",
+      "role": "professor de história, alvo do recado",
+      "look": {
+        "skin": "#d8a982",
+        "hair": "curto",
+        "hair_color": "#757575",
+        "top": "#4e342e",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Trinta anos de magistério. E isso.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nogueira_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Trinta anos dando aula e me chamam de ladrão. Em spray. Na frente dos alunos.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem teria raiva do senhor?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor mereceu, professor?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Sexta peguei um aluno colando. Zerei a prova e tirei ele da viagem. Regra é regra.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Ele saiu dizendo 'o senhor vai se arrepender'. Achei que era drama.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Mereci?! Saia da minha frente, detetive.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nogueira_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nogueira_bravo} me desrespeitou. Volte com educação.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "kevin",
+      "kind": "pessoa",
+      "name": "Kevin",
+      "gender": "m",
+      "role": "grafiteiro conhecido",
+      "look": {
+        "skin": "#5b3a24",
+        "hair": "curto",
+        "hair_color": "#0c0c0c",
+        "top": "#ffeb3b",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Isso aí não é meu.",
+            "expr": "desconfiado",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "kevin_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "kevin_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "kevin_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Olha a letra desse muro. Torta, escorrida, sem sombra. Eu nunca faria um trampo tão feio.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar seu post do festival",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_live_kevin"
+                  ]
+                },
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Você sabe quem fez isso?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Foi você, todo mundo sabe!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Não. Mas spray 'Color Max' é de papelaria. Profissional não usa.",
+                  "expr": "neutro",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar seu post do festival",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_live_kevin"
+                  ]
+                },
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Domingo, 22h, eu tava pintando ao vivo no festival da praça. Duzentas pessoas viram.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "E eu assino tudo. Quem pichou isso queria que pensassem em mim.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kevin_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kevin"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Todo mundo sabe o quê? Que eu tenho cara de culpado? Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kevin_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:kevin_bravo} me julgou pela cara. Sem prova, sem papo.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar seu post do festival",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_live_kevin"
+                  ]
+                },
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Salvou! Deixa eu te mostrar a live inteira.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Olha a hora: 22h05, eu na praça, pincel na mão. Álibi em 4K.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "kevin_falou",
+                "kevin_troca"
+              ],
+              "take_item": "carregador",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kevin"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "jorge",
+      "kind": "pessoa",
+      "name": "Seu Jorge",
+      "gender": "m",
+      "role": "zelador",
+      "look": {
+        "skin": "#7a4b2a",
+        "hair": "raspado",
+        "hair_color": "#cfcfcf",
+        "top": "#546e7a",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu ouvi barulho domingo.",
+            "expr": "desconfiado",
+            "anim": "pensando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "jorge_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "jorge_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "jorge_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Domingo eu tava de plantão. Ouvi barulho, fui ver, não achei ninguém. Achei que era gato.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o livro do plantão",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_livro"
+                  ]
+                },
+                {
+                  "text": "Dá pra entrar na escola à noite?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor deixou entrar de propósito!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Pela frente, não. Pelos fundos do depósito... infelizmente, dá.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o livro do plantão",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_livro"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "22h10. Vi um vulto correndo pro depósito, de capuz. Tênis branco com um raio do lado.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Saiu pela porta dos fundos. Aquela tranca tá quebrada faz uma semana. Eu avisei!",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "jorge_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_jorge"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "De propósito? Eu quase morri de susto! Fora.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "jorge_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:jorge_bravo} me acusou. Volte com o livro do plantão.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o livro do plantão",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_livro"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "thiago",
+      "kind": "pessoa",
+      "name": "Thiago",
+      "gender": "m",
+      "role": "aluno do 2B, fora da viagem",
+      "look": {
+        "skin": "#c99266",
+        "hair": "franja",
+        "hair_color": "#2d1e12",
+        "top": "#3949ab",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Tô aqui por outra coisa.",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "thiago_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "thiago_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "thiago_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Tô na coordenação por outro motivo. Nada a ver com muro. Que muro?",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o tênis com tinta vermelha",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_tenis"
+                  ]
+                },
+                {
+                  "text": "Você foi tirado da viagem, né?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você pichou o muro, Thiago!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Fui. Por causa de uma cola. Todo mundo cola, só eu fui pego. Justo, né?",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o tênis com tinta vermelha",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_tenis"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Ele me humilhou na frente da sala. Zerou minha prova e me tirou da viagem.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Entrei pelos fundos domingo e escrevi a verdade. Pra mim, é a verdade.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "thiago_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Prova. Cadê a prova? Não tem. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "thiago_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:thiago_bravo} me acusou sem prova. Não falo mais nada.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a pegada do depósito",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_pegada"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "deposito",
+      "kind": "lugar",
+      "name": "Depósito"
+    },
+    {
+      "id": "festival",
+      "kind": "lugar",
+      "name": "Festival da praça",
+      "scene": "patio"
+    },
+    {
+      "id": "muro",
+      "kind": "fato",
+      "name": "Muro pichado",
+      "icon": "cartaz"
+    }
+  ],
+  "items": [
+    {
+      "id": "carregador",
+      "name": "Carregador de celular",
+      "desc": "Esquecido na raiz da árvore do pátio.",
+      "icon": "carregador"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_foto_muro",
+      "kind": "post",
+      "title": "Foto do muro",
+      "time": "7h00",
+      "text": "A foto do muro pichado viraliza e os comentários culpam o Kevin.",
+      "post": {
+        "user": "@escola.news",
+        "caption": "AMANHECEU ASSIM 😳 quem foi??",
+        "likes": 412,
+        "image": "muro do pátio com 'NOGUEIRA LADRÃO DE NOTA' em spray vermelho escorrido",
+        "comments": [
+          {
+            "user": "@juju.9a",
+            "text": "Kevin né, óbvio 💀"
+          },
+          {
+            "user": "@kevin.arte",
+            "text": "isso aí tá FEIO demais pra ser meu"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_spray",
+      "kind": "objeto",
+      "title": "Lixeira do pátio",
+      "text": "Na lixeira, uma lata de spray vermelho 'Color Max' vazia, com etiqueta da Papelaria Estrela.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_pegada",
+      "kind": "objeto",
+      "title": "Porta dos fundos",
+      "text": "Tranca dos fundos quebrada. No chão, pegada de tênis com desenho de raio, tamanho 41, respingada de vermelho.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_livro",
+      "kind": "registro",
+      "title": "Livro do plantão",
+      "time": "22h10",
+      "text": "Livro do zelador, domingo: '22h10, barulho no pátio. Vulto de capuz fugiu pelo depósito.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_ocorrencia",
+      "kind": "registro",
+      "title": "Ocorrência de sexta",
+      "text": "Ocorrência do Prof. Nogueira, sexta: 'Thiago, 2B, pego colando. Prova zerada. Fora da viagem.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_tenis",
+      "kind": "objeto",
+      "title": "Achados da coordenação",
+      "text": "Nos achados da coordenação: um tênis branco com raio, 41, respingado de vermelho. Etiqueta na palmilha: 'THIAGO 2B'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_live_kevin",
+      "kind": "post",
+      "title": "Live do Kevin",
+      "time": "domingo 22h05",
+      "text": "Domingo às 22h05 o Kevin está ao vivo pintando no festival da praça.",
+      "post": {
+        "user": "@kevin.arte",
+        "caption": "ao vivo no festival 🎨 assinando tudo, como sempre",
+        "likes": 980,
+        "image": "Kevin pintando um muro enorme na praça, cercado de gente",
+        "comments": [
+          {
+            "user": "@fã.do.kevin",
+            "text": "🔥🔥🔥"
+          }
+        ],
+        "who": "kevin"
+      },
+      "release": "t+180",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_kevin",
+      "kind": "depoimento",
+      "title": "Fala do Kevin",
+      "who": "kevin",
+      "text": "Kevin estava ao vivo no festival da praça domingo às 22h, e assina todo trabalho dele.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_jorge",
+      "kind": "depoimento",
+      "title": "Fala do Seu Jorge",
+      "who": "jorge",
+      "text": "Seu Jorge viu um vulto de capuz e tênis com raio fugir pelos fundos do depósito às 22h10.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão do Thiago",
+      "who": "thiago",
+      "text": "Thiago entrou pelos fundos do depósito domingo à noite e pichou o muro por vingança.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_lixeira",
+      "scene": "patio",
+      "object": "lixeira_patio",
+      "label": "Lixeira do pátio",
+      "clue": "c_spray"
+    },
+    {
+      "id": "hs_arvore",
+      "scene": "patio",
+      "object": "arvore",
+      "label": "Árvore",
+      "item": "carregador"
+    },
+    {
+      "id": "hs_porta",
+      "scene": "deposito",
+      "object": "porta_fundos",
+      "label": "Porta dos fundos",
+      "clue": "c_pegada"
+    },
+    {
+      "id": "hs_livro",
+      "scene": "deposito",
+      "object": "prateleira",
+      "label": "Livro do plantão",
+      "clue": "c_livro"
+    },
+    {
+      "id": "hs_escaninho",
+      "scene": "sala_professores",
+      "object": "escaninho",
+      "label": "Ocorrências",
+      "clue": "c_ocorrencia"
+    },
+    {
+      "id": "hs_achados",
+      "scene": "sala_professores",
+      "object": "armario_prof",
+      "label": "Achados e perdidos",
+      "clue": "c_tenis"
+    }
+  ],
+  "solution": {
+    "culprit": "thiago",
+    "culprit_question": "Quem pichou o muro?",
+    "culprit_evidence": [
+      "c_tenis",
+      "c_pegada",
+      "c_ocorrencia",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "autoria",
+        "label": "Quem pichou"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava domingo à noite"
+      }
+    ],
+    "edges": [
+      {
+        "from": "thiago",
+        "to": "muro",
+        "type": "pichou",
+        "category": "autoria",
+        "evidence": [
+          "c_tenis",
+          "c_pegada",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "thiago",
+        "to": "deposito",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_pegada",
+          "c_livro",
+          "c_dep_jorge"
+        ]
+      },
+      {
+        "from": "kevin",
+        "to": "festival",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_live_kevin",
+          "c_dep_kevin"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "kevin",
+        "to": "muro",
+        "type": "pichou",
+        "category": "autoria"
+      }
+    ]
+  },
+  "hints": [
+    "Grafiteiro famoso assina. Esse recado tem assinatura?",
+    "Por onde alguém entra numa escola trancada à noite?",
+    "Pegadas contam tamanho e modelo. Quem perdeu um tênis?",
+    "Quem teria raiva do professor por causa de uma nota?"
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "Sexta",
+        "text": "Nogueira pega o Thiago colando, zera a prova e o tira da viagem."
+      },
+      {
+        "time": "22h05",
+        "text": "Kevin pinta ao vivo no festival da praça."
+      },
+      {
+        "time": "22h10",
+        "text": "Thiago entra pelos fundos do depósito e picha o muro."
+      },
+      {
+        "time": "6h50",
+        "text": "A escola acorda com o recado. O Kevin leva a culpa."
+      }
+    ],
+    "explanation": "Todo mundo apontou o Kevin, mas ele estava ao vivo na praça e assina o que pinta. Quem tinha motivo era o Thiago, zerado e tirado da viagem na sexta. O aha: o tênis de raio, tamanho 41, respingado de vermelho, tem o nome dele na palmilha.",
+    "refuted": [
+      "Kevin estava ao vivo no festival da praça às 22h05."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "Na sexta, o Prof. Nogueira pegou o Thiago colando, zerou a prova e o tirou da viagem. No domingo às 22h10, o Thiago entrou pela tranca quebrada dos fundos do depósito e pichou o muro com spray de papelaria. Na fuga, deixou pegadas e depois esqueceu o tênis sujo nos achados da coordenação.",
+    "twist": "Plantado na lata de spray de papelaria (grafiteiro não usa), na pegada de raio 41 e na ocorrência de sexta. A live do Kevin (t+) só derruba a pista falsa. Segundo giro: a tranca dos fundos estava quebrada havia uma semana e ninguém consertou.",
+    "solution_steps": [
+      "Ver a foto do muro: todos culpam o Kevin.",
+      "No pátio, a lata é de spray de papelaria, não de grafiteiro.",
+      "No depósito, a tranca dos fundos está quebrada e há pegada de tênis de raio 41; o livro do plantão registra a fuga às 22h10.",
+      "Na sala dos professores, a ocorrência de sexta mostra o motivo do Thiago.",
+      "Nos achados, o tênis de raio com tinta tem o nome do Thiago.",
+      "A live do Kevin (chega com o tempo) mostra que ele estava na praça.",
+      "Mostrar o tênis ao Thiago e apontá-lo."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 4 min",
+        "aha": "A turma culpa o Kevin.",
+        "if_stuck": "O Kevin assina o que pinta? Esse recado tem assinatura?"
+      },
+      {
+        "when": "4 a 8 min",
+        "aha": "Aha: a pegada e o tênis levam a um aluno, não a um grafiteiro.",
+        "if_stuck": "Quem perdeu um tênis respingado de vermelho?"
+      },
+      {
+        "when": "8 min em diante",
+        "aha": "A ocorrência mostra o motivo; a live confirma o Kevin longe.",
+        "if_stuck": "Por que alguém escreveria 'ladrão de nota'?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_foto_muro",
+        "where": "Já no início, para todos",
+        "proves": "Apresenta o recado e a suspeita falsa sobre o Kevin."
+      },
+      {
+        "clue": "c_spray",
+        "where": "Pátio: tocar em 'Lixeira do pátio'",
+        "proves": "Spray de papelaria: não parece coisa de grafiteiro profissional."
+      },
+      {
+        "clue": "c_pegada",
+        "where": "Depósito: tocar em 'Porta dos fundos'",
+        "proves": "Prova a linha: Thiago pichou Muro pichado; Thiago estava em Depósito. Aponta para Thiago."
+      },
+      {
+        "clue": "c_livro",
+        "where": "Depósito: tocar em 'Livro do plantão'",
+        "proves": "Prova a linha: Thiago estava em Depósito."
+      },
+      {
+        "clue": "c_ocorrencia",
+        "where": "Sala dos professores: tocar em 'Ocorrências'",
+        "proves": "Mostra o motivo do Thiago: prova zerada e fora da viagem."
+      },
+      {
+        "clue": "c_tenis",
+        "where": "Sala dos professores: tocar em 'Achados e perdidos'",
+        "proves": "Prova a linha: Thiago pichou Muro pichado. Aponta para Thiago."
+      },
+      {
+        "clue": "c_live_kevin",
+        "where": "Chega sozinha aos 3 min",
+        "proves": "Prova a linha: Kevin estava em Festival da praça."
+      },
+      {
+        "clue": "c_dep_kevin",
+        "where": "mostrar 'Live do Kevin' para Kevin; ou trocar 'Carregador de celular' com Kevin",
+        "proves": "Prova a linha: Kevin estava em Festival da praça."
+      },
+      {
+        "clue": "c_dep_jorge",
+        "where": "mostrar 'Livro do plantão' para Seu Jorge",
+        "proves": "Prova a linha: Thiago estava em Depósito."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Achados da coordenação' para Thiago; ou mostrar 'Porta dos fundos' para Thiago",
+        "proves": "Prova a linha: Thiago pichou Muro pichado. Aponta para Thiago."
+      }
+    ],
+    "red_herrings": [
+      "O Kevin é grafiteiro, mas assina tudo e estava ao vivo na praça."
+    ],
+    "faq": [
+      {
+        "q": "Foi o Kevin, ele picha tudo!",
+        "a": "Ele assina o que faz? Onde ele estava domingo às 22h?"
+      },
+      {
+        "q": "Como alguém entrou à noite?",
+        "a": "Olhem as portas do depósito."
+      },
+      {
+        "q": "Quem tem tênis de raio 41?",
+        "a": "Procurem nos achados e perdidos."
+      },
+      {
+        "q": "Qual o motivo?",
+        "a": "Leiam as ocorrências de sexta na sala dos professores."
+      }
+    ],
+    "talking_points": [
+      "Raiva de uma punição justifica atacar alguém em público?",
+      "Por que a escola culpou o Kevin antes de olhar as provas?",
+      "Como o Thiago poderia ter contestado a nota de outro jeito?"
+    ]
+  }
+}

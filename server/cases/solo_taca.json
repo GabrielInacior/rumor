@@ -1,0 +1,1530 @@
+{
+  "id": "solo_taca",
+  "mode": "solo",
+  "title": "A Taça do Fundador",
+  "tagline": "Trinta anos na vitrine. Uma sexta à noite para virar latão.",
+  "difficulty": 3,
+  "duration_sec": 1320,
+  "scene": "sala_diretor",
+  "locations": [
+    "sala_diretor",
+    "teatro",
+    "sala_professores",
+    "corredor",
+    "deposito"
+  ],
+  "scene_people": [
+    {
+      "id": "otavio",
+      "scene": "sala_diretor"
+    },
+    {
+      "id": "sofia",
+      "scene": "teatro"
+    },
+    {
+      "id": "marta",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "nogueira",
+      "scene": "corredor"
+    },
+    {
+      "id": "nanda",
+      "scene": "corredor"
+    },
+    {
+      "id": "jorge",
+      "scene": "deposito"
+    }
+  ],
+  "briefing": "Segunda, 9h. A Taça do Fundador, prata maciça de 1962, avaliada em quinze mil reais, passou trinta anos na vitrine do diretor. Hoje o avaliador raspou a base: latão. A verdadeira sumiu. A chave da vitrine passou por poucas mãos. Uma delas mente muito bem.",
+  "goal": "Descubra quem trocou a taça, quem fez a cópia e quando a troca aconteceu.",
+  "link_types": [
+    {
+      "id": "pegou",
+      "label": "pegou",
+      "directed": true
+    },
+    {
+      "id": "fez",
+      "label": "fez",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "otavio",
+      "kind": "pessoa",
+      "name": "Sr. Otávio",
+      "gender": "m",
+      "role": "diretor",
+      "look": {
+        "skin": "#8a5a3c",
+        "hair": "raspado",
+        "hair_color": "#bdbdbd",
+        "top": "#263238",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Sessenta anos de escola. E isso.",
+            "expr": "bravo",
+            "anim": "negando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "otavio_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "otavio_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "otavio_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "A taça do fundador. Na MINHA sala. Trocada por uma peça de latão. Alguém vai pagar.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a foto de março do jornal",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_foto_marco"
+                  ]
+                },
+                {
+                  "text": "Quem tem a chave da vitrine?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor vendeu a taça, diretor?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Eu e o Seu Jorge, que limpa. E quem pedir no caderno da chave, claro.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                },
+                {
+                  "text": "Sexta eu saí às 17h. Reunião na secretaria de educação.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a foto de março do jornal",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_foto_marco"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "O amassado na alça! Meu avô... quer dizer, o fundador derrubou a taça em 1970. Toda foto tem.",
+                  "expr": "surpreso",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Essa da vitrine está lisinha. Então a troca é recente. Depois de março.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "otavio_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu?! Saia da minha sala agora.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "otavio_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:otavio_bravo} me acusou. Volte com provas, não com ofensas.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a foto de março do jornal",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_foto_marco"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "sofia",
+      "kind": "pessoa",
+      "name": "Sofia",
+      "gender": "f",
+      "role": "faz os objetos de cena do teatro",
+      "look": {
+        "skin": "#6b4423",
+        "hair": "ondulado",
+        "hair_color": "#1b1b1b",
+        "top": "#4a148c",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu só faço cenário.",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "sofia_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "sofia_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "sofia_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu só faço cenário. Coroas, espadas, coisas de mentira. Por que estão me olhando assim?",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a encomenda da réplica",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_encomenda"
+                  ]
+                },
+                {
+                  "text": "Toma, fita pra consertar o cenário",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "fita"
+                  ],
+                  "ifnot": [
+                    "sofia_troca"
+                  ]
+                },
+                {
+                  "text": "Você trocou a taça, Sofia!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Tá. Fiz a réplica, sim. A Profa. Marta encomendou 'pra peça dos 60 anos'. Pagou trezentos.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Segunda vi minha réplica na vitrine e fiquei quieta. Ela prometeu aprovar minha bolsa do teatro.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "sofia_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma, fita pra consertar o cenário",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "fita"
+                  ],
+                  "ifnot": [
+                    "sofia_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_sofia"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu FIZ uma cópia. Não troquei nada! Sai do meu teatro.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "sofia_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:sofia_bravo} me chamou de ladra. Só converso se me ajudarem com o cenário.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma, fita pra consertar o cenário",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "fita"
+                  ],
+                  "ifnot": [
+                    "sofia_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Fita silver tape. Você é bom nisso, hein.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Tá, vou falar: a réplica fui eu que fiz. Encomenda da Profa. Marta. E eu fiquei quieta por uma bolsa.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "sofia_falou",
+                "sofia_troca"
+              ],
+              "take_item": "fita",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_sofia"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "marta",
+      "kind": "pessoa",
+      "name": "Profa. Marta",
+      "gender": "f",
+      "role": "vice-diretora",
+      "look": {
+        "skin": "#b5835a",
+        "hair": "longo",
+        "hair_color": "#9e9e9e",
+        "top": "#00695c",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Que tristeza, essa história.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "marta_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "marta_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "marta_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Que tristeza. A taça do fundador... Eu nem durmo direito desde ontem.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o caderno da chave e o antiquário",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chave_log",
+                    "c_antiquario"
+                  ]
+                },
+                {
+                  "text": "A senhora mexeu na vitrine sexta?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora é a ladra da taça!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Limpeza especial pra exposição. Coisa rápida. O Seu Jorge já tinha ido embora.",
+                  "expr": "nervoso",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o caderno da chave e o antiquário",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chave_log",
+                    "c_antiquario"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Eu caí num golpe de empréstimo. Doze mil de dívida. Meu nome ia pro lixo.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Sábado vendi a taça pro antiquário. Ninguém olhava aquela vitrine havia anos. Até hoje.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "marta_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Como ousa? Vou chamar o diretor. Saia.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "marta_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:marta_bravo} me ofendeu. Só falo com provas de verdade.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o caderno da chave e o antiquário",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chave_log",
+                    "c_antiquario"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "nogueira",
+      "kind": "pessoa",
+      "name": "Prof. Nogueira",
+      "gender": "m",
+      "role": "curador da exposição dos 60 anos",
+      "look": {
+        "skin": "#d8a982",
+        "hair": "curto",
+        "hair_color": "#757575",
+        "top": "#4e342e",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "A peça dos 60 anos? Eu escrevi.",
+            "expr": "desconfiado",
+            "anim": "pensando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nogueira_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Sou o curador da exposição e o autor da peça dos 60 anos. Pergunte o que quiser.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "A peça dos 60 anos tem uma taça?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor trocou a taça pra exposição!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Taça? Não. A peça se passa numa sala de aula de 1962. Não tem taça em cena nenhuma.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Quem disse que tinha, mentiu pra alguém.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_nogueira",
+              "sets": [
+                "nogueira_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu sou historiador, não falsificador. Passar bem.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nogueira_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nogueira_bravo} me ofendeu. Não falo mais hoje.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "nanda",
+      "kind": "pessoa",
+      "name": "Nanda",
+      "gender": "f",
+      "role": "repórter do jornal",
+      "look": {
+        "skin": "#b07850",
+        "hair": "trancas",
+        "hair_color": "#1a0f08",
+        "top": "#ff7043",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu tenho fotos de tudo.",
+            "expr": "feliz",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nanda_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "nanda_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Repórter do jornal. Eu fotografo tudo. Inclusive coisas que ninguém repara.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate dos achados",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "nanda_troca"
+                  ]
+                },
+                {
+                  "text": "Você fotografou a vitrine alguma vez?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você inventa notícia, Nanda!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Em março, pra matéria dos 60 anos. Tá no mural. Repara na alça da taça.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate dos achados",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "nanda_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu checo tudo, ao contrário de você. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nanda_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nanda_bravo} me chamou de mentirosa. Sem chocolate, sem furo.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate dos achados",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "nanda_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate! Tá, um furo em troca.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Sexta 18h10 eu vi a Profa. Marta saindo da diretoria com uma bolsa pesada, olhando pros lados.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "nanda_falou",
+                "nanda_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_nanda"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "jorge",
+      "kind": "pessoa",
+      "name": "Seu Jorge",
+      "gender": "m",
+      "role": "zelador, limpa a vitrine",
+      "look": {
+        "skin": "#7a4b2a",
+        "hair": "raspado",
+        "hair_color": "#cfcfcf",
+        "top": "#546e7a",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Lá vem acusação.",
+            "expr": "bravo",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "jorge_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "jorge_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "jorge_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Já sei. Sumiu algo, a culpa é do zelador. Eu limpo aquela vitrine há trinta anos.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o seu livro do plantão",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_livro_jorge"
+                  ]
+                },
+                {
+                  "text": "O senhor vendeu a taça, Seu Jorge!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Sexta 18h a Profa. Marta pediu a chave da vitrine e me mandou embora mais cedo. Achei gentil.",
+                  "expr": "neutro",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Agora não acho mais.",
+                  "expr": "desconfiado",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "jorge_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_jorge"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Trinta anos de casa e eu ouço isso? Fora.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "jorge_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:jorge_bravo} me acusou. Traga o livro do plantão.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o seu livro do plantão",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_livro_jorge"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "sala_diretor",
+      "kind": "lugar",
+      "name": "Sala do diretor"
+    },
+    {
+      "id": "taca",
+      "kind": "fato",
+      "name": "A Taça do Fundador (prata)",
+      "icon": "trofeu"
+    },
+    {
+      "id": "replica",
+      "kind": "fato",
+      "name": "A taça de latão da vitrine",
+      "icon": "coroa"
+    }
+  ],
+  "items": [
+    {
+      "id": "fita",
+      "name": "Fita silver tape",
+      "desc": "No armário do corredor. Conserta qualquer cenário.",
+      "icon": "fita"
+    },
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "Nos achados do depósito, ainda lacrada.",
+      "icon": "chocolate"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_laudo",
+      "kind": "registro",
+      "title": "Laudo do avaliador",
+      "time": "9h00",
+      "text": "Laudo: 'Peça de latão com tinta dourada. Na base, restos de resina de molde. NÃO é a taça de 1962.'",
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da direção",
+      "time": "9h20",
+      "text": "O diretor descobre a troca; a vice pergunta quem tem a chave, e a suspeita cai no zelador.",
+      "chat": {
+        "group": "Direção 🏫",
+        "lines": [
+          {
+            "who": "otavio",
+            "text": "trocaram a TAÇA DO FUNDADOR",
+            "time": "9h20"
+          },
+          {
+            "who": "marta",
+            "text": "meu Deus 😢 quem tem a chave da vitrine?",
+            "time": "9h21"
+          },
+          {
+            "who": "otavio",
+            "text": "eu e o Seu Jorge, que limpa",
+            "time": "9h21"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_vitrine",
+      "kind": "objeto",
+      "title": "Vitrine",
+      "text": "Na vitrine, a 'taça' brilha demais e a alça é lisinha, sem marca nenhuma.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_chave_log",
+      "kind": "registro",
+      "title": "Caderno da chave",
+      "time": "18h00",
+      "text": "Caderno da chave da vitrine: 'Sexta 18h, retirada para limpeza especial. Ass. Profa. Marta.' Devolvida 18h20.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_encomenda",
+      "kind": "registro",
+      "title": "Encomenda do teatro",
+      "text": "Encomenda de objetos: 'Réplica da taça do fundador, para a peça dos 60 anos. Pedido: M. Pago R$ 300.' Feita por Sofia.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_molde",
+      "kind": "objeto",
+      "title": "Caixa de objetos",
+      "text": "Na caixa, um molde de resina em forma de taça e uma lata de tinta dourada. Etiqueta: 'peça dos 60 anos'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_cartao",
+      "kind": "objeto",
+      "title": "Escaninho da vice",
+      "text": "No escaninho da vice-direção, um cartão do 'Antiquário Relíquia, compramos prata'. Atrás, a lápis: 'sábado 10h, levar a peça'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_foto_marco",
+      "kind": "objeto",
+      "title": "Mural do jornal",
+      "text": "Foto de março no mural do jornal: a taça na vitrine, com um amassado bem visível na alça.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_livro_jorge",
+      "kind": "registro",
+      "title": "Livro do plantão",
+      "text": "Livro do zelador: 'Sexta 18h, a Profa. Marta pediu a chave da vitrine e me liberou mais cedo.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_antiquario",
+      "kind": "post",
+      "title": "Post do antiquário",
+      "time": "domingo",
+      "text": "No domingo, um antiquário anuncia uma taça de prata de 1962, com um amassado na alça.",
+      "post": {
+        "user": "@antiquario.reliquia",
+        "caption": "acabou de chegar! taça de prata de 1962, peça rara 🏆 consulte valor",
+        "likes": 18,
+        "image": "uma taça de prata com um amassado na alça, sobre veludo vermelho",
+        "comments": [
+          {
+            "user": "@colecionador.sp",
+            "text": "tem certificado?"
+          }
+        ]
+      },
+      "release": "t+300",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_sofia",
+      "kind": "depoimento",
+      "title": "Fala da Sofia",
+      "who": "sofia",
+      "text": "Sofia fez a réplica a pedido da Profa. Marta, 'para a peça'. Viu a réplica na vitrine e ficou quieta em troca da bolsa.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_nogueira",
+      "kind": "depoimento",
+      "title": "Fala do Prof. Nogueira",
+      "who": "nogueira",
+      "text": "A peça dos 60 anos não tem nenhuma taça em cena. A encomenda tinha um pretexto falso.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_nanda",
+      "kind": "depoimento",
+      "title": "Fala da Nanda",
+      "who": "nanda",
+      "text": "Nanda viu a Profa. Marta sair da diretoria sexta às 18h10 com uma bolsa pesada.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_jorge",
+      "kind": "depoimento",
+      "title": "Fala do Seu Jorge",
+      "who": "jorge",
+      "text": "Sexta às 18h, a Profa. Marta pediu a chave da vitrine e mandou o Seu Jorge para casa mais cedo.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão da Profa. Marta",
+      "who": "marta",
+      "text": "A vice-diretora caiu num golpe, encomendou a réplica, trocou a taça na sexta e vendeu a verdadeira no sábado.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_vitrine",
+      "scene": "sala_diretor",
+      "object": "quadro_fotos",
+      "label": "Vitrine",
+      "clue": "c_vitrine"
+    },
+    {
+      "id": "hs_chave",
+      "scene": "sala_diretor",
+      "object": "mesa_diretor",
+      "label": "Caderno da chave",
+      "clue": "c_chave_log"
+    },
+    {
+      "id": "hs_quadro",
+      "scene": "teatro",
+      "object": "quadro_teatro",
+      "label": "Encomendas",
+      "clue": "c_encomenda"
+    },
+    {
+      "id": "hs_caixa",
+      "scene": "teatro",
+      "object": "caixa_props",
+      "label": "Caixa de objetos",
+      "clue": "c_molde"
+    },
+    {
+      "id": "hs_escaninho",
+      "scene": "sala_professores",
+      "object": "escaninho",
+      "label": "Escaninho da vice",
+      "clue": "c_cartao"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "corredor",
+      "object": "mural",
+      "label": "Mural do jornal",
+      "clue": "c_foto_marco"
+    },
+    {
+      "id": "hs_armario",
+      "scene": "corredor",
+      "object": "armario_aberto",
+      "label": "Armário do corredor",
+      "item": "fita"
+    },
+    {
+      "id": "hs_livro",
+      "scene": "deposito",
+      "object": "prateleira",
+      "label": "Livro do plantão",
+      "clue": "c_livro_jorge"
+    },
+    {
+      "id": "hs_achados",
+      "scene": "deposito",
+      "object": "caixa_achados",
+      "label": "Achados",
+      "item": "chocolate"
+    }
+  ],
+  "solution": {
+    "culprit": "marta",
+    "culprit_question": "Quem trocou a Taça do Fundador?",
+    "culprit_evidence": [
+      "c_chave_log",
+      "c_cartao",
+      "c_antiquario",
+      "c_livro_jorge",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "troca",
+        "label": "Quem pegou a taça e quem fez a cópia"
+      },
+      {
+        "id": "quando",
+        "label": "Onde estava quem trocou"
+      }
+    ],
+    "edges": [
+      {
+        "from": "marta",
+        "to": "taca",
+        "type": "pegou",
+        "category": "troca",
+        "evidence": [
+          "c_chave_log",
+          "c_cartao",
+          "c_antiquario",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "sofia",
+        "to": "replica",
+        "type": "fez",
+        "category": "troca",
+        "evidence": [
+          "c_encomenda",
+          "c_molde",
+          "c_dep_sofia"
+        ]
+      },
+      {
+        "from": "marta",
+        "to": "sala_diretor",
+        "type": "estava",
+        "category": "quando",
+        "evidence": [
+          "c_chave_log",
+          "c_livro_jorge",
+          "c_dep_nanda"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "jorge",
+        "to": "taca",
+        "type": "pegou",
+        "category": "troca"
+      },
+      {
+        "from": "sofia",
+        "to": "taca",
+        "type": "pegou",
+        "category": "troca"
+      }
+    ]
+  },
+  "hints": [
+    "Compare a taça da vitrine com uma foto antiga. Falta alguma coisa?",
+    "Uma réplica perfeita precisa de alguém que saiba fazer molde.",
+    "Quem pediu a chave da vitrine fora do horário?",
+    "A peça dos 60 anos tinha mesmo uma taça em cena?",
+    "Prata roubada precisa ser vendida. Para quem?"
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "Março",
+        "text": "O jornal fotografa a taça com o amassado na alça."
+      },
+      {
+        "time": "Quinta",
+        "text": "Marta encomenda à Sofia uma réplica 'para a peça'."
+      },
+      {
+        "time": "18h00",
+        "text": "Sexta: Marta pega a chave da vitrine e libera o zelador mais cedo."
+      },
+      {
+        "time": "18h10",
+        "text": "Marta sai da diretoria com a taça na bolsa."
+      },
+      {
+        "time": "Sábado",
+        "text": "A taça é vendida ao Antiquário Relíquia."
+      }
+    ],
+    "explanation": "O zelador limpava a vitrine e a Sofia fez a cópia, mas quem pegou a chave na sexta à noite e mandou todos embora foi a vice-diretora. O aha: a peça dos 60 anos não tem taça nenhuma, então a encomenda era uma mentira, e o antiquário anuncia uma taça com o amassado das fotos.",
+    "refuted": [
+      "Seu Jorge foi mandado para casa às 18h.",
+      "Sofia fez a réplica achando que era para a peça, mas depois ficou quieta por uma bolsa."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "A vice-diretora Marta caiu num golpe e ficou com doze mil reais de dívida. Encomendou à Sofia uma réplica da taça 'para a peça dos 60 anos', que nem tem taça. Na sexta às 18h pegou a chave da vitrine, liberou o zelador, trocou as taças e no sábado vendeu a verdadeira a um antiquário. A Sofia percebeu e ficou quieta em troca de uma bolsa.",
+    "twist": "Plantado na comparação de duas pistas visuais (a alça lisa da vitrine e o amassado na foto de março) e numa frase do curador: a peça não tem taça. A encomenda 'para a peça' era mentira. Segundo giro: a Sofia percebeu a troca e ficou calada em troca de uma bolsa.",
+    "solution_steps": [
+      "Ler o laudo e o grupo da direção: a suspeita cai no Seu Jorge.",
+      "Comparar a vitrine com a foto de março (corredor): falta o amassado da alça.",
+      "No teatro, a encomenda e o molde mostram que a Sofia fez a réplica a pedido de 'M.'.",
+      "O Prof. Nogueira conta que a peça não tem taça: a encomenda era mentira.",
+      "Na diretoria, o caderno da chave mostra a Marta na sexta às 18h; no depósito, o livro do zelador confirma que ela o liberou.",
+      "No escaninho da vice, o cartão do antiquário. O post do antiquário (chega com o tempo) mostra a taça com o amassado.",
+      "Mostrar o caderno e o post à Marta e apontá-la."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 5 min",
+        "aha": "O zelador, que limpa a vitrine, parece culpado.",
+        "if_stuck": "Quem pegou a chave na sexta?"
+      },
+      {
+        "when": "5 a 12 min",
+        "aha": "Aha 1: existe uma réplica feita no teatro, encomendada por 'M.'.",
+        "if_stuck": "A peça dos 60 anos tem taça?"
+      },
+      {
+        "when": "12 a 20 min",
+        "aha": "Aha 2: o caderno da chave e o cartão do antiquário apontam a vice-diretora.",
+        "if_stuck": "Para onde vai uma taça de prata roubada?"
+      },
+      {
+        "when": "20 min em diante",
+        "aha": "O post do antiquário mostra o amassado. A Sofia conta o que escondeu.",
+        "if_stuck": "Ficar calada também é participar?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_laudo",
+        "where": "Já no início, para todos",
+        "proves": "Mostra que a taça da vitrine é falsa."
+      },
+      {
+        "clue": "c_chat",
+        "where": "Já no início, para todos",
+        "proves": "Cria a suspeita sobre o Seu Jorge."
+      },
+      {
+        "clue": "c_vitrine",
+        "where": "Sala do diretor: tocar em 'Vitrine'",
+        "proves": "A taça falsa não tem o amassado da alça."
+      },
+      {
+        "clue": "c_chave_log",
+        "where": "Sala do diretor: tocar em 'Caderno da chave'",
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata); Profa. Marta estava em Sala do diretor. Aponta para Profa. Marta."
+      },
+      {
+        "clue": "c_encomenda",
+        "where": "Teatro: tocar em 'Encomendas'",
+        "proves": "Prova a linha: Sofia fez A taça de latão da vitrine."
+      },
+      {
+        "clue": "c_molde",
+        "where": "Teatro: tocar em 'Caixa de objetos'",
+        "proves": "Prova a linha: Sofia fez A taça de latão da vitrine."
+      },
+      {
+        "clue": "c_cartao",
+        "where": "Sala dos professores: tocar em 'Escaninho da vice'",
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata). Aponta para Profa. Marta."
+      },
+      {
+        "clue": "c_foto_marco",
+        "where": "Corredor: tocar em 'Mural do jornal'",
+        "proves": "Em março a taça verdadeira ainda estava lá, com o amassado."
+      },
+      {
+        "clue": "c_livro_jorge",
+        "where": "Depósito: tocar em 'Livro do plantão'",
+        "proves": "Prova a linha: Profa. Marta estava em Sala do diretor. Aponta para Profa. Marta."
+      },
+      {
+        "clue": "c_antiquario",
+        "where": "Chega sozinha aos 5 min",
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata). Aponta para Profa. Marta."
+      },
+      {
+        "clue": "c_dep_sofia",
+        "where": "mostrar 'Encomenda do teatro' para Sofia; ou trocar 'Fita silver tape' com Sofia",
+        "proves": "Prova a linha: Sofia fez A taça de latão da vitrine."
+      },
+      {
+        "clue": "c_dep_nogueira",
+        "where": "conversar com Prof. Nogueira ('A peça dos 60 anos tem uma taça?')",
+        "proves": "A peça não tem taça: a encomenda da réplica era mentira."
+      },
+      {
+        "clue": "c_dep_nanda",
+        "where": "trocar 'Barra de chocolate' com Nanda",
+        "proves": "Prova a linha: Profa. Marta estava em Sala do diretor."
+      },
+      {
+        "clue": "c_dep_jorge",
+        "where": "mostrar 'Livro do plantão' para Seu Jorge",
+        "proves": "A vice-diretora pegou a chave e mandou o zelador embora mais cedo."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Caderno da chave' + 'Post do antiquário' para Profa. Marta",
+        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata). Aponta para Profa. Marta."
+      }
+    ],
+    "red_herrings": [
+      "O Seu Jorge tem a chave, mas foi liberado às 18h.",
+      "A Sofia fez a cópia, mas não pegou a taça."
+    ],
+    "faq": [
+      {
+        "q": "Foi o Seu Jorge, ele limpa a vitrine!",
+        "a": "Quem pegou a chave na sexta? Olhem o caderno da chave."
+      },
+      {
+        "q": "Foi a Sofia, ela fez a cópia!",
+        "a": "Fazer a cópia é o mesmo que trocar? Quem encomendou?"
+      },
+      {
+        "q": "Desde quando a taça é falsa?",
+        "a": "Comparem com uma foto antiga. Tem uma no corredor."
+      },
+      {
+        "q": "Por que alguém faria isso?",
+        "a": "Prata vale dinheiro. Quem precisaria tanto de dinheiro?"
+      },
+      {
+        "q": "A Sofia não fala.",
+        "a": "Ela está com medo. Talvez ajudar com o cenário destrave."
+      }
+    ],
+    "talking_points": [
+      "Ficar calado diante de algo errado também é participar?",
+      "Por que confiamos mais em quem tem cargo?",
+      "Que detalhe pequeno (o amassado) desmontou o plano?"
+    ]
+  }
+}

@@ -1,0 +1,2065 @@
+{
+  "id": "garota_que_nao_existe",
+  "mode": "multi",
+  "title": "A Garota que Não Existe",
+  "tagline": "Ela conversou com o time inteiro. Ela nunca existiu.",
+  "difficulty": 3,
+  "duration_sec": 2400,
+  "scene": "quadra",
+  "locations": [
+    "quadra",
+    "corredor",
+    "sala_aula",
+    "cantina",
+    "biblioteca",
+    "laboratorio"
+  ],
+  "scene_people": [
+    {
+      "id": "ivo",
+      "scene": "quadra"
+    },
+    {
+      "id": "gabriel",
+      "scene": "quadra"
+    },
+    {
+      "id": "pedro",
+      "scene": "corredor"
+    },
+    {
+      "id": "kaua",
+      "scene": "corredor"
+    },
+    {
+      "id": "mel",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "kevin",
+      "scene": "cantina"
+    },
+    {
+      "id": "nanda",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "leo",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "ana",
+      "scene": "laboratorio"
+    }
+  ],
+  "briefing": "Há três semanas a Luiza chegou de Portugal, só no Instagram: linda, sempre online às 23h. Conquistou metade do time de futsal. Na véspera da semi, três titulares faltaram ao treino para vê-la. Ela não apareceu. O time perdeu. A Luiza não existe.",
+  "goal": "Descubra quem criou a Luiza, de onde vieram as fotos e quem ganhou com a derrota.",
+  "link_types": [
+    {
+      "id": "criou",
+      "label": "criou",
+      "directed": true
+    },
+    {
+      "id": "entregou",
+      "label": "entregou as fotos para",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "ivo",
+      "kind": "pessoa",
+      "name": "Prof. Ivo",
+      "gender": "m",
+      "role": "técnico do time",
+      "look": {
+        "skin": "#e5b48f",
+        "hair": "raspado",
+        "hair_color": "#3a3a3a",
+        "top": "#1b5e20",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Três titulares suspensos. Na semifinal.",
+            "expr": "bravo",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "ivo_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "ivo_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "ivo_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Três titulares faltaram no treino de véspera. Regra é regra: suspensos. Perdemos de três a um.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a prancheta da jogada 7",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_prancheta"
+                  ]
+                },
+                {
+                  "text": "Quem jogou no gol na semifinal?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor suspendeu de propósito!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "O Léo. Reserva há dois anos. Primeiro jogo como titular. Coitado, levou três.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a prancheta da jogada 7",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_prancheta"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "A 'jogada 7' eu só expliquei no vestiário, sexta. Portas fechadas. Time titular e o Léo, reserva.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Se essa tal de Luiza perguntou da jogada 7, ela tava no vestiário. Ou tem alguém lá dentro.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "ivo_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_ivo"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Regra não tem propósito, tem regra. Sai da quadra.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "ivo_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:ivo_bravo} me acusou. Volte com a prancheta.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a prancheta da jogada 7",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_prancheta"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "gabriel",
+      "kind": "pessoa",
+      "name": "Gabriel",
+      "gender": "m",
+      "role": "titular suspenso",
+      "look": {
+        "skin": "#f5d0b0",
+        "hair": "curto",
+        "hair_color": "#3b2a1a",
+        "top": "#c62828",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu fui no shopping. Ela não.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "gabriel_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "gabriel_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "gabriel_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu fui no shopping às 17h. Ela não apareceu. Fiquei duas horas segurando um sorvete derretido.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar sua DM com a Luiza",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_dm_gabriel"
+                  ]
+                },
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "gabriel_troca"
+                  ]
+                },
+                {
+                  "text": "Você trocou o time por uma menina!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Ela perguntou da 'jogada 7'. Como uma menina de Portugal sabe o nome da nossa jogada secreta?",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "E ela pediu pra eu não contar pro técnico. Eu, idiota, não contei.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "gabriel_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "gabriel_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_gabriel"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Valeu pela lembrança. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "gabriel_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:gabriel_bravo} me humilhou. Só falo se carregarem meu celular.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um carregador pro seu celular",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "gabriel_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Ligou. Olha a conversa inteira.",
+                  "expr": "nervoso",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Ela perguntou da 'jogada 7'. Só quem tava no vestiário sexta sabe esse nome.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "gabriel_falou",
+                "gabriel_troca"
+              ],
+              "take_item": "carregador",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_gabriel"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "pedro",
+      "kind": "pessoa",
+      "name": "Pedro",
+      "gender": "m",
+      "role": "titular suspenso",
+      "look": {
+        "skin": "#c68642",
+        "hair": "curto",
+        "hair_color": "#1e1208",
+        "top": "#37474f",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Ela escrevia tão bonito.",
+            "expr": "triste",
+            "anim": "pensando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "pedro_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Ela me chamou de 'a excessão da escola'. Com dois esses. Eu achei fofo. Agora acho suspeito.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "A Luiza escrevia diferente?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você caiu num golpe ridículo!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "'Excessão', assim, errado. Três vezes. Português de Portugal é diferente, mas não tanto.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Cai você num golpe desses. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "pedro_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:pedro_bravo} riu de mim. Não falo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "kaua",
+      "kind": "pessoa",
+      "name": "Kauã",
+      "gender": "m",
+      "role": "titular suspenso",
+      "look": {
+        "skin": "#6e4528",
+        "hair": "raspado",
+        "hair_color": "#121212",
+        "top": "#f9a825",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Ela vivia online às 23h.",
+            "expr": "desconfiado",
+            "anim": "pensando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "kaua_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "A Luiza só aparecia às 23h. Disse que era quando a mãe dormia. Toda noite, pontual.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem mais fica online às 23h?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você ajudou a enganar o time!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Sei lá. A galera do campeonato de videogame. Aquele da cantina, sabe?",
+                  "expr": "neutro",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu fui ENGANADO, gênio. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kaua_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:kaua_bravo} me acusou. Não falo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mel",
+      "kind": "pessoa",
+      "name": "Mel",
+      "gender": "f",
+      "role": "designer, suspeita das fotos editadas",
+      "look": {
+        "skin": "#f7d2b0",
+        "hair": "rabo",
+        "hair_color": "#e0b050",
+        "top": "#f06292",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu edito foto, não gente.",
+            "expr": "bravo",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "mel_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "As fotos da Luiza são editadas, então foi a designer. Lógico. Eu edito foto, não gente.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Alguém te pediu edição estranha?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você criou a Luiza, Mel!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "O Léo. Semana passada. Queria um filtro 'cara de Portugal'. Achei que era pra algum meme.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_mel",
+              "sets": [
+                "mel_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu criaria uma garota com fotos melhores. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "mel_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:mel_bravo} me acusou. Hoje não ajudo ninguém.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "kevin",
+      "kind": "pessoa",
+      "name": "Kevin",
+      "gender": "m",
+      "role": "capitão do time rival, o 3B",
+      "look": {
+        "skin": "#5b3a24",
+        "hair": "curto",
+        "hair_color": "#0c0c0c",
+        "top": "#ffeb3b",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "A semi foi nossa.",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "kevin_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "kevin_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "kevin_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "A semi foi nossa, três a um. Se o time de vocês tava no shopping, problema de vocês.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a investigação das fotos",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_busca"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, capitão",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Você é a Luiza, Kevin!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...As fotos são da minha prima de Lisboa. Eu passei pro Léo. Ele disse que era zoeira com o time dele.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "O perfil? Era ele. Eu só queria que vocês perdessem. Ele queria jogar.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kevin_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, capitão",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kevin"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? Eu escrevo pior que ela. Tchau.",
+                  "expr": "bravo",
+                  "anim": "rindo"
+                }
+              ],
+              "sets": [
+                "kevin_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:kevin_bravo} me acusou. Só falo com chocolate.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, capitão",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kevin_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate do vencedor. Tá, eu falo.",
+                  "expr": "nervoso",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Passei as fotos da minha prima pro Léo. A gente joga junto toda noite, 23h. A Luiza era ele.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kevin_falou",
+                "kevin_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kevin"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "nanda",
+      "kind": "pessoa",
+      "name": "Nanda",
+      "gender": "f",
+      "role": "repórter, investiga a Luiza",
+      "look": {
+        "skin": "#b07850",
+        "hair": "trancas",
+        "hair_color": "#1a0f08",
+        "top": "#ff7043",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Furo do ano!",
+            "expr": "feliz",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nanda_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Estou investigando a Luiza pro jornal. Spoiler: ela tem prima. Ou dono.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "O que você descobriu?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você inventou a Luiza pra ter notícia!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Fiz busca reversa das fotos. Publico daqui a pouco. Vai ter gente chorando.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "E vi o Léo aqui no computador ontem, 14h10, com o Instagram aberto e cara de culpa.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_nanda",
+              "sets": [
+                "nanda_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu investigo notícia, não fabrico. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nanda_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nanda_bravo} me ofendeu. Sem furo pra você.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "leo",
+      "kind": "pessoa",
+      "name": "Léo",
+      "gender": "m",
+      "role": "goleiro reserva, titular na semifinal",
+      "look": {
+        "skin": "#d1a17a",
+        "hair": "curto",
+        "hair_color": "#4e342e",
+        "top": "#ef6c00",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Que pena, galera.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "leo_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "leo_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "leo_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Que pena o que fizeram com o time. Eu dei tudo no gol. Levei três, mas dei tudo.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a redação, a jogada 7 e o computador",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_redacao",
+                    "c_prancheta",
+                    "c_computador"
+                  ]
+                },
+                {
+                  "text": "Onde você estava ontem às 14h?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você é a Luiza, confessa!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Na biblioteca, estudando. Sozinho. Normal. Por quê?",
+                  "expr": "nervoso",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a redação, a jogada 7 e o computador",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_redacao",
+                    "c_prancheta",
+                    "c_computador"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Dois anos no banco. Dois anos. Eu só queria UM jogo.",
+                  "expr": "bravo",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "A Luiza era eu. O Kevin me deu as fotos da prima. Eu sabia exatamente o que cada um queria ouvir.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "leo_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? O cara que levou três gols? Que absurdo.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "leo_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:leo_bravo} me acusou. Só falo com prova.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a redação e o cartaz do campeonato",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_redacao",
+                    "c_campeonato"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "ana",
+      "kind": "pessoa",
+      "name": "Profa. Ana",
+      "gender": "f",
+      "role": "professora de ciências e de redação de reforço",
+      "look": {
+        "skin": "#d29b73",
+        "hair": "longo",
+        "hair_color": "#3e2a1c",
+        "top": "#00796b",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Ortografia diz muito.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "ana_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Dou reforço de redação. Ortografia diz muito sobre uma pessoa. Às vezes diz quem ela é.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Algum aluno erra 'exceção'?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora ensinou o golpe!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Um só, com teimosia: escreve 'excessão' com dois esses. Corrigi três vezes. O Léo.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_ana",
+              "sets": [
+                "ana_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu ensino crase, não golpe. Saia.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "ana_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:ana_bravo} me ofendeu. Laboratório fechado.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "biblioteca",
+      "kind": "lugar",
+      "name": "Biblioteca"
+    },
+    {
+      "id": "shopping",
+      "kind": "lugar",
+      "name": "Shopping (17h)",
+      "scene": "corredor"
+    },
+    {
+      "id": "quadra",
+      "kind": "lugar",
+      "name": "Quadra"
+    },
+    {
+      "id": "luiza",
+      "kind": "fato",
+      "name": "O perfil @luiza.intercambio",
+      "icon": "celular"
+    }
+  ],
+  "items": [
+    {
+      "id": "carregador",
+      "name": "Carregador de celular",
+      "desc": "No armário do corredor.",
+      "icon": "carregador"
+    },
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "No balcão da cantina.",
+      "icon": "chocolate"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_perfil",
+      "kind": "post",
+      "title": "Perfil da Luiza",
+      "time": "3 semanas atrás",
+      "text": "A 'Luiza', recém-chegada de Portugal, chama atenção do time inteiro.",
+      "post": {
+        "user": "@luiza.intercambio",
+        "caption": "nova na cidade 🇵🇹 alguém me mostra o shopping? 😇",
+        "likes": 640,
+        "image": "uma garota sorrindo num miradouro de Lisboa",
+        "comments": [
+          {
+            "user": "@gabriel.10",
+            "text": "eu mostro 👀"
+          },
+          {
+            "user": "@pedro.saque",
+            "text": "bem-vinda!!"
+          },
+          {
+            "user": "@kaua.carteiro",
+            "text": "😍"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_time",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo do futsal",
+      "time": "véspera",
+      "text": "O técnico suspende três titulares; o Léo diz 'deixa comigo no gol'.",
+      "chat": {
+        "group": "Futsal 2A ⚽",
+        "lines": [
+          {
+            "who": "ivo",
+            "text": "três titulares FALTARAM no treino. suspensos da semi.",
+            "time": "19h00"
+          },
+          {
+            "who": "gabriel",
+            "text": "a gente foi ver a Luiza 😭",
+            "time": "19h02"
+          },
+          {
+            "who": "leo",
+            "text": "que pena galera 😔 deixa comigo no gol",
+            "time": "19h03"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_dm_gabriel",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM com o Gabriel",
+      "time": "véspera",
+      "text": "A Luiza marca com o Gabriel às 17h e pergunta da 'jogada 7'.",
+      "chat": {
+        "group": "@luiza.intercambio",
+        "lines": [
+          {
+            "who": "@luiza.intercambio",
+            "text": "amanhã 17h no shopping? 🥺 só não conta pro técnico kkk",
+            "time": "23h01"
+          },
+          {
+            "who": "@luiza.intercambio",
+            "text": "e aquela 'jogada 7' de vcs, como funciona? curiosa 🙈",
+            "time": "23h03"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dm_pedro",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM com o Pedro",
+      "time": "véspera",
+      "text": "A Luiza escreve 'excessão' com dois esses.",
+      "chat": {
+        "group": "@luiza.intercambio",
+        "lines": [
+          {
+            "who": "@luiza.intercambio",
+            "text": "vc é a excessão da escola 😍",
+            "time": "23h10"
+          },
+          {
+            "who": "@luiza.intercambio",
+            "text": "17h no shopping, sem falta",
+            "time": "23h11"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dm_kaua",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM com o Kauã",
+      "time": "véspera",
+      "text": "A Luiza diz que só fica online às 23h.",
+      "chat": {
+        "group": "@luiza.intercambio",
+        "lines": [
+          {
+            "who": "@luiza.intercambio",
+            "text": "só consigo falar 23h, quando minha mãe dorme 💤",
+            "time": "23h00"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_story_kevin",
+      "kind": "post",
+      "title": "Story do Kevin",
+      "time": "domingo",
+      "text": "O Kevin posta uma chamada de vídeo com a prima de Lisboa.",
+      "post": {
+        "user": "@kevin.3b",
+        "caption": "saudade da prima 🇵🇹",
+        "likes": 77,
+        "image": "chamada de vídeo com uma garota sorrindo, a mesma do miradouro",
+        "comments": [
+          {
+            "user": "@leo_gol",
+            "text": "kkkk"
+          }
+        ],
+        "who": "kevin"
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_sumula",
+      "kind": "registro",
+      "title": "Súmula da semifinal",
+      "text": "Súmula: 2A perdeu de 3 a 1. Goleiro: Léo, reserva, primeiro jogo como titular. Suspensos: Gabriel, Pedro, Kauã.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_prancheta",
+      "kind": "registro",
+      "title": "Prancheta do técnico",
+      "text": "Prancheta: 'Jogada 7 = escanteio curto. Explicada só no vestiário, sexta. Presentes: titulares e Léo.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_redacao",
+      "kind": "objeto",
+      "title": "Redação corrigida",
+      "text": "Redação do Léo, nota 6. Em vermelho, três vezes: 'É EXCEÇÃO, não excessão!'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_campeonato",
+      "kind": "registro",
+      "title": "Cartaz do campeonato",
+      "text": "Cartaz: 'Campeonato online de videogame, toda noite às 23h. Dupla líder: KEVIN e LÉO.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_computador",
+      "kind": "registro",
+      "title": "Computador da biblioteca",
+      "time": "14h10",
+      "text": "Reserva do computador: ontem 14h às 14h30, Léo. No histórico: instagram.com, 14h10.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_shopping",
+      "kind": "objeto",
+      "title": "Mural do corredor",
+      "text": "Foto no mural do jornal: Gabriel, Pedro e Kauã no shopping, 17h, esperando com flores. A Luiza não veio.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_busca",
+      "kind": "post",
+      "title": "Investigação do jornal",
+      "time": "hoje",
+      "text": "O jornal descobre que as fotos da Luiza são de uma garota real de Lisboa, prima do Kevin.",
+      "post": {
+        "user": "@jornal.escola",
+        "caption": "INVESTIGAÇÃO: as fotos da 'Luiza' são da @mariana.pt, de Lisboa. Ela não fazia ideia.",
+        "likes": 1200,
+        "image": "a mesma garota, num perfil verdadeiro, com 12 seguidores",
+        "comments": [
+          {
+            "user": "@mariana.pt",
+            "text": "sou PRIMA do Kevin, que raiva!!"
+          },
+          {
+            "user": "@gabriel.10",
+            "text": "KEVIN???"
+          }
+        ],
+        "who": "nanda"
+      },
+      "release": "t+270",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_ivo",
+      "kind": "depoimento",
+      "title": "Fala do Prof. Ivo",
+      "who": "ivo",
+      "text": "A 'jogada 7' só foi explicada no vestiário, para os titulares e o Léo.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_gabriel",
+      "kind": "depoimento",
+      "title": "Fala do Gabriel",
+      "who": "gabriel",
+      "text": "A Luiza perguntou ao Gabriel da 'jogada 7', um nome que só existe dentro do vestiário.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_mel",
+      "kind": "depoimento",
+      "title": "Fala da Mel",
+      "who": "mel",
+      "text": "O Léo pediu à Mel um filtro 'cara de Portugal' na semana passada.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_kevin",
+      "kind": "depoimento",
+      "title": "Fala do Kevin",
+      "who": "kevin",
+      "text": "Kevin deu ao Léo as fotos da prima. Os dois jogam juntos toda noite às 23h. O perfil era do Léo.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_nanda",
+      "kind": "depoimento",
+      "title": "Fala da Nanda",
+      "who": "nanda",
+      "text": "Nanda viu o Léo no computador da biblioteca, ontem às 14h10, com o Instagram aberto.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_ana",
+      "kind": "depoimento",
+      "title": "Fala da Profa. Ana",
+      "who": "ana",
+      "text": "Só um aluno escreve 'excessão' com dois esses, mesmo corrigido três vezes: o Léo.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão do Léo",
+      "who": "leo",
+      "text": "O Léo criou a Luiza com as fotos que o Kevin deu, para tirar os titulares da semifinal e finalmente jogar.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_redacao_lista",
+      "kind": "registro",
+      "title": "Lista do reforço",
+      "text": "Lista do reforço de redação: 'Léo: excessão (3x). Continua errando.'",
+      "release": "hotspot",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_placar",
+      "scene": "quadra",
+      "object": "placar",
+      "label": "Súmula",
+      "clue": "c_sumula"
+    },
+    {
+      "id": "hs_bolsa",
+      "scene": "quadra",
+      "object": "bolsa_esportiva",
+      "label": "Prancheta",
+      "clue": "c_prancheta"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "corredor",
+      "object": "mural",
+      "label": "Mural do jornal",
+      "clue": "c_shopping"
+    },
+    {
+      "id": "hs_armario",
+      "scene": "corredor",
+      "object": "armario_aberto",
+      "label": "Armário",
+      "item": "carregador"
+    },
+    {
+      "id": "hs_carteira",
+      "scene": "sala_aula",
+      "object": "carteira_fundo",
+      "label": "Redação corrigida",
+      "clue": "c_redacao"
+    },
+    {
+      "id": "hs_balcao",
+      "scene": "cantina",
+      "object": "balcao",
+      "label": "Balcão",
+      "item": "chocolate"
+    },
+    {
+      "id": "hs_mural_c",
+      "scene": "cantina",
+      "object": "mural_cantina",
+      "label": "Cartaz do campeonato",
+      "clue": "c_campeonato"
+    },
+    {
+      "id": "hs_comp",
+      "scene": "biblioteca",
+      "object": "computador",
+      "label": "Computador",
+      "clue": "c_computador"
+    },
+    {
+      "id": "hs_quadro",
+      "scene": "laboratorio",
+      "object": "quadro_tabela",
+      "label": "Quadro do reforço",
+      "clue": "c_redacao_lista"
+    }
+  ],
+  "solution": {
+    "culprit": "leo",
+    "culprit_question": "Quem é a Luiza?",
+    "culprit_evidence": [
+      "c_prancheta",
+      "c_redacao",
+      "c_campeonato",
+      "c_computador",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "perfil",
+        "label": "Quem criou e de onde vieram as fotos"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava"
+      }
+    ],
+    "edges": [
+      {
+        "from": "leo",
+        "to": "luiza",
+        "type": "criou",
+        "category": "perfil",
+        "evidence": [
+          "c_redacao",
+          "c_prancheta",
+          "c_computador",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "kevin",
+        "to": "leo",
+        "type": "entregou",
+        "category": "perfil",
+        "evidence": [
+          "c_busca",
+          "c_campeonato",
+          "c_story_kevin",
+          "c_dep_kevin"
+        ]
+      },
+      {
+        "from": "leo",
+        "to": "biblioteca",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_computador",
+          "c_dep_nanda"
+        ]
+      },
+      {
+        "from": "gabriel",
+        "to": "shopping",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_shopping",
+          "c_chat_time",
+          "c_dm_gabriel"
+        ]
+      },
+      {
+        "from": "leo",
+        "to": "quadra",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_sumula",
+          "c_chat_time"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "kevin",
+        "to": "luiza",
+        "type": "criou",
+        "category": "perfil"
+      },
+      {
+        "from": "mel",
+        "to": "luiza",
+        "type": "criou",
+        "category": "perfil"
+      }
+    ]
+  },
+  "hints": [
+    "Quem ganhou alguma coisa com a derrota do próprio time?",
+    "A Luiza sabia de uma coisa que só se diz dentro do vestiário.",
+    "Um erro de ortografia pode ser uma impressão digital.",
+    "Quem fica online toda noite às 23h, e com quem?",
+    "Achar o dono das fotos não é achar o dono do perfil.",
+    "O reserva mais solidário do grupo estreou no gol."
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "3 semanas atrás",
+        "text": "Kevin passa ao Léo as fotos da prima de Lisboa. Nasce a @luiza.intercambio."
+      },
+      {
+        "time": "Sexta",
+        "text": "O técnico explica a 'jogada 7' no vestiário. O Léo está lá."
+      },
+      {
+        "time": "Véspera, 23h",
+        "text": "A Luiza marca com três titulares às 17h e pergunta da jogada 7."
+      },
+      {
+        "time": "14h10",
+        "text": "Léo usa o computador da biblioteca com o Instagram aberto."
+      },
+      {
+        "time": "17h00",
+        "text": "Gabriel, Pedro e Kauã esperam no shopping. Faltam ao treino."
+      },
+      {
+        "time": "19h00",
+        "text": "Suspensos. Léo escreve: 'deixa comigo no gol'."
+      }
+    ],
+    "explanation": "A investigação das fotos aponta a prima do Kevin, e quase todos param aí. Mas o Kevin só deu as fotos. A Luiza sabia da 'jogada 7', que só existia dentro do vestiário; escrevia 'excessão', como o Léo; ficava online às 23h, na hora do campeonato da dupla Kevin e Léo. O goleiro reserva tirou três titulares do jogo para finalmente estrear.",
+    "refuted": [
+      "Kevin forneceu as fotos e torceu contra, mas não criou o perfil.",
+      "Mel edita fotos, mas só fez um filtro a pedido do Léo."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "O Léo, goleiro reserva há dois anos, queria jogar a semifinal. Com as fotos da prima de Lisboa, cedidas pelo amigo Kevin (capitão do time rival), criou a falsa Luiza. Usando o que ouvia no vestiário, conquistou três titulares e marcou com eles no shopping na hora do treino de véspera. Os três foram suspensos, o Léo estreou no gol e o time perdeu.",
+    "twist": "A investigação do jornal (t+270) entrega a prima do Kevin, e a turma acha que acabou: é a isca. Antes disso, as três DMs (cada uma com um aluno) já tinham as digitais do Léo: a 'jogada 7' (só dita no vestiário), o 'excessão' da redação dele e o 'só às 23h' do campeonato com o Kevin. O 'deixa comigo no gol' no grupo é o detalhe que dá arrepio na revelação.",
+    "solution_steps": [
+      "Ver o perfil e o grupo do time: a Luiza enganou três titulares.",
+      "Juntar as DMs (cada aluno tem uma): 'jogada 7', 'excessão' e 'só às 23h'.",
+      "Na quadra, a prancheta diz que a jogada 7 só foi falada no vestiário, para titulares e o Léo; a súmula mostra o Léo estreando.",
+      "Na sala de aula, a redação do Léo tem 'excessão' corrigido três vezes; a Profa. Ana confirma.",
+      "Na cantina, o cartaz do campeonato mostra a dupla Kevin e Léo online toda noite às 23h.",
+      "A investigação do jornal (cerca de 4 min 30 s) liga as fotos à prima do Kevin: ele vira o suspeito.",
+      "Na biblioteca, a reserva e o histórico do computador põem o Léo no Instagram às 14h10.",
+      "Montar as 5 linhas e apontar o Léo; o Kevin entra como quem entregou as fotos."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 6 min",
+        "aha": "A turma acha a Luiza real e culpa os titulares.",
+        "if_stuck": "Uma garota de Portugal saberia o nome da jogada secreta do time?"
+      },
+      {
+        "when": "6 a 14 min",
+        "aha": "Aha 1: juntando as DMs, a Luiza é alguém de dentro do time.",
+        "if_stuck": "Quem estava no vestiário na sexta?"
+      },
+      {
+        "when": "14 a 22 min",
+        "aha": "Isca: as fotos são da prima do Kevin.",
+        "if_stuck": "O dono das fotos é o dono do perfil? Quem joga com o Kevin às 23h?"
+      },
+      {
+        "when": "22 a 30 min",
+        "aha": "Aha 2: 'excessão' e o computador da biblioteca apontam o Léo.",
+        "if_stuck": "Quem ganhou com a suspensão dos titulares?"
+      },
+      {
+        "when": "30 min em diante",
+        "aha": "Giro final: o Kevin entregou as fotos.",
+        "if_stuck": "Os dois devem ser responsabilizados do mesmo jeito?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_perfil",
+        "where": "Já no início, para todos",
+        "proves": "Apresenta a falsa Luiza."
+      },
+      {
+        "clue": "c_chat_time",
+        "where": "Já no início, para todos",
+        "proves": "Mostra a suspensão e o Léo se oferecendo para o gol."
+      },
+      {
+        "clue": "c_dm_gabriel",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "A Luiza sabia da 'jogada 7'."
+      },
+      {
+        "clue": "c_dm_pedro",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "A Luiza escreve 'excessão', com o mesmo erro do Léo."
+      },
+      {
+        "clue": "c_dm_kaua",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "A Luiza só fica online às 23h."
+      },
+      {
+        "clue": "c_story_kevin",
+        "where": "Já no início, só para um aluno (split)",
+        "proves": "Prova a linha: Kevin entregou as fotos para Léo."
+      },
+      {
+        "clue": "c_sumula",
+        "where": "Quadra: tocar em 'Súmula'",
+        "proves": "Prova a linha: Léo estava em Quadra."
+      },
+      {
+        "clue": "c_prancheta",
+        "where": "Quadra: tocar em 'Prancheta'",
+        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio. Aponta para Léo."
+      },
+      {
+        "clue": "c_redacao",
+        "where": "Sala de aula: tocar em 'Redação corrigida'",
+        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio. Aponta para Léo."
+      },
+      {
+        "clue": "c_campeonato",
+        "where": "Cantina: tocar em 'Cartaz do campeonato'",
+        "proves": "Prova a linha: Kevin entregou as fotos para Léo. Aponta para Léo."
+      },
+      {
+        "clue": "c_computador",
+        "where": "Biblioteca: tocar em 'Computador'",
+        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio; Léo estava em Biblioteca. Aponta para Léo."
+      },
+      {
+        "clue": "c_shopping",
+        "where": "Corredor: tocar em 'Mural do jornal'",
+        "proves": "Os titulares estavam no shopping na hora do treino."
+      },
+      {
+        "clue": "c_busca",
+        "where": "Chega sozinha aos 4 min 30 s",
+        "proves": "Prova a linha: Kevin entregou as fotos para Léo."
+      },
+      {
+        "clue": "c_dep_ivo",
+        "where": "mostrar 'Prancheta do técnico' para Prof. Ivo",
+        "proves": "Só os titulares e o Léo ouviram a 'jogada 7': a Luiza é alguém de dentro."
+      },
+      {
+        "clue": "c_dep_gabriel",
+        "where": "mostrar 'DM com o Gabriel' para Gabriel; ou trocar 'Carregador de celular' com Gabriel",
+        "proves": "A Luiza perguntou da 'jogada 7', segredo do vestiário."
+      },
+      {
+        "clue": "c_dep_mel",
+        "where": "conversar com Mel ('Alguém te pediu edição estranha?')",
+        "proves": "O Léo pediu um filtro 'cara de Portugal'."
+      },
+      {
+        "clue": "c_dep_kevin",
+        "where": "mostrar 'Investigação do jornal' para Kevin; ou trocar 'Barra de chocolate' com Kevin",
+        "proves": "Prova a linha: Kevin entregou as fotos para Léo."
+      },
+      {
+        "clue": "c_dep_nanda",
+        "where": "conversar com Nanda ('O que você descobriu?')",
+        "proves": "Prova a linha: Léo estava em Biblioteca."
+      },
+      {
+        "clue": "c_dep_ana",
+        "where": "conversar com Profa. Ana ('Algum aluno erra 'exceção'?')",
+        "proves": "Só o Léo escreve 'excessão'."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Redação corrigida' + 'Prancheta do técnico' + 'Computador da biblioteca' para Léo; ou mostrar 'Redação corrigida' + 'Cartaz do campeonato' para Léo",
+        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio. Aponta para Léo."
+      },
+      {
+        "clue": "c_redacao_lista",
+        "where": "Laboratório: tocar em 'Quadro do reforço'",
+        "proves": "Lista do reforço de redação: o Léo é o único com 'excessão' marcado."
+      }
+    ],
+    "red_herrings": [
+      "As fotos são da prima do Kevin, mas ele não criou o perfil.",
+      "As fotos parecem editadas, mas a Mel só fez um filtro a pedido."
+    ],
+    "faq": [
+      {
+        "q": "Foi o Kevin, a prima é dele!",
+        "a": "Achar o dono das fotos é achar o dono do perfil? A Luiza sabia coisas de dentro do vestiário?"
+      },
+      {
+        "q": "Foi a Mel, ela edita fotos.",
+        "a": "Pergunte se alguém pediu algo estranho a ela."
+      },
+      {
+        "q": "Como saber quem escrevia?",
+        "a": "Comparem o jeito de escrever com redações da escola."
+      },
+      {
+        "q": "Quem fica online às 23h?",
+        "a": "Procurem um cartaz na cantina."
+      },
+      {
+        "q": "Mas o Léo foi tão solidário...",
+        "a": "Quem ganhou com a suspensão dos titulares?"
+      },
+      {
+        "q": "Cada um de nós tem uma DM diferente.",
+        "a": "Juntem as três no quadro. Sozinhas, elas não dizem nada."
+      }
+    ],
+    "talking_points": [
+      "Por que perfis falsos funcionam tão bem?",
+      "Usar a foto de uma pessoa real sem ela saber também é uma violência. Por quê?",
+      "O Léo estava frustrado. O que ele poderia ter feito em vez disso?"
+    ]
+  }
+}

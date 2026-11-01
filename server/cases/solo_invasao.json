@@ -1,0 +1,1242 @@
+{
+  "id": "solo_invasao",
+  "mode": "solo",
+  "title": "A Invasão das 2h03",
+  "tagline": "Janela quebrada, alarme tocando, microscópio sumido. Tudo encenado.",
+  "difficulty": 2,
+  "duration_sec": 1080,
+  "scene": "laboratorio",
+  "locations": [
+    "laboratorio",
+    "patio",
+    "sala_diretor",
+    "corredor"
+  ],
+  "scene_people": [
+    {
+      "id": "ana",
+      "scene": "laboratorio"
+    },
+    {
+      "id": "lari",
+      "scene": "laboratorio"
+    },
+    {
+      "id": "theo",
+      "scene": "patio"
+    },
+    {
+      "id": "otavio",
+      "scene": "sala_diretor"
+    },
+    {
+      "id": "jorge",
+      "scene": "corredor"
+    }
+  ],
+  "briefing": "Domingo, 2h03, o alarme da escola dispara. De manhã: janela do laboratório estilhaçada e o microscópio digital de oito mil reais sumido. O zelador de plantão diz que não viu nada. O seguro já foi acionado. Alguém montou esse palco com muito cuidado.",
+  "goal": "Descubra quem forjou a invasão e quando o microscópio saiu de verdade.",
+  "link_types": [
+    {
+      "id": "pegou",
+      "label": "pegou",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "ana",
+      "kind": "pessoa",
+      "name": "Profa. Ana",
+      "gender": "f",
+      "role": "professora de ciências, dona do laboratório",
+      "look": {
+        "skin": "#d29b73",
+        "hair": "longo",
+        "hair_color": "#3e2a1c",
+        "top": "#00796b",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Que horror. Meu laboratório.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "ana_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "ana_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "ana_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Que horror. Oito mil reais. Ainda bem que o seguro cobre, né? Ainda bem.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro do alarme e os códigos",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_alarme",
+                    "c_codigos"
+                  ]
+                },
+                {
+                  "text": "Quando a senhora viu o microscópio pela última vez?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora roubou o próprio laboratório!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Sexta, umas 17h. Guardadinho no armário. Tenho certeza absoluta.",
+                  "expr": "nervoso",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro do alarme e os códigos",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_alarme",
+                    "c_codigos"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...O microscópio quebrou no meu cursinho particular. Eu levava escondido nos fins de semana.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "O inventário é segunda. Eu ia perder o emprego. Quebrei a janela por dentro e desliguei o alarme.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "ana_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Que absurdo! Eu sou VÍTIMA aqui. Saia.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "ana_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:ana_bravo} me ofendeu. Fale com meu advogado. Quer dizer, com o diretor.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a ficha do armário",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ficha_lab"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "lari",
+      "kind": "pessoa",
+      "name": "Lari",
+      "gender": "f",
+      "role": "monitora do laboratório",
+      "look": {
+        "skin": "#ffd7b5",
+        "hair": "ondulado",
+        "hair_color": "#a1662f",
+        "top": "#43a047",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Tem algo errado nessa história.",
+            "expr": "desconfiado",
+            "anim": "pensando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "lari_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Sou monitora do laboratório. E tem uma coisa nessa história que não fecha.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "O que não fecha?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você ajudou a sumir com ele!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Sexta às 16h30 eu fui limpar o armário. O microscópio JÁ não tava lá.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "A profa disse 'tá na manutenção'. Agora dizem que roubaram domingo. Domingo?",
+                  "expr": "surpreso",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_lari",
+              "sets": [
+                "lari_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? Eu ganho ponto extra por limpar vidro! Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "lari_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:lari_bravo} me acusou. Não ajudo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "theo",
+      "kind": "pessoa",
+      "name": "Theo",
+      "gender": "m",
+      "role": "mora em frente à escola",
+      "look": {
+        "skin": "#a0704c",
+        "hair": "cacheado",
+        "hair_color": "#20140c",
+        "top": "#558b2f",
+        "accessory": "cachecol"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu vi uma luz às 2h.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "theo_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "theo_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "theo_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu moro em frente. Domingo, 2h, tava acordado jogando e vi luz no laboratório.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o seu story das 2h04",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_story_theo"
+                  ]
+                },
+                {
+                  "text": "Você invadiu e postou pra disfarçar!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Uma pessoa só, de casaco comprido, lá DENTRO. Não pulou janela nenhuma.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Depois vi um carro prata saindo pela rua de trás, sem pressa nenhuma.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "theo_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_theo"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu tava de pijama de dinossauro. Invasor de pijama? Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "theo_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:theo_bravo} me acusou. Mostra meu story e a gente conversa.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o seu story das 2h04",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_story_theo"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "otavio",
+      "kind": "pessoa",
+      "name": "Sr. Otávio",
+      "gender": "m",
+      "role": "diretor",
+      "look": {
+        "skin": "#8a5a3c",
+        "hair": "raspado",
+        "hair_color": "#bdbdbd",
+        "top": "#263238",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Seguro acionado. Assunto encerrado.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "otavio_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Invasão, furto, seguro acionado. Quero isso resolvido antes da imprensa saber.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem tem código do alarme?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor quer o dinheiro do seguro!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Eu, o Seu Jorge e a Profa. Ana, que trabalha até tarde. Só nós três.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu?! Saia da minha sala imediatamente.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "otavio_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:otavio_bravo} me acusou. A diretoria está fechada para você.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "jorge",
+      "kind": "pessoa",
+      "name": "Seu Jorge",
+      "gender": "m",
+      "role": "zelador de plantão",
+      "look": {
+        "skin": "#7a4b2a",
+        "hair": "raspado",
+        "hair_color": "#cfcfcf",
+        "top": "#546e7a",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu tava na guarita!",
+            "expr": "bravo",
+            "anim": "negando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "jorge_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "jorge_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "jorge_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Todo mundo me olhando torto. Eu tava na guarita, com a câmera ligada!",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o livro da ronda",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ronda"
+                  ]
+                },
+                {
+                  "text": "Achei suas chaves no armário do corredor",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chave"
+                  ],
+                  "ifnot": [
+                    "jorge_troca"
+                  ]
+                },
+                {
+                  "text": "O senhor dormiu e deixaram roubar!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "1h50 às 2h20 na guarita, tá na câmera. O alarme tocou e quando cheguei já tinha parado.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "jorge_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Achei suas chaves no armário do corredor",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chave"
+                  ],
+                  "ifnot": [
+                    "jorge_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_jorge"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Dormir? Eu? Fora daqui.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "jorge_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:jorge_bravo} me chamou de dorminhoco. Só falo se acharem minhas chaves.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei suas chaves no armário do corredor",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chave"
+                  ],
+                  "ifnot": [
+                    "jorge_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Minhas chaves! Você é um anjo.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Vou contar o que eu não contei: 2h00 entrou um carro prata pela rua de trás. O da Profa. Ana é prata.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "jorge_falou",
+                "jorge_troca"
+              ],
+              "take_item": "chave",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_jorge"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "laboratorio",
+      "kind": "lugar",
+      "name": "Laboratório"
+    },
+    {
+      "id": "guarita",
+      "kind": "lugar",
+      "name": "Guarita do zelador",
+      "scene": "corredor"
+    },
+    {
+      "id": "microscopio",
+      "kind": "fato",
+      "name": "O microscópio digital",
+      "icon": "computador"
+    }
+  ],
+  "items": [
+    {
+      "id": "chave",
+      "name": "Molho de chaves do zelador",
+      "desc": "Vinte chaves e um chaveiro de vassoura.",
+      "icon": "chave"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_alerta",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo dos funcionários",
+      "time": "7h30",
+      "text": "O diretor anuncia a invasão e aciona o seguro; a Profa. Ana lamenta.",
+      "chat": {
+        "group": "Funcionários 🏫",
+        "lines": [
+          {
+            "who": "otavio",
+            "text": "INVASÃO no laboratório. Microscópio digital levado. Seguro acionado.",
+            "time": "7h30"
+          },
+          {
+            "who": "ana",
+            "text": "que horror 😢 meu laboratório",
+            "time": "7h31"
+          },
+          {
+            "who": "jorge",
+            "text": "eu tava na guarita, não vi ninguém",
+            "time": "7h33"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_poeira",
+      "kind": "objeto",
+      "title": "Suporte do microscópio",
+      "text": "No suporte vazio, a marca do microscópio na poeira. A poeira é grossa, de dias, não de horas.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_ficha_lab",
+      "kind": "registro",
+      "title": "Ficha do armário",
+      "text": "Controle do armário: 'Microscópio digital retirado sexta 16h, para manutenção. Ass. A.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_vidro",
+      "kind": "objeto",
+      "title": "Cacos no pátio",
+      "text": "Os cacos da janela do laboratório caíram AQUI FORA, no pátio. O vidro foi quebrado de dentro para fora.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_alarme",
+      "kind": "registro",
+      "title": "Painel do alarme",
+      "time": "2h03",
+      "text": "Painel do alarme: '2h03 DESATIVADO, código 07. 2h09 ATIVADO, código 07.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_codigos",
+      "kind": "registro",
+      "title": "Códigos do alarme",
+      "text": "Na gaveta, a lista de códigos: 01 Diretor. 03 Seu Jorge. 07 Profa. Ana.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_ronda",
+      "kind": "registro",
+      "title": "Livro da ronda",
+      "text": "Livro da ronda: 'Domingo, 1h50 às 2h20, Jorge na guarita. Câmera da guarita gravando.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_story_theo",
+      "kind": "post",
+      "title": "Story do Theo",
+      "time": "2h04",
+      "text": "Às 2h04, o Theo filma da janela: luz acesa e uma pessoa de casaco comprido dentro do laboratório.",
+      "post": {
+        "user": "@theo.livre",
+        "caption": "2h da manhã e tem alguém no laboratório da escola 👻",
+        "likes": 64,
+        "image": "janela do laboratório acesa, uma silhueta de casaco comprido do lado de dentro",
+        "comments": [
+          {
+            "user": "@lari.lab",
+            "text": "????"
+          }
+        ],
+        "who": "theo"
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_cursinho",
+      "kind": "post",
+      "title": "Anúncio do cursinho",
+      "time": "3 semanas atrás",
+      "text": "Um cursinho particular anuncia aulas com microscópio digital profissional, com o mesmo adesivo do laboratório.",
+      "post": {
+        "user": "@cursinho.bio.ana",
+        "caption": "aulas particulares de biologia com MICROSCÓPIO DIGITAL profissional 🔬 vagas abertas!",
+        "likes": 41,
+        "image": "um microscópio digital com adesivo 'PATRIMÔNIO ESCOLA' meio raspado",
+        "comments": [
+          {
+            "user": "@mae.de.aluno",
+            "text": "quanto custa?"
+          }
+        ],
+        "who": "ana"
+      },
+      "release": "t+240",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_lari",
+      "kind": "depoimento",
+      "title": "Fala da Lari",
+      "who": "lari",
+      "text": "Lari foi limpar o armário sexta às 16h30 e o microscópio já não estava lá.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_theo",
+      "kind": "depoimento",
+      "title": "Fala do Theo",
+      "who": "theo",
+      "text": "Theo viu uma pessoa sozinha dentro do laboratório e, depois, um carro prata saindo sem pressa.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_jorge",
+      "kind": "depoimento",
+      "title": "Fala do Seu Jorge",
+      "who": "jorge",
+      "text": "Seu Jorge estava na guarita das 1h50 às 2h20 e viu entrar um carro prata pela rua de trás às 2h.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão da Profa. Ana",
+      "who": "ana",
+      "text": "A Profa. Ana usava o microscópio no cursinho, quebrou o aparelho e encenou a invasão para enganar o inventário e o seguro.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_suporte",
+      "scene": "laboratorio",
+      "object": "microscopio",
+      "label": "Suporte do microscópio",
+      "clue": "c_poeira"
+    },
+    {
+      "id": "hs_armario",
+      "scene": "laboratorio",
+      "object": "armario_vidros",
+      "label": "Ficha do armário",
+      "clue": "c_ficha_lab"
+    },
+    {
+      "id": "hs_cacos",
+      "scene": "patio",
+      "object": "arvore",
+      "label": "Cacos perto da árvore",
+      "clue": "c_vidro"
+    },
+    {
+      "id": "hs_painel",
+      "scene": "sala_diretor",
+      "object": "telefone",
+      "label": "Painel do alarme",
+      "clue": "c_alarme"
+    },
+    {
+      "id": "hs_gaveta",
+      "scene": "sala_diretor",
+      "object": "gaveta",
+      "label": "Gaveta do diretor",
+      "clue": "c_codigos"
+    },
+    {
+      "id": "hs_ronda",
+      "scene": "corredor",
+      "object": "quadro_avisos",
+      "label": "Livro da ronda",
+      "clue": "c_ronda"
+    },
+    {
+      "id": "hs_arm_corr",
+      "scene": "corredor",
+      "object": "armario_aberto",
+      "label": "Armário do corredor",
+      "item": "chave"
+    }
+  ],
+  "solution": {
+    "culprit": "ana",
+    "culprit_question": "Quem forjou a invasão?",
+    "culprit_evidence": [
+      "c_alarme",
+      "c_codigos",
+      "c_ficha_lab",
+      "c_cursinho",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "sumico",
+        "label": "Quando o microscópio saiu"
+      },
+      {
+        "id": "noite",
+        "label": "Onde cada um estava às 2h03"
+      }
+    ],
+    "edges": [
+      {
+        "from": "ana",
+        "to": "microscopio",
+        "type": "pegou",
+        "category": "sumico",
+        "evidence": [
+          "c_ficha_lab",
+          "c_poeira",
+          "c_cursinho",
+          "c_dep_lari"
+        ]
+      },
+      {
+        "from": "ana",
+        "to": "laboratorio",
+        "type": "estava",
+        "category": "noite",
+        "evidence": [
+          "c_alarme",
+          "c_codigos",
+          "c_story_theo"
+        ]
+      },
+      {
+        "from": "jorge",
+        "to": "guarita",
+        "type": "estava",
+        "category": "noite",
+        "evidence": [
+          "c_ronda",
+          "c_dep_jorge"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "jorge",
+        "to": "microscopio",
+        "type": "pegou",
+        "category": "sumico"
+      },
+      {
+        "from": "theo",
+        "to": "laboratorio",
+        "type": "estava",
+        "category": "noite"
+      }
+    ]
+  },
+  "hints": [
+    "Ladrão que invade quebra a janela de fora para dentro. E esses cacos?",
+    "Poeira grossa não se forma em uma noite.",
+    "Alarme desligado com código não foi invasão. De quem é o código?",
+    "Quem mais ganha com um 'furto' coberto pelo seguro?",
+    "Um anúncio antigo pode mostrar onde o microscópio trabalhava nos fins de semana."
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "Sexta, 16h",
+        "text": "Ana tira o microscópio 'para manutenção'. Ele já estava quebrado no cursinho dela."
+      },
+      {
+        "time": "Sexta, 16h30",
+        "text": "Lari nota o armário vazio."
+      },
+      {
+        "time": "2h00",
+        "text": "Um carro prata entra pela rua de trás."
+      },
+      {
+        "time": "2h03",
+        "text": "Ana desliga o alarme com o código 07 e quebra a janela por dentro."
+      },
+      {
+        "time": "2h09",
+        "text": "Ela religa o alarme e sai sem pressa."
+      }
+    ],
+    "explanation": "A invasão era cenário. Os cacos caíram para fora, a poeira era de dias e o alarme foi desligado com o código 07, da própria Profa. Ana. O aha: o microscópio já tinha saído na sexta, assinado por 'A.', e trabalhava escondido no cursinho particular dela.",
+    "refuted": [
+      "Seu Jorge estava na guarita, gravado pela câmera.",
+      "Theo só filmou da janela de casa."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "A Profa. Ana levava escondido o microscópio da escola para o cursinho particular dela nos fins de semana, e ele quebrou. Com o inventário marcado para segunda, ela tirou o aparelho na sexta 'para manutenção'. No domingo às 2h03 voltou de carro, desligou o alarme com o próprio código, quebrou a janela por dentro e religou o alarme para parecer invasão.",
+    "twist": "Plantado em três detalhes físicos que parecem decoração: os cacos caídos para fora, a poeira grossa de dias e o alarme desligado com código. A vítima indignada é a autora. Segundo giro: o anúncio do cursinho (t+) mostra que o microscópio da escola trabalhava escondido havia semanas.",
+    "solution_steps": [
+      "Ler o grupo: todos aceitam a 'invasão'.",
+      "No pátio, os cacos caíram para fora: a janela foi quebrada por dentro.",
+      "No laboratório, a poeira grossa no suporte e a ficha 'retirado sexta 16h, Ass. A.' mostram que o microscópio saiu antes.",
+      "Na diretoria, o painel mostra o alarme desligado com o código 07 e a gaveta diz que o 07 é da Profa. Ana.",
+      "No corredor, o livro da ronda dá o álibi do Seu Jorge; com as chaves devolvidas, ele fala do carro prata.",
+      "O story do Theo mostra alguém DENTRO do laboratório às 2h04, e o anúncio do cursinho (chega com o tempo) mostra o motivo.",
+      "Mostrar o alarme e os códigos à Profa. Ana e apontá-la."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 5 min",
+        "aha": "A 'invasão' parece real; o zelador é suspeito.",
+        "if_stuck": "De que lado caíram os cacos?"
+      },
+      {
+        "when": "5 a 12 min",
+        "aha": "Aha 1: o microscópio saiu na sexta, não no domingo.",
+        "if_stuck": "Quem assinou a ficha do armário?"
+      },
+      {
+        "when": "12 min em diante",
+        "aha": "Aha 2: o código 07 é da professora; o anúncio dá o motivo.",
+        "if_stuck": "Quem ganha com o dinheiro do seguro?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_alerta",
+        "where": "Já no início, para todos",
+        "proves": "Apresenta a versão oficial da invasão."
+      },
+      {
+        "clue": "c_poeira",
+        "where": "Laboratório: tocar em 'Suporte do microscópio'",
+        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital."
+      },
+      {
+        "clue": "c_ficha_lab",
+        "where": "Laboratório: tocar em 'Ficha do armário'",
+        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital. Aponta para Profa. Ana."
+      },
+      {
+        "clue": "c_vidro",
+        "where": "Pátio: tocar em 'Cacos perto da árvore'",
+        "proves": "Os cacos caíram para fora: a janela foi quebrada por dentro."
+      },
+      {
+        "clue": "c_alarme",
+        "where": "Sala do diretor: tocar em 'Painel do alarme'",
+        "proves": "Prova a linha: Profa. Ana estava em Laboratório. Aponta para Profa. Ana."
+      },
+      {
+        "clue": "c_codigos",
+        "where": "Sala do diretor: tocar em 'Gaveta do diretor'",
+        "proves": "Prova a linha: Profa. Ana estava em Laboratório. Aponta para Profa. Ana."
+      },
+      {
+        "clue": "c_ronda",
+        "where": "Corredor: tocar em 'Livro da ronda'",
+        "proves": "O zelador estava na guarita, gravado pela câmera."
+      },
+      {
+        "clue": "c_story_theo",
+        "where": "Já no início, para todos",
+        "proves": "Prova a linha: Profa. Ana estava em Laboratório."
+      },
+      {
+        "clue": "c_cursinho",
+        "where": "Chega sozinha aos 4 min",
+        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital. Aponta para Profa. Ana."
+      },
+      {
+        "clue": "c_dep_lari",
+        "where": "conversar com Lari ('O que não fecha?')",
+        "proves": "Prova a linha: Profa. Ana pegou O microscópio digital."
+      },
+      {
+        "clue": "c_dep_theo",
+        "where": "mostrar 'Story do Theo' para Theo",
+        "proves": "Havia uma pessoa DENTRO do laboratório, e um carro prata saiu sem pressa."
+      },
+      {
+        "clue": "c_dep_jorge",
+        "where": "mostrar 'Livro da ronda' para Seu Jorge; ou trocar 'Molho de chaves do zelador' com Seu Jorge",
+        "proves": "Prova a linha: Seu Jorge estava em Guarita do zelador."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Painel do alarme' + 'Códigos do alarme' para Profa. Ana; ou mostrar 'Ficha do armário' para Profa. Ana",
+        "proves": "Aponta para Profa. Ana."
+      }
+    ],
+    "red_herrings": [
+      "O zelador 'não viu nada': estava na guarita, gravado pela câmera."
+    ],
+    "faq": [
+      {
+        "q": "Foi o Seu Jorge, ele tava de plantão!",
+        "a": "Onde ele estava às 2h03? Tem um livro da ronda."
+      },
+      {
+        "q": "Mas a janela quebrou, então alguém invadiu.",
+        "a": "De que lado caíram os cacos?"
+      },
+      {
+        "q": "Quem tem código do alarme?",
+        "a": "Perguntem ao diretor, ou olhem a gaveta dele."
+      },
+      {
+        "q": "Quando o microscópio sumiu de verdade?",
+        "a": "Conversem com a monitora do laboratório. E olhem a poeira."
+      },
+      {
+        "q": "A professora é a vítima!",
+        "a": "A vítima ganha alguma coisa com o seguro? Esperem o anúncio que chega."
+      }
+    ],
+    "talking_points": [
+      "Por que a gente confia mais em quem parece vítima?",
+      "Esconder um erro pode virar um erro muito maior. Como?",
+      "Quais pistas físicas desmontaram a encenação?"
+    ]
+  }
+}

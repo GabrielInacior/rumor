@@ -1,0 +1,881 @@
+{
+  "id": "solo_bilhete",
+  "mode": "solo",
+  "title": "Sai do Time",
+  "tagline": "Letras recortadas. Uma ameaça por dia. Um segredo com prazo.",
+  "difficulty": 1,
+  "duration_sec": 600,
+  "scene": "corredor",
+  "locations": [
+    "corredor",
+    "quadra"
+  ],
+  "scene_people": [
+    {
+      "id": "bia",
+      "scene": "corredor"
+    },
+    {
+      "id": "duda",
+      "scene": "quadra"
+    },
+    {
+      "id": "lu",
+      "scene": "quadra"
+    }
+  ],
+  "briefing": "Quarta, 7h30. Quarto bilhete no armário da Bia, em letras recortadas de revista: 'SAI DO TIME ATÉ SEXTA OU A ESCOLA INTEIRA VAI SABER.' A capitã vive brigando com ela. Mas quem ganha se a Bia sair?",
+  "goal": "Descubra quem está ameaçando a Bia e prove onde a capitã estava.",
+  "link_types": [
+    {
+      "id": "escreveu",
+      "label": "escreveu",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "bia",
+      "kind": "pessoa",
+      "name": "Bia",
+      "gender": "f",
+      "role": "levantadora titular, alvo dos bilhetes",
+      "look": {
+        "skin": "#e0ac69",
+        "hair": "cacheado_longo",
+        "hair_color": "#2b1d14",
+        "top": "#e91e63",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Mais um bilhete. Eu tô bem. Mentira.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "bia_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "bia_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "bia_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Quatro bilhetes. Quatro! E eu nem sei que segredo é esse que 'todo mundo vai saber'.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei sua bola autografada na lixeira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "bola"
+                  ],
+                  "ifnot": [
+                    "bia_troca"
+                  ]
+                },
+                {
+                  "text": "Que segredo alguém poderia saber?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você inventou os bilhetes pra chamar atenção!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Tá. Tô de recuperação em três matérias. Se repetir, saio do time de qualquer jeito.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Só a capitã e o técnico sabiam. E quem fuçasse o mural do técnico.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei sua bola autografada na lixeira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "bola"
+                  ],
+                  "ifnot": [
+                    "bia_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Chamar atenção? Eu quero é sumir. Sai daqui.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "bia_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:bia_bravo} disse que eu inventei tudo. Volta quando acreditar em mim.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei sua bola autografada na lixeira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "bola"
+                  ],
+                  "ifnot": [
+                    "bia_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Minha bola! Jogaram no LIXO? Isso também é recado.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Lembrei: ontem a Lu pediu a senha do meu armário 'pra guardar um tênis'. Eu não dei.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "bia_falou",
+                "bia_troca"
+              ],
+              "take_item": "bola",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Sexta é o prazo. Corre, detetive.",
+                  "expr": "nervoso",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei sua bola autografada na lixeira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "bola"
+                  ],
+                  "ifnot": [
+                    "bia_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "duda",
+      "kind": "pessoa",
+      "name": "Duda",
+      "gender": "f",
+      "role": "capitã do time",
+      "look": {
+        "skin": "#f1c27d",
+        "hair": "rabo",
+        "hair_color": "#b5482a",
+        "top": "#212121",
+        "accessory": "fones"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu falo na cara.",
+            "expr": "bravo",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "duda_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "duda_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "duda_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Sou dura com a Bia, sim. Mas bilhete anônimo? Eu falo na cara.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a chamada do treino das 7h",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_treino"
+                  ]
+                },
+                {
+                  "text": "Por que você briga tanto com a Bia?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Confessa, capitã, os bilhetes são seus!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Porque ela falta e eu sou a capitã. Se ela sair, quem entra é a Lu. Faz a conta.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a chamada do treino das 7h",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_treino"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Viu? 7h em ponto eu tava aqui puxando aquecimento. O bilhete apareceu antes das 7h20.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Quem chegou atrasada hoje? Pergunta pra quem quer a camisa da Bia.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "duda_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Meus? Eu não preciso de revista pra xingar ninguém. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "duda_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:duda_bravo} me acusou. Só falo com a chamada do treino na mão.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a chamada do treino das 7h",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_treino"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "lu",
+      "kind": "pessoa",
+      "name": "Lu",
+      "gender": "f",
+      "role": "reserva há três anos",
+      "look": {
+        "skin": "#f0c8a0",
+        "hair": "rabo",
+        "hair_color": "#d84315",
+        "top": "#fdd835",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Tô do lado da Bia. Cem por cento.",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "lu_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "lu_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "lu_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Coitada da Bia, né? Eu tô do lado dela. Totalmente. Cem por cento.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a revista recortada da sua bolsa",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bolsa"
+                  ]
+                },
+                {
+                  "text": "Onde você tava às 7h10?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você quer a vaga da Bia, né?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "No ônibus. Trânsito. Cheguei 7h25. Por quê? Alguém disse alguma coisa?",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a revista recortada da sua bolsa",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bolsa"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Tá. Fui eu. Três anos no banco, detetive. Três anos esperando.",
+                  "expr": "bravo",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "O técnico escreveu que, se ela saísse, a titular era eu. Eu só dei um empurrãozinho.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "lu_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Quero. Todo reserva quer. Isso não é crime. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "lu_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:lu_bravo} me acusou sem prova. Agora só com prova.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a ficha do técnico",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ficha"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Vou pedir desculpa pra Bia. Ou mudar de escola. Ainda não decidi.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "quadra",
+      "kind": "lugar",
+      "name": "Quadra"
+    },
+    {
+      "id": "bilhetes",
+      "kind": "fato",
+      "name": "Os bilhetes ameaçadores",
+      "icon": "carta"
+    }
+  ],
+  "items": [
+    {
+      "id": "bola",
+      "name": "Bola autografada da Bia",
+      "desc": "Assinada pela seleção. Alguém jogou no lixo de propósito.",
+      "icon": "bola"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_bilhete",
+      "kind": "bilhete",
+      "title": "O quarto bilhete",
+      "time": "7h20",
+      "text": "Letras recortadas de revista: 'SAI DO TIME ATÉ SEXTA OU A ESCOLA INTEIRA VAI SABER.' Cheiro forte de cola de morango.",
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_time",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo do time",
+      "time": "21h00",
+      "text": "Na véspera, a capitã ameaça tirar a Bia do time e a Lu pede calma.",
+      "chat": {
+        "group": "Vôlei Feminino 🏐",
+        "lines": [
+          {
+            "who": "duda",
+            "text": "faltou mais um treino, tá FORA, Bia",
+            "time": "21h00"
+          },
+          {
+            "who": "bia",
+            "text": "vc nunca gostou de mim",
+            "time": "21h01"
+          },
+          {
+            "who": "lu",
+            "text": "gente calma 🙏 somos um time ❤️",
+            "time": "21h03"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_armario",
+      "kind": "objeto",
+      "title": "Armário da Bia",
+      "text": "A fresta do armário foi forçada com algo fino. No chão, um 'S' recortado da capa da revista 'Vôlei Total'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_bolsa",
+      "kind": "objeto",
+      "title": "Bolsa da Lu",
+      "text": "Na bolsa da Lu: uma 'Vôlei Total' com a capa toda recortada e uma cola bastão sabor morango.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_treino",
+      "kind": "registro",
+      "title": "Chamada do treino",
+      "text": "Chamada de hoje: 7h00, Duda presente. Lu chegou 7h25, 'trânsito'. O bilhete foi achado às 7h20.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_ficha",
+      "kind": "registro",
+      "title": "Ficha do técnico",
+      "text": "Ficha do Prof. Ivo: 'Se a Bia não recuperar as notas, a titular passa a ser a LU.'",
+      "release": "t+150",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_armario",
+      "scene": "corredor",
+      "object": "armario_aberto",
+      "label": "Armário da Bia",
+      "clue": "c_armario"
+    },
+    {
+      "id": "hs_lixeira",
+      "scene": "corredor",
+      "object": "lixeira",
+      "label": "Lixeira",
+      "item": "bola"
+    },
+    {
+      "id": "hs_bolsa",
+      "scene": "quadra",
+      "object": "bolsa_esportiva",
+      "label": "Bolsa da Lu",
+      "clue": "c_bolsa"
+    },
+    {
+      "id": "hs_placar",
+      "scene": "quadra",
+      "object": "placar",
+      "label": "Chamada no placar",
+      "clue": "c_treino"
+    }
+  ],
+  "solution": {
+    "culprit": "lu",
+    "culprit_question": "Quem está ameaçando a Bia?",
+    "culprit_evidence": [
+      "c_bolsa",
+      "c_armario",
+      "c_ficha"
+    ],
+    "categories": [
+      {
+        "id": "autoria",
+        "label": "Quem escreveu os bilhetes"
+      },
+      {
+        "id": "alibi",
+        "label": "Onde estava a capitã"
+      }
+    ],
+    "edges": [
+      {
+        "from": "lu",
+        "to": "bilhetes",
+        "type": "escreveu",
+        "category": "autoria",
+        "evidence": [
+          "c_bolsa",
+          "c_armario"
+        ]
+      },
+      {
+        "from": "duda",
+        "to": "quadra",
+        "type": "estava",
+        "category": "alibi",
+        "evidence": [
+          "c_treino"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "duda",
+        "to": "bilhetes",
+        "type": "escreveu",
+        "category": "autoria"
+      }
+    ]
+  },
+  "hints": [
+    "Quem ganha se a Bia sair do time?",
+    "Letras recortadas vêm de algum lugar. Que revista?",
+    "O bilhete apareceu antes das 7h20. Quem estava no treino?",
+    "Uma amiga 'cem por cento do seu lado' pode ter outros planos."
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "21h00",
+        "text": "Briga no grupo. A Lu responde: 'somos um time ❤️'."
+      },
+      {
+        "time": "7h00",
+        "text": "Duda começa o treino."
+      },
+      {
+        "time": "7h10",
+        "text": "Lu força o armário da Bia e deixa o quarto bilhete."
+      },
+      {
+        "time": "7h25",
+        "text": "Lu aparece no treino dizendo que pegou trânsito."
+      }
+    ],
+    "explanation": "A capitã gritava, mas falava na cara. Quem ganhava com a saída da Bia era a reserva Lu, que leu no mural do técnico que seria a titular. O aha: a revista recortada e a cola de morango estavam na bolsa dela, e o 'trânsito' foi o tempo de deixar o bilhete.",
+    "refuted": [
+      "Duda estava no treino desde as 7h."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "A Lu, reserva há três anos, leu na ficha do técnico que viraria titular se a Bia saísse. Começou a deixar bilhetes ameaçadores no armário da Bia, usando o segredo da recuperação. Hoje chegou cedo, deixou o quarto bilhete e apareceu no treino às 7h25 dizendo que pegou trânsito.",
+    "twist": "Plantado no grupo do time: a Lu é a única que pede calma ('somos um time ❤️') e é exatamente quem ganha a vaga. A chamada mostra que ela 'chegou' às 7h25, depois do bilhete. Segundo giro: a vítima também escondia um segredo, a recuperação.",
+    "solution_steps": [
+      "Ler o bilhete e o grupo do time: a capitã Duda parece a suspeita.",
+      "No corredor, o armário forçado tem um 'S' recortado da revista 'Vôlei Total'.",
+      "Na quadra, a chamada mostra a Duda no treino desde as 7h e a Lu chegando só 7h25.",
+      "Na bolsa da Lu estão a revista recortada e a cola de morango.",
+      "A ficha do técnico (chega com o tempo) mostra o motivo: a Lu seria a titular.",
+      "Montar o quadro e apontar a Lu."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 3 min",
+        "aha": "A capitã parece culpada pela briga no grupo.",
+        "if_stuck": "Onde a capitã estava quando o bilhete apareceu?"
+      },
+      {
+        "when": "3 a 6 min",
+        "aha": "Aha: a Lu chegou tarde e quem ganha com a saída da Bia é ela.",
+        "if_stuck": "De onde vieram as letras recortadas?"
+      },
+      {
+        "when": "6 min em diante",
+        "aha": "A ficha do técnico confirma o motivo.",
+        "if_stuck": "Que segredo da Bia a Lu usou?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_bilhete",
+        "where": "Já no início, para todos",
+        "proves": "Mostra a ameaça e as letras recortadas com cheiro de cola de morango."
+      },
+      {
+        "clue": "c_chat_time",
+        "where": "Já no início, para todos",
+        "proves": "Cria a suspeita sobre a capitã Duda."
+      },
+      {
+        "clue": "c_armario",
+        "where": "Corredor: tocar em 'Armário da Bia'",
+        "proves": "Prova a linha: Lu escreveu Os bilhetes ameaçadores. Aponta para Lu."
+      },
+      {
+        "clue": "c_bolsa",
+        "where": "Quadra: tocar em 'Bolsa da Lu'",
+        "proves": "Prova a linha: Lu escreveu Os bilhetes ameaçadores. Aponta para Lu."
+      },
+      {
+        "clue": "c_treino",
+        "where": "Quadra: tocar em 'Chamada no placar'",
+        "proves": "Prova a linha: Duda estava em Quadra."
+      },
+      {
+        "clue": "c_ficha",
+        "where": "Chega sozinha aos 2 min 30 s",
+        "proves": "Aponta para Lu."
+      }
+    ],
+    "red_herrings": [
+      "A briga da Duda com a Bia: ela é dura, mas estava no treino na hora do bilhete."
+    ],
+    "faq": [
+      {
+        "q": "Foi a capitã, ela odeia a Bia!",
+        "a": "Onde ela estava entre 7h e 7h20? Tem uma chamada na quadra."
+      },
+      {
+        "q": "De onde vieram as letras?",
+        "a": "Olhem o chão do armário. Qual revista tem esse 'S'?"
+      },
+      {
+        "q": "A Lu é tão legal com a Bia...",
+        "a": "Quem ficaria com a vaga se a Bia saísse?"
+      },
+      {
+        "q": "A Bia não fala mais com a gente.",
+        "a": "Algo dela foi parar no lixo. Devolvam."
+      }
+    ],
+    "talking_points": [
+      "Por que a gente desconfia de quem grita, e não de quem sorri?",
+      "Ameaçar alguém com um segredo é uma forma de violência?",
+      "Que pista ligou a ameaça à pessoa?"
+    ]
+  }
+}

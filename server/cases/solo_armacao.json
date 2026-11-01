@@ -1,0 +1,1467 @@
+{
+  "id": "solo_armacao",
+  "mode": "solo",
+  "title": "A Armação",
+  "tagline": "Uma mochila, uma prova roubada, trezentos reais e um aluno perfeito demais.",
+  "difficulty": 3,
+  "duration_sec": 1440,
+  "scene": "sala_aula",
+  "locations": [
+    "sala_aula",
+    "sala_professores",
+    "laboratorio",
+    "biblioteca",
+    "corredor"
+  ],
+  "scene_people": [
+    {
+      "id": "davi",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "vera",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "mel",
+      "scene": "laboratorio"
+    },
+    {
+      "id": "bento",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "joana",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "caique",
+      "scene": "corredor"
+    }
+  ],
+  "briefing": "Sexta, 13h. Após uma denúncia anônima, a coordenação abre a mochila do Davi, bolsista e primeiro do ranking: a prova de química e trezentos reais em notas novas. Segunda ele será expulso. Ele jura que nunca viu aquilo. Alguém quer muito o lugar dele.",
+  "goal": "Descubra quem armou para o Davi, de onde veio a prova e quem mandou a denúncia.",
+  "link_types": [
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    },
+    {
+      "id": "entregou",
+      "label": "entregou para",
+      "directed": true
+    },
+    {
+      "id": "enviou",
+      "label": "enviou",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "davi",
+      "kind": "pessoa",
+      "name": "Davi",
+      "gender": "m",
+      "role": "bolsista, 1º do ranking",
+      "look": {
+        "skin": "#6d4426",
+        "hair": "cacheado",
+        "hair_color": "#0e0a06",
+        "top": "#78909c",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu nunca vi aquela prova.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "davi_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu nunca vi aquela prova. Nem aquele dinheiro. Segunda eu perco a bolsa e a escola.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Onde você tava no almoço?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você roubou a prova, confessa!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Na biblioteca, dando monitoria. Cobro cinco reais por aluno... não conta pra ninguém, é proibido.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Deixei a mochila na sala, como todo dia. Qualquer um podia mexer.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_davi",
+              "sets": [
+                "davi_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu não aguento mais ninguém acreditando em mim. Sai.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "davi_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:davi_bravo} me chamou de ladrão. Volta quando tiver prova de verdade.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "vera",
+      "kind": "pessoa",
+      "name": "Dona Vera",
+      "gender": "f",
+      "role": "coordenadora",
+      "look": {
+        "skin": "#5d3a22",
+        "hair": "cacheado_longo",
+        "hair_color": "#2a1a10",
+        "top": "#880e4f",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "A denúncia era precisa demais.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "vera_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Recebi um e-mail anônimo às 12h47: 'olhem a mochila do Davi antes das 13h'. Preciso. Demais.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem sabia da prova de química?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora quer expulsar o bolsista!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Só a professora e a monitora do laboratório, a Mel. A prova fica no computador de lá.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                },
+                {
+                  "text": "E quem ganha a bolsa se o Davi sair? O segundo do ranking.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Que acusação baixa. Saia da coordenação.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "vera_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:vera_bravo} me acusou. A coordenação está fechada para você.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mel",
+      "kind": "pessoa",
+      "name": "Mel",
+      "gender": "f",
+      "role": "monitora de química",
+      "look": {
+        "skin": "#f7d2b0",
+        "hair": "rabo",
+        "hair_color": "#e0b050",
+        "top": "#f06292",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu só imprimo o que me pedem.",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "mel_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "mel_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "mel_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Monitora de química. Eu só imprimo o que me pedem. Não sei de nada. Nadinha.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o bilhete do armário de vidros",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bilhete_mel"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, respira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "mel_troca"
+                  ]
+                },
+                {
+                  "text": "Você vendeu a prova, Mel!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Tá. O Bento me pediu a prova 'só pra revisar'. Pagou cinquenta. Imprimi quinta 17h10.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Eu juro que não sabia que ele ia pôr na mochila do Davi.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "mel_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, respira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "mel_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_mel"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Vendi? Eu... eu preciso ir. Tchau.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "mel_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:mel_bravo} me pressionou. Não consigo falar. Talvez com um chocolate.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, respira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "mel_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate... tá. Eu não aguento mais segurar isso.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Imprimi a prova quinta pro Bento, por cinquenta reais. Ele disse que era só pra estudar.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "mel_falou",
+                "mel_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_mel"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "bento",
+      "kind": "pessoa",
+      "name": "Bento",
+      "gender": "m",
+      "role": "2º do ranking",
+      "look": {
+        "skin": "#e0b088",
+        "hair": "franja",
+        "hair_color": "#5d4037",
+        "top": "#1e88e5",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Que decepção, o Davi.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "bento_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "bento_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "bento_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Que decepção, o Davi. Eu admirava ele. De verdade. Quem diria, né?",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da rede da biblioteca",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_rede"
+                  ]
+                },
+                {
+                  "text": "Onde você tava no almoço?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você armou pro Davi!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Estudando. Na sala, sozinho, com autorização. Depois vim pra biblioteca. Sou responsável.",
+                  "expr": "neutro",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da rede da biblioteca",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_rede"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...Ele era perfeito em tudo. A bolsa de intercâmbio era a minha única chance.",
+                  "expr": "bravo",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Fiquei sozinho na sala no almoço, pus a prova e o dinheiro na mochila dele e mandei o e-mail daqui.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "bento_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Armei? Eu sou o aluno exemplar aqui. Cuidado com o que fala.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "bento_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:bento_bravo} me acusou. Meu pai é advogado, sabia? Só falo com prova.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro da rede da biblioteca",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_rede"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "joana",
+      "kind": "pessoa",
+      "name": "Joana",
+      "gender": "f",
+      "role": "monitora da biblioteca",
+      "look": {
+        "skin": "#d9a066",
+        "hair": "longo",
+        "hair_color": "#2c1b10",
+        "top": "#00897b",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Shhh.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "joana_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Shhh. Biblioteca. Hoje teve monitoria do Davi o almoço inteiro. Fila até a porta.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem usou o celular aqui às 12h47?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você deixou o Davi sair escondido!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "O Bento. Chegou 12h46, sentou no canto e digitou sorrindo. Achei estranho alguém sorrir tanto numa sexta.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_joana",
+              "sets": [
+                "joana_papo"
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Ele não saiu daqui. Tenho sete assinaturas. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "joana_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:joana_bravo} me acusou. Shhh e tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "caique",
+      "kind": "pessoa",
+      "name": "Caíque",
+      "gender": "m",
+      "role": "monitor do corredor, colecionador",
+      "look": {
+        "skin": "#8c5a3c",
+        "hair": "raspado",
+        "hair_color": "#101010",
+        "top": "#26a69a",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Vejo todo mundo passar.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "caique_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "caique_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Monitor do corredor. Vejo todo mundo passar. Inclusive quem tenta não ser visto.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei uma figurinha rara na biblioteca",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "figurinha"
+                  ],
+                  "ifnot": [
+                    "caique_troca"
+                  ]
+                },
+                {
+                  "text": "Viu alguém entrar na sala no almoço?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você viu e não fez nada!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Vi. Mas informação de monitor tem preço. Eu coleciono figurinha, sabia?",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei uma figurinha rara na biblioteca",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "figurinha"
+                  ],
+                  "ifnot": [
+                    "caique_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu sou monitor, não herói. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "caique_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:caique_bravo} me acusou. Agora só com a figurinha.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei uma figurinha rara na biblioteca",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "figurinha"
+                  ],
+                  "ifnot": [
+                    "caique_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "O Corujão Dourado! Tô te devendo uma.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Pago agora: 12h44 o Bento saiu da sala do Davi com uma sacola da Papelaria Estrela, vazia.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "caique_falou",
+                "caique_troca"
+              ],
+              "take_item": "figurinha",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_caique"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "sala_aula",
+      "kind": "lugar",
+      "name": "Sala do Davi"
+    },
+    {
+      "id": "biblioteca",
+      "kind": "lugar",
+      "name": "Biblioteca"
+    },
+    {
+      "id": "denuncia",
+      "kind": "fato",
+      "name": "A denúncia anônima das 12h47",
+      "icon": "mensagem"
+    }
+  ],
+  "items": [
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "No armário do corredor. Ajuda a confessar.",
+      "icon": "chocolate"
+    },
+    {
+      "id": "figurinha",
+      "name": "Figurinha do Corujão Dourado",
+      "desc": "A mais rara do álbum da escola.",
+      "icon": "papel"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_denuncia",
+      "kind": "mensagem",
+      "title": "Denúncia anônima",
+      "time": "12h47",
+      "text": "E-mail anônimo para a coordenação, 12h47: 'A mochila do Davi tem a prova de química da semana que vem. Olhem antes das 13h.'",
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_turma",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da turma",
+      "time": "13h30",
+      "text": "A turma condena o Davi, e o Bento lamenta a 'decepção'.",
+      "chat": {
+        "group": "2º B 📚",
+        "lines": [
+          {
+            "who": "Léo",
+            "text": "o DAVI?? roubando prova??",
+            "time": "13h30"
+          },
+          {
+            "who": "bento",
+            "text": "que decepção. eu admirava ele 😔",
+            "time": "13h31"
+          },
+          {
+            "who": "Mari",
+            "text": "não acredito nisso",
+            "time": "13h32"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_mochila",
+      "kind": "objeto",
+      "title": "Mochila do Davi",
+      "text": "Na mochila: a prova de química impressa e trezentos reais em notas novas, dentro de uma sacola da Papelaria Estrela.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_lousa",
+      "kind": "registro",
+      "title": "Recado na lousa",
+      "text": "Na lousa: 'Sala liberada para estudo no almoço, 12h15 às 12h45: só o BENTO. Ass. Coordenação.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_ranking",
+      "kind": "registro",
+      "title": "Ranking da bolsa",
+      "text": "Bolsa de intercâmbio: 1º Davi (9,8). 2º Bento (9,6). 'Se o 1º for desclassificado, a vaga passa ao 2º.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_ocorrencia",
+      "kind": "registro",
+      "title": "Ocorrência",
+      "text": "Ocorrência: mochila do Davi aberta às 13h, após denúncia anônima. Davi estava na biblioteca desde as 12h10.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_impressora",
+      "kind": "registro",
+      "title": "Computador do laboratório",
+      "text": "Computador do laboratório: 'prova_quimica_final.pdf' impressa quinta 17h10, usuário 'monitoria.quimica'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_bilhete_mel",
+      "kind": "bilhete",
+      "title": "Bilhete no armário",
+      "text": "Preso no armário de vidros: 'Mel, valeu pela cópia 😉 te passo os 50 amanhã. B.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_registro_bib",
+      "kind": "registro",
+      "title": "Monitoria do Davi",
+      "text": "Registro da biblioteca: monitoria com Davi, 12h10 às 13h. Sete alunos assinaram.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_recibo",
+      "kind": "objeto",
+      "title": "Lixeira do corredor",
+      "text": "Na lixeira, o comprovante de um saque de R$ 300 em notas novas, quinta 18h02, embrulhado em papel da Papelaria Estrela.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_rede",
+      "kind": "registro",
+      "title": "Rede da biblioteca",
+      "text": "Da coordenação: o e-mail anônimo saiu às 12h47 de um celular na rede 'Biblioteca-Alunos'. Nome do aparelho: 'Galaxy-do-Bento'.",
+      "release": "t+300",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_davi",
+      "kind": "depoimento",
+      "title": "Fala do Davi",
+      "who": "davi",
+      "text": "Davi passou o almoço dando monitoria paga, escondido, na biblioteca. A mochila ficou na sala.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_mel",
+      "kind": "depoimento",
+      "title": "Fala da Mel",
+      "who": "mel",
+      "text": "Mel imprimiu a prova na quinta e entregou ao Bento por cinquenta reais, 'para revisar'.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_joana",
+      "kind": "depoimento",
+      "title": "Fala da Joana",
+      "who": "joana",
+      "text": "Joana viu o Bento chegar à biblioteca às 12h46 e digitar sorrindo no celular.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_caique",
+      "kind": "depoimento",
+      "title": "Fala do Caíque",
+      "who": "caique",
+      "text": "Caíque viu o Bento sair da sala do Davi às 12h44 com uma sacola da Papelaria Estrela.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão do Bento",
+      "who": "bento",
+      "text": "Bento comprou a prova da Mel, plantou a prova e o dinheiro na mochila do Davi e mandou a denúncia da biblioteca.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_mochila",
+      "scene": "sala_aula",
+      "object": "mochila",
+      "label": "Mochila do Davi",
+      "clue": "c_mochila"
+    },
+    {
+      "id": "hs_lousa",
+      "scene": "sala_aula",
+      "object": "lousa",
+      "label": "Lousa",
+      "clue": "c_lousa"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "sala_professores",
+      "object": "mural_recados",
+      "label": "Ranking",
+      "clue": "c_ranking"
+    },
+    {
+      "id": "hs_escaninho",
+      "scene": "sala_professores",
+      "object": "escaninho",
+      "label": "Ocorrência",
+      "clue": "c_ocorrencia"
+    },
+    {
+      "id": "hs_bancada",
+      "scene": "laboratorio",
+      "object": "bancada",
+      "label": "Computador da bancada",
+      "clue": "c_impressora"
+    },
+    {
+      "id": "hs_vidros",
+      "scene": "laboratorio",
+      "object": "armario_vidros",
+      "label": "Armário de vidros",
+      "clue": "c_bilhete_mel"
+    },
+    {
+      "id": "hs_comp_bib",
+      "scene": "biblioteca",
+      "object": "computador",
+      "label": "Registro da monitoria",
+      "clue": "c_registro_bib"
+    },
+    {
+      "id": "hs_estante",
+      "scene": "biblioteca",
+      "object": "estante",
+      "label": "Estante",
+      "item": "figurinha"
+    },
+    {
+      "id": "hs_lixeira",
+      "scene": "corredor",
+      "object": "lixeira",
+      "label": "Lixeira",
+      "clue": "c_recibo"
+    },
+    {
+      "id": "hs_arm_corr",
+      "scene": "corredor",
+      "object": "armario_aberto",
+      "label": "Armário do corredor",
+      "item": "chocolate"
+    }
+  ],
+  "solution": {
+    "culprit": "bento",
+    "culprit_question": "Quem armou para o Davi?",
+    "culprit_evidence": [
+      "c_lousa",
+      "c_ranking",
+      "c_bilhete_mel",
+      "c_rede",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "prova",
+        "label": "De onde veio a prova"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava no almoço"
+      },
+      {
+        "id": "denuncia",
+        "label": "Quem fez a denúncia"
+      }
+    ],
+    "edges": [
+      {
+        "from": "mel",
+        "to": "bento",
+        "type": "entregou",
+        "category": "prova",
+        "evidence": [
+          "c_bilhete_mel",
+          "c_impressora",
+          "c_dep_mel"
+        ]
+      },
+      {
+        "from": "bento",
+        "to": "sala_aula",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_lousa",
+          "c_dep_caique"
+        ]
+      },
+      {
+        "from": "davi",
+        "to": "biblioteca",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_registro_bib",
+          "c_ocorrencia",
+          "c_dep_davi"
+        ]
+      },
+      {
+        "from": "bento",
+        "to": "denuncia",
+        "type": "enviou",
+        "category": "denuncia",
+        "evidence": [
+          "c_rede",
+          "c_dep_joana",
+          "c_confissao"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "mel",
+        "to": "denuncia",
+        "type": "enviou",
+        "category": "denuncia"
+      },
+      {
+        "from": "davi",
+        "to": "sala_aula",
+        "type": "estava",
+        "category": "onde"
+      }
+    ]
+  },
+  "hints": [
+    "Quem ganha a bolsa se o primeiro do ranking cair?",
+    "Uma denúncia anônima que sabe o horário exato sabe demais.",
+    "Onde o Davi estava enquanto a mochila ficou sozinha?",
+    "A prova saiu de um computador com usuário. Para quem foi a cópia?",
+    "Quem estava sozinho na sala no almoço, com autorização?",
+    "Celulares deixam rastro na rede da escola."
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "Quinta, 17h10",
+        "text": "Mel imprime a prova para o Bento por cinquenta reais."
+      },
+      {
+        "time": "Quinta, 18h02",
+        "text": "Bento saca trezentos reais em notas novas."
+      },
+      {
+        "time": "12h10",
+        "text": "Davi começa a monitoria na biblioteca."
+      },
+      {
+        "time": "12h15",
+        "text": "Bento fica sozinho na sala do Davi e planta a prova e o dinheiro."
+      },
+      {
+        "time": "12h44",
+        "text": "Bento sai da sala com a sacola vazia."
+      },
+      {
+        "time": "12h47",
+        "text": "Na biblioteca, Bento manda a denúncia anônima do celular."
+      },
+      {
+        "time": "13h00",
+        "text": "A coordenação abre a mochila."
+      }
+    ],
+    "explanation": "O segundo do ranking ganharia a bolsa se o Davi fosse expulso. O Bento comprou a prova da monitora, sacou o dinheiro, ficou sozinho na sala no almoço e plantou tudo. O aha: o e-mail anônimo saiu do 'Galaxy-do-Bento', na rede da biblioteca, enquanto o Davi tinha sete testemunhas dando monitoria.",
+    "refuted": [
+      "Davi estava na biblioteca das 12h10 às 13h, com sete assinaturas.",
+      "Mel vendeu a cópia, mas não mandou a denúncia nem plantou nada."
+    ]
+  },
+  "teacher_guide": {
+    "summary": "O Bento, segundo do ranking, ganharia a bolsa de intercâmbio se o Davi fosse desclassificado. Comprou uma cópia da prova de química da monitora Mel por cinquenta reais e sacou trezentos reais em notas novas. No almoço, sozinho na sala com autorização, plantou tudo na mochila do Davi e mandou a denúncia anônima do celular, na rede da biblioteca. O Davi dava monitoria (paga, escondido) com sete testemunhas.",
+    "twist": "Plantado na própria denúncia (sabia o que e quando), no ranking (quem ganha a bolsa) e no 'que decepção' do Bento no grupo. O registro da rede (t+) confirma. Segundo giro: a monitora Mel vendeu a cópia, e a vítima, Davi, escondia uma monitoria paga.",
+    "solution_steps": [
+      "Ler a denúncia: ela sabe demais (o que e quando).",
+      "Na sala, a mochila tem a prova e o dinheiro; a lousa mostra que só o Bento ficou na sala no almoço.",
+      "Na sala dos professores, o ranking dá o motivo e a ocorrência põe o Davi na biblioteca.",
+      "No laboratório, a prova foi impressa pela monitoria e o bilhete 'valeu pela cópia, B.' liga a Mel ao Bento.",
+      "Na biblioteca, o registro da monitoria dá o álibi do Davi; a Joana viu o Bento digitando às 12h47.",
+      "No corredor, o comprovante do saque; com a figurinha, o Caíque conta que viu o Bento saindo da sala às 12h44.",
+      "O registro da rede (chega com o tempo) mostra o aparelho 'Galaxy-do-Bento'. Mostrar a ele e apontá-lo."
+    ],
+    "pacing": [
+      {
+        "when": "0 a 5 min",
+        "aha": "A mochila parece condenar o Davi.",
+        "if_stuck": "Onde o Davi estava enquanto a mochila ficou na sala?"
+      },
+      {
+        "when": "5 a 12 min",
+        "aha": "Aha 1: o Davi tem sete testemunhas; o Bento ficou sozinho na sala.",
+        "if_stuck": "Quem ganha se o primeiro do ranking cair?"
+      },
+      {
+        "when": "12 a 20 min",
+        "aha": "Aha 2: o bilhete 'valeu pela cópia, B.' liga a prova ao Bento.",
+        "if_stuck": "Como a prova saiu do laboratório?"
+      },
+      {
+        "when": "20 min em diante",
+        "aha": "A rede mostra o celular do Bento mandando a denúncia.",
+        "if_stuck": "Por que alguém se faz de 'decepcionado'?"
+      }
+    ],
+    "clue_map": [
+      {
+        "clue": "c_denuncia",
+        "where": "Já no início, para todos",
+        "proves": "A denúncia sabe o que e quando: quem escreveu sabia porque plantou."
+      },
+      {
+        "clue": "c_chat_turma",
+        "where": "Já no início, para todos",
+        "proves": "A turma condena o Davi; o Bento finge decepção."
+      },
+      {
+        "clue": "c_mochila",
+        "where": "Sala de aula: tocar em 'Mochila do Davi'",
+        "proves": "Mostra o que foi plantado: prova e trezentos reais."
+      },
+      {
+        "clue": "c_lousa",
+        "where": "Sala de aula: tocar em 'Lousa'",
+        "proves": "Prova a linha: Bento estava em Sala do Davi. Aponta para Bento."
+      },
+      {
+        "clue": "c_ranking",
+        "where": "Sala dos professores: tocar em 'Ranking'",
+        "proves": "Aponta para Bento."
+      },
+      {
+        "clue": "c_ocorrencia",
+        "where": "Sala dos professores: tocar em 'Ocorrência'",
+        "proves": "Prova a linha: Davi estava em Biblioteca."
+      },
+      {
+        "clue": "c_impressora",
+        "where": "Laboratório: tocar em 'Computador da bancada'",
+        "proves": "Prova a linha: Mel entregou para Bento."
+      },
+      {
+        "clue": "c_bilhete_mel",
+        "where": "Laboratório: tocar em 'Armário de vidros'",
+        "proves": "Prova a linha: Mel entregou para Bento. Aponta para Bento."
+      },
+      {
+        "clue": "c_registro_bib",
+        "where": "Biblioteca: tocar em 'Registro da monitoria'",
+        "proves": "Prova a linha: Davi estava em Biblioteca."
+      },
+      {
+        "clue": "c_recibo",
+        "where": "Corredor: tocar em 'Lixeira'",
+        "proves": "O dinheiro foi sacado na quinta, em notas novas."
+      },
+      {
+        "clue": "c_rede",
+        "where": "Chega sozinha aos 5 min",
+        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47. Aponta para Bento."
+      },
+      {
+        "clue": "c_dep_davi",
+        "where": "conversar com Davi ('Onde você tava no almoço?')",
+        "proves": "Prova a linha: Davi estava em Biblioteca."
+      },
+      {
+        "clue": "c_dep_mel",
+        "where": "mostrar 'Bilhete no armário' para Mel; ou trocar 'Barra de chocolate' com Mel",
+        "proves": "Prova a linha: Mel entregou para Bento."
+      },
+      {
+        "clue": "c_dep_joana",
+        "where": "conversar com Joana ('Quem usou o celular aqui às 12h47?')",
+        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47."
+      },
+      {
+        "clue": "c_dep_caique",
+        "where": "trocar 'Figurinha do Corujão Dourado' com Caíque",
+        "proves": "Prova a linha: Bento estava em Sala do Davi."
+      },
+      {
+        "clue": "c_confissao",
+        "where": "mostrar 'Rede da biblioteca' para Bento",
+        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47. Aponta para Bento."
+      }
+    ],
+    "red_herrings": [
+      "A Mel imprimiu a prova, mas não plantou nem denunciou.",
+      "O Davi escondia a monitoria paga, mas estava com testemunhas na hora."
+    ],
+    "faq": [
+      {
+        "q": "O Davi tinha a prova na mochila, então foi ele.",
+        "a": "Onde ele estava enquanto a mochila ficou na sala?"
+      },
+      {
+        "q": "Quem ganharia com isso?",
+        "a": "Olhem o ranking da bolsa na sala dos professores."
+      },
+      {
+        "q": "Como a prova saiu do laboratório?",
+        "a": "Quem tem usuário no computador de lá? E o que diz o bilhete no armário?"
+      },
+      {
+        "q": "A denúncia é anônima, não dá pra saber.",
+        "a": "Esperem o recado da coordenação sobre a rede da biblioteca."
+      },
+      {
+        "q": "Ninguém quer falar.",
+        "a": "A Mel está com medo e o Caíque coleciona figurinhas. Procurem pela escola."
+      }
+    ],
+    "talking_points": [
+      "Por que a gente acredita tão fácil numa denúncia anônima?",
+      "A Mel 'só imprimiu'. Ela tem parte da culpa?",
+      "O que a competição por uma bolsa pode fazer com as pessoas?"
+    ]
+  }
+}
