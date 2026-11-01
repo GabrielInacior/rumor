@@ -203,6 +203,8 @@ static func _inkify(n: Node) -> void:
 ## Pasta parda com etiqueta, carimbo e a folha do guia dentro.
 static func _folder(content: Control, title: String) -> Control:
 	var outer := PanelContainer.new()
+	# no PC o dossiê vira uma coluna de leitura (linha de 1800 px cansa); no celular ocupa tudo
+	outer.custom_minimum_size.x = 0
 	outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	outer.add_theme_stylebox_override("panel", UI.box(MANILA, MANILA_EDGE, 2, 8, 14))
 	var v := UI.vbox(10)

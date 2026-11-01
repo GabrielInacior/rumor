@@ -486,8 +486,20 @@ func _build_clue_list() -> void:
 	bag.add_child(bh)
 	clue_list.add_child(bag)
 	clue_list.add_child(UI.title("PISTAS", 34, UI.YELLOW))
+	# PC: fichas em duas colunas (linhas de ponta a ponta ficam difíceis de ler)
+	var holder: Container = clue_list
+	if _desk():
+		var g := GridContainer.new()
+		g.columns = 2
+		g.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		g.add_theme_constant_override("h_separation", 14)
+		g.add_theme_constant_override("v_separation", 14)
+		clue_list.add_child(g)
+		holder = g
 	for c in sorted:
-		clue_list.add_child(_clue_row(c, mine.has(c["id"]), on_board.has("c:" + str(c["id"]))))
+		var row := _clue_row(c, mine.has(c["id"]), on_board.has("c:" + str(c["id"])))
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		holder.add_child(row)
 	if clues.is_empty():
 		clue_list.add_child(UI.label("Nenhuma pista ainda. Explore a CENA!", 28, UI.MIST, "type"))
 	UI.scroll_friendly(clue_list)
@@ -677,7 +689,11 @@ func _build_board_page() -> Control:
 	fit.pressed.connect(func() -> void: board.fit())
 	topbar.add_child(fit)
 	page.add_child(topbar)
-
+	if _desk():
+		# PC: botões do quadro num grupo compacto no canto, o quadro fica com a tela
+		topbar.anchor_right = 0.0
+		topbar.offset_right = 16 + 820
+	
 	guide = PanelContainer.new()
 	guide.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.88), Color(UI.YELLOW, 0.7), 2, 16, 16))
 	guide_l = UI.label("", 24, UI.PAPER, "bold")
@@ -740,7 +756,16 @@ func _build_board_page() -> Control:
 	brow.add_child(submit_btn)
 	bottom.add_child(brow)
 	page.add_child(bottom)
+	if _desk():
+		bottom.anchor_left = 1.0
+		bottom.offset_left = -16 - 860
 	return page
+
+
+## Tela deitada (PC/tablet): alguns grupos ficam compactos em vez de atravessar a tela.
+func _desk() -> bool:
+	var vs := get_viewport_rect().size
+	return vs.x > vs.y * 1.05
 
 
 class StoryIcon extends Control:
@@ -1414,7 +1439,8 @@ func _open_sheet(content: Control) -> void:
 	panel.add_theme_stylebox_override("panel", UI.box(Color(UI.NAVY, 0.98), UI.YELLOW, 3, 28, 26))
 	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	# na tela larga o painel vira uma folha central, não uma faixa de ponta a ponta
-	var side := maxf(10.0, (size.x - 860.0) / 2.0)
+	# PC: folha central mais larga (a tela tem 2240 de largura lógica); celular: ocupa tudo
+	var side := maxf(10.0, (size.x - (1180.0 if _desk() else 860.0)) / 2.0)
 	panel.offset_left = side; panel.offset_right = -side; panel.offset_bottom = -10
 	panel.offset_top = -minf(size.y * 0.82, 1080)
 	# botão VOLTAR fixo no topo (fora da rolagem): sempre visível, mesmo em pista longa no celular em pé

@@ -31,6 +31,24 @@ func _ready() -> void:
 			_refresh_game())
 
 
+## No PC, texto longo numa coluna central de leitura; no celular, a largura toda.
+func _reading_column(c: Control) -> Control:
+	if not _wide():
+		return c
+	var h := UI.hbox(0)
+	h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var l := Control.new()
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(l)
+	c.custom_minimum_size.x = 1300
+	c.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	h.add_child(c)
+	var r := Control.new()
+	r.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(r)
+	return h
+
+
 func _wide() -> bool:
 	return size.x > size.y * 1.1
 
@@ -514,7 +532,7 @@ func _do_refresh_game() -> void:
 		"aovivo":
 			_build_feed()
 		"guia":
-			page_box.add_child(GuideView.build(Net.guide_data))
+			page_box.add_child(_reading_column(GuideView.build(Net.guide_data)))
 		"quadros":
 			var grid := GridContainer.new()
 			grid.columns = 3 if _wide() else 1
@@ -1122,7 +1140,7 @@ func _open_guide_overlay() -> void:
 			return
 		UI.clear(sc)
 		var g := GuideView.build(Net.guide_data)
-		sc.add_child(g)
+		sc.add_child(_reading_column(g))
 		UI.scroll_friendly(g)
 	fill.call()
 	Net.guide_loaded.connect(fill, CONNECT_ONE_SHOT)

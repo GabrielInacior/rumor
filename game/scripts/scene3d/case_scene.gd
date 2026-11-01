@@ -464,8 +464,15 @@ func _auto_frame() -> void:
 	var hx := (ext.y - ext.x) * 0.5
 	var hy := (ext.w - ext.z) * 0.5
 	# metade do campo vertical necessária para caber na largura (retrato) e na altura, com folga
-	var need_y := maxf(atan(tan(hx) / frame_aspect) / (1.0 - frame_margin_x), hy / (1.0 - frame_margin_y))
-	cam.fov = clampf(rad_to_deg(need_y * 2.0), frame_fov_min, frame_fov_max)
+	# tela deitada (PC): usa a proporção real; o ângulo fecha e pessoas e objetos ficam maiores
+	var asp := frame_aspect
+	var fmin := frame_fov_min
+	var vs := size if size.y > 0.0 else get_viewport_rect().size
+	if vs.y > 0.0 and vs.x > vs.y * 1.05:
+		asp = vs.x / vs.y
+		fmin = 42.0
+	var need_y := maxf(atan(tan(hx) / asp) / (1.0 - frame_margin_x), hy / (1.0 - frame_margin_y))
+	cam.fov = clampf(rad_to_deg(need_y * 2.0), fmin, frame_fov_max)
 
 
 ## extremos angulares (x mín, x máx, y mín, y máx) dos pontos vistos pela câmera

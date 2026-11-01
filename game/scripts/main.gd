@@ -130,7 +130,9 @@ func _dev_hooks() -> void:
 func _apply_scale() -> void:
 	var win := get_window()
 	var s := win.size
-	var want := Vector2i(1600, 900) if s.x > s.y * 1.05 else Vector2i(720, 1280)
+	# PC: altura lógica perto da do celular (1260 x 1280), para botões e letras ocuparem na tela a
+	# mesma proporção que no celular (com 900 tudo ficava gigante e cortava). Celular: não muda.
+	var want := Vector2i(2240, 1260) if s.x > s.y * 1.05 else Vector2i(720, 1280)
 	if win.content_scale_size != want:
 		win.content_scale_size = want
 
@@ -152,8 +154,8 @@ func _fit_column() -> void:
 	if narrow:
 		current.anchor_left = 0.5
 		current.anchor_right = 0.5
-		current.offset_left = -480
-		current.offset_right = 480
+		current.offset_left = -640
+		current.offset_right = 640
 	else:
 		current.anchor_left = 0.0
 		current.anchor_right = 1.0

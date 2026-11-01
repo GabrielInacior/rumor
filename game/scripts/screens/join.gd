@@ -57,9 +57,9 @@ func _build() -> void:
 		for i in 4:
 			var p := PanelContainer.new()
 			# tela deitada (PC) tem pouca altura: quadrados e teclas menores para caber tudo
-			p.custom_minimum_size = Vector2(110, 120) if _wide() else Vector2(130, 160)
+			p.custom_minimum_size = Vector2(130, 160)
 			p.add_theme_stylebox_override("panel", UI.box(UI.NIGHT, UI.YELLOW, 4, 18))
-			var l := UI.title("", 90 if _wide() else 120, UI.YELLOW)
+			var l := UI.title("", 120, UI.YELLOW)
 			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 			p.add_child(l)
@@ -72,13 +72,17 @@ func _build() -> void:
 		grid.add_theme_constant_override("h_separation", 16)
 		grid.add_theme_constant_override("v_separation", 16)
 		for k in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "<", "0", "OK"]:
-			var b := UI.button(k, "primary" if k == "OK" else "ghost", 66 if _wide() else 110)
+			var b := UI.button(k, "primary" if k == "OK" else "ghost", 96 if _wide() else 110)
 			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			b.add_theme_font_override("font", UI.font("title"))
 			b.add_theme_font_size_override("font_size", 60)
 			b.pressed.connect(_key.bind(k))
 			grid.add_child(b)
 		body.add_child(grid)
+		if _wide():
+			var kb := UI.label("Dá para digitar o código no teclado.", 22, UI.MIST)
+			kb.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			body.add_child(kb)
 		_show_digits()
 	else:
 		title_l.text = "SEU NOME"
@@ -154,6 +158,24 @@ func _key(k: String) -> void:
 		if digits.length() == 4:
 			Sfx.play("card_pin")
 	_show_digits()
+
+
+## PC: o código também entra pelo teclado (números, apagar, Enter).
+func _unhandled_key_input(e: InputEvent) -> void:
+	if step != 1 or not (e is InputEventKey) or not e.pressed or e.echo:
+		return
+	var k := (e as InputEventKey).keycode
+	if k >= KEY_0 and k <= KEY_9:
+		_key(str(k - KEY_0))
+	elif k >= KEY_KP_0 and k <= KEY_KP_9:
+		_key(str(k - KEY_KP_0))
+	elif k == KEY_BACKSPACE:
+		_key("<")
+	elif k == KEY_ENTER or k == KEY_KP_ENTER:
+		_key("OK")
+	else:
+		return
+	get_viewport().set_input_as_handled()
 
 
 func _show_digits() -> void:

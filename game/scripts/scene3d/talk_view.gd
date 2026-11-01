@@ -171,6 +171,10 @@ func _ready() -> void:
 	bubble.add_theme_stylebox_override("panel", UI.box(Color("#fbf8ef"), UI.INK, 5, 30, 28))
 	bubble.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	bubble.offset_left = 22; bubble.offset_right = -22; bubble.offset_bottom = -30
+	if _wide():
+		# PC: balão e escolhas numa coluna central (linhas de ponta a ponta cansam a leitura)
+		bubble.anchor_left = 0.5; bubble.anchor_right = 0.5
+		bubble.offset_left = -720; bubble.offset_right = 720
 	bubble.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	bubble.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var bv := UI.vbox(10)
@@ -187,6 +191,9 @@ func _ready() -> void:
 	choices_box = UI.vbox(12)
 	choices_box.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	choices_box.offset_left = 22; choices_box.offset_right = -22; choices_box.offset_bottom = -30
+	if _wide():
+		choices_box.anchor_left = 0.5; choices_box.anchor_right = 0.5
+		choices_box.offset_left = -720; choices_box.offset_right = 720
 	choices_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	choices_box.visible = false
 	add_child(choices_box)
@@ -194,6 +201,9 @@ func _ready() -> void:
 	tail.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	tail.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	tail.offset_bottom = -30
+	if _wide():
+		tail.anchor_left = 0.5; tail.anchor_right = 0.5
+		tail.offset_left = -720; tail.offset_right = 720
 	add_child(tail)
 	tail.bubble = bubble
 	_tail = tail
@@ -309,13 +319,14 @@ func _frame() -> void:
 	# na tela deitada o balão ocupa a parte de baixo: a câmera mira mais baixo para o rosto subir
 	var wide := _wide()
 	if duo:
-		_cam.fov = 44 if wide else 50
-		_cam.position = Vector3(0.0, 1.5 + lift, 3.1 if wide else 3.7)
-		_cam.look_at(Vector3(0.0, (1.0 if wide else 1.25) + lift, 0), Vector3.UP)
+		# PC: mais perto e fechado (personagens grandes, meio corpo); celular: como antes
+		_cam.fov = 36 if wide else 50
+		_cam.position = Vector3(0.0, 1.5 + lift, 2.9 if wide else 3.7)
+		_cam.look_at(Vector3(0.0, (1.05 if wide else 1.25) + lift, 0), Vector3.UP)
 	else:
-		_cam.fov = 36
-		_cam.position = Vector3(0.18, 1.55 + lift, 2.6 if wide else 2.35)
-		_cam.look_at(Vector3(0.0, (1.12 if wide else 1.36) + lift, 0), Vector3.UP)
+		_cam.fov = 30 if wide else 36
+		_cam.position = Vector3(0.12, 1.55 + lift, 2.3 if wide else 2.35)
+		_cam.look_at(Vector3(0.0, (1.1 if wide else 1.36) + lift, 0), Vector3.UP)
 
 
 ## Um nó pode chamar alguém para a conversa no meio dela: a pessoa entra em cena na hora.
