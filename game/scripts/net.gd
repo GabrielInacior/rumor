@@ -14,6 +14,7 @@ signal hosted
 signal revealed
 signal kicked
 signal cases_listed(cases: Array)
+signal guide_loaded
 
 const RECONNECT_SEC := 2.0
 
@@ -30,6 +31,7 @@ var my_name := ""
 var state: Dictionary = {}
 var case_data: Dictionary = {}
 var reveal_data: Dictionary = {}
+var guide_data: Dictionary = {}   # só o professor recebe: solução completa do caso
 var clock_offset_ms := 0.0   # servidor - local, para o cronômetro bater em todos os celulares
 
 var _want_open := false
@@ -216,6 +218,9 @@ func _on_message(m: Dictionary) -> void:
 			kicked.emit()
 		"cases":
 			cases_listed.emit(m.get("cases", []))
+		"guide":
+			guide_data = m.get("guide", {})
+			guide_loaded.emit()
 		"error":
 			error_msg.emit(str(m.get("msg", "Erro.")))
 

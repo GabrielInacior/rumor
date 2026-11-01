@@ -138,6 +138,7 @@ function handle(sock, msg) {
     rooms.set(room.code, room);
     room.attachHost(sock);
     send(sock, { t: 'hosted', code: room.code, hostSecret: room.hostSecret });
+    room.sendGuide();
     room.broadcast();
     return;
   }
@@ -146,6 +147,7 @@ function handle(sock, msg) {
     if (!room || room.hostSecret !== msg.hostSecret) { send(sock, { t: 'resume_failed' }); return; }
     room.attachHost(sock);
     send(sock, { t: 'hosted', code: room.code, hostSecret: room.hostSecret });
+    room.sendGuide();
     if (room.phase !== 'lobby') send(sock, { t: 'case', case: require('./room').publicCase(room.caseData) });
     if (room.phase === 'reveal') send(sock, { t: 'reveal', reveal: room.revealData() });
     room.broadcast();

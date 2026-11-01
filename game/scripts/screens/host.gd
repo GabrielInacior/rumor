@@ -25,6 +25,10 @@ func _ready() -> void:
 	viewer_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(UI.full(viewer_layer))
 	Sfx.set_ambience("ambience_room_tone_loop")
+	Net.guide_loaded.connect(func() -> void:
+		_guide_dirty = true
+		if phase_built == "game" and game_tab == "guia":
+			_refresh_game())
 
 
 func _wide() -> bool:
@@ -140,6 +144,9 @@ func _build_lobby() -> void:
 	tm.add_child(tplus)
 	right.add_child(tm)
 
+	var guide_btn := UI.button("Ler o guia do caso (solução e dicas)", "ghost", 80)
+	guide_btn.pressed.connect(_open_guide_overlay)
+	right.add_child(guide_btn)
 	var start := UI.button("COMEÇAR O CASO", "primary", 116)
 	start.add_theme_font_size_override("font_size", 52)
 	start.name = "Start"
@@ -249,7 +256,7 @@ func _build_game() -> void:
 	top.add_child(tv)
 	v.add_child(top)
 	var tabs := UI.hbox(8)
-	for k in [["equipes", "EQUIPES"], ["aovivo", "AO VIVO"], ["quadros", "QUADROS"]]:
+	for k in [["equipes", "EQUIPES"], ["aovivo", "AO VIVO"], ["quadros", "QUADROS"], ["guia", "GUIA"]]:
 		var b := UI.button(k[1], "ghost", 64)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.add_theme_font_override("font", UI.font("title"))
@@ -257,6 +264,9 @@ func _build_game() -> void:
 		b.pressed.connect(func() -> void:
 			game_tab = k[0]
 			_feed_len = -1
+			_guide_dirty = true
+			if k[0] == "guia" and Net.guide_data.is_empty():
+				Net.send({"t": "host_guide"})
 			_refresh_game())
 		tabs.add_child(b)
 		tab_btns[k[0]] = b
@@ -290,6 +300,7 @@ func _build_game() -> void:
 
 
 var page_scroll: ScrollContainer
+var _guide_dirty := true
 var _busy_until := 0
 var _pending := false
 
@@ -317,6 +328,9 @@ func _do_refresh_game() -> void:
 		(tab_btns[k] as Button).add_theme_color_override("font_color", UI.INK if on else UI.PAPER)
 	if str(st.get("phase", "")) == "briefing":
 		timer_l.text = "%ds" % Net.seconds_left()
+	if game_tab == "guia" and page_box.get_child_count() > 0 and not _guide_dirty:
+		return
+	_guide_dirty = false
 	if game_tab == "aovivo":
 		var feed: Array = st.get("feed", [])
 		if feed.size() == _feed_len:
@@ -329,6 +343,8 @@ func _do_refresh_game() -> void:
 				page_box.add_child(_team_card(t))
 		"aovivo":
 			_build_feed()
+		"guia":
+			page_box.add_child(GuideView.build(Net.guide_data))
 		"quadros":
 			var grid := GridContainer.new()
 			grid.columns = 3 if _wide() else 1
@@ -639,6 +655,35 @@ func _open_hint(team_id: String, show_suggestions := false) -> void:
 	panel.add_child(v)
 	viewer_layer.add_child(panel)
 	le.grab_focus.call_deferred()
+
+
+func _open_guide_overlay() -> void:
+	UI.clear(viewer_layer)
+	var bg := ColorRect.new()
+	bg.color = Color(UI.NIGHT, 0.97)
+	bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	viewer_layer.add_child(UI.full(bg))
+	var m := UI.margin(20, 24, 20)
+	viewer_layer.add_child(UI.full(m))
+	var v := UI.vbox(10)
+	m.add_child(v)
+	var close := UI.button("FECHAR O GUIA", "ghost", 70)
+	close.pressed.connect(func() -> void: UI.clear(viewer_layer))
+	v.add_child(close)
+	var sc := ScrollContainer.new()
+	sc.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	v.add_child(sc)
+	var fill := func() -> void:
+		if not is_instance_valid(sc):
+			return
+		UI.clear(sc)
+		var g := GuideView.build(Net.guide_data)
+		sc.add_child(g)
+		UI.scroll_friendly(g)
+	fill.call()
+	Net.guide_loaded.connect(fill, CONNECT_ONE_SHOT)
+	Net.send({"t": "host_guide"})
 
 
 func _open_viewer(t: Dictionary) -> void:

@@ -135,6 +135,7 @@ class Room {
   // ------------------------------------------------------------- professor
   hostCmd(msg) {
     const t = msg.t;
+    if (t === 'host_guide') { this.sendGuide(); return; }
     if (t === 'host_settings' && this.phase === 'lobby') {
       if (msg.caseId && this.cases.has(msg.caseId) && (this.cases.get(msg.caseId).mode || 'multi') !== 'solo') this.settings.caseId = msg.caseId;
       if (msg.teamCount) {
@@ -143,7 +144,7 @@ class Room {
         for (const p of this.players.values()) if (!p.teamId) this.autoTeam(p);
       }
       if (msg.penaltySec != null) this.settings.penaltySec = Math.max(0, Math.min(180, msg.penaltySec | 0));
-      if (msg.caseId) this.settings.extraMin = 0;
+      if (msg.caseId) { this.settings.extraMin = 0; this.sendGuide(); }
       if (msg.extraMin != null) this.settings.extraMin = Math.max(-10, Math.min(30, msg.extraMin | 0));
     } else if (t === 'host_kick') {
       const p = this.players.get(msg.pid);
@@ -174,6 +175,18 @@ class Room {
       for (const p of this.players.values()) { p.clues = new Set(); if (!p.teamId) this.autoTeam(p); }
     }
     this.broadcast();
+  }
+
+  // guia completo do caso: SÓ para o professor (solução, pistas, onde estão, dúvidas comuns)
+  sendGuide() {
+    if (!this.hostSock) return;
+    const c = this.caseData;
+    if (!c) return;
+    this.send(this.hostSock, { t: 'guide', guide: {
+      id: c.id, title: c.title, teacher_guide: c.teacher_guide || null, solution: c.solution, reveal: c.reveal,
+      clues: c.clues, hotspots: c.hotspots || [], items: c.items || [], cards: c.cards, link_types: c.link_types,
+      locations: c.locations || [], hints: c.hints || [],
+    } });
   }
 
   startRound() {

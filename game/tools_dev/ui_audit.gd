@@ -242,6 +242,12 @@ func _run() -> void:
 	await _shot("19c_prof_quadros")
 	main.current._open_hint("t1")
 	await _shot("19d_prof_dica")
+	main.current.viewer_layer.get_children().map(func(c: Node) -> void: c.queue_free())
+	Net.guide_data = full_case.duplicate(true)
+	main.current.game_tab = "guia"
+	main.current._guide_dirty = true
+	main.current._refresh_game()
+	await _shot("19e_prof_guia")
 	# --- revelação
 	Net.reveal_data = {"reveal": full_case["reveal"], "culprit": full_case["solution"].get("culprit"), "edges": full_case["solution"]["edges"],
 		"categories": full_case["solution"]["categories"], "ranking": [

@@ -1,0 +1,164 @@
+{
+ "size": [
+  1080,
+  1600
+ ],
+ "rooms": {
+  "teatro": {
+   "rect": [
+    40,
+    120,
+    390,
+    300
+   ],
+   "label": "Teatro",
+   "door": [
+    430,
+    270
+   ]
+  },
+  "biblioteca": {
+   "rect": [
+    40,
+    430,
+    390,
+    300
+   ],
+   "label": "Biblioteca",
+   "door": [
+    430,
+    580
+   ]
+  },
+  "sala_aula": {
+   "rect": [
+    40,
+    740,
+    390,
+    290
+   ],
+   "label": "Sala de aula",
+   "door": [
+    430,
+    885
+   ]
+  },
+  "sala_musica": {
+   "rect": [
+    40,
+    1040,
+    390,
+    280
+   ],
+   "label": "Sala de música",
+   "door": [
+    430,
+    1180
+   ]
+  },
+  "sala_diretor": {
+   "rect": [
+    650,
+    120,
+    390,
+    230
+   ],
+   "label": "Sala do diretor",
+   "door": [
+    650,
+    235
+   ]
+  },
+  "sala_professores": {
+   "rect": [
+    650,
+    360,
+    390,
+    240
+   ],
+   "label": "Sala dos professores",
+   "door": [
+    650,
+    480
+   ]
+  },
+  "cantina": {
+   "rect": [
+    650,
+    610,
+    390,
+    270
+   ],
+   "label": "Cantina",
+   "door": [
+    650,
+    745
+   ]
+  },
+  "laboratorio": {
+   "rect": [
+    650,
+    890,
+    390,
+    220
+   ],
+   "label": "Laboratório",
+   "door": [
+    650,
+    1000
+   ]
+  },
+  "deposito": {
+   "rect": [
+    650,
+    1120,
+    390,
+    200
+   ],
+   "label": "Depósito",
+   "door": [
+    650,
+    1220
+   ]
+  },
+  "corredor": {
+   "rect": [
+    440,
+    120,
+    200,
+    1200
+   ],
+   "label": "Corredor",
+   "door": [
+    540,
+    1320
+   ]
+  },
+  "patio": {
+   "rect": [
+    40,
+    1340,
+    500,
+    230
+   ],
+   "label": "Pátio",
+   "door": [
+    290,
+    1340
+   ]
+  },
+  "quadra": {
+   "rect": [
+    550,
+    1340,
+    490,
+    230
+   ],
+   "label": "Quadra",
+   "door": [
+    795,
+    1340
+   ]
+  }
+ }
+}
