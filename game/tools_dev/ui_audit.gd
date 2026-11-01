@@ -168,6 +168,9 @@ func _run() -> void:
 	_apply("player", _player_state("playing"))
 	await _wait(1.5)
 	await _shot("06_cena")
+	main.current._open_map()
+	await _shot("06b_mapa")
+	main.current._close_sheet()
 	var g: Node = main.current
 	g._set_tab("pistas")
 	await _shot("07_pistas")

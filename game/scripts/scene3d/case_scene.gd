@@ -12,6 +12,7 @@ const TOON := preload("res://shaders/toon.gdshader")
 const OUTLINE := preload("res://shaders/outline.gdshader")
 const Character := preload("res://scripts/scene3d/character.gd")
 const AmbientLife := preload("res://scripts/scene3d/ambient_life.gd")
+const Props := preload("res://scripts/scene3d/props.gd")
 const PEOPLE_SPOTS := {
 	"corredor": [Vector3(0.9, 0, -3.2), Vector3(-0.9, 0, -9.6), Vector3(1.0, 0, -11.4)],
 	"biblioteca": [Vector3(-0.7, 0, -2.3), Vector3(1.6, 0, -4.6), Vector3(-0.6, 0, -8.6)],
@@ -167,6 +168,7 @@ func _build() -> void:
 		"sala_musica": _scene_sala_musica()
 		"fachada": _scene_fachada()
 		_: _scene_corredor()
+	_dress_props()
 	_place_hotspots()
 	_place_people()
 	_auto_frame()
@@ -804,9 +806,34 @@ func _text(pos: Vector3, txt: String, line_h: float, col: Color, font := "marker
 	return l
 
 
+## props da cena (props.gd): dezenas de objetos em 3 MultiMesh (caixa, cilindro, esfera)
+func _dress_props() -> void:
+	var pr := Props.new()
+	pr.dress(scene_id)
+	if not pr.boxes.is_empty():
+		_mm(pr.boxes)
+	if not pr.cyls.is_empty():
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.5
+		cm.bottom_radius = 0.5
+		cm.height = 1.0
+		cm.radial_segments = 10
+		cm.rings = 1
+		_mm(pr.cyls, cm)
+	if not pr.balls.is_empty():
+		var sm := SphereMesh.new()
+		sm.radius = 0.5
+		sm.height = 1.0
+		sm.radial_segments = 10
+		sm.rings = 5
+		_mm(pr.balls, sm)
+	for l in pr.labels:
+		_text(l[0], l[1], l[2], l[3], l[4], l[5])
+
+
 ## muitas caixas numa chamada só (livros, garrafas, partituras): uma malha, cor por instância.
-## item = [pos, size, cor] ou [pos, size, cor, Basis]
-func _mm(items: Array) -> MultiMeshInstance3D:
+## item = [pos, size, cor] ou [pos, size, cor, Basis]; mesh = forma unitária (caixa por padrão)
+func _mm(items: Array, mesh: Mesh = null) -> MultiMeshInstance3D:
 	if _mm_shader == null:
 		_mm_shader = Shader.new()
 		_mm_shader.code = TOON.code.replace("vec3 col = albedo.rgb;", "vec3 col = albedo.rgb * COLOR.rgb;")
@@ -819,7 +846,7 @@ func _mm(items: Array) -> MultiMeshInstance3D:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = true
-	mm.mesh = BoxMesh.new()
+	mm.mesh = mesh if mesh else BoxMesh.new()
 	mm.instance_count = items.size()
 	for i in items.size():
 		var it: Array = items[i]

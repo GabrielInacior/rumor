@@ -8,6 +8,7 @@ const CaseScene := preload("res://scripts/scene3d/case_scene.gd")
 const TalkView := preload("res://scripts/scene3d/talk_view.gd")
 const ItemView := preload("res://scripts/ui/item_view.gd")
 const TutorialIcon := preload("res://scripts/ui/tutorial_icon.gd")
+const SchoolMap := preload("res://scripts/ui/school_map.gd")
 
 var timer_l: Label
 var team_l: Label
@@ -207,28 +208,71 @@ func _load_location(l: String) -> void:
 	Sfx.play("paper_flip", -8.0)
 
 
-## Cada lugar mostra quantas coisas brilhantes ainda faltam ali: guia quem joga pouco sem dar a resposta.
+func _remaining_by_room() -> Dictionary:
+	var found: Array = Net.state.get("hotspots", [])
+	var out := {}
+	for h in Net.case_data.get("hotspots", []):
+		var room := str(h.get("scene", locations[0]))
+		if not found.has(h["id"]):
+			out[room] = int(out.get(room, 0)) + 1
+	return out
+
+
+## No topo da cena fica só um botão: a sala atual + MAPA. O mapa da escola mostra o resto.
 func _refresh_loc_strip() -> void:
 	if loc_strip == null:
 		return
 	UI.clear(loc_strip)
-	var found: Array = Net.state.get("hotspots", [])
-	for l in locations:
-		var left := 0
-		for h in Net.case_data.get("hotspots", []):
-			if str(h.get("scene", locations[0])) == str(l) and not found.has(h["id"]):
-				left += 1
-		var on: bool = str(l) == loc
-		var b := UI.button(str(LOC_NAMES.get(str(l), str(l))).to_upper() + ("  •%d" % left if left > 0 else ""), "ghost", 72)
-		b.add_theme_font_override("font", UI.font("title"))
-		b.add_theme_font_size_override("font_size", 30)
-		b.custom_minimum_size.x = 200
-		b.add_theme_stylebox_override("normal", UI.box(UI.YELLOW if on else Color(UI.NIGHT, 0.85), UI.YELLOW.darkened(0.3), 0 if on else 2, 16, 18))
-		b.add_theme_color_override("font_color", UI.INK if on else UI.PAPER)
-		b.pressed.connect(func() -> void:
-			if str(l) != loc:
-				_load_location(str(l)))
-		loc_strip.add_child(b)
+	var rem := _remaining_by_room()
+	var total := 0
+	for k in rem:
+		total += int(rem[k])
+	var b := UI.button("MAPA  ·  " + str(LOC_NAMES.get(loc, loc)).to_upper() + ("   (%d pista%s pelo mapa)" % [total, "" if total == 1 else "s"] if total > 0 else ""), "primary", 72)
+	b.add_theme_font_override("font", UI.font("title"))
+	b.add_theme_font_size_override("font_size", 30)
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.pressed.connect(_open_map)
+	loc_strip.add_child(b)
+
+
+func _open_map() -> void:
+	_close_sheet()
+	var dim := ColorRect.new()
+	dim.color = Color(UI.NIGHT, 0.96)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	sheet_layer.add_child(UI.full(dim))
+	var m := UI.margin(14, 14, 14)
+	sheet_layer.add_child(UI.full(m))
+	var v := UI.vbox(10)
+	m.add_child(v)
+	var h := UI.hbox(10)
+	var t := UI.title("MAPA DA ESCOLA", 46, UI.YELLOW)
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(t)
+	var close := UI.button("VOLTAR", "ghost", 66)
+	close.custom_minimum_size.x = 170
+	close.pressed.connect(_close_sheet)
+	h.add_child(close)
+	v.add_child(h)
+	v.add_child(UI.label("Toque numa sala do caso para ir até ela. As salas apagadas não fazem parte desta investigação.", 20, UI.MIST))
+	var mp := SchoolMap.new()
+	mp.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	mp.locations = locations
+	mp.current = loc
+	mp.remaining = _remaining_by_room()
+	var ppl := {}
+	for e in Net.case_data.get("scene_people", []):
+		if e is Dictionary:
+			var room := str(e.get("scene", ""))
+			if not ppl.has(room):
+				ppl[room] = []
+			ppl[room].append(_name_of(str(e.get("id", ""))))
+	mp.people = ppl
+	mp.room_chosen.connect(func(id: String) -> void:
+		_close_sheet()
+		if id != loc:
+			_load_location(id))
+	v.add_child(mp)
 
 
 func _narrate(text: String, important: bool) -> void:
