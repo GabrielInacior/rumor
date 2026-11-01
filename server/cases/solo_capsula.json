@@ -1,0 +1,1189 @@
+{
+  "id": "solo_capsula",
+  "mode": "solo",
+  "title": "A Carta Número 17",
+  "tagline": "Vinte anos enterrada. Sumiu numa segunda de manhã.",
+  "difficulty": 3,
+  "duration_sec": 1200,
+  "scene": "patio",
+  "locations": [
+    "patio",
+    "deposito",
+    "biblioteca",
+    "sala_diretor"
+  ],
+  "scene_people": [
+    {
+      "id": "ines",
+      "scene": "patio"
+    },
+    {
+      "id": "jorge",
+      "scene": "deposito"
+    },
+    {
+      "id": "nanda",
+      "scene": "biblioteca"
+    },
+    {
+      "id": "otavio",
+      "scene": "sala_diretor"
+    }
+  ],
+  "briefing": "Segunda, 7h40. A cápsula do tempo de 2006, que seria aberta ao vivo na sexta, aparece desenterrada no pátio. Das trinta cartas, falta uma: a de número 17. O zelador tem a pá. A repórter queria o furo. E alguém tinha muito a perder.",
+  "goal": "Descubra quem desenterrou a cápsula e de quem era a carta nº 17.",
+  "link_types": [
+    {
+      "id": "escreveu",
+      "label": "escreveu",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "ines",
+      "kind": "pessoa",
+      "name": "Profa. Inês",
+      "gender": "f",
+      "role": "professora de ciências, dona da árvore",
+      "look": {
+        "skin": "#ffe3c8",
+        "hair": "coque",
+        "hair_color": "#8d6e63",
+        "top": "#7cb342",
+        "accessory": "cachecol"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Alguém cavou na minha árvore preferida.",
+            "expr": "bravo",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "ines_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "ines_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "ines_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Cheguei e já tinha um buraco na minha árvore preferida. Sim, eu tenho uma árvore preferida.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a etiqueta da pá pequena",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_etiqueta"
+                  ]
+                },
+                {
+                  "text": "A que horas a senhora viu o buraco?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora cavou atrás de minhoca?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "7h20, quando cheguei. Terra fresquinha. Alguém cavou logo antes.",
+                  "expr": "neutro",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a etiqueta da pá pequena",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_etiqueta"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Pá pequena e nova? Então não foi a pá grande do Seu Jorge.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "E agora lembrei: às 7h20 vi alguém de terno entrando apressado na diretoria.",
+                  "expr": "surpreso",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "ines_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_ines"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Minhoca?! Sou doutora em botânica! Que audácia.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "ines_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:ines_bravo} riu da minha árvore. Volta com algo sério.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a etiqueta da pá pequena",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_etiqueta"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Vou replantar a grama. A árvore merece.",
+                  "expr": "triste",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "jorge",
+      "kind": "pessoa",
+      "name": "Seu Jorge",
+      "gender": "m",
+      "role": "zelador",
+      "look": {
+        "skin": "#7a4b2a",
+        "hair": "raspado",
+        "hair_color": "#cfcfcf",
+        "top": "#546e7a",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Sumiu algo, a culpa é do zelador.",
+            "expr": "bravo",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "jorge_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "jorge_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "jorge_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Já sei, já sei. Sumiu algo, a culpa é do zelador. Clássico.",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro do fusível",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_fusiveis"
+                  ]
+                },
+                {
+                  "text": "O senhor chegou cedo hoje?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor desenterrou a cápsula!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "6h50, como sempre. O diretor chegou 7h05, cedo pra ele. Tá no livro do portão.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro do fusível",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_fusiveis"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Das 7h às 7h30 eu tava aqui, trocando fusível do teatro. Minha pá nem saiu do gancho.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Olha ela: seca e limpinha. Quem cavou trouxe pá própria.",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "jorge_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_jorge"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Trinta anos limpando essa escola e é isso que eu ouço? Fora.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "jorge_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:jorge_bravo} me chamou de cavador. Só converso com o registro na mão.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro do fusível",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_fusiveis"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Precisando de vassoura, é comigo. De acusação, não.",
+                  "expr": "neutro",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "nanda",
+      "kind": "pessoa",
+      "name": "Nanda",
+      "gender": "f",
+      "role": "repórter do jornal da escola",
+      "look": {
+        "skin": "#b07850",
+        "hair": "trancas",
+        "hair_color": "#1a0f08",
+        "top": "#ff7043",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Furo do século e eu sem gravador!",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nanda_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "nanda_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "nanda_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Nanda Repórter, jornal da escola. Furo do século e eu sem meu gravador! Que fase.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Falta só a carta 17",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_buraco"
+                  ]
+                },
+                {
+                  "text": "Achei seu gravador na estante",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "gravador"
+                  ],
+                  "ifnot": [
+                    "nanda_troca"
+                  ]
+                },
+                {
+                  "text": "Você queria ler as cartas antes, né?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você roubou a carta pela matéria!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Queria, mas não sou louca. Sexta ia ser ao vivo, com plateia!",
+                  "expr": "bravo",
+                  "anim": "negando"
+                },
+                {
+                  "text": "Cheguei 7h30 e vim direto pra cá. A cápsula já tava aberta.",
+                  "expr": "neutro",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Falta só a carta 17",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_buraco"
+                  ]
+                },
+                {
+                  "text": "Achei seu gravador na estante",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "gravador"
+                  ],
+                  "ifnot": [
+                    "nanda_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Só a 17? As cartas seguem a chamada do 9º B de 2006. Quem era o 17?",
+                  "expr": "surpreso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Não fui eu, cheguei 7h30. Mas agora eu quero saber mais que você.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "nanda_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Achei seu gravador na estante",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "gravador"
+                  ],
+                  "ifnot": [
+                    "nanda_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_nanda"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Jornalismo ético existe, tá? Sai da minha redação.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nanda_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nanda_bravo} me chamou de antiética. Só falo se me devolverem meu gravador.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Achei seu gravador na estante",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "gravador"
+                  ],
+                  "ifnot": [
+                    "nanda_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "MEU GRAVADOR! Te devo uma manchete.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Exclusivo: sexta o diretor me mandou um e-mail perguntando se precisava ler TODAS as cartas.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "nanda_falou",
+                "nanda_troca"
+              ],
+              "take_item": "gravador",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_email"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "otavio",
+      "kind": "pessoa",
+      "name": "Sr. Otávio",
+      "gender": "m",
+      "role": "diretor da escola",
+      "look": {
+        "skin": "#8a5a3c",
+        "hair": "raspado",
+        "hair_color": "#bdbdbd",
+        "top": "#263238",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Dia tranquilo. Nada a declarar.",
+            "expr": "nervoso",
+            "anim": "nervoso"
+          }
+        ],
+        "mood": "nervoso",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "otavio_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "otavio_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "otavio_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Bom dia, jovem. Dia tranquilo. Nada a declarar. Nadinha.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a foto do 9º B de 2006",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_foto2006",
+                    "c_buraco"
+                  ]
+                },
+                {
+                  "text": "O senhor estudou nesta escola?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor é um ladrão de cartas!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Estudei, sim. Bons tempos. Pouco cabelo, muita esperança.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Por quê? Alguém comentou alguma coisa? Não comente.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a foto do 9º B de 2006",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_foto2006",
+                    "c_buraco"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "...O 17º da chamada. Otávio M. Fui eu, tá bom? Fui eu.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Na carta eu escrevi 'quero ser cantor de axé'. Lida ao vivo, no pátio? Jamais.",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "otavio_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_confissao"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Ladrão?! Eu sou o DIRETOR! Saia imediatamente.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "otavio_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:otavio_bravo} me chamou de ladrão. Sem prova, sem audiência.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar as luvas sujas da gaveta",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_luvas"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Sexta eu leio minha carta. Em voz alta. E talvez cante um pedacinho.",
+                  "expr": "triste",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "patio",
+      "kind": "lugar",
+      "name": "Pátio"
+    },
+    {
+      "id": "deposito",
+      "kind": "lugar",
+      "name": "Depósito"
+    },
+    {
+      "id": "carta17",
+      "kind": "fato",
+      "name": "Carta nº 17 da cápsula",
+      "icon": "carta"
+    },
+    {
+      "id": "capsula",
+      "kind": "fato",
+      "name": "Cápsula do tempo de 2006",
+      "icon": "caixa"
+    }
+  ],
+  "items": [
+    {
+      "id": "gravador",
+      "name": "Microgravador da Nanda",
+      "desc": "Adesivo 'NANDA REPÓRTER'. Esquecido entre os livros.",
+      "icon": "microfone"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_post_jornal",
+      "kind": "post",
+      "title": "Post do jornal",
+      "time": "semana passada",
+      "text": "O jornal anunciou que as 30 cartas da cápsula seriam lidas em voz alta na sexta.",
+      "post": {
+        "user": "@jornal.escola",
+        "caption": "SEXTA: abertura da cápsula do tempo de 2006 AO VIVO! 📦 30 cartas lidas em voz alta no pátio 🎤",
+        "likes": 230,
+        "image": "uma caixa de metal enferrujada com '2006' pintado",
+        "comments": [
+          {
+            "user": "@nanda.reporter",
+            "text": "eu vou narrar tudo 🎙️"
+          },
+          {
+            "user": "@ex.aluno2006",
+            "text": "socorro, o que eu escrevi aos 14 anos 💀"
+          }
+        ],
+        "who": "nanda"
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_escola",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da escola",
+      "time": "7h40",
+      "text": "A escola culpa o Seu Jorge, que tem pá, ou a Nanda, que queria o furo.",
+      "chat": {
+        "group": "Escola Inteira 📢",
+        "lines": [
+          {
+            "who": "Bento",
+            "text": "ALGUÉM DESENTERROU A CÁPSULA 😱",
+            "time": "7h40"
+          },
+          {
+            "who": "Lu",
+            "text": "foi o Seu Jorge, ele tem a pá",
+            "time": "7h41"
+          },
+          {
+            "who": "Bento",
+            "text": "ou a Nanda, ela queria o furo",
+            "time": "7h41"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_buraco",
+      "kind": "objeto",
+      "title": "Cápsula aberta",
+      "text": "Ao pé da árvore, a cápsula aberta. Dentro, 29 cartas numeradas. Falta só a nº 17. A terra ainda está úmida.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_etiqueta",
+      "kind": "objeto",
+      "title": "Lixeira do pátio",
+      "text": "Na lixeira, a etiqueta de uma pá de jardim PEQUENA, nova: 'R$ 24,90, Papelaria Estrela'. A pá do zelador é grande.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_portaria",
+      "kind": "registro",
+      "title": "Livro do portão",
+      "text": "Livro do portão, segunda: 6h50 Seu Jorge. 7h05 Diretor Otávio. 7h30 Nanda (jornal). A escola estava fechada antes disso.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_fusiveis",
+      "kind": "registro",
+      "title": "Caixa de fusíveis",
+      "text": "Registro: 'Troca do fusível do teatro, 7h00 às 7h30. Ass. Jorge.' Ao lado, a pá grande dele, pendurada, seca e limpa.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_lista",
+      "kind": "registro",
+      "title": "Arquivo da cápsula",
+      "text": "Arquivo da cápsula de 2006: 30 cartas, numeradas pela ordem da chamada do 9º B. Cada aluno escreveu 'o que eu quero ser'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_foto2006",
+      "kind": "objeto",
+      "title": "Foto da turma 2006",
+      "text": "Foto do 9º B de 2006 na parede. A legenda segue a chamada. O 17º nome: 'Otávio M.', de bigodinho ralo e topete.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_luvas",
+      "kind": "objeto",
+      "title": "Gaveta do diretor",
+      "text": "Na gaveta, luvas de jardinagem sujas de terra úmida e uma pá pequena nova, ainda com cheiro de loja.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_email",
+      "kind": "mensagem",
+      "title": "E-mail do diretor",
+      "time": "sexta",
+      "text": "E-mail de sexta, do diretor para o jornal: 'Nanda, é mesmo necessário ler TODAS as cartas em voz alta? Algumas podem ser constrangedoras.'",
+      "release": "t+240",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_ines",
+      "kind": "depoimento",
+      "title": "Fala da Profa. Inês",
+      "who": "ines",
+      "text": "Profa. Inês viu o buraco às 7h20. Na mesma hora, viu alguém de terno entrando apressado na diretoria.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_jorge",
+      "kind": "depoimento",
+      "title": "Fala do Seu Jorge",
+      "who": "jorge",
+      "text": "Seu Jorge trocou o fusível do teatro das 7h00 às 7h30. A pá dele não saiu do depósito.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_nanda",
+      "kind": "depoimento",
+      "title": "Fala da Nanda",
+      "who": "nanda",
+      "text": "Nanda chegou às 7h30 e foi direto pra biblioteca. As cartas seguem a chamada do 9º B de 2006.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_confissao",
+      "kind": "depoimento",
+      "title": "Confissão do diretor",
+      "who": "otavio",
+      "text": "O diretor Otávio, o 17º da chamada de 2006, desenterrou a cápsula às 7h10 para pegar a própria carta.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_arvore",
+      "scene": "patio",
+      "object": "arvore",
+      "label": "Árvore do pátio",
+      "clue": "c_buraco"
+    },
+    {
+      "id": "hs_lixeira",
+      "scene": "patio",
+      "object": "lixeira_patio",
+      "label": "Lixeira do pátio",
+      "clue": "c_etiqueta"
+    },
+    {
+      "id": "hs_prateleira",
+      "scene": "deposito",
+      "object": "prateleira",
+      "label": "Livro do portão",
+      "clue": "c_portaria"
+    },
+    {
+      "id": "hs_fusiveis",
+      "scene": "deposito",
+      "object": "caixa_fusiveis",
+      "label": "Caixa de fusíveis",
+      "clue": "c_fusiveis"
+    },
+    {
+      "id": "hs_computador",
+      "scene": "biblioteca",
+      "object": "computador",
+      "label": "Arquivo digital",
+      "clue": "c_lista"
+    },
+    {
+      "id": "hs_estante",
+      "scene": "biblioteca",
+      "object": "estante",
+      "label": "Estante",
+      "item": "gravador"
+    },
+    {
+      "id": "hs_foto",
+      "scene": "sala_diretor",
+      "object": "quadro_fotos",
+      "label": "Fotos na parede",
+      "clue": "c_foto2006"
+    },
+    {
+      "id": "hs_gaveta",
+      "scene": "sala_diretor",
+      "object": "gaveta",
+      "label": "Gaveta do diretor",
+      "clue": "c_luvas"
+    }
+  ],
+  "solution": {
+    "culprit": "otavio",
+    "culprit_question": "Quem pegou a carta nº 17?",
+    "culprit_evidence": [
+      "c_foto2006",
+      "c_lista",
+      "c_luvas",
+      "c_email",
+      "c_confissao"
+    ],
+    "categories": [
+      {
+        "id": "dono",
+        "label": "De quem era a carta 17"
+      },
+      {
+        "id": "onde",
+        "label": "Onde cada um estava cedo"
+      }
+    ],
+    "edges": [
+      {
+        "from": "otavio",
+        "to": "carta17",
+        "type": "escreveu",
+        "category": "dono",
+        "evidence": [
+          "c_foto2006",
+          "c_lista",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "otavio",
+        "to": "patio",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_luvas",
+          "c_dep_ines",
+          "c_confissao"
+        ]
+      },
+      {
+        "from": "jorge",
+        "to": "deposito",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_fusiveis",
+          "c_dep_jorge"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "jorge",
+        "to": "patio",
+        "type": "estava",
+        "category": "onde"
+      },
+      {
+        "from": "nanda",
+        "to": "patio",
+        "type": "estava",
+        "category": "onde"
+      }
+    ]
+  },
+  "hints": [
+    "Falta só uma carta. O número dela importa.",
+    "A pá do zelador está limpa. Então quem cavou trouxe outra.",
+    "Quem chegou cedo o bastante para cavar antes das 7h20?",
+    "As cartas seguem a chamada de 2006. Procure uma foto dessa turma.",
+    "Quem teria vergonha de ouvir a própria carta lida em voz alta?",
+    "O diretor também já foi aluno."
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "Sexta",
+        "text": "O diretor pergunta ao jornal se precisa mesmo ler todas as cartas."
+      },
+      {
+        "time": "6h50",
+        "text": "Seu Jorge chega e vai trocar o fusível do teatro."
+      },
+      {
+        "time": "7h05",
+        "text": "O diretor chega com uma pá pequena e luvas novas."
+      },
+      {
+        "time": "7h10",
+        "text": "Ele desenterra a cápsula e pega a carta 17, a dele."
+      },
+      {
+        "time": "7h20",
+        "text": "Profa. Inês acha o buraco. O diretor entra apressado na sala."
+      },
+      {
+        "time": "7h30",
+        "text": "Nanda chega. Tarde demais para o furo."
+      }
+    ],
+    "explanation": "Todos olharam para a pá do zelador e para a ambição da repórter. A reviravolta: o culpado é o próprio diretor, aluno da turma de 2006. O aha: a carta 17 segue a chamada, e o 17º nome da foto é 'Otávio M.'. Ele queria esconder seu sonho de ser cantor de axé.",
+    "refuted": [
+      "Seu Jorge trocava o fusível das 7h às 7h30, e a pá dele estava limpa.",
+      "Nanda só chegou às 7h30, depois do buraco."
+    ]
+  }
+}

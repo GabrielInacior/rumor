@@ -244,3 +244,29 @@ func _load_session() -> Dictionary:
 		return {}
 	var parsed: Variant = JSON.parse_string(txt)
 	return parsed if parsed is Dictionary else {}
+
+
+# ------------------------------------------------------------------ casos solo concluídos
+func solo_done() -> Array:
+	var txt := ""
+	if OS.has_feature("web"):
+		var v: Variant = JavaScriptBridge.eval("(function(){try{return localStorage.getItem('rumor_solo_done')||''}catch(e){return ''}})()", true)
+		txt = str(v) if v != null else ""
+	elif FileAccess.file_exists("user://solo_done.json"):
+		txt = FileAccess.get_file_as_string("user://solo_done.json")
+	var parsed: Variant = JSON.parse_string(txt) if txt != "" else null
+	return parsed if parsed is Array else []
+
+
+func mark_solo_done(case_id: String) -> void:
+	var done := solo_done()
+	if done.has(case_id):
+		return
+	done.append(case_id)
+	var txt := JSON.stringify(done)
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("try{localStorage.setItem('rumor_solo_done', %s)}catch(e){}" % JSON.stringify(txt), true)
+	else:
+		var f := FileAccess.open("user://solo_done.json", FileAccess.WRITE)
+		if f:
+			f.store_string(txt)

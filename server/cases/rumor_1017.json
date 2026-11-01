@@ -1,14 +1,16 @@
 {
   "id": "rumor_1017",
+  "mode": "multi",
   "title": "O Rumor das 10h17",
   "tagline": "Ninguém cancelou nada. Mas a escola inteira já chorou.",
   "difficulty": 1,
-  "duration_sec": 600,
+  "duration_sec": 1500,
   "scene": "corredor",
   "locations": [
     "corredor",
     "sala_aula",
-    "sala_musica"
+    "sala_musica",
+    "sala_professores"
   ],
   "scene_people": [
     {
@@ -24,12 +26,24 @@
       "scene": "sala_aula"
     },
     {
+      "id": "teo",
+      "scene": "sala_aula"
+    },
+    {
       "id": "duda",
       "scene": "sala_musica"
+    },
+    {
+      "id": "nina",
+      "scene": "sala_musica"
+    },
+    {
+      "id": "lucia",
+      "scene": "sala_professores"
     }
   ],
-  "briefing": "10h40. Cento e vinte alunos estão de luto por uma viagem que ninguém cancelou. Um recado saiu certo da boca da professora e chegou errado no grupo do 2A. Alguém, no meio do caminho, mudou a história.",
-  "goal": "Siga o recado de boca em boca e aponte quem mudou a história.",
+  "briefing": "10h40. Cento e vinte alunos estão de luto por uma viagem que ninguém cancelou. Um recado saiu certo da boca da professora e chegou errado no grupo do 2A. No caminho, alguém mudou a história. Siga o recado de boca em boca.",
+  "goal": "Refaça o caminho do recado e aponte quem mudou a história.",
   "link_types": [
     {
       "id": "contou",
@@ -59,12 +73,169 @@
       "talk": {
         "greet": [
           {
-            "text": "Já assinou a lista da viagem? Não? Corre, hein.",
+            "text": "Já assinou a lista da viagem? Corre, hein.",
             "expr": "feliz",
             "anim": "apontando"
           }
         ],
-        "mood": "feliz"
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "lucia_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "lucia_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "lucia_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Ouvi dizer que minha viagem morreu. Engraçado, ela tá vivíssima na minha agenda.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o bilhete do quadro de avisos",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bilhete"
+                  ]
+                },
+                {
+                  "text": "O que a senhora avisou ao Caio?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora cancelou e tá escondendo!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Que a viagem MUDA DE DATA se a lista não fechar até sexta. Mudar. Não cancelar.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o bilhete do quadro de avisos",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bilhete"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Esse mesmo. Falei com o Caio no corredor às 9h50 e deixei o bilhete pra garantir.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                },
+                {
+                  "text": "Se a história mudou, mudou depois dele. O Caio é chato, mas é preciso.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "sets": [
+                "lucia_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_lucia"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Escondendo? Eu? Vou te dar falta em detetive.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "lucia_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:lucia_bravo} me chamou de mentirosa. Volta com o meu bilhete.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o recado no mural dos professores",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_agenda_lucia"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Já falei: muda de data. Agora me deixa corrigir prova em paz.",
+                  "expr": "neutro",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
       }
     },
     {
@@ -83,7 +254,7 @@
       "talk": {
         "greet": [
           {
-            "text": "Se for sobre a viagem, eu já falei mil vezes hoje.",
+            "text": "Se for da viagem, já falei mil vezes.",
             "expr": "desconfiado",
             "anim": "dando_de_ombros"
           }
@@ -93,18 +264,18 @@
           "entries": [
             {
               "if": [
-                "caio_bravo"
+                "caio_falou"
               ],
-              "ifnot": [
-                "caio_carregado"
-              ],
-              "node": "fechado"
+              "node": "conta"
             },
             {
               "if": [
-                "caio_contou"
+                "caio_bravo"
               ],
-              "node": "reencontro"
+              "node": "fechado",
+              "ifnot": [
+                "caio_falou"
+              ]
             },
             {
               "node": "inicio"
@@ -114,7 +285,7 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Se for da viagem, já respondi mil vezes. E meu celular tá com 2%, então fala rápido.",
+                  "text": "Se for da viagem, já respondi mil vezes. E meu celular tá com 2%, fala rápido.",
                   "expr": "desconfiado",
                   "anim": "dando_de_ombros"
                 }
@@ -131,15 +302,53 @@
                 {
                   "text": "Toma, carrega seu celular aqui",
                   "kind": "boa",
-                  "next": "carrega",
+                  "next": "troca",
                   "requires": [
                     "carregador"
+                  ],
+                  "ifnot": [
+                    "caio_troca"
                   ]
                 },
                 {
-                  "text": "Foi você que inventou isso, né?",
+                  "text": "Quem tá no grupo do grêmio?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Foi você que inventou o cancelamento!",
                   "kind": "ruim",
                   "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Eu, a Duda e mais seis. A Duda é a mais rápida. Rápida até demais.",
+                  "expr": "neutro",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o bilhete da Profa. Lúcia",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_bilhete"
+                  ]
+                },
+                {
+                  "text": "Toma, carrega seu celular aqui",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "carregador"
+                  ],
+                  "ifnot": [
+                    "caio_troca"
+                  ]
                 },
                 {
                   "text": "Valeu, depois eu volto.",
@@ -151,62 +360,38 @@
             "conta": {
               "lines": [
                 {
-                  "text": "Isso! Foi esse recado. Mandei no grupo do grêmio às 10h17, igualzinho.",
+                  "text": "Isso! Mandei no grupo do grêmio às 10h17, igualzinho ela falou. Em duas mensagens.",
                   "expr": "feliz",
                   "anim": "apontando"
                 },
                 {
-                  "text": "Mostrava o print, mas o celular tá morrendo. Arruma um carregador?",
+                  "text": "O print? Sem bateria. Arruma um carregador que eu mostro.",
                   "expr": "nervoso",
                   "anim": "pensando"
                 }
               ],
               "sets": [
-                "caio_contou"
+                "caio_falou"
               ],
-              "unlock": "c_dep_caio",
               "choices": [
                 {
                   "text": "Toma, carrega seu celular aqui",
                   "kind": "boa",
-                  "next": "carrega",
+                  "next": "troca",
                   "requires": [
                     "carregador"
+                  ],
+                  "ifnot": [
+                    "caio_troca"
                   ]
                 },
                 {
-                  "text": "Valeu, depois eu volto.",
+                  "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
                 }
-              ]
-            },
-            "carrega": {
-              "lines": [
-                {
-                  "text": "Salvou minha vida! Pera que ligou.",
-                  "expr": "feliz",
-                  "anim": "rindo"
-                },
-                {
-                  "text": "Olha o print: 'MUDA DE DATA, não é cancelamento'. Eu escrevi em DUAS mensagens. Quem leu só uma, leu errado.",
-                  "expr": "desconfiado",
-                  "anim": "apontando"
-                }
               ],
-              "sets": [
-                "caio_carregado",
-                "caio_contou"
-              ],
-              "unlock": "c_print_gremio",
-              "take_item": "carregador",
-              "choices": [
-                {
-                  "text": "Valeu, Caio.",
-                  "kind": "neutra",
-                  "end": true
-                }
-              ]
+              "unlock": "c_dep_caio"
             },
             "bravo": {
               "lines": [
@@ -235,9 +420,12 @@
                 {
                   "text": "Toma, carrega seu celular aqui",
                   "kind": "boa",
-                  "next": "carrega",
+                  "next": "troca",
                   "requires": [
                     "carregador"
+                  ],
+                  "ifnot": [
+                    "caio_troca"
                   ]
                 },
                 {
@@ -247,32 +435,32 @@
                 }
               ]
             },
-            "reencontro": {
+            "troca": {
               "lines": [
                 {
-                  "text": "De novo? Já te contei tudo. Se faltar print, me arruma bateria.",
-                  "expr": "neutro",
-                  "anim": "dando_de_ombros"
-                }
-              ],
-              "choices": [
-                {
-                  "text": "Toma, carrega seu celular aqui",
-                  "kind": "boa",
-                  "next": "carrega",
-                  "requires": [
-                    "carregador"
-                  ],
-                  "ifnot": [
-                    "caio_carregado"
-                  ]
+                  "text": "Salvou minha vida! Ligou. Olha o print.",
+                  "expr": "feliz",
+                  "anim": "rindo"
                 },
                 {
-                  "text": "Valeu, depois eu volto.",
+                  "text": "'MUDA DE DATA, não é cancelamento.' Duas mensagens. Quem leu só uma, leu errado.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "caio_falou",
+                "caio_troca"
+              ],
+              "take_item": "carregador",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
                   "kind": "neutra",
                   "end": true
                 }
-              ]
+              ],
+              "unlock": "c_print_gremio"
             }
           }
         }
@@ -294,7 +482,7 @@
       "talk": {
         "greet": [
           {
-            "text": "Alguém viu minha baqueta? Tô atrasadíssima!",
+            "text": "Alguém viu minha baqueta?",
             "expr": "nervoso",
             "anim": "nervoso"
           }
@@ -304,15 +492,18 @@
           "entries": [
             {
               "if": [
-                "duda_contou"
+                "duda_falou"
               ],
-              "node": "confessa"
+              "node": "conta"
             },
             {
               "if": [
-                "duda_ofendida"
+                "duda_bravo"
               ],
-              "node": "fechada"
+              "node": "fechado",
+              "ifnot": [
+                "duda_falou"
+              ]
             },
             {
               "node": "inicio"
@@ -322,7 +513,7 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Agora não, o ensaio já começou! E alguém viu minha baqueta? Sumiu na correria.",
+                  "text": "Agora não, o ensaio já começou! E alguém viu minha baqueta?",
                   "expr": "nervoso",
                   "anim": "nervoso"
                 }
@@ -331,7 +522,7 @@
                 {
                   "text": "Mostrar o celular que estava na bateria",
                   "kind": "boa",
-                  "next": "confessa",
+                  "next": "conta",
                   "requires": [
                     "c_celular"
                   ]
@@ -339,43 +530,52 @@
                 {
                   "text": "Achei uma baqueta na lixeira",
                   "kind": "boa",
-                  "next": "baqueta",
+                  "next": "troca",
                   "requires": [
                     "baqueta"
+                  ],
+                  "ifnot": [
+                    "duda_troca"
                   ]
                 },
                 {
                   "text": "Você viu a mensagem do Caio?",
                   "kind": "neutra",
-                  "next": "evasiva"
+                  "next": "papo"
                 },
                 {
                   "text": "Você espalhou fake news, Duda!",
                   "kind": "ruim",
-                  "next": "ofendida"
+                  "next": "bravo"
                 }
               ]
             },
-            "evasiva": {
+            "papo": {
               "lines": [
                 {
                   "text": "Vi, ué. Lista, sexta, viagem. Entendi tudo. Acho.",
                   "expr": "desconfiado",
                   "anim": "dando_de_ombros"
-                },
-                {
-                  "text": "Agora licença que bateria sem baterista é só barulho.",
-                  "expr": "neutro",
-                  "anim": "negando"
                 }
               ],
               "choices": [
                 {
                   "text": "Mostrar o celular que estava na bateria",
                   "kind": "boa",
-                  "next": "confessa",
+                  "next": "conta",
                   "requires": [
                     "c_celular"
+                  ]
+                },
+                {
+                  "text": "Achei uma baqueta na lixeira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "baqueta"
+                  ],
+                  "ifnot": [
+                    "duda_troca"
                   ]
                 },
                 {
@@ -385,33 +585,7 @@
                 }
               ]
             },
-            "baqueta": {
-              "lines": [
-                {
-                  "text": "MINHA BAQUETA! Te devo uma, sério.",
-                  "expr": "feliz",
-                  "anim": "rindo"
-                },
-                {
-                  "text": "Tá, vou ser sincera: vi só o começo da mensagem do Caio na tela. E já saí avisando a Bia. 😬",
-                  "expr": "nervoso",
-                  "anim": "pensando"
-                }
-              ],
-              "sets": [
-                "duda_contou"
-              ],
-              "unlock": "c_dep_duda",
-              "take_item": "baqueta",
-              "choices": [
-                {
-                  "text": "Valeu, Duda.",
-                  "kind": "neutra",
-                  "end": true
-                }
-              ]
-            },
-            "confessa": {
+            "conta": {
               "lines": [
                 {
                   "text": "Meu celular! Ih. A mensagem do Caio ainda tá aí, sem abrir.",
@@ -425,18 +599,29 @@
                 }
               ],
               "sets": [
-                "duda_contou"
+                "duda_falou"
               ],
-              "unlock": "c_dep_duda",
               "choices": [
                 {
-                  "text": "Valeu, Duda.",
+                  "text": "Achei uma baqueta na lixeira",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "baqueta"
+                  ],
+                  "ifnot": [
+                    "duda_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
                 }
-              ]
+              ],
+              "unlock": "c_dep_duda"
             },
-            "ofendida": {
+            "bravo": {
               "lines": [
                 {
                   "text": "Fake news?! Eu sou baterista, não jornalista! Tchau.",
@@ -445,35 +630,38 @@
                 }
               ],
               "sets": [
-                "duda_ofendida"
+                "duda_bravo"
               ],
               "end": true,
               "lock": 20,
               "choices": []
             },
-            "fechada": {
+            "fechado": {
               "lines": [
                 {
-                  "text": "{por:duda_ofendida} me chamou de mentirosa. Sem minha baqueta, sem conversa.",
+                  "text": "{por:duda_bravo} me chamou de mentirosa. Sem minha baqueta, sem conversa.",
                   "expr": "bravo",
                   "anim": "negando"
                 }
               ],
               "choices": [
                 {
-                  "text": "Achei uma baqueta na lixeira",
+                  "text": "Mostrar o celular que estava na bateria",
                   "kind": "boa",
-                  "next": "baqueta",
+                  "next": "conta",
                   "requires": [
-                    "baqueta"
+                    "c_celular"
                   ]
                 },
                 {
-                  "text": "Mostrar o celular que estava na bateria",
+                  "text": "Achei uma baqueta na lixeira",
                   "kind": "boa",
-                  "next": "confessa",
+                  "next": "troca",
                   "requires": [
-                    "c_celular"
+                    "baqueta"
+                  ],
+                  "ifnot": [
+                    "duda_troca"
                   ]
                 },
                 {
@@ -482,6 +670,33 @@
                   "end": true
                 }
               ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "MINHA BAQUETA! Te devo uma, sério.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Tá, sinceridade: vi só o começo da mensagem do Caio na tela. E já saí avisando a Bia.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "duda_falou",
+                "duda_troca"
+              ],
+              "take_item": "baqueta",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_duda"
             }
           }
         }
@@ -503,7 +718,7 @@
       "talk": {
         "greet": [
           {
-            "text": "Nem fala comigo, eu tô de luto pela viagem 😭",
+            "text": "Tô de luto pela viagem 😭",
             "expr": "triste",
             "anim": "negando"
           }
@@ -513,15 +728,28 @@
           "entries": [
             {
               "if": [
-                "bia_contou"
+                "bia_falou"
               ],
-              "node": "reencontro"
+              "node": "conta"
             },
             {
               "if": [
-                "bia_ofendida"
+                "bia_bravo"
               ],
-              "node": "fechada"
+              "node": "fechado",
+              "ifnot": [
+                "bia_falou"
+              ]
+            },
+            {
+              "if": [
+                "duda_bravo"
+              ],
+              "node": "reage",
+              "ifnot": [
+                "bia_falou",
+                "bia_bravo"
+              ]
             },
             {
               "node": "inicio"
@@ -540,7 +768,7 @@
                 {
                   "text": "Mostrar sua mensagem no grupo do 2A",
                   "kind": "boa",
-                  "next": "dm",
+                  "next": "conta",
                   "requires": [
                     "c_chat_2a"
                   ]
@@ -548,33 +776,28 @@
                 {
                   "text": "Calma. Quem te contou da viagem?",
                   "kind": "neutra",
-                  "next": "quem"
+                  "next": "papo"
                 },
                 {
                   "text": "Você inventou isso pra causar, né?",
                   "kind": "ruim",
-                  "next": "ofendida"
+                  "next": "bravo"
                 }
               ]
             },
-            "quem": {
+            "papo": {
               "lines": [
                 {
                   "text": "Uma amiga do grêmio. Fonte segura. Eu acho.",
                   "expr": "triste",
                   "anim": "pensando"
-                },
-                {
-                  "text": "Não vou entregar amiga sem motivo, detetive.",
-                  "expr": "desconfiado",
-                  "anim": "negando"
                 }
               ],
               "choices": [
                 {
                   "text": "Mostrar sua mensagem no grupo do 2A",
                   "kind": "boa",
-                  "next": "dm",
+                  "next": "conta",
                   "requires": [
                     "c_chat_2a"
                   ]
@@ -586,7 +809,7 @@
                 }
               ]
             },
-            "dm": {
+            "conta": {
               "lines": [
                 {
                   "text": "Tá, escrevi em caps lock. Eu sei. Mas olha a DM que a Duda me mandou!",
@@ -600,18 +823,18 @@
                 }
               ],
               "sets": [
-                "bia_contou"
+                "bia_falou"
               ],
-              "unlock": "c_dm_duda",
               "choices": [
                 {
-                  "text": "Valeu, Bia.",
+                  "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
                 }
-              ]
+              ],
+              "unlock": "c_dm_duda"
             },
-            "ofendida": {
+            "bravo": {
               "lines": [
                 {
                   "text": "Causar?? Eu tô SOFRENDO aqui! Sai, detetive.",
@@ -620,16 +843,16 @@
                 }
               ],
               "sets": [
-                "bia_ofendida"
+                "bia_bravo"
               ],
               "end": true,
               "lock": 20,
               "choices": []
             },
-            "fechada": {
+            "fechado": {
               "lines": [
                 {
-                  "text": "{por:bia_ofendida} me chamou de fofoqueira. Só converso se for notícia boa.",
+                  "text": "{por:bia_bravo} me chamou de fofoqueira. Só converso se for notícia boa.",
                   "expr": "bravo",
                   "anim": "negando"
                 }
@@ -638,7 +861,7 @@
                 {
                   "text": "Mostrar o comunicado: a viagem não caiu",
                   "kind": "boa",
-                  "next": "dm",
+                  "next": "conta",
                   "requires": [
                     "c_comunicado"
                   ]
@@ -650,21 +873,265 @@
                 }
               ]
             },
-            "reencontro": {
+            "reage": {
               "lines": [
                 {
-                  "text": "Já te mostrei a DM. Agora me deixa sofrer em paz. Ou comemorar, sei lá.",
-                  "expr": "neutro",
-                  "anim": "dando_de_ombros"
+                  "text": "Soube que {por:duda_bravo} brigou com a Duda. Ela é minha amiga, hein. Cuidado.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar sua mensagem no grupo do 2A",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chat_2a"
+                  ]
+                },
                 {
                   "text": "Valeu, depois eu volto.",
                   "kind": "neutra",
                   "end": true
                 }
               ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "teo",
+      "kind": "pessoa",
+      "name": "Téo",
+      "gender": "m",
+      "role": "está no grupo do 2A e do 2B",
+      "look": {
+        "skin": "#ffdbac",
+        "hair": "franja",
+        "hair_color": "#d4a94f",
+        "top": "#1565c0",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu só aperto 'encaminhar'.",
+            "expr": "neutro",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "neutro",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "teo_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "teo_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "teo_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu só aperto 'encaminhar', tá? Sou um carteiro digital.",
+                  "expr": "neutro",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o grupo do 2B",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chat_2b"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate dos professores",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "teo_troca"
+                  ]
+                },
+                {
+                  "text": "Você tá em quais grupos?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você espalhou fake news pela escola!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "2A e 2B. Troquei de turma e ninguém me tirou de nenhum.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o grupo do 2B",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chat_2b"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate dos professores",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "teo_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Vi a Bia no 2A às 10h31 e mandei pro 2B às 10h35. Sem mudar uma vírgula.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "O Rafa viu lá e fez o meme. Eu sou só a ponte.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "sets": [
+                "teo_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate dos professores",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "teo_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_teo"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Fake news? Eu só encaminho! Bloqueado, detetive.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "teo_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:teo_bravo} me acusou. Agora só com chocolate. Ou print.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o grupo do 2B",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chat_2b"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate dos professores",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "teo_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate de professor? Isso é crime ou presente? Aceito.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Fui eu que encaminhei pro 2B, 10h35. O Rafa viu lá. Pronto, confessei a ponte.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "teo_falou",
+                "teo_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_teo"
             }
           }
         }
@@ -686,7 +1153,7 @@
       "talk": {
         "greet": [
           {
-            "text": "Veio pedir meme? Tenho um pra cada desgraça.",
+            "text": "Veio pedir meme?",
             "expr": "feliz",
             "anim": "rindo"
           }
@@ -696,18 +1163,18 @@
           "entries": [
             {
               "if": [
-                "rafa_bravo"
-              ],
-              "ifnot": [
                 "rafa_falou"
               ],
-              "node": "fechado"
+              "node": "depois"
             },
             {
               "if": [
-                "rafa_falou"
+                "rafa_bravo"
               ],
-              "node": "reencontro"
+              "node": "fechado",
+              "ifnot": [
+                "rafa_falou"
+              ]
             },
             {
               "node": "inicio"
@@ -726,7 +1193,7 @@
                 {
                   "text": "Mostrar seu story das 10h40",
                   "kind": "boa",
-                  "next": "meme",
+                  "next": "conta",
                   "requires": [
                     "c_post_rafa"
                   ]
@@ -734,7 +1201,7 @@
                 {
                   "text": "Quem começou essa história?",
                   "kind": "neutra",
-                  "next": "fofoca"
+                  "next": "papo"
                 },
                 {
                   "text": "Confessa, Rafa, foi você!",
@@ -743,10 +1210,10 @@
                 }
               ]
             },
-            "fofoca": {
+            "papo": {
               "lines": [
                 {
-                  "text": "Eu vi no 2B, encaminhado do 2A. A Bia postou em caps lock. Caps lock é grito, né.",
+                  "text": "Sei lá. Mas a Duda passou correndo pelo corredor 10h20, digitando igual louca.",
                   "expr": "desconfiado",
                   "anim": "pensando"
                 }
@@ -755,7 +1222,7 @@
                 {
                   "text": "Mostrar seu story das 10h40",
                   "kind": "boa",
-                  "next": "meme",
+                  "next": "conta",
                   "requires": [
                     "c_post_rafa"
                   ]
@@ -767,7 +1234,7 @@
                 }
               ]
             },
-            "meme": {
+            "conta": {
               "lines": [
                 {
                   "text": "Olha a hora: 10h40. Quando eu postei, o 2A já chorava fazia dez minutos.",
@@ -775,7 +1242,7 @@
                   "anim": "apontando"
                 },
                 {
-                  "text": "Eu só surfei na onda. Mas se quer minha opinião, a Duda passou correndo muito esquisita.",
+                  "text": "Vi no 2B, o Téo encaminhou. Eu só surfei na onda.",
                   "expr": "neutro",
                   "anim": "dando_de_ombros"
                 }
@@ -785,7 +1252,7 @@
               ],
               "choices": [
                 {
-                  "text": "Justo. Valeu, Rafa.",
+                  "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
                 }
@@ -818,7 +1285,7 @@
                 {
                   "text": "Mostrar seu story das 10h40",
                   "kind": "boa",
-                  "next": "meme",
+                  "next": "conta",
                   "requires": [
                     "c_post_rafa"
                   ]
@@ -830,10 +1297,191 @@
                 }
               ]
             },
-            "reencontro": {
+            "depois": {
               "lines": [
                 {
-                  "text": "Segundo meme do dia: detetive voltando sem pista. Brincadeira. Vai lá falar com a Duda.",
+                  "text": "Segundo meme do dia: detetive voltando sem pista. Brincadeira. Boa sorte.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "nina",
+      "kind": "pessoa",
+      "name": "Nina",
+      "gender": "f",
+      "role": "guitarrista da banda",
+      "look": {
+        "skin": "#7d4a2a",
+        "hair": "trancas",
+        "hair_color": "#120c08",
+        "top": "#00acc1",
+        "accessory": "fones"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "A gente ensaiou sem bateria hoje.",
+            "expr": "triste",
+            "anim": "dando_de_ombros"
+          }
+        ],
+        "mood": "neutro",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nina_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "nina_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "nina_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Sou a guitarrista. A Duda chegou atrasada e a gente ensaiou sem bateria. Foi triste.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o grupo da banda",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chat_banda"
+                  ]
+                },
+                {
+                  "text": "A Duda costuma se atrasar?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você tá encobrindo a Duda!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Sempre. Ela lê tudo pela metade de tanta pressa. Até partitura.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o grupo da banda",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chat_banda"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Ela chegou 10h26 digitando, toda pálida. Disse 'cancelaram a viagem, avisei a Bia'.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Perguntei quem cancelou. Ela: 'vi na notificação'. Só na notificação, sabe?",
+                  "expr": "neutro",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "nina_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_nina"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Encobrindo? Eu tô é com saudade de baterista pontual. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nina_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nina_bravo} me acusou de encobrir. Mostra o horário do ensaio e a gente conversa.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o horário do ensaio",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_ensaio"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Se acharem a baqueta da Duda, devolve. Ela fica insuportável sem.",
                   "expr": "feliz",
                   "anim": "rindo"
                 }
@@ -873,21 +1521,17 @@
     {
       "id": "baqueta",
       "name": "Baqueta com 'DUDA' escrito",
-      "desc": "Caiu na correria. Uma baterista sem baqueta é só uma pessoa batendo na mesa.",
+      "desc": "Caiu na correria. Baterista sem baqueta é só alguém batendo na mesa.",
       "icon": "baqueta"
+    },
+    {
+      "id": "chocolate",
+      "name": "Chocolate dos professores",
+      "desc": "Bilhetinho: 'para quem corrigir as provas'. Ninguém vai notar. Talvez.",
+      "icon": "chocolate"
     }
   ],
   "clues": [
-    {
-      "id": "c_bilhete",
-      "kind": "bilhete",
-      "title": "Bilhete da Lúcia",
-      "time": "09h55",
-      "who": "lucia",
-      "text": "Caio, avisa o grêmio: se a lista da viagem não fechar até sexta, a viagem MUDA DE DATA. Não cancela! Valeu. Profa. Lúcia",
-      "release": "hotspot",
-      "deal": "team"
-    },
     {
       "id": "c_chat_2a",
       "kind": "mensagem",
@@ -912,6 +1556,11 @@
             "who": "bia",
             "text": "a Duda que me falou, ela é do grêmio",
             "time": "10h32"
+          },
+          {
+            "who": "teo",
+            "text": "mds",
+            "time": "10h32"
           }
         ]
       },
@@ -926,7 +1575,6 @@
       "text": "Rafa posta um meme às 10h40 e a escola inteira culpa ele.",
       "post": {
         "user": "@rafa.memes",
-        "who": "rafa",
         "caption": "quando a viagem é cancelada 😿",
         "likes": 87,
         "image": "gato chorando abraçado numa mala",
@@ -937,11 +1585,107 @@
           },
           {
             "user": "@rafa.memes",
-            "text": "vi no 2B, encaminhado da Bia. eu só fiz o meme"
+            "text": "vi no 2B, o Téo encaminhou da Bia. eu só fiz o meme"
+          }
+        ],
+        "who": "rafa"
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_2b",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo do 2B",
+      "time": "10h35",
+      "text": "Téo encaminha a mensagem da Bia para o 2B, onde o Rafa vê.",
+      "chat": {
+        "group": "2B 💙",
+        "lines": [
+          {
+            "who": "teo",
+            "text": "[encaminhada] Bia: GENTE A VIAGEM FOI CANCELADA 😭😭",
+            "time": "10h35"
+          },
+          {
+            "who": "teo",
+            "text": "alguém confirma??",
+            "time": "10h35"
+          },
+          {
+            "who": "rafa",
+            "text": "kkkkk eu de mala pronta e tudo",
+            "time": "10h36"
           }
         ]
       },
       "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_chat_banda",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da banda",
+      "time": "10h24",
+      "text": "Duda avisa a banda que estava contando algo sério pra Bia.",
+      "chat": {
+        "group": "Os Ácaros 🎸",
+        "lines": [
+          {
+            "who": "nina",
+            "text": "duda cadê vc?? ensaio começou",
+            "time": "10h21"
+          },
+          {
+            "who": "duda",
+            "text": "chegando!! tava avisando a Bia de um bagulho sério 😬",
+            "time": "10h24"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_lista_viagem",
+      "kind": "registro",
+      "title": "Lista da viagem",
+      "text": "Lista da viagem: faltam 4 assinaturas. Bia, Téo, Rafa e Juca. Prazo: sexta.",
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_story_bia",
+      "kind": "post",
+      "title": "Story da Bia",
+      "time": "10h33",
+      "text": "Bia posta luto pela viagem e a Nina comenta que a Duda disse o mesmo.",
+      "post": {
+        "user": "@bia.capslock",
+        "caption": "🖤 RIP VIAGEM 🖤",
+        "likes": 58,
+        "image": "tela preta com uma mala chorando",
+        "comments": [
+          {
+            "user": "@nina.guitarra",
+            "text": "ué, a Duda me falou a mesma coisa correndo"
+          }
+        ],
+        "who": "bia"
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_bilhete",
+      "kind": "bilhete",
+      "title": "Bilhete da Lúcia",
+      "time": "9h55",
+      "who": "lucia",
+      "text": "Caio, avisa o grêmio: se a lista da viagem não fechar até sexta, a viagem MUDA DE DATA. Não cancela! Profa. Lúcia",
+      "release": "hotspot",
       "deal": "team"
     },
     {
@@ -949,7 +1693,7 @@
       "kind": "objeto",
       "title": "Celular na bateria",
       "time": "10h17",
-      "text": "Celular da Duda, esquecido em cima da bateria. Na tela, só o começo da mensagem do Caio: 'se a lista da viagem não fechar até sexta...'. Nunca foi aberta.",
+      "text": "Celular da Duda, em cima da bateria. Na tela, só o começo da mensagem do Caio: 'se a lista não fechar até sexta...'. Nunca foi aberta.",
       "release": "hotspot",
       "deal": "team"
     },
@@ -957,7 +1701,15 @@
       "id": "c_ensaio",
       "kind": "registro",
       "title": "Quadro de horários",
-      "text": "Ensaio da banda: terça, 10h20. Anotação do maestro: 'Duda chegou 10h26, correndo e digitando no celular. DE NOVO.'",
+      "text": "Ensaio da banda: terça, 10h20. Anotação: 'Duda chegou 10h26, correndo e digitando no celular. DE NOVO.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_agenda_lucia",
+      "kind": "registro",
+      "title": "Mural dos professores",
+      "text": "Recado no mural: 'Lúcia: avisar o grêmio que a viagem muda de data.' Embaixo: 'falei com o Caio, 9h50 ✅'.",
       "release": "hotspot",
       "deal": "team"
     },
@@ -966,8 +1718,17 @@
       "kind": "registro",
       "title": "Comunicado oficial",
       "time": "10h55",
-      "text": "Da coordenação, 10h55: a viagem NÃO foi cancelada. Se a lista não fechar até sexta, ela só muda de data. Podem parar de chorar no corredor 🙏",
-      "release": "t+180",
+      "text": "Da coordenação, 10h55: a viagem NÃO foi cancelada. Se a lista não fechar até sexta, ela só muda de data. Podem parar de chorar 🙏",
+      "release": "t+240",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_lucia",
+      "kind": "depoimento",
+      "title": "Fala da Lúcia",
+      "who": "lucia",
+      "text": "Profa. Lúcia avisou o Caio às 9h50, no corredor: a viagem muda de data, não é cancelada.",
+      "release": "interrogatorio",
       "deal": "team"
     },
     {
@@ -975,7 +1736,7 @@
       "kind": "depoimento",
       "title": "Fala do Caio",
       "who": "caio",
-      "text": "Caio recebeu o recado da Lúcia e mandou no grupo do grêmio às 10h17, igualzinho. Nunca escreveu 'cancelada'.",
+      "text": "Caio mandou o recado da Lúcia no grupo do grêmio às 10h17, em duas mensagens. Nunca escreveu 'cancelada'.",
       "release": "interrogatorio",
       "deal": "team"
     },
@@ -1042,6 +1803,24 @@
       "text": "Duda viu só o começo da mensagem do Caio na tela, correndo pro ensaio, e avisou a Bia que a viagem foi cancelada.",
       "release": "interrogatorio",
       "deal": "team"
+    },
+    {
+      "id": "c_dep_teo",
+      "kind": "depoimento",
+      "title": "Fala do Téo",
+      "who": "teo",
+      "text": "Téo viu a mensagem da Bia no 2A e encaminhou para o 2B às 10h35, sem mudar nada. O Rafa viu lá.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_nina",
+      "kind": "depoimento",
+      "title": "Fala da Nina",
+      "who": "nina",
+      "text": "Nina conta que a Duda chegou 10h26 dizendo 'cancelaram' e admitiu que só viu a notificação.",
+      "release": "interrogatorio",
+      "deal": "team"
     }
   ],
   "hotspots": [
@@ -1079,6 +1858,20 @@
       "object": "quadro_horarios",
       "label": "Quadro de horários",
       "clue": "c_ensaio"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "sala_professores",
+      "object": "mural_recados",
+      "label": "Mural de recados",
+      "clue": "c_agenda_lucia"
+    },
+    {
+      "id": "hs_cafeteira",
+      "scene": "sala_professores",
+      "object": "cafeteira",
+      "label": "Mesa do café",
+      "item": "chocolate"
     }
   ],
   "solution": {
@@ -1086,21 +1879,38 @@
     "culprit_question": "Quem mudou a história?",
     "culprit_evidence": [
       "c_celular",
+      "c_chat_banda",
       "c_dm_duda",
       "c_dep_duda",
-      "c_comunicado"
+      "c_dep_nina"
     ],
     "categories": [
       {
+        "id": "origem",
+        "label": "De onde veio o recado"
+      },
+      {
         "id": "cadeia",
-        "label": "Por onde o recado passou"
+        "label": "Por onde ele passou"
       },
       {
         "id": "post",
-        "label": "Quem espalhou no grupo"
+        "label": "Como chegou na escola toda"
       }
     ],
     "edges": [
+      {
+        "from": "lucia",
+        "to": "caio",
+        "type": "contou",
+        "category": "origem",
+        "evidence": [
+          "c_bilhete",
+          "c_agenda_lucia",
+          "c_dep_lucia",
+          "c_dep_caio"
+        ]
+      },
       {
         "from": "caio",
         "to": "duda",
@@ -1118,6 +1928,7 @@
         "category": "cadeia",
         "evidence": [
           "c_chat_2a",
+          "c_chat_banda",
           "c_dm_duda"
         ]
       },
@@ -1128,7 +1939,19 @@
         "category": "post",
         "evidence": [
           "c_chat_2a",
+          "c_story_bia",
           "c_post_rafa"
+        ]
+      },
+      {
+        "from": "teo",
+        "to": "rafa",
+        "type": "contou",
+        "category": "post",
+        "evidence": [
+          "c_chat_2b",
+          "c_post_rafa",
+          "c_dep_teo"
         ]
       }
     ],
@@ -1147,11 +1970,19 @@
       }
     ]
   },
+  "hints": [
+    "O recado saiu certo da boca da professora. Siga quem ouviu primeiro.",
+    "Uma mensagem pode chegar em duas partes. E se alguém leu só a primeira?",
+    "Quem estava com mais pressa entre 10h17 e 10h24?",
+    "Um celular esquecido mostra o que a dona realmente viu.",
+    "O meme veio depois do post. Confira os horários.",
+    "Quem disse 'cancelaram' para a Bia nunca abriu a conversa do grêmio."
+  ],
   "reveal": {
     "timeline": [
       {
-        "time": "09h55",
-        "text": "A Profa. Lúcia deixa o recado pro Caio: a viagem muda de data."
+        "time": "9h50",
+        "text": "A Profa. Lúcia avisa o Caio: a viagem muda de data."
       },
       {
         "time": "10h17",
@@ -1170,15 +2001,19 @@
         "text": "Bia posta em caps lock no grupo do 2A."
       },
       {
+        "time": "10h35",
+        "text": "Téo encaminha pro 2B."
+      },
+      {
         "time": "10h40",
-        "text": "Rafa posta o meme e leva a culpa."
+        "text": "Rafa vê no 2B, posta o meme e leva a culpa."
       }
     ],
-    "explanation": "O Caio escreveu em duas mensagens, e a tela do celular da Duda só mostrava a primeira, que parava em 'até sexta...'. Na pressa do ensaio, ela completou o resto com o pior final possível. O aha: a conversa nunca foi aberta, então quem disse 'cancelaram' inventou o fim da frase.",
+    "explanation": "O Caio escreveu em duas mensagens, e a tela do celular da Duda só mostrava a primeira, que parava em 'até sexta...'. Na pressa do ensaio, ela completou a frase com o pior final possível. O aha: a conversa nunca foi aberta, então quem disse 'cancelaram' inventou o fim da frase.",
     "refuted": [
-      "Rafa só fez o meme às 10h40, depois do post da Bia.",
+      "Rafa só fez o meme às 10h40, depois de ver no 2B.",
       "Caio escreveu 'MUDA DE DATA, não é cancelamento'.",
-      "Bia só copiou o que a Duda disse."
+      "Bia e Téo só repassaram o que receberam."
     ]
   }
 }

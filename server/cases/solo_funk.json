@@ -1,0 +1,1114 @@
+{
+  "id": "solo_funk",
+  "mode": "solo",
+  "title": "Funk no Intervalo",
+  "tagline": "Era pra ser flauta e chuva. Foi Bonde do Grampeador.",
+  "difficulty": 1,
+  "duration_sec": 720,
+  "scene": "patio",
+  "locations": [
+    "patio",
+    "sala_diretor",
+    "sala_musica"
+  ],
+  "scene_people": [
+    {
+      "id": "lari",
+      "scene": "patio"
+    },
+    {
+      "id": "kiko",
+      "scene": "patio"
+    },
+    {
+      "id": "vera",
+      "scene": "sala_diretor"
+    },
+    {
+      "id": "helio",
+      "scene": "sala_musica"
+    }
+  ],
+  "briefing": "10h00. Em vez da playlist calma de sempre, o som do intervalo explode 'Bonde do Grampeador' no volume máximo. Metade da escola dançou, a outra metade reclamou. O DJ da rádio jura que não foi ele. A diretora quer um nome até o almoço.",
+  "goal": "Descubra quem colocou o funk no som do intervalo.",
+  "link_types": [
+    {
+      "id": "levou",
+      "label": "levou o pendrive para",
+      "directed": true
+    },
+    {
+      "id": "estava",
+      "label": "estava em",
+      "directed": true
+    }
+  ],
+  "cards": [
+    {
+      "id": "lari",
+      "kind": "pessoa",
+      "name": "Lari",
+      "gender": "f",
+      "role": "monitora do intervalo",
+      "look": {
+        "skin": "#ffd7b5",
+        "hair": "ondulado",
+        "hair_color": "#a1662f",
+        "top": "#43a047",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Fila de reclamação do funk é ali.",
+            "expr": "desconfiado",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "desconfiado",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "lari_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "lari_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "lari_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Se veio reclamar do funk, a fila de reclamação tá ali. Eu tô cuidando do intervalo.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o cartaz da monitoria",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_poste"
+                  ]
+                },
+                {
+                  "text": "Você curte Bonde do Grampeador?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Foi você que botou o funk, né?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Curto. E daí? Metade da escola curte. A outra metade finge que não.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o cartaz da monitoria",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_poste"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Exato. Das 9h55 às 10h20 eu tava AQUI, no sol, contando cabeça.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Chave da diretoria? Nem sonho. Tenho chave do meu armário e olhe lá.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "sets": [
+                "lari_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_lari"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Que absurdo! Vou te dar advertência de monitora. Existe isso? Agora existe.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "lari_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:lari_bravo} me acusou na frente da galera. Mostra o cartaz da monitoria ou nada feito.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o cartaz da monitoria",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_poste"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Já falei, detetive. Eu tava aqui no pátio, sofrendo junto.",
+                  "expr": "neutro",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "kiko",
+      "kind": "pessoa",
+      "name": "Kiko",
+      "gender": "m",
+      "role": "DJ da rádio da escola",
+      "look": {
+        "skin": "#3e2723",
+        "hair": "franja",
+        "hair_color": "#0d0d0d",
+        "top": "#6a1b9a",
+        "accessory": "fones"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Minha carreira de DJ acabou antes de começar.",
+            "expr": "triste",
+            "anim": "negando"
+          }
+        ],
+        "mood": "triste",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "kiko_falou"
+              ],
+              "node": "conta"
+            },
+            {
+              "if": [
+                "kiko_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "kiko_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Ninguém acredita em mim. Minha carreira de DJ acabou antes de começar.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a escala da rádio",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_escala"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, pra animar",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kiko_troca"
+                  ]
+                },
+                {
+                  "text": "Por que acham que foi você?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Admite, Kiko, você é o DJ do caos!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Porque eu sou o DJ da rádio. Mas hoje eu nem pus o pé lá.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a escala da rádio",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_escala"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, pra animar",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kiko_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Folga! Terça eu tenho prova de geografia, das 9h30 às 10h30. A rádio fica no automático.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "E o automático toca o que tiver no pendrive. Quem trocou o pendrive?",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "sets": [
+                "kiko_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Toma um chocolate, pra animar",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kiko_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kiko"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "DJ do caos? Até que é um bom nome. Mas não fui eu. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "kiko_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:kiko_bravo} me chamou de DJ do caos. Sem escala ou chocolate, sem papo.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a escala da rádio",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_escala"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, pra animar",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "kiko_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "troca": {
+              "lines": [
+                {
+                  "text": "Chocolate! Você é a pessoa mais legal desta escola.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Dica de DJ: o Prof. Hélio tem uma filha que ama esse funk. Ela posta tudo.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "kiko_falou",
+                "kiko_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kiko"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "vera",
+      "kind": "pessoa",
+      "name": "Dona Vera",
+      "gender": "f",
+      "role": "diretora",
+      "look": {
+        "skin": "#5d3a22",
+        "hair": "cacheado_longo",
+        "hair_color": "#2a1a10",
+        "top": "#880e4f",
+        "accessory": "brinco"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Explique-se, detetive.",
+            "expr": "bravo",
+            "anim": "apontando"
+          }
+        ],
+        "mood": "bravo",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "vera_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "vera_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "vera_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Eu estava em reunião fora da escola e volto com FUNK no intervalo. Explique-se, detetive.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o pendrive 'playlist calma'",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_pendrive"
+                  ]
+                },
+                {
+                  "text": "Quem tem a chave desta sala?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora botou o funk, diretora?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Eu e o Prof. Hélio, que cuida do som. Ninguém mais.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                },
+                {
+                  "text": "E eu estava na Secretaria de Educação. Tenho testemunha e crachá.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o pendrive 'playlist calma'",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_pendrive"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "'H.'? Hélio! Ele trouxe o pendrive novo hoje cedo. Calma, é? Calmíssima.",
+                  "expr": "surpreso",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "vera_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "EU? Eu ouço MPB e podcast de jardinagem. Fora da minha sala.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "vera_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:vera_bravo} já me faltou com respeito. Volte com o pendrive na mão.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o pendrive 'playlist calma'",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_pendrive"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Resolva isso antes do próximo intervalo, por favor.",
+                  "expr": "nervoso",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "helio",
+      "kind": "pessoa",
+      "name": "Prof. Hélio",
+      "gender": "m",
+      "role": "professor de música",
+      "look": {
+        "skin": "#c08a64",
+        "hair": "curto",
+        "hair_color": "#9e9e9e",
+        "top": "#5d4037",
+        "accessory": "oculos"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Que manhã tranquila, né?",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "helio_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "helio_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "helio_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Bom dia! Que manhã tranquila, né? Botei música calminha no intervalo hoje.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o post da sua filha",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_post_filha"
+                  ]
+                },
+                {
+                  "text": "O senhor levou um pendrive pra diretoria?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor é fã de funk, professor?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Levei, 9h50. Playlist calma: som de chuva e flauta. Relaxante.",
+                  "expr": "feliz",
+                  "anim": "falando"
+                },
+                {
+                  "text": "Por quê? Alguém reclamou da flauta?",
+                  "expr": "desconfiado",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o post da sua filha",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_post_filha"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Minha filha... Não. NÃO. Os pendrives são iguaizinhos!",
+                  "expr": "surpreso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Levei o dela às 9h50. A escola inteira ouviu Bonde do Grampeador. Que vergonha.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "helio_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_helio"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Que insinuação! Sou maestro! Saia da minha sala de música.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "helio_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:helio_bravo} me desrespeitou. Só converso com uma prova séria.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o pendrive 'playlist calma'",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_pendrive"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Vou pedir desculpas no próximo intervalo. Com flauta. Ao vivo.",
+                  "expr": "triste",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "patio",
+      "kind": "lugar",
+      "name": "Pátio"
+    },
+    {
+      "id": "sala_diretor",
+      "kind": "lugar",
+      "name": "Sala da diretora"
+    },
+    {
+      "id": "sala_prova",
+      "kind": "lugar",
+      "name": "Sala da prova de geografia",
+      "scene": "sala_aula"
+    },
+    {
+      "id": "funk",
+      "kind": "fato",
+      "name": "O funk no intervalo",
+      "icon": "microfone"
+    }
+  ],
+  "items": [
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "Esquecida no banco do pátio, ainda lacrada. Moeda universal da escola.",
+      "icon": "chocolate"
+    }
+  ],
+  "clues": [
+    {
+      "id": "c_chat_escola",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da escola",
+      "time": "10h01",
+      "text": "A escola inteira culpa o Kiko ou a Lari pelo funk.",
+      "chat": {
+        "group": "Escola Inteira 📢",
+        "lines": [
+          {
+            "who": "Bento",
+            "text": "QUEM COLOCOU BONDE DO GRAMPEADOR NO INTERVALO 😭😂",
+            "time": "10h01"
+          },
+          {
+            "who": "kiko",
+            "text": "não fui eu!!! hoje eu tava de folga",
+            "time": "10h02"
+          },
+          {
+            "who": "Bento",
+            "text": "claro que foi o Kiko kkk",
+            "time": "10h02"
+          },
+          {
+            "who": "Bento",
+            "text": "ou a Lari, ela tem isso na playlist",
+            "time": "10h03"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_poste",
+      "kind": "registro",
+      "title": "Cartaz no poste",
+      "text": "Cartaz: 'Monitora do intervalo hoje: Lari, das 9h55 às 10h20, no pátio. Olho na galera!'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_pendrive",
+      "kind": "objeto",
+      "title": "Som da diretoria",
+      "text": "No som da diretoria, um pendrive com etiqueta 'PLAYLIST CALMA ☮️ H.'. Dentro, uma música só: 'Bonde do Grampeador (remix)'.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_escala",
+      "kind": "registro",
+      "title": "Escala da rádio",
+      "text": "Escala da rádio: terça, Kiko de FOLGA (prova de geografia, 9h30 às 10h30). Som do intervalo no automático, pelo pendrive.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_recado_helio",
+      "kind": "bilhete",
+      "title": "Recado no quadro",
+      "time": "9h50",
+      "text": "Recado: 'Hélio, levar o pendrive NOVO de música calma pra diretoria antes do intervalo!' Embaixo: 'feito, 9h50 ✅ H.'",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_post_filha",
+      "kind": "post",
+      "title": "Post da Luna",
+      "time": "10h15",
+      "text": "A filha do Prof. Hélio reclama que o pai levou o pendrive de funk dela de novo.",
+      "post": {
+        "user": "@luna.helio",
+        "caption": "meu pai levou meu pendrive de funk pro trabalho DE NOVO 😩 alguém da escola dele me avisa se tocou kkkk",
+        "likes": 34,
+        "image": "dois pendrives iguaizinhos, um com um coração desenhado",
+        "comments": [
+          {
+            "user": "@amiga.da.luna",
+            "text": "tocou sim kkkkk tá viral"
+          }
+        ]
+      },
+      "release": "t+180",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_kiko",
+      "kind": "depoimento",
+      "title": "Fala do Kiko",
+      "who": "kiko",
+      "text": "Kiko estava na prova de geografia das 9h30 às 10h30. A rádio estava no automático.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_lari",
+      "kind": "depoimento",
+      "title": "Fala da Lari",
+      "who": "lari",
+      "text": "Lari estava no pátio cuidando do intervalo das 9h55 às 10h20. Não tem chave da diretoria.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_helio",
+      "kind": "depoimento",
+      "title": "Fala do Hélio",
+      "who": "helio",
+      "text": "Prof. Hélio levou o pendrive à diretoria às 9h50. Em casa tem dois iguais: o dele e o da filha.",
+      "release": "interrogatorio",
+      "deal": "team"
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hs_poste",
+      "scene": "patio",
+      "object": "poste",
+      "label": "Cartaz no poste",
+      "clue": "c_poste"
+    },
+    {
+      "id": "hs_banco",
+      "scene": "patio",
+      "object": "banco_patio",
+      "label": "Banco do pátio",
+      "item": "chocolate"
+    },
+    {
+      "id": "hs_som",
+      "scene": "sala_diretor",
+      "object": "mesa_diretor",
+      "label": "Som da diretoria",
+      "clue": "c_pendrive"
+    },
+    {
+      "id": "hs_gaveta",
+      "scene": "sala_diretor",
+      "object": "gaveta",
+      "label": "Gaveta da diretora",
+      "clue": "c_escala"
+    },
+    {
+      "id": "hs_quadro",
+      "scene": "sala_musica",
+      "object": "quadro_horarios",
+      "label": "Quadro de recados",
+      "clue": "c_recado_helio"
+    }
+  ],
+  "solution": {
+    "culprit": "helio",
+    "culprit_question": "Quem botou o funk no intervalo?",
+    "culprit_evidence": [
+      "c_pendrive",
+      "c_recado_helio",
+      "c_post_filha"
+    ],
+    "categories": [
+      {
+        "id": "caminho",
+        "label": "Como o funk chegou no som"
+      },
+      {
+        "id": "alibi",
+        "label": "Onde estavam os suspeitos"
+      }
+    ],
+    "edges": [
+      {
+        "from": "helio",
+        "to": "sala_diretor",
+        "type": "levou",
+        "category": "caminho",
+        "evidence": [
+          "c_recado_helio",
+          "c_pendrive",
+          "c_dep_helio"
+        ]
+      },
+      {
+        "from": "kiko",
+        "to": "sala_prova",
+        "type": "estava",
+        "category": "alibi",
+        "evidence": [
+          "c_escala",
+          "c_dep_kiko"
+        ]
+      },
+      {
+        "from": "lari",
+        "to": "patio",
+        "type": "estava",
+        "category": "alibi",
+        "evidence": [
+          "c_poste",
+          "c_dep_lari"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "from": "kiko",
+        "to": "sala_diretor",
+        "type": "levou",
+        "category": "caminho"
+      },
+      {
+        "from": "lari",
+        "to": "sala_diretor",
+        "type": "levou",
+        "category": "caminho"
+      }
+    ]
+  },
+  "hints": [
+    "O som do intervalo estava no automático. O que o automático toca?",
+    "Quem tem a chave da sala onde fica o som?",
+    "Uma etiqueta com uma letra só pode dizer muito.",
+    "Dois pendrives iguais na mesma casa dão confusão.",
+    "Quem levou o pendrive não sabia o que tinha dentro."
+  ],
+  "reveal": {
+    "timeline": [
+      {
+        "time": "9h30",
+        "text": "Kiko entra na prova de geografia. A rádio fica no automático."
+      },
+      {
+        "time": "9h50",
+        "text": "Prof. Hélio leva o pendrive 'novo' pra diretoria. É o da filha."
+      },
+      {
+        "time": "9h55",
+        "text": "Lari assume a monitoria do pátio."
+      },
+      {
+        "time": "10h00",
+        "text": "Bonde do Grampeador no volume máximo."
+      }
+    ],
+    "explanation": "O culpado foi o próprio Prof. Hélio, sem querer: ele tem dois pendrives iguais em casa e levou o da filha. O aha: a etiqueta 'H.' e o recado 'feito, 9h50' batem com o post da Luna reclamando do pendrive.",
+    "refuted": [
+      "Kiko estava na prova de geografia.",
+      "Lari estava no pátio e não tem a chave da diretoria."
+    ]
+  }
+}

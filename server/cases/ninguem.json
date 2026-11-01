@@ -1,14 +1,17 @@
 {
   "id": "ninguem",
+  "mode": "multi",
   "title": "Quem é @ninguém?",
   "tagline": "Uma conta sem rosto. Uma senha a mais.",
   "difficulty": 2,
-  "duration_sec": 720,
+  "duration_sec": 1800,
   "scene": "biblioteca",
   "locations": [
     "biblioteca",
     "sala_aula",
-    "quadra"
+    "quadra",
+    "sala_professores",
+    "cantina"
   ],
   "scene_people": [
     {
@@ -20,21 +23,42 @@
       "scene": "sala_aula"
     },
     {
+      "id": "rosa",
+      "scene": "sala_aula"
+    },
+    {
       "id": "pedro",
       "scene": "quadra"
+    },
+    {
+      "id": "ivo",
+      "scene": "quadra"
+    },
+    {
+      "id": "nico",
+      "scene": "sala_professores"
+    },
+    {
+      "id": "cida",
+      "scene": "cantina"
     }
   ],
-  "briefing": "14h05. A conta anônima @ninguém revela: a feira de ciências foi adiada e ninguém avisou os alunos. Metade da escola virou a noite à toa. Agora todo mundo quer saber quem está por trás da conta. E alguém aqui está mentindo.",
-  "goal": "Descubra onde cada um estava às 14h05 e aponte quem é @ninguém.",
+  "briefing": "14h05. A conta anônima @ninguém revela: a feira de ciências foi adiada e ninguém avisou. Metade da escola virou a noite à toa. A coordenação quer saber quem está por trás da conta. Três pessoas sabiam do segredo. Uma delas mentiu sobre onde estava.",
+  "goal": "Descubra quem sabia do segredo, onde cada um estava às 14h05 e aponte quem é @ninguém.",
   "link_types": [
+    {
+      "id": "postou",
+      "label": "postou",
+      "directed": true
+    },
     {
       "id": "estava",
       "label": "estava em",
       "directed": true
     },
     {
-      "id": "postou",
-      "label": "postou",
+      "id": "contou",
+      "label": "contou para",
       "directed": true
     }
   ],
@@ -55,7 +79,7 @@
       "talk": {
         "greet": [
           {
-            "text": "Shhh. Biblioteca, né? Fala baixinho, detetive.",
+            "text": "Shhh. Biblioteca, né?",
             "expr": "desconfiado",
             "anim": "apontando"
           }
@@ -65,15 +89,18 @@
           "entries": [
             {
               "if": [
-                "joana_confessou"
+                "joana_falou"
               ],
-              "node": "reencontro"
+              "node": "depois"
             },
             {
               "if": [
-                "joana_fechada"
+                "joana_bravo"
               ],
-              "node": "fechada"
+              "node": "fechado",
+              "ifnot": [
+                "joana_falou"
+              ]
             },
             {
               "node": "inicio"
@@ -90,30 +117,30 @@
               ],
               "choices": [
                 {
-                  "text": "Você ficou aqui a tarde toda?",
-                  "kind": "neutra",
-                  "next": "plantao"
-                },
-                {
-                  "text": "O post saiu deste computador, com sua senha",
+                  "text": "O post saiu daqui, com sua senha",
                   "kind": "boa",
-                  "next": "confessa",
+                  "next": "conta",
                   "requires": [
                     "c_senha",
                     "c_coord"
                   ]
                 },
                 {
+                  "text": "Você ficou aqui a tarde toda?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
                   "text": "Você é a @ninguém, confessa!",
                   "kind": "ruim",
-                  "next": "fechou"
+                  "next": "bravo"
                 }
               ]
             },
-            "plantao": {
+            "papo": {
               "lines": [
                 {
-                  "text": "Plantão das 13h às 15h. Só entrou o Pedro, que ficou escondido atrás da estante. Sei lá por quê.",
+                  "text": "Plantão das 13h às 15h. Só entrou o Pedro, escondido atrás da estante. Sei lá por quê.",
                   "expr": "neutro",
                   "anim": "pensando"
                 },
@@ -123,15 +150,11 @@
                   "anim": "apontando"
                 }
               ],
-              "sets": [
-                "joana_falou"
-              ],
-              "unlock": "c_dep_joana",
               "choices": [
                 {
-                  "text": "O post saiu deste computador, com sua senha",
+                  "text": "O post saiu daqui, com sua senha",
                   "kind": "boa",
-                  "next": "confessa",
+                  "next": "conta",
                   "requires": [
                     "c_senha",
                     "c_coord"
@@ -142,9 +165,13 @@
                   "kind": "neutra",
                   "end": true
                 }
+              ],
+              "unlock": "c_dep_joana",
+              "sets": [
+                "joana_papo"
               ]
             },
-            "confessa": {
+            "conta": {
               "lines": [
                 {
                   "text": "...Tá. Fui eu. Senha da monitoria, computador da monitoria.",
@@ -152,23 +179,23 @@
                   "anim": "pensando"
                 },
                 {
-                  "text": "A feira foi adiada e ninguém avisou. Tinha gente virando a noite. Alguém precisava falar, tá ligado??",
+                  "text": "O Nico me contou da feira no almoço. Ninguém ia avisar. Alguém precisava, tá ligado??",
                   "expr": "triste",
                   "anim": "falando"
                 }
               ],
               "sets": [
-                "joana_confessou"
+                "joana_falou"
               ],
               "choices": [
                 {
-                  "text": "Obrigado por contar, Joana.",
+                  "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
                 }
               ]
             },
-            "fechou": {
+            "bravo": {
               "lines": [
                 {
                   "text": "Acusação sem prova? Shhh pra você também.",
@@ -177,34 +204,29 @@
                 }
               ],
               "sets": [
-                "joana_fechada"
+                "joana_bravo"
               ],
               "end": true,
               "lock": 20,
               "choices": []
             },
-            "fechada": {
+            "fechado": {
               "lines": [
                 {
-                  "text": "{por:joana_fechada} já veio me acusar. Volta com prova. Ou com silêncio.",
+                  "text": "{por:joana_bravo} já veio me acusar. Volta com prova. Ou com silêncio.",
                   "expr": "bravo",
                   "anim": "negando"
                 }
               ],
               "choices": [
                 {
-                  "text": "O post saiu deste computador, com sua senha",
+                  "text": "O post saiu daqui, com sua senha",
                   "kind": "boa",
-                  "next": "confessa",
+                  "next": "conta",
                   "requires": [
                     "c_senha",
                     "c_coord"
                   ]
-                },
-                {
-                  "text": "Desculpa. Você ficou aqui a tarde toda?",
-                  "kind": "neutra",
-                  "next": "plantao"
                 },
                 {
                   "text": "Valeu, depois eu volto.",
@@ -213,7 +235,7 @@
                 }
               ]
             },
-            "reencontro": {
+            "depois": {
               "lines": [
                 {
                   "text": "Vou falar com a coordenação. Mas que alguém precisava avisar, precisava.",
@@ -249,7 +271,7 @@
       "talk": {
         "greet": [
           {
-            "text": "Se veio me acusar, entra na fila. Tá grande hoje.",
+            "text": "Se veio me acusar, entra na fila.",
             "expr": "desconfiado",
             "anim": "dando_de_ombros"
           }
@@ -261,13 +283,16 @@
               "if": [
                 "lia_falou"
               ],
-              "node": "reencontro"
+              "node": "conta"
             },
             {
               "if": [
-                "lia_ofendida"
+                "lia_bravo"
               ],
-              "node": "fechada"
+              "node": "fechado",
+              "ifnot": [
+                "lia_falou"
+              ]
             },
             {
               "node": "inicio"
@@ -286,24 +311,35 @@
                 {
                   "text": "Seu caderno escreve igual à @ninguém",
                   "kind": "boa",
-                  "next": "estilo",
+                  "next": "conta",
                   "requires": [
                     "c_rabisco_lia"
                   ]
                 },
                 {
+                  "text": "Toma um chocolate, pós-prova",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "lia_troca"
+                  ]
+                },
+                {
                   "text": "Onde você tava às 14h05?",
                   "kind": "neutra",
-                  "next": "alibi"
+                  "next": "papo"
                 },
                 {
                   "text": "Seu 'tá ligado??' te entregou, Lia!",
                   "kind": "ruim",
-                  "next": "ofendida"
+                  "next": "bravo"
                 }
               ]
             },
-            "alibi": {
+            "papo": {
               "lines": [
                 {
                   "text": "Na sala, brigando com uma equação do 2º grau. Perdi.",
@@ -311,22 +347,29 @@
                   "anim": "negando"
                 },
                 {
-                  "text": "Das 13h30 às 14h30, celular na caixa da Profa. Rosa. Pergunta pra ela.",
+                  "text": "Das 13h30 às 14h30, celular na caixa da Profa. Rosa.",
                   "expr": "neutro",
                   "anim": "apontando"
                 }
               ],
-              "sets": [
-                "lia_falou"
-              ],
-              "unlock": "c_dep_lia",
               "choices": [
                 {
                   "text": "Seu caderno escreve igual à @ninguém",
                   "kind": "boa",
-                  "next": "estilo",
+                  "next": "conta",
                   "requires": [
                     "c_rabisco_lia"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, pós-prova",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "lia_troca"
                   ]
                 },
                 {
@@ -334,17 +377,21 @@
                   "kind": "neutra",
                   "end": true
                 }
+              ],
+              "unlock": "c_dep_lia",
+              "sets": [
+                "lia_papo"
               ]
             },
-            "estilo": {
+            "conta": {
               "lines": [
                 {
-                  "text": "Esse 'tá ligado??' é meu desde o 6º ano. Sabe quem copiou de mim? A Joana. A gente era dupla.",
+                  "text": "Esse 'tá ligado??' é meu desde o 6º ano. Sabe quem copiou? A Joana, minha antiga dupla.",
                   "expr": "desconfiado",
                   "anim": "pensando"
                 },
                 {
-                  "text": "E eu tava na recuperação, sem celular. Pode conferir a ata.",
+                  "text": "E eu tava na recuperação. Pode conferir a ata.",
                   "expr": "neutro",
                   "anim": "apontando"
                 }
@@ -352,16 +399,27 @@
               "sets": [
                 "lia_falou"
               ],
-              "unlock": "c_dica_lia",
               "choices": [
                 {
-                  "text": "Valeu, Lia.",
+                  "text": "Toma um chocolate, pós-prova",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "lia_troca"
+                  ]
+                },
+                {
+                  "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
                 }
-              ]
+              ],
+              "unlock": "c_dica_lia"
             },
-            "ofendida": {
+            "bravo": {
               "lines": [
                 {
                   "text": "Ah, pronto. Vai prender a escola inteira então. Tchau.",
@@ -370,16 +428,16 @@
                 }
               ],
               "sets": [
-                "lia_ofendida"
+                "lia_bravo"
               ],
               "end": true,
               "lock": 20,
               "choices": []
             },
-            "fechada": {
+            "fechado": {
               "lines": [
                 {
-                  "text": "{por:lia_ofendida} me chamou de @ninguém na frente da sala. Mostra a ata e a gente conversa.",
+                  "text": "{por:lia_bravo} me chamou de @ninguém na frente da sala. Só com chocolate. Muito chocolate.",
                   "expr": "bravo",
                   "anim": "negando"
                 }
@@ -388,9 +446,20 @@
                 {
                   "text": "Mostrar a ata da recuperação",
                   "kind": "boa",
-                  "next": "alibi",
+                  "next": "conta",
                   "requires": [
                     "c_ata"
+                  ]
+                },
+                {
+                  "text": "Toma um chocolate, pós-prova",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "chocolate"
+                  ],
+                  "ifnot": [
+                    "lia_troca"
                   ]
                 },
                 {
@@ -400,32 +469,32 @@
                 }
               ]
             },
-            "reencontro": {
+            "troca": {
               "lines": [
                 {
-                  "text": "Já falei tudo. Agora deixa eu dormir em paz.",
-                  "expr": "neutro",
-                  "anim": "dando_de_ombros"
-                }
-              ],
-              "choices": [
-                {
-                  "text": "Seu caderno escreve igual à @ninguém",
-                  "kind": "boa",
-                  "next": "estilo",
-                  "requires": [
-                    "c_rabisco_lia"
-                  ],
-                  "ifnot": [
-                    "lia_ofendida"
-                  ]
+                  "text": "Chocolate! Meu cérebro voltou a funcionar.",
+                  "expr": "feliz",
+                  "anim": "rindo"
                 },
                 {
-                  "text": "Valeu, depois eu volto.",
+                  "text": "Dica grátis: quem escreve 'tá ligado??' igual a mim é a Joana. Copiou desde o 6º ano.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "lia_falou",
+                "lia_troca"
+              ],
+              "take_item": "chocolate",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
                   "kind": "neutra",
                   "end": true
                 }
-              ]
+              ],
+              "unlock": "c_dica_lia"
             }
           }
         }
@@ -447,7 +516,7 @@
       "talk": {
         "greet": [
           {
-            "text": "Já sei, já sei. Todo mundo acha que fui eu.",
+            "text": "Já sei. Todo mundo acha que fui eu.",
             "expr": "bravo",
             "anim": "negando"
           }
@@ -457,15 +526,18 @@
           "entries": [
             {
               "if": [
-                "pedro_aliviado"
+                "pedro_falou"
               ],
-              "node": "reencontro"
+              "node": "conta"
             },
             {
               "if": [
                 "pedro_bravo"
               ],
-              "node": "fechado"
+              "node": "fechado",
+              "ifnot": [
+                "pedro_falou"
+              ]
             },
             {
               "node": "inicio"
@@ -478,9 +550,44 @@
                   "text": "Eu tava no treino. Sempre. Sou praticamente um atleta olímpico.",
                   "expr": "nervoso",
                   "anim": "nervoso"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "A chamada diz que você faltou",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_chamada"
+                  ]
                 },
                 {
-                  "text": "E se quer saber, a Lia escreve 'tá ligado??'. Só tô dizendo.",
+                  "text": "Achei isso embaixo da estante",
+                  "kind": "boa",
+                  "next": "troca",
+                  "requires": [
+                    "rascunho"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
+                  ]
+                },
+                {
+                  "text": "Quem você acha que é @ninguém?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Admite, Pedro, você é a @ninguém!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Sei lá. A Lia escreve 'tá ligado??'. Só tô dizendo.",
                   "expr": "desconfiado",
                   "anim": "dando_de_ombros"
                 }
@@ -489,7 +596,7 @@
                 {
                   "text": "A chamada diz que você faltou",
                   "kind": "boa",
-                  "next": "pego",
+                  "next": "conta",
                   "requires": [
                     "c_chamada"
                   ]
@@ -497,15 +604,13 @@
                 {
                   "text": "Achei isso embaixo da estante",
                   "kind": "boa",
-                  "next": "alivio",
+                  "next": "troca",
                   "requires": [
                     "rascunho"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
                   ]
-                },
-                {
-                  "text": "Admite, Pedro, você é a @ninguém!",
-                  "kind": "ruim",
-                  "next": "bravo"
                 },
                 {
                   "text": "Valeu, depois eu volto.",
@@ -514,7 +619,7 @@
                 }
               ]
             },
-            "pego": {
+            "conta": {
               "lines": [
                 {
                   "text": "Tá, faltei. Eu tava na biblioteca. Mas não postei nada, juro!",
@@ -528,50 +633,27 @@
                 }
               ],
               "sets": [
-                "pedro_pego"
+                "pedro_falou"
               ],
-              "unlock": "c_dep_pedro",
               "choices": [
                 {
                   "text": "Achei isso embaixo da estante",
                   "kind": "boa",
-                  "next": "alivio",
+                  "next": "troca",
                   "requires": [
                     "rascunho"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
                   ]
                 },
                 {
-                  "text": "Valeu, depois eu volto.",
+                  "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
                 }
-              ]
-            },
-            "alivio": {
-              "lines": [
-                {
-                  "text": "MINHA CARTINHA! Se alguém lê isso, eu mudo de escola.",
-                  "expr": "surpreso",
-                  "anim": "nervoso"
-                },
-                {
-                  "text": "Valeu. Em troca: às 14h05 a Joana tava no computador da monitoria, rindo sozinha.",
-                  "expr": "feliz",
-                  "anim": "apontando"
-                }
               ],
-              "sets": [
-                "pedro_aliviado"
-              ],
-              "unlock": "c_pedro_viu",
-              "take_item": "rascunho",
-              "choices": [
-                {
-                  "text": "Segredo guardado, Pedro.",
-                  "kind": "neutra",
-                  "end": true
-                }
-              ]
+              "unlock": "c_dep_pedro"
             },
             "bravo": {
               "lines": [
@@ -591,26 +673,29 @@
             "fechado": {
               "lines": [
                 {
-                  "text": "{por:pedro_bravo} já me acusou. Só falo se me devolverem uma coisa que eu perdi na biblioteca.",
+                  "text": "{por:pedro_bravo} já me acusou. Só falo se me devolverem uma coisa que perdi na biblioteca.",
                   "expr": "bravo",
                   "anim": "negando"
                 }
               ],
               "choices": [
                 {
-                  "text": "Achei isso embaixo da estante",
+                  "text": "A chamada diz que você faltou",
                   "kind": "boa",
-                  "next": "alivio",
+                  "next": "conta",
                   "requires": [
-                    "rascunho"
+                    "c_chamada"
                   ]
                 },
                 {
-                  "text": "A chamada diz que você faltou",
+                  "text": "Achei isso embaixo da estante",
                   "kind": "boa",
-                  "next": "pego",
+                  "next": "troca",
                   "requires": [
-                    "c_chamada"
+                    "rascunho"
+                  ],
+                  "ifnot": [
+                    "pedro_troca"
                   ]
                 },
                 {
@@ -620,10 +705,202 @@
                 }
               ]
             },
-            "reencontro": {
+            "troca": {
               "lines": [
                 {
-                  "text": "Shhh sobre a cartinha, hein. Combinado? Combinado.",
+                  "text": "MINHA CARTINHA! Se alguém lê isso, eu mudo de escola.",
+                  "expr": "surpreso",
+                  "anim": "nervoso"
+                },
+                {
+                  "text": "Valeu. Em troca: às 14h05 a Joana tava no computador da monitoria, rindo sozinha.",
+                  "expr": "feliz",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "pedro_falou",
+                "pedro_troca"
+              ],
+              "take_item": "rascunho",
+              "choices": [
+                {
+                  "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_pedro_viu"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "nico",
+      "kind": "pessoa",
+      "name": "Nico",
+      "gender": "m",
+      "role": "ajudante da coordenação",
+      "look": {
+        "skin": "#4a2c17",
+        "hair": "cacheado",
+        "hair_color": "#111111",
+        "top": "#fbc02d",
+        "accessory": "fones"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Eu sei de tudo e não conto nada.",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "nico_falou"
+              ],
+              "node": "depois"
+            },
+            {
+              "if": [
+                "nico_bravo"
+              ],
+              "node": "fechado",
+              "ifnot": [
+                "nico_falou"
+              ]
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Ajudante da coordenação, prazer. Eu sei de tudo e não conto nada. Quase nada.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a comanda das coxinhas",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_comanda"
+                  ]
+                },
+                {
+                  "text": "Você sabia da feira adiada?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "Você é a @ninguém, Nico!",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Sabia. Eu imprimi a circular. Mas segredo de coordenação é sagrado.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar a comanda das coxinhas",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_comanda"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "conta": {
+              "lines": [
+                {
+                  "text": "Tá, contei pra Joana no almoço. 13h05, coxinha, segredo. Ela jurou que não ia espalhar.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "E às 14h05 eu tava aqui, digitando ata. O computador registra tudo.",
+                  "expr": "neutro",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "nico_falou"
+              ],
+              "choices": [
+                {
+                  "text": "Valeu pela ajuda.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_nico"
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? Eu sou o cofre da escola! Ofendido. Tchau.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "nico_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:nico_bravo} me chamou de @ninguém. Mostra o registro do computador e a gente se entende.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Mostrar o registro do computador",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_log_nico"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "depois": {
+              "lines": [
+                {
+                  "text": "Se a Joana perguntar, eu não falei nada. Mas falei.",
                   "expr": "nervoso",
                   "anim": "rindo"
                 }
@@ -656,12 +933,319 @@
       "talk": {
         "greet": [
           {
-            "text": "Se for dúvida de matemática, meu horário é quinta.",
+            "text": "Meu horário de dúvidas é quinta.",
             "expr": "neutro",
             "anim": "falando"
           }
         ],
-        "mood": "neutro"
+        "mood": "neutro",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "rosa_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Se for dúvida de matemática, meu horário é quinta.",
+                  "expr": "neutro",
+                  "anim": "falando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "A Lia saiu da recuperação?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora deixou usar celular na prova?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Ninguém sai da minha recuperação. Nem pra beber água.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "Celular na caixa, das 13h30 às 14h30. Sou rígida, querido.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Celular? Na minha prova? Vai pra fora, detetive.",
+                  "expr": "bravo",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "rosa_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:rosa_bravo} duvidou da minha prova. Hoje não atendo mais.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "ivo",
+      "kind": "pessoa",
+      "name": "Prof. Ivo",
+      "gender": "m",
+      "role": "professor de vôlei",
+      "look": {
+        "skin": "#e5b48f",
+        "hair": "raspado",
+        "hair_color": "#3a3a3a",
+        "top": "#1b5e20",
+        "accessory": "bone"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Apita! Quer dizer, oi.",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "ivo_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Apita! Quer dizer, oi. Sou o Prof. Ivo, do vôlei.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "O Pedro veio no treino hoje?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "O senhor está protegendo o Pedro?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "O Pedro? Faltou. DE NOVO. Disse que tava 'resolvendo coisas do coração'.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Protegendo? Eu dei falta pra ele! Sai da minha quadra.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "ivo_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:ivo_bravo} me chamou de cúmplice. Sem conversa hoje.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "cida",
+      "kind": "pessoa",
+      "name": "Tia Cida",
+      "gender": "f",
+      "role": "cantineira, vê tudo",
+      "look": {
+        "skin": "#9c6644",
+        "hair": "coque",
+        "hair_color": "#2e2e2e",
+        "top": "#ffffff",
+        "accessory": "nenhum"
+      },
+      "talk": {
+        "greet": [
+          {
+            "text": "Coxinha saindo!",
+            "expr": "feliz",
+            "anim": "rindo"
+          }
+        ],
+        "mood": "feliz",
+        "tree": {
+          "entries": [
+            {
+              "if": [
+                "cida_bravo"
+              ],
+              "node": "fechado"
+            },
+            {
+              "node": "inicio"
+            }
+          ],
+          "nodes": {
+            "inicio": {
+              "lines": [
+                {
+                  "text": "Coxinha saindo! Quer uma? Vem com fofoca de brinde.",
+                  "expr": "feliz",
+                  "anim": "rindo"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Quem almoçou junto hoje?",
+                  "kind": "neutra",
+                  "next": "papo"
+                },
+                {
+                  "text": "A senhora inventa fofoca, né?",
+                  "kind": "ruim",
+                  "next": "bravo"
+                }
+              ]
+            },
+            "papo": {
+              "lines": [
+                {
+                  "text": "Nico e Joana, mesa do canto, 13h05. Cochicharam mais que comeram.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                },
+                {
+                  "text": "A Joana saiu dizendo 'isso não pode ficar assim'. Brava, ela.",
+                  "expr": "neutro",
+                  "anim": "pensando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "bravo": {
+              "lines": [
+                {
+                  "text": "Eu? Eu SÓ observo. Sem coxinha pra você hoje.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "sets": [
+                "cida_bravo"
+              ],
+              "end": true,
+              "lock": 20,
+              "choices": []
+            },
+            "fechado": {
+              "lines": [
+                {
+                  "text": "{por:cida_bravo} me chamou de fofoqueira. Observadora, por favor.",
+                  "expr": "bravo",
+                  "anim": "negando"
+                }
+              ],
+              "choices": [
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            }
+          }
+        }
       }
     },
     {
@@ -681,6 +1265,11 @@
       "name": "Quadra"
     },
     {
+      "id": "sala_professores",
+      "kind": "lugar",
+      "name": "Sala da coordenação"
+    },
+    {
       "id": "ninguem",
       "kind": "fato",
       "name": "Post da @ninguém, 14h05",
@@ -693,6 +1282,12 @@
       "name": "Rascunho de cartinha",
       "desc": "Amassado, assinado 'P.', cheio de coraçãozinho. Começa com 'Oi, menina do 2B'.",
       "icon": "carta"
+    },
+    {
+      "id": "chocolate",
+      "name": "Barra de chocolate",
+      "desc": "Da bandeja da cantina. Moeda forte depois de prova.",
+      "icon": "chocolate"
     }
   ],
   "clues": [
@@ -719,6 +1314,111 @@
         ]
       },
       "release": "start",
+      "deal": "team"
+    },
+    {
+      "id": "c_chat_sala",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo da sala",
+      "time": "13h20",
+      "text": "A Lia escreve 'tá ligado??' igualzinho à @ninguém.",
+      "chat": {
+        "group": "2º ano 📚",
+        "lines": [
+          {
+            "who": "lia",
+            "text": "recuperação de mat daqui a pouco, tá ligado?? 😩",
+            "time": "13h20"
+          },
+          {
+            "who": "lia",
+            "text": "se eu sumir foi a equação",
+            "time": "13h20"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_dm_nico",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "DM do Nico",
+      "time": "13h05",
+      "text": "Nico conta o segredo da feira adiada pra Joana no almoço.",
+      "chat": {
+        "group": "Nico",
+        "lines": [
+          {
+            "who": "nico",
+            "text": "segredo: a feira foi adiada, a coord só avisa quinta 🤐",
+            "time": "13h05"
+          },
+          {
+            "who": "joana",
+            "text": "de novo isso? ninguém avisa nada, tá ligado??",
+            "time": "13h06"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_story_pedro",
+      "kind": "post",
+      "title": "Story do Pedro",
+      "time": "13h55",
+      "text": "Pedro posta que está indo pro treino às 13h55.",
+      "post": {
+        "user": "@pedro.saque",
+        "caption": "partiu treino 💪🏐",
+        "likes": 19,
+        "image": "selfie do Pedro com a mochila nas costas, num corredor",
+        "comments": [
+          {
+            "user": "@ivo.volei",
+            "text": "te espero às 14h, hein"
+          }
+        ],
+        "who": "pedro"
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_chat_monitores",
+      "kind": "mensagem",
+      "app": "chat",
+      "title": "Grupo dos monitores",
+      "time": "14h00",
+      "text": "Joana avisa que está sozinha no plantão da biblioteca até as 15h.",
+      "chat": {
+        "group": "Monitores 📌",
+        "lines": [
+          {
+            "who": "joana",
+            "text": "plantão na biblio até 15h, sozinha 😴",
+            "time": "14h00"
+          },
+          {
+            "who": "Caíque",
+            "text": "boa sorte kkk",
+            "time": "14h01"
+          }
+        ]
+      },
+      "release": "start",
+      "deal": "split"
+    },
+    {
+      "id": "c_senha",
+      "kind": "objeto",
+      "title": "Computador da monitoria",
+      "text": "Post-it no monitor: 'Computador da monitoria. Senha só com a monitora, nem adianta pedir. Plantão: Joana, 13h às 15h.'",
+      "release": "hotspot",
       "deal": "team"
     },
     {
@@ -756,10 +1456,27 @@
       "deal": "team"
     },
     {
-      "id": "c_senha",
-      "kind": "objeto",
-      "title": "Computador da monitoria",
-      "text": "Post-it no monitor: 'Computador da monitoria. Senha só com a monitora, nem adianta pedir. Plantão: Joana, 13h às 15h.'",
+      "id": "c_log_nico",
+      "kind": "registro",
+      "title": "Computador da coordenação",
+      "text": "Computador da coordenação: 13h50 às 14h40, usuário 'nico.ajudante', digitando atas sem pausa.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_circular",
+      "kind": "registro",
+      "title": "Circular interna",
+      "text": "Circular: 'Feira de ciências ADIADA. Divulgar aos alunos só na quinta.' Impressa por: Nico.",
+      "release": "hotspot",
+      "deal": "team"
+    },
+    {
+      "id": "c_comanda",
+      "kind": "registro",
+      "title": "Comanda da cantina",
+      "time": "13h05",
+      "text": "Comanda: '13h05, duas coxinhas, mesa do canto: Nico e Joana.' Anotação da Tia Cida: 'cochicharam mais que comeram'.",
       "release": "hotspot",
       "deal": "team"
     },
@@ -769,7 +1486,7 @@
       "title": "Recado da coordenação",
       "time": "14h40",
       "text": "Da coordenação: o post da @ninguém saiu às 14h05 do computador da biblioteca, logado na conta da monitoria. Não foi de celular.",
-      "release": "t+180",
+      "release": "t+300",
       "deal": "team"
     },
     {
@@ -812,9 +1529,17 @@
       "id": "c_pedro_viu",
       "kind": "depoimento",
       "title": "Pedro viu",
-      "time": "14h05",
       "who": "pedro",
       "text": "Pedro conta que às 14h05 viu a Joana no computador da monitoria, rindo sozinha.",
+      "release": "interrogatorio",
+      "deal": "team"
+    },
+    {
+      "id": "c_dep_nico",
+      "kind": "depoimento",
+      "title": "Fala do Nico",
+      "who": "nico",
+      "text": "Nico contou o segredo da feira pra Joana às 13h05. Às 14h05 digitava atas no computador da coordenação.",
       "release": "interrogatorio",
       "deal": "team"
     }
@@ -861,6 +1586,34 @@
       "object": "bolsa_esportiva",
       "label": "Bolsa do Pedro",
       "clue": "c_livro"
+    },
+    {
+      "id": "hs_comp_prof",
+      "scene": "sala_professores",
+      "object": "computador_prof",
+      "label": "Computador da coordenação",
+      "clue": "c_log_nico"
+    },
+    {
+      "id": "hs_mural",
+      "scene": "sala_professores",
+      "object": "mural_recados",
+      "label": "Mural de recados",
+      "clue": "c_circular"
+    },
+    {
+      "id": "hs_balcao",
+      "scene": "cantina",
+      "object": "balcao",
+      "label": "Balcão",
+      "clue": "c_comanda"
+    },
+    {
+      "id": "hs_bandeja",
+      "scene": "cantina",
+      "object": "bandeja",
+      "label": "Bandeja",
+      "item": "chocolate"
     }
   ],
   "solution": {
@@ -869,16 +1622,21 @@
     "culprit_evidence": [
       "c_coord",
       "c_senha",
-      "c_pedro_viu"
+      "c_pedro_viu",
+      "c_dica_lia"
     ],
     "categories": [
       {
-        "id": "identidade",
-        "label": "De onde saiu o post"
+        "id": "segredo",
+        "label": "Como o segredo vazou"
       },
       {
         "id": "onde",
         "label": "Onde cada um estava às 14h05"
+      },
+      {
+        "id": "post",
+        "label": "De onde saiu o post"
       }
     ],
     "edges": [
@@ -886,10 +1644,21 @@
         "from": "joana",
         "to": "ninguem",
         "type": "postou",
-        "category": "identidade",
+        "category": "post",
         "evidence": [
           "c_coord",
           "c_senha"
+        ]
+      },
+      {
+        "from": "nico",
+        "to": "joana",
+        "type": "contou",
+        "category": "segredo",
+        "evidence": [
+          "c_comanda",
+          "c_dm_nico",
+          "c_dep_nico"
         ]
       },
       {
@@ -899,6 +1668,7 @@
         "category": "onde",
         "evidence": [
           "c_senha",
+          "c_chat_monitores",
           "c_dep_joana"
         ]
       },
@@ -922,6 +1692,16 @@
           "c_ata",
           "c_dep_lia"
         ]
+      },
+      {
+        "from": "nico",
+        "to": "sala_professores",
+        "type": "estava",
+        "category": "onde",
+        "evidence": [
+          "c_log_nico",
+          "c_dep_nico"
+        ]
       }
     ],
     "traps": [
@@ -935,10 +1715,24 @@
         "from": "lia",
         "to": "ninguem",
         "type": "postou",
-        "category": "identidade"
+        "category": "post"
+      },
+      {
+        "from": "nico",
+        "to": "ninguem",
+        "type": "postou",
+        "category": "post"
       }
     ]
   },
+  "hints": [
+    "O post não veio de um celular. De onde, então?",
+    "Alguém mentiu sobre onde estava, mas por vergonha, não por culpa.",
+    "Um segredo da coordenação vazou antes do post. Quem contou para quem, e onde?",
+    "Um computador com senha só tem um dono.",
+    "O 'tá ligado??' não é exclusivo de uma pessoa só.",
+    "Quem estava sozinha na biblioteca com a senha da monitoria?"
+  ],
   "reveal": {
     "timeline": [
       {
@@ -946,8 +1740,16 @@
         "text": "Joana começa o plantão na biblioteca."
       },
       {
+        "time": "13h05",
+        "text": "Na cantina, Nico conta o segredo da feira pra Joana."
+      },
+      {
         "time": "13h30",
         "text": "Lia entra na recuperação, sem celular."
+      },
+      {
+        "time": "13h50",
+        "text": "Nico começa a digitar atas na coordenação."
       },
       {
         "time": "14h02",
@@ -956,16 +1758,13 @@
       {
         "time": "14h05",
         "text": "Joana posta como @ninguém no computador da monitoria."
-      },
-      {
-        "time": "14h40",
-        "text": "A coordenação descobre de onde saiu o post."
       }
     ],
-    "explanation": "O Pedro mentiu, mas por vergonha: estava na biblioteca escrevendo uma cartinha. O aha: o post não saiu de celular, saiu do computador da monitoria, e a senha só a Joana tem. O 'tá ligado??' ela pegou da Lia, a antiga dupla. Ela só queria que a escola avisasse os alunos.",
+    "explanation": "Três pessoas sabiam do segredo, mas só uma estava na biblioteca com a senha. O Pedro mentiu por vergonha: escrevia uma cartinha. O aha: o post saiu do computador da monitoria, e a Joana pegou o 'tá ligado??' da Lia, sua antiga dupla. Ela só queria que a escola avisasse os alunos.",
     "refuted": [
       "Lia escreve 'tá ligado??', mas estava na recuperação sem sair da sala.",
-      "Pedro estava na biblioteca, mas não tem a senha da monitoria. Mentiu sobre o treino por causa da cartinha."
+      "Pedro estava na biblioteca, mas não tem a senha da monitoria.",
+      "Nico vazou o segredo, mas às 14h05 digitava atas na coordenação."
     ]
   }
 }

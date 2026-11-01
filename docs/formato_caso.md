@@ -19,12 +19,13 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
 
 ```jsonc
 {
-  "id": "rumor_1017",                 // = nome do arquivo
+  "id": "rumor_1017",                 // = nome do arquivo (casos solo: solo_*.json)
+  "mode": "multi",                    // "solo" (um aluno sozinho, sem professor) | "multi" (equipes)
   "title": "O Rumor das 10h17",
   "tagline": "Ninguém cancelou nada. Mas a escola inteira já chorou.",   // 1 linha, tom noir divertido
   "difficulty": 1,                    // 1 fácil, 2 médio, 3 difícil
   "duration_sec": 600,
-  // Cenas do caso (fácil 3, médio 3 a 4, difícil 4). A primeira é onde o caso começa.
+  // Cenas do caso (ver "Solo x multi"). A primeira é onde o caso começa.
   // corredor | biblioteca | teatro | sala_aula | cantina | patio | sala_professores | quadra
   // sala_diretor | deposito | laboratorio | sala_musica
   "locations": ["corredor", "sala_aula", "sala_musica"],
@@ -104,6 +105,10 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
       {"from": "rafa", "to": "boato", "type": "postou", "category": "post"}
     ]
   },
+
+  // 4 a 6 dicas DESTE caso, da mais sutil para a mais forte, sem entregar o culpado de cara.
+  // multi: o professor manda. solo: o jogador pede (uma por vez, na ordem).
+  "hints": ["Alguém leu só o começo de uma mensagem. Quem estava com pressa?", "..."],
 
   "reveal": {
     "timeline": [{"time": "09h55", "text": "..."}],
@@ -194,11 +199,36 @@ ou que é aberto por uma entry com essa flag em `if`.
 - Fim do tempo sem acerto: vence a equipe com mais pontos de dedução na última entrega.
   Pontos = 100 por linha exigida certa com prova, 50 sem prova, −60 por armadilha, +150 pelo culpado certo.
 
+## Solo x multi
+
+| | solo | multi |
+|---|---|---|
+| locations | 2 a 4 (muito fácil 2, difícil 4) | 4 a 5 |
+| pessoas | 3 a 5 | 6 a 8 |
+| pistas | 5 a 14 | 14 a 20 |
+| `deal: "split"` | proibido (tudo `team`) | obrigatório (pelo menos 2, só em start ou t+) |
+| linhas exigidas | 2 a 4 | 5 a 7 |
+| trocas (`take_item`) | pelo menos 1 | pelo menos 2, cada item usado por uma pessoa só |
+| duration_sec | 600 a 1200 | 1500 a 2100 (o servidor ainda soma 50%) |
+
+Comum aos dois: 2 a 3 link_types, até 3 categorias, 1 a 3 armadilhas, pelo menos 1 pista `t+150..300`,
+1 a 2 hotspots por cena, 1 a 3 pessoas por cena.
+
+`unlock` pode apontar para uma pista `t+` (vira **atalho**: a equipe ganha antes do tempo). Nunca para
+start ou hotspot.
+
+## Validador
+
+`python tools/validar_casos.py` valida todos os casos (ou os arquivos passados). Além dos ids, âncoras,
+tamanhos e regras por modo, ele roda a alcançabilidade duas vezes: do zero, e com **todas as flags ruins
+ligadas** (a equipe fez todas as escolhas ruins). Toda linha exigida e o culpado precisam continuar
+com prova alcançável no pior caminho.
+
 ## Regras de escrita
 
 - Público com pouca experiência em jogos: nada complexo, mas o culpado não pode ser óbvio.
   2 suspeitos plausíveis + o verdadeiro, uma pista falsa justa, uma reviravolta que se encaixa, um "aha" deduzível.
-- 4 a 5 pessoas. Uma informação clara por pista. Pelo menos 1 pista `t+` (150 a 300) que vira o jogo.
+- Uma informação clara por pista (limites de quantidade na tabela "Solo x multi"). Pelo menos 1 pista `t+` (150 a 300) que vira o jogo.
 - Cada linha exigida aceita 2 ou mais pistas como prova, uma delas team ou hotspot.
 - Tudo deduzível só com as pistas, sem conhecimento externo. Nada pesado; tom leve.
 - Personagens fictícios. Sem travessão nos textos ao jogador. Português do Brasil.

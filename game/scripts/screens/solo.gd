@@ -58,6 +58,9 @@ func _on_cases(cases: Array) -> void:
 		chip.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 		h.add_child(chip)
 		cv.add_child(h)
+		if Net.solo_done().has(str(c["id"])):
+			var dn := UI.title("CASO RESOLVIDO", 30, UI.GREEN)
+			cv.add_child(dn)
 		cv.add_child(UI.label(UI.strip_emoji(str(c.get("tagline", ""))), 24, UI.MIST))
 		cv.add_child(UI.label("%d min" % (int(c.get("duration_sec", 600)) * 3 / 120), 22, col, "bold"))
 		var go := UI.button("INVESTIGAR", "primary", 90)

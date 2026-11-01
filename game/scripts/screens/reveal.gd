@@ -11,6 +11,11 @@ var pages := {}
 
 func _ready() -> void:
 	var r: Dictionary = Net.reveal_data
+	# modo solo resolvido: guarda como concluído para aparecer na lista de casos
+	if Net.state.get("solo", false):
+		for row in r.get("ranking", []):
+			if row.get("solved", false):
+				Net.mark_solo_done(str(Net.state.get("settings", {}).get("caseId", "")))
 	var m := UI.margin(28, 36, 24)
 	add_child(UI.full(m))
 	var v := UI.vbox(14)
