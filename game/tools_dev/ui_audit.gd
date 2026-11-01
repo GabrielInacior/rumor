@@ -51,7 +51,7 @@ func _public_case() -> Dictionary:
 
 
 func _teams(phase: String) -> Array:
-	var names := [["Corvo", "Lince", "Coruja", "Raposa"], ["Sombra", "Neblina", "Faro"], ["Lupa", "Gato Preto", "Trench", "Fumaça", "Morcego"]]
+	var names := [["Corvo", "Maria Eduarda Santos", "Coruja", "Raposa"], ["Sombra", "Neblina", "Faro"], ["Lupa", "Gato Preto", "Trench", "Fumaça", "Morcego"]]
 	var presets := [["t1", "Lanterna", "#ffc83d"], ["t2", "Neblina", "#6fd3ff"], ["t3", "Néon", "#ff6fae"]]
 	var out := []
 	for i in 3:
@@ -352,6 +352,21 @@ func _run() -> void:
 			{"place": 1, "id": "t2", "name": "Neblina", "color": "#6fd3ff", "solved": true, "timeSec": 412, "score": 650, "submissions": 2},
 			{"place": 2, "id": "t1", "name": "Lanterna", "color": "#ffc83d", "solved": false, "timeSec": null, "score": 350, "submissions": 3},
 			{"place": 3, "id": "t3", "name": "Néon", "color": "#ff6fae", "solved": false, "timeSec": null, "score": 100, "submissions": 1}]}
+	var full_reveal: Dictionary = Net.reveal_data.duplicate(true)
+	var cats_m := []
+	var qq := 0
+	for cat in full_case["solution"]["categories"]:
+		cats_m.append({"id": cat["id"], "label": cat["label"], "status": "ok" if qq % 2 == 0 else "incompleto"})
+		qq += 1
+	Net.reveal_data = {"hidden": true, "ranking": full_reveal["ranking"], "mine": {"culpritOk": false, "objDone": 1, "objTotal": cats_m.size(), "categories": cats_m}}
+	_apply("player", _player_state("reveal"))
+	await _wait(1.0)
+	await _shot("20a_errou_vitoria")
+	for c in main.current.get_children():
+		if c.get_script() == load("res://scripts/ui/victory.gd") or (c.get_child_count() > 0 and c.get_child(0).get_script() == load("res://scripts/ui/victory.gd")):
+			c.queue_free()
+	await _shot("20b_errou_resultado")
+	Net.reveal_data = full_reveal
 	_apply("player", _player_state("reveal"))
 	await _shot("20_revelacao_placar")
 	main.current._show("verdade")

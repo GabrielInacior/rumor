@@ -26,8 +26,10 @@ func _ready() -> void:
 	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(t)
 
+	var hidden := bool(r.get("hidden", false))
 	var tb := UI.hbox(10)
-	for k in [["placar", "PLACAR"], ["verdade", "A VERDADE"], ["quadro", "QUADRO OFICIAL"]]:
+	var tab_list := [["placar", "PLACAR"], ["resultado", "SEU RESULTADO"]] if hidden else [["placar", "PLACAR"], ["verdade", "A VERDADE"], ["quadro", "QUADRO OFICIAL"]]
+	for k in tab_list:
 		var b := UI.button(k[1], "ghost", 84)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.add_theme_font_override("font", UI.font("title"))
@@ -41,8 +43,12 @@ func _ready() -> void:
 	page_holder.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(page_holder)
 	pages["placar"] = _build_ranking(r)
-	pages["verdade"] = _build_truth(r)
-	pages["quadro"] = _build_board(r)
+	if hidden:
+		# errou o culpado: a resposta não aparece (dá para tentar de novo outro dia)
+		pages["resultado"] = _build_missed(r)
+	else:
+		pages["verdade"] = _build_truth(r)
+		pages["quadro"] = _build_board(r)
 	for k in pages:
 		page_holder.add_child(UI.full(pages[k]))
 
@@ -51,10 +57,23 @@ func _ready() -> void:
 		again.pressed.connect(func() -> void: Net.send({"t": "host_lobby"}))
 		v.add_child(again)
 	else:
-		var leave := UI.button("Sair da sala", "ghost", 76)
+		var row := UI.hbox(10)
+		if hidden and Net.state.get("solo", false):
+			var retry := UI.button("TENTAR DE NOVO", "primary", 84)
+			retry.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			var cid := str(Net.state.get("settings", {}).get("caseId", ""))
+			retry.pressed.connect(func() -> void:
+				Net.forget_session()
+				Net.open()
+				Net.send({"t": "solo_start", "caseId": cid, "name": "Detetive"})
+				Net.role = "player")
+			row.add_child(retry)
+		var leave := UI.button("Sair da sala", "ghost", 84)
+		leave.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		leave.pressed.connect(func() -> void: get_meta("main").go_home())
-		v.add_child(leave)
-	_show("placar")
+		row.add_child(leave)
+		v.add_child(row)
+	_show("resultado" if hidden else "placar")
 	# aluno: primeiro a tela de vitória (com compartilhar), depois a revelação completa
 	if Net.role == "player":
 		var vic := Victory.new()
@@ -62,7 +81,49 @@ func _ready() -> void:
 		add_child(UI.full(vic))
 
 
+## Quem errou o culpado vê só o próprio resultado: o que cumpriu, sem a resposta.
+func _build_missed(r: Dictionary) -> Control:
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var v := UI.vbox(14)
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(v)
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override("panel", UI.box(Color("#d9b977"), Color("#b8944f"), 2, 8, 20))
+	var cv := UI.vbox(8)
+	var st := UI.title("CULPADO NÃO ENCONTRADO", 44, Color("#c42c3f"))
+	st.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	cv.add_child(st)
+	var msg := "A pessoa acusada não era a culpada. A resposta continua em segredo: dá para investigar de novo." if Net.state.get("solo", false) \
+		else "A pessoa acusada não era a culpada. A resposta continua em segredo para a próxima vez."
+	cv.add_child(UI.label(msg, 24, Color("#1b2140"), "type"))
+	card.add_child(cv)
+	v.add_child(card)
+	var mine: Dictionary = r.get("mine", {}) if r.get("mine") is Dictionary else {}
+	v.add_child(UI.label("O QUE VOCÊS CUMPRIRAM", 20, UI.YELLOW, "type"))
+	for cat in mine.get("categories", []):
+		if str(cat.get("id", "")) == "culpado":
+			continue
+		var ok := str(cat["status"]) == "ok"
+		var row := UI.hbox(10)
+		var l := UI.label(str(cat["label"]), 24, UI.PAPER, "bold")
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(l)
+		var stamp := PanelContainer.new()
+		var c := UI.GREEN if ok else UI.MIST
+		stamp.add_theme_stylebox_override("panel", UI.box(Color(c, 0.15), c, 2, 6, 8))
+		var sl := UI.title("PROVADO" if ok else "NÃO PROVADO", 24, c)
+		sl.autowrap_mode = TextServer.AUTOWRAP_OFF
+		stamp.add_child(sl)
+		stamp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(stamp)
+		v.add_child(row)
+	return scroll
+
+
 func _show(k: String) -> void:
+	if not pages.has(k):
+		return
 	for key in pages:
 		(pages[key] as Control).visible = key == k
 	for key in tabs:

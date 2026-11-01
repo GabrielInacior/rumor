@@ -123,14 +123,14 @@ func refresh() -> void:
 		if r["ready"]:
 			n_ready += 1
 		else:
-			missing.append(str(r["name"]))
+			missing.append(UI.short_name(str(r["name"])))
 		# só os colegas de equipe viram fichinhas (a turma inteira vira número)
 		if str(r["team"]) != my_team:
 			continue
 		var c: Color = col.get(r["team"], UI.MIST)
 		var chip := PanelContainer.new()
 		chip.add_theme_stylebox_override("panel", UI.box(Color(UI.GREEN, 0.18) if r["ready"] else Color(UI.NIGHT, 0.8), UI.GREEN if r["ready"] else Color(c, 0.6), 2, 20, 8))
-		var l := UI.label(("OK  " if r["ready"] else "") + str(r["name"]), 20, UI.GREEN if r["ready"] else UI.PAPER, "bold")
+		var l := UI.label(("OK  " if r["ready"] else "") + UI.short_name(str(r["name"])), 20, UI.GREEN if r["ready"] else UI.PAPER, "bold")
 		l.autowrap_mode = TextServer.AUTOWRAP_OFF
 		chip.add_child(l)
 		chips.add_child(chip)

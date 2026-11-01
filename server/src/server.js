@@ -1,4 +1,5 @@
 'use strict';
+const { checkName } = require('./namefilter');
 // Servidor do RUMOR: entrega o jogo exportado (pasta public/) e roda as salas por WebSocket em /ws.
 // Um único processo, sem banco: a sala vive na memória enquanto a aula acontece.
 const fs = require('fs');
@@ -161,8 +162,11 @@ function handle(sock, msg) {
   if (msg.t === 'join') {
     const room = rooms.get(String(msg.code));
     if (!room) { send(sock, { t: 'error', msg: 'Sala não encontrada. Confira o código.' }); return; }
-    const r = room.join(sock, msg.name);
-    if (r.error) { send(sock, { t: 'error', msg: r.error }); return; }
+    // nome digitado pelo aluno: filtro de palavrão e termo sexual (o servidor tem a palavra final)
+    const chk = checkName(msg.name);
+    if (!chk.ok) { send(sock, { t: 'error', msg: chk.msg, field: 'name' }); return; }
+    const r = room.join(sock, chk.name);
+    if (r.error) { send(sock, { t: 'error', msg: r.error, field: 'name' }); return; }
     send(sock, { t: 'joined', code: room.code, pid: r.player.id, secret: r.player.secret, name: r.player.name, rejoined: !!r.rejoined });
     if (room.phase !== 'lobby') send(sock, { t: 'case', case: require('./room').publicCase(room.caseData) });
     room.broadcast();
@@ -174,7 +178,7 @@ function handle(sock, msg) {
     const p = room.players.get(msg.pid);
     send(sock, { t: 'joined', code: room.code, pid: p.id, secret: p.secret, name: p.name });
     if (room.phase !== 'lobby') send(sock, { t: 'case', case: require('./room').publicCase(room.caseData) });
-    if (room.phase === 'reveal') send(sock, { t: 'reveal', reveal: room.revealData() });
+    if (room.phase === 'reveal') send(sock, { t: 'reveal', reveal: room.revealFor(p) });
     room.broadcast();
     return;
   }

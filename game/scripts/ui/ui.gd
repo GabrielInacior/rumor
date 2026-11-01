@@ -176,6 +176,24 @@ static func fmt_time(sec: int) -> String:
 	return "%d:%02d" % [sec / 60, sec % 60]
 
 
+## Nome curto para fichas e etiquetas: "Maria Eduarda Santos" -> "Maria E. S." (nunca estoura a UI).
+static func short_name(n: String, max_len := 13) -> String:
+	n = n.strip_edges()
+	if n.length() <= max_len:
+		return n
+	var parts := n.split(" ", false)
+	var first := parts[0]
+	if first.length() > max_len - 1:
+		return first.substr(0, max_len - 1) + "."
+	var out := first
+	for k in range(1, parts.size()):
+		var ini := " " + parts[k].substr(0, 1).to_upper() + "."
+		if (out + ini).length() > max_len:
+			break
+		out += ini
+	return out
+
+
 static func portrait(id: String) -> Texture2D:
 	var p := "res://assets/portraits/%s.png" % id
 	if ResourceLoader.exists(p):

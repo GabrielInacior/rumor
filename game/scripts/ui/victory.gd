@@ -11,6 +11,9 @@ var stars := 1
 var case_title := ""
 var culprit_id := ""
 var codename := ""
+var missed := false     # errou o culpado: nada da resposta aparece
+var culprit_ok := false
+var obj_line := ""
 var team_name := ""
 var team_color := UI.YELLOW
 
@@ -20,6 +23,11 @@ func setup_from_reveal(r: Dictionary) -> void:
 	case_title = str(Net.case_data.get("title", ""))
 	culprit_id = str(r.get("culprit", "")) if r.get("culprit") != null else ""
 	codename = str(Net.state.get("me", {}).get("name", Net.my_name))
+	missed = bool(r.get("hidden", false))
+	var res: Dictionary = r.get("mine", {}) if r.get("mine") is Dictionary else {}
+	culprit_ok = bool(res.get("culpritOk", false))
+	if not res.is_empty():
+		obj_line = "%d de %d provas" % [int(res.get("objDone", 0)), int(res.get("objTotal", 0))]
 	for row in r.get("ranking", []):
 		if row["id"] == mine:
 			solved = row.get("solved", false)
@@ -86,7 +94,9 @@ func _make_card(sz: Vector2) -> Control:
 	logo.add_theme_constant_override("shadow_offset_x", int(5 * k))
 	logo.add_theme_constant_override("shadow_offset_y", int(3 * k))
 	v.add_child(logo)
-	var head := UI.title("CASO RESOLVIDO!" if solved else "CASO ENCERRADO", int(56 * k), UI.GREEN if solved else UI.PAPER)
+	var htxt := "CASO RESOLVIDO!" if solved else ("CULPADO CERTO!" if culprit_ok else "CULPADO NÃO ENCONTRADO")
+	var head := UI.title(htxt, int(56 * k), UI.GREEN if solved else (UI.YELLOW if culprit_ok else UI.PINK))
+	head.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	head.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(head)
 	var t := UI.label(case_title.to_upper(), int(30 * k), UI.PAPER, "type")
@@ -97,7 +107,7 @@ func _make_card(sz: Vector2) -> Control:
 	st.count = stars
 	st.custom_minimum_size = Vector2(0, 70 * k)
 	v.add_child(st)
-	var tl := UI.title(("em " + UI.fmt_time(time_sec)) if solved and time_sec > 0 else "tempo esgotado", int(48 * k), UI.YELLOW)
+	var tl := UI.title(("em " + UI.fmt_time(time_sec)) if solved and time_sec > 0 else (obj_line if obj_line != "" else "tempo esgotado"), int(48 * k), UI.YELLOW)
 	tl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(tl)
 	if place > 0 and not Net.state.get("solo", false):

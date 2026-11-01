@@ -1,6 +1,6 @@
 extends Control
 ## Entrar na sala sem teclado do celular: teclado numérico próprio para o código e
-## codinomes de detetive prontos (ninguém expõe o nome real, e é mais divertido).
+## nome digitado pelo aluno (com filtro de palavrão) e codinomes como sugestão.
 
 const ALIASES := [
 	"Corvo", "Lince", "Coruja", "Raposa", "Sombra", "Neblina", "Faro", "Lupa",
@@ -12,6 +12,8 @@ var boxes: Array[Label] = []
 var step := 1
 var body: VBoxContainer
 var title_l: Label
+var err_l: Label
+static var _last_name := ""
 
 
 func _ready() -> void:
@@ -36,6 +38,11 @@ func _ready() -> void:
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(body)
 	_build()
+	# recusa do servidor (nome proibido ou repetido) aparece embaixo do campo
+	Net.error_msg.connect(func(t: String) -> void:
+		if step == 2 and is_instance_valid(err_l):
+			err_l.text = t
+			err_l.visible = true)
 
 
 func _build() -> void:
@@ -74,29 +81,59 @@ func _build() -> void:
 		body.add_child(grid)
 		_show_digits()
 	else:
-		title_l.text = "SEU CODINOME"
-		body.add_child(UI.label("Escolha como sua equipe vai te chamar.", 26, UI.MIST))
-		var scroll := ScrollContainer.new()
-		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		var grid := GridContainer.new()
-		grid.columns = 2
-		grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		grid.add_theme_constant_override("h_separation", 16)
-		grid.add_theme_constant_override("v_separation", 16)
+		title_l.text = "SEU NOME"
+		body.add_child(UI.label("Como a sua equipe vai te chamar.", 26, UI.MIST))
+		var field := LineEdit.new()
+		field.placeholder_text = "Digite seu nome"
+		field.max_length = 20
+		field.custom_minimum_size = Vector2(0, 104)
+		field.add_theme_font_override("font", UI.font("marker"))
+		field.add_theme_font_size_override("font_size", 40)
+		field.add_theme_color_override("font_color", UI.INK)
+		field.add_theme_color_override("font_placeholder_color", Color(UI.INK, 0.4))
+		field.add_theme_color_override("caret_color", UI.INK)
+		field.add_theme_stylebox_override("normal", UI.box(UI.PAPER, UI.YELLOW, 4, 16, 20))
+		field.add_theme_stylebox_override("focus", UI.box(UI.PAPER, UI.PINK, 4, 16, 20))
+		field.virtual_keyboard_type = LineEdit.KEYBOARD_TYPE_DEFAULT
+		field.text = _last_name
+		body.add_child(field)
+		err_l = UI.label("", 22, UI.RED, "bold")
+		err_l.visible = false
+		body.add_child(err_l)
+		var go := UI.button("ENTRAR", "primary", 100)
+		go.add_theme_font_size_override("font_size", 46)
+		var submit := func(_t: String = "") -> void:
+			var msg := NameFilter.problem(field.text)
+			err_l.text = msg
+			err_l.visible = msg != ""
+			if msg != "":
+				Sfx.play("ui_tap")
+				return
+			_last_name = field.text.strip_edges()
+			Net.open()
+			Net.join(digits, _last_name)
+		go.pressed.connect(submit)
+		field.text_submitted.connect(submit)
+		field.text_changed.connect(func(_t: String) -> void: err_l.visible = false)
+		body.add_child(go)
+		# codinomes continuam como sugestão (para quem não quer usar o nome)
+		var sug := UI.label("ou toque num codinome:", 20, UI.MIST, "type")
+		body.add_child(sug)
+		var flow := HFlowContainer.new()
+		flow.add_theme_constant_override("h_separation", 10)
+		flow.add_theme_constant_override("v_separation", 10)
 		var list := ALIASES.duplicate()
 		list.shuffle()
-		for a in list:
-			var b := UI.button(a, "ghost", 100)
-			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		for a in list.slice(0, 8):
+			var b := UI.button(a, "ghost", 64)
 			b.add_theme_font_override("font", UI.font("marker"))
-			b.add_theme_font_size_override("font_size", 34)
+			b.add_theme_font_size_override("font_size", 26)
+			b.custom_minimum_size.x = 0
 			b.pressed.connect(func() -> void:
-				Net.open()
-				Net.join(digits, a))
-			grid.add_child(b)
-		scroll.add_child(grid)
-		body.add_child(scroll)
+				field.text = a
+				err_l.visible = false)
+			flow.add_child(b)
+		body.add_child(flow)
 
 
 func _wide() -> bool:

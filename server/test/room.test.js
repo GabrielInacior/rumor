@@ -79,12 +79,12 @@ test('rodada completa', async () => {
   const b = client(port); await b.open();
   const c = client(port); await c.open();
   a.send({ t: 'join', code: hosted.code, name: 'Corvo' });
-  b.send({ t: 'join', code: hosted.code, name: 'Corvo' });
+  b.send({ t: 'join', code: hosted.code, name: 'Lince' });
   c.send({ t: 'join', code: hosted.code, name: 'Gato' });
   const ja = await a.wait((m) => m.t === 'joined');
   const jb = await b.wait((m) => m.t === 'joined');
   await c.wait((m) => m.t === 'joined');
-  assert.strictEqual(jb.name, 'Corvo 2', 'nome repetido ganha número');
+  assert.strictEqual(jb.name, 'Lince');
   a.send({ t: 'pick_team', team: 't1' });
   b.send({ t: 'pick_team', team: 't1' });
   c.send({ t: 'pick_team', team: 't2' });

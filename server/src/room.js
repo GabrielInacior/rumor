@@ -102,6 +102,10 @@ class Room {
       this.touch();
       return { player: back, rejoined: true };
     }
+    // mesmo nome de alguém conectado: pede a inicial do sobrenome (duas Anas na turma)
+    if ([...this.players.values()].some((x) => x.sock && x.name.toLowerCase() === name.toLowerCase())) {
+      return { error: `Já tem alguém chamado ${name} na sala. Acrescente a inicial do sobrenome (ex.: ${name} S.).` };
+    }
     if (this.players.size >= 60) return { error: 'Sala cheia.' };
     const taken = new Set([...this.players.values()].map((p) => p.name));
     if (taken.has(name)) {
@@ -296,8 +300,21 @@ class Room {
       }
     }
     if (this.hostSock) this.send(this.hostSock, { t: 'reveal', reveal: this.revealData() });
-    for (const p of this.players.values()) if (p.sock) this.send(p.sock, { t: 'reveal', reveal: this.revealData() });
+    for (const p of this.players.values()) if (p.sock) this.send(p.sock, { t: 'reveal', reveal: this.revealFor(p) });
     this.emitEvent({ k: 'reveal' });
+  }
+
+  /**
+   * Revelação para um aluno: quem errou o culpado NÃO recebe a resposta (nem o culpado, nem a
+   * explicação, nem o quadro oficial). Só o placar e os próprios objetivos.
+   */
+  revealFor(p) {
+    const team = this.teams.find((t) => t.id === p.teamId);
+    const r = team ? (team.finalResult || validateBoard(this.caseData, team.board, team.lastCulprit)) : null;
+    const o = r ? this.objectives(r) : { primary: false, secDone: 0, secTotal: 0 };
+    const mine = r ? { culpritOk: o.primary, objDone: o.secDone, objTotal: o.secTotal, categories: r.categories, finished: !!(team && team.finishedAt) } : null;
+    if (o.primary) return { ...this.revealData(), mine };
+    return { hidden: true, ranking: this.ranking(), mine, categories: this.caseData.solution.categories.map((c) => ({ id: c.id, label: c.label })) };
   }
 
   revealData() {

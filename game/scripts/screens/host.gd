@@ -367,7 +367,7 @@ func _refresh_lobby() -> void:
 		for pl in t["players"]:
 			var chip := PanelContainer.new()
 			chip.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.8), Color(col, 0.5), 1, 20, 8))
-			var clb := UI.label(str(pl["name"]), 20, UI.PAPER if pl["online"] else UI.MIST, "bold")
+			var clb := UI.label(UI.short_name(str(pl["name"])), 20, UI.PAPER if pl["online"] else UI.MIST, "bold")
 			clb.autowrap_mode = TextServer.AUTOWRAP_OFF
 			chip.add_child(clb)
 			flow.add_child(chip)
@@ -586,7 +586,7 @@ func _ready_panel() -> Control:
 			var rc: Color = UI.GREEN if r["ready"] else (UI.MIST.darkened(0.3) if not r["online"] else UI.YELLOW)
 			var chip := PanelContainer.new()
 			chip.add_theme_stylebox_override("panel", UI.box(Color(rc, 0.15), rc, 2, 20, 8))
-			var txt := ("OK  " if r["ready"] else "") + str(r["name"]) + ("" if r["online"] else "  fora") + ("" if r["ready"] or not r["online"] else "  lendo...")
+			var txt := ("OK  " if r["ready"] else "") + UI.short_name(str(r["name"])) + ("" if r["online"] else "  fora") + ("" if r["ready"] or not r["online"] else "  lendo...")
 			var l := UI.label(txt, 20, rc, "bold")
 			l.autowrap_mode = TextServer.AUTOWRAP_OFF
 			chip.add_child(l)
@@ -686,7 +686,7 @@ func _team_card(t: Dictionary) -> Control:
 			dot = UI.MIST.darkened(0.4)
 		var mc := PanelContainer.new()
 		mc.add_theme_stylebox_override("panel", UI.box(Color(UI.NIGHT, 0.85), dot, 2, 20, 8))
-		var txt := str(mbr["name"])
+		var txt := UI.short_name(str(mbr["name"]))
 		if not mbr.get("online", true):
 			txt += "  fora"
 		elif idle >= 180:

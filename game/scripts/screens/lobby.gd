@@ -70,7 +70,7 @@ func refresh() -> void:
 			chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			var me: bool = str(p["name"]) == me_name
 			chip.add_theme_stylebox_override("panel", UI.box(col if me else Color(UI.NIGHT, 0.8), col, 2, 30, 14))
-			var cl := UI.label(str(p["name"]), 24, UI.INK if me else UI.PAPER, "bold")
+			var cl := UI.label(UI.short_name(str(p["name"])), 24, UI.INK if me else UI.PAPER, "bold")
 			cl.autowrap_mode = TextServer.AUTOWRAP_OFF
 			cl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			chip.add_child(cl)
