@@ -448,6 +448,7 @@ func _build_game() -> void:
 		b.add_theme_font_size_override("font_size", 28)
 		b.pressed.connect(func() -> void:
 			game_tab = k[0]
+			_scroll_top = true
 			_feed_len = -1
 			_guide_dirty = true
 			if k[0] == "guia" and Net.guide_data.is_empty():
@@ -487,20 +488,113 @@ var _pending := false
 
 
 func _touch_scroll() -> void:
-	_busy_until = Time.get_ticks_msec() + 1400
+	_busy_until = maxi(_busy_until, Time.get_ticks_msec() + 1400)
+
+
+## Qualquer toque, arrasto ou roda do mouse na tela segura a reconstrução por um tempo: a lista
+## não se refaz embaixo do dedo do professor (era isso que travava e fazia a rolagem pular).
+func _input(e: InputEvent) -> void:
+	if phase_built != "game":
+		return
+	if e is InputEventScreenTouch or e is InputEventScreenDrag or e is InputEventMouseButton 			or (e is InputEventMouseMotion and (e as InputEventMouseMotion).button_mask != 0):
+		_busy_until = maxi(_busy_until, Time.get_ticks_msec() + 2500)
+
+
+var _last_sig := ""
+var _last_build_ms := -100000
+var _scroll_top := false
+
+
+## Assinatura do que a aba mostra: se nada mudou, a tela não é refeita.
+func _page_sig() -> String:
+	var st := Net.state
+	if str(st.get("phase", "")) == "briefing":
+		return "b" + JSON.stringify([st.get("readyList", []), st.get("countdown", false)])
+	var bucket := int(Net.seconds_elapsed() / 30)
+	match game_tab:
+		"equipes":
+			# o tempo parado de cada aluno muda a cada mensagem; na ficha só importa a faixa (ativo,
+			# pensando, parado N min), então a assinatura usa a faixa
+			var ins: Dictionary = (st.get("insight", {}) as Dictionary).duplicate(true)
+			for tid in ins:
+				for mbr in (ins[tid] as Dictionary).get("members", []):
+					var idle := int(mbr.get("idleSec", 0))
+					mbr["idleSec"] = 0 if idle < 60 else (1 if idle < 180 else 2 + idle / 60)
+					mbr.erase("actions")
+			return "e%d|%s" % [bucket, JSON.stringify([st.get("teams", []), ins])]
+		"aovivo":
+			return "a%d|%d|%s" % [bucket, (st.get("feed", []) as Array).size(), feed_filter]
+		"quadros":
+			# arrastar carta manda o quadro de novo várias vezes por segundo: a miniatura só
+			# refaz quando muda o que tem nele (cartas, fios, provas), não a posição
+			var parts := []
+			var bds: Dictionary = st.get("boards", {})
+			for tid in bds:
+				var b: Dictionary = bds[tid]
+				var refs := []
+				for c in b.get("cards", []):
+					refs.append(str(c.get("ref", "")) + str(c.get("tag", "")))
+				parts.append([tid, refs, b.get("links", [])])
+			return "q" + JSON.stringify([parts, st.get("teams", [])])
+		"guia":
+			return "g%d" % Net.guide_data.size()
+	return game_tab
 
 
 func _refresh_game() -> void:
-	if _touch and _touch.busy():
-		_busy_until = Time.get_ticks_msec() + 900
-	if page_scroll and Time.get_ticks_msec() < _busy_until:
+	# mudança pedida pelo professor (aba, filtro) passa na hora; atualização dos alunos espera
+	# quadro de equipe aberto em tela cheia: atualiza sempre (é barato e mostra o arrasto ao vivo)
+	if viewer_team != "" and viewer_board and is_instance_valid(viewer_board):
+		var vb: Dictionary = Net.state.get("boards", {}).get(viewer_team, {})
+		viewer_board.set_data(vb.get("cards", []), vb.get("links", []))
+	var forced := _feed_len == -1 or (_guide_dirty and game_tab == "guia")
+	if not forced:
+		if _touch and _touch.busy():
+			_busy_until = maxi(_busy_until, Time.get_ticks_msec() + 900)
+		if page_scroll and Time.get_ticks_msec() < _busy_until:
+			_pending = true
+			return
+	# no máximo uma reconstrução a cada 1,5 s vinda dos alunos (turma inteira mexendo ao mesmo
+	# tempo não pode travar o celular do professor)
+	if not forced and Time.get_ticks_msec() - _last_build_ms < 1500:
 		_pending = true
 		return
 	_pending = false
-	var keep := page_scroll.scroll_vertical if page_scroll else 0
+	var sig := _page_sig()
+	if not forced and sig == _last_sig and page_box and page_box.get_child_count() > 0:
+		_do_tabs_only()
+		return
+	_last_sig = sig
+	_last_build_ms = Time.get_ticks_msec()
+	if _feed_len == -1:
+		_feed_len = 0
+	var keep := 0 if _scroll_top else (page_scroll.scroll_vertical if page_scroll else 0)
+	_scroll_top = false
+	# segura a altura da página durante a troca: a lista nunca fica vazia por um instante
+	# (a rolagem não é puxada para o topo)
+	if page_box:
+		page_box.custom_minimum_size.y = page_box.size.y
 	_do_refresh_game()
+	_restore_scroll(keep)
+
+
+func _restore_scroll(keep: int) -> void:
 	if page_scroll:
-		page_scroll.set_deferred("scroll_vertical", keep)
+		page_scroll.scroll_vertical = keep
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if not is_instance_valid(page_box) or not is_instance_valid(page_scroll):
+		return
+	page_box.custom_minimum_size.y = 0
+	if not (_touch and _touch.busy()):
+		page_scroll.scroll_vertical = keep
+
+
+func _do_tabs_only() -> void:
+	for k in tab_btns:
+		var on: bool = k == game_tab
+		(tab_btns[k] as Button).add_theme_stylebox_override("normal", UI.box(UI.YELLOW if on else Color(UI.NIGHT, 0.8), UI.YELLOW.darkened(0.4), 0 if on else 2, 16))
+		(tab_btns[k] as Button).add_theme_color_override("font_color", UI.INK if on else UI.PAPER)
 
 
 func _do_refresh_game() -> void:
@@ -517,11 +611,6 @@ func _do_refresh_game() -> void:
 	if game_tab == "guia" and page_box.get_child_count() > 0 and not _guide_dirty:
 		return
 	_guide_dirty = false
-	if game_tab == "aovivo":
-		var feed: Array = st.get("feed", [])
-		if feed.size() == _feed_len:
-			return
-		_feed_len = feed.size()
 	UI.clear(page_box)
 	match game_tab:
 		"equipes":
@@ -1195,7 +1284,6 @@ func _process(_dt: float) -> void:
 		if s != _last_sec:
 			_last_sec = s
 			if s % 5 == 0 and game_tab != "quadros":
-				_feed_len = -1
 				_refresh_game()
 	elif phase_built == "game" and timer_l:
 		timer_l.text = ("%ds" % Net.seconds_left()) if Net.state.get("countdown", false) else "PRONTOS?"

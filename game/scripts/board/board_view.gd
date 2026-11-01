@@ -65,6 +65,9 @@ func _process(dt: float) -> void:
 
 var _ev_anim := {}      # link id -> {from: Vector2, t0: ms}
 var _prev_ev := {}
+var _line_anim := {}    # fio novo: link id -> ms em que começou a ser esticado
+var _data_once := false
+const LINE_MS := 520.0
 
 
 ## Provas presas num fio (até 3). Quadros antigos só tinham "evidence".
@@ -83,7 +86,13 @@ func set_data(new_cards: Array, new_links: Array) -> void:
 			if not before.has(e):
 				var src := _card("c:" + str(e))
 				if not src.is_empty():
-					_ev_anim[str(l["id"]) + "|" + str(e)] = {"from": Vector2(src["x"], src["y"]) * BOARD, "t0": Time.get_ticks_msec()}
+					_ev_anim[str(l["id"]) + "|" + str(e)] = {"from": Vector2(src["x"], src["y"]) * BOARD, "t0": _now_ms()}
+	# fio novo (depois da primeira carga): o barbante se estica de uma carta até a outra
+	if _data_once:
+		for l in new_links:
+			if not _prev_ev.has(l["id"]):
+				_line_anim[str(l["id"])] = _now_ms()
+	_data_once = true
 	_prev_ev.clear()
 	for l in new_links:
 		_prev_ev[l["id"]] = proofs_of(l).duplicate()
@@ -105,6 +114,21 @@ func set_data(new_cards: Array, new_links: Array) -> void:
 	if selected_link != "" and _link(selected_link).is_empty():
 		selected_link = ""
 	queue_redraw()
+
+
+## relógio das animações do quadro (soma dos quadros: a gravação de vídeo também anda certo)
+func _now_ms() -> float:
+	return _t * 1000.0
+
+
+func _line_k(id: String) -> float:
+	if not _line_anim.has(id):
+		return 1.0
+	var k := (_now_ms() - float(_line_anim[id])) / LINE_MS
+	if k >= 1.0:
+		_line_anim.erase(id)
+		return 1.0
+	return clampf(k, 0.0, 1.0)
 
 
 func fit() -> void:
@@ -427,6 +451,11 @@ func _draw() -> void:
 	# fios
 	for l in links:
 		var pts := _link_points(l)
+		var growing := _line_k(str(l["id"])) < 1.0
+		if growing:
+			var kk := _line_k(str(l["id"]))
+			kk = 1.0 - pow(1.0 - kk, 3.0)
+			pts = pts.slice(0, maxi(2, int(ceil(pts.size() * kk))))
 		var sel: bool = l["id"] == selected_link
 		var lc: Color = LINK_COLORS.get(str(l.get("color", "vermelho")), UI.RED)
 		draw_polyline(pts, Color(0, 0, 0, 0.35), 10.0 if sel else 9.0, true)
@@ -438,6 +467,9 @@ func _draw() -> void:
 			draw_polyline(pts, Color(UI.YELLOW, 0.9 if hot else 0.35), 16.0 if hot else 11.0, true)
 		draw_polyline(pts, lc, 6.0 if sel else 5.0, true)
 		draw_polyline(pts, Color(1, 1, 1, 0.25), 1.5, true)
+		if growing:
+			draw_circle(pts[pts.size() - 1], 9.0, lc.lightened(0.3))
+			continue
 		_draw_link_tag(l, pts, sel)
 
 	# cartas soltas (as pistas presas num fio aparecem penduradas nele, não soltas)
@@ -450,7 +482,7 @@ func _draw() -> void:
 	# provas penduradas nos fios, por cima das cartas soltas
 	for l in links:
 		var lp := _link_points(l)
-		if lp.size() > 10:
+		if lp.size() > 10 and _line_k(str(l["id"])) >= 1.0:
 			_draw_link_tag(l, lp, l["id"] == selected_link, "proofs")
 	# MODO LIGAR: o quadro apaga e só ficam acesas as cartas que podem ser ligadas à origem;
 	# a carta de origem pulsa (fica claro de onde sai o fio)
@@ -548,7 +580,7 @@ func _draw_link_proofs(l: Dictionary, k: Vector2, sel: bool) -> void:
 		var akey := str(l["id"]) + "|" + ev_id
 		if _ev_anim.has(akey):
 			var an: Dictionary = _ev_anim[akey]
-			var u := clampf((Time.get_ticks_msec() - int(an["t0"])) / 380.0, 0.0, 1.0)
+			var u := clampf((_now_ms() - float(an["t0"])) / 380.0, 0.0, 1.0)
 			var ease := 1.0 - pow(1.0 - u, 3.0)
 			ctr = (an["from"] as Vector2).lerp(ctr, ease) + Vector2(0, -sin(u * PI) * 60.0)
 			if u >= 1.0:

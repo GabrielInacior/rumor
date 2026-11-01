@@ -320,11 +320,24 @@ func _process(dt: float) -> void:
 	_watch_vertical_text(dt)
 
 
+var _watch_dirty := 2       # quantas varreduras faltam (tela mudou: uma agora e outra depois do layout)
+var _watch_hooked := false
+
+
 func _watch_vertical_text(dt: float) -> void:
+	if not _watch_hooked:
+		_watch_hooked = true
+		# só confere quando a tela muda (nó novo ou janela girada), não o tempo todo: no celular
+		# do professor a varredura constante pesava junto com a lista ao vivo
+		get_tree().node_added.connect(func(n: Node) -> void:
+			if n is Label:
+				_watch_dirty = 2)
+		get_viewport().size_changed.connect(func() -> void: _watch_dirty = 2)
 	_watch_t += dt
-	if _watch_t < 0.4:
+	if _watch_t < 0.4 or _watch_dirty <= 0:
 		return
 	_watch_t = 0.0
+	_watch_dirty -= 1
 	_scan_labels(self)
 
 
