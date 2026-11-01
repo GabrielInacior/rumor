@@ -183,14 +183,14 @@
             "conta": {
               "lines": [
                 {
-                  "text": "...Tá. Imprimi quinta 13h48, sozinho. Vinte reais por cabeça dava um computador novo.",
+                  "text": "Imprimi, sim, quinta 13h48. A professora pediu uma cópia extra. Eu só obedeço.",
                   "expr": "nervoso",
                   "anim": "pensando"
                 },
                 {
-                  "text": "E a Profa. Rosa me reprovou ano passado. Cancelar a prova dela foi bônus. Doce bônus.",
+                  "text": "Esse @fantasma eu não conheço. E-mail parecido não é prova. Tchau.",
                   "expr": "bravo",
-                  "anim": "rindo"
+                  "anim": "negando"
                 }
               ],
               "sets": [
@@ -203,7 +203,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "partial"
             },
             "bravo": {
               "lines": [
@@ -700,10 +701,17 @@
               "lines": [
                 {
                   "who": "nico",
-                  "text": "...Imprimi às 13h48. A Rosa me reprovou. O resto vocês sabem.",
-                  "expr": "triste",
-                  "anim": "pensando",
-                  "react": "triste"
+                  "text": "Às 13h48 a coordenação tava vazia, ninguém... quer dizer, eu não sei de horário nenhum.",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "surpreso"
+                },
+                {
+                  "who": "pedro",
+                  "text": "Ninguém falou 13h48, Nico.",
+                  "expr": "desconfiado",
+                  "anim": "apontando",
+                  "react": "nervoso"
                 }
               ],
               "choices": [
@@ -713,10 +721,10 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao",
               "cast": [
                 "nico"
-              ]
+              ],
+              "confession": "slip"
             }
           }
         }
@@ -879,12 +887,23 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Antes que perguntem: eu NÃO preciso de gabarito. Eu preciso de silêncio pra estudar.",
+                  "text": "Domingo eu nem falei com a professora. Fiquei estudando o dia todo.",
                   "expr": "desconfiado",
                   "anim": "dando_de_ombros"
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar sua mensagem para a professora",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_chat_lia"
+                  ],
+                  "ifnot": [
+                    "lia_versao"
+                  ]
+                },
                 {
                   "text": "Mostrar o registro da biblioteca",
                   "kind": "boa",
@@ -914,6 +933,17 @@
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar sua mensagem para a professora",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_chat_lia"
+                  ],
+                  "ifnot": [
+                    "lia_versao"
+                  ]
+                },
                 {
                   "text": "Mostrar o registro da biblioteca",
                   "kind": "boa",
@@ -947,6 +977,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar sua mensagem para a professora",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_chat_lia"
+                  ],
+                  "ifnot": [
+                    "lia_versao"
+                  ]
+                },
+                {
                   "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
@@ -979,6 +1020,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar sua mensagem para a professora",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_chat_lia"
+                  ],
+                  "ifnot": [
+                    "lia_versao"
+                  ]
+                },
+                {
                   "text": "Mostrar o registro da biblioteca",
                   "kind": "boa",
                   "next": "conta",
@@ -988,6 +1040,26 @@
                 },
                 {
                   "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá, mandei. Ofereci ajuda pra refazer a prova. Por uma carta de recomendação. Ambição não é crime.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "lia_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
                   "kind": "neutra",
                   "end": true
                 }
@@ -1142,12 +1214,23 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Comprei, tá? Vinte reais. Veio borrado e a prova foi cancelada. Pior investimento da vida.",
-                  "expr": "triste",
-                  "anim": "dando_de_ombros"
+                  "text": "Eu? Comprar gabarito? Jamais. Eu estudo.",
+                  "expr": "nervoso",
+                  "anim": "negando"
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar o comprovante do seu Pix",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_comprovante"
+                  ],
+                  "ifnot": [
+                    "kaua_versao"
+                  ]
+                },
                 {
                   "text": "De quem você comprou?",
                   "kind": "neutra",
@@ -1169,6 +1252,17 @@
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar o comprovante do seu Pix",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_comprovante"
+                  ],
+                  "ifnot": [
+                    "kaua_versao"
+                  ]
+                },
                 {
                   "text": "Valeu, depois eu volto.",
                   "kind": "neutra",
@@ -1205,11 +1299,43 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o comprovante do seu Pix",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_comprovante"
+                  ],
+                  "ifnot": [
+                    "kaua_versao"
+                  ]
+                },
+                {
                   "text": "Valeu, depois eu volto.",
                   "kind": "neutra",
                   "end": true
                 }
               ]
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá, comprei. Vinte reais pro Pedro. E chegou borrado.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "kaua_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_kaua"
             }
           }
         }
@@ -1666,9 +1792,9 @@
     {
       "id": "c_confissao",
       "kind": "depoimento",
-      "title": "Confissão do Nico",
+      "title": "Versão do Nico",
       "who": "nico",
-      "text": "Nico imprimiu o gabarito às 13h48, criou o @fantasma e usou o Pedro como vendedor. Queria dinheiro e se vingar da professora.",
+      "text": "Nico admite que imprimiu o gabarito às 13h48, dizendo que a professora pediu, e nega ser o @fantasma.",
       "release": "interrogatorio",
       "deal": "team"
     }
@@ -1745,8 +1871,7 @@
       "c_log_impressora",
       "c_foto_gabarito",
       "c_email",
-      "c_story_nico",
-      "c_confissao"
+      "c_story_nico"
     ],
     "categories": [
       {
@@ -1775,8 +1900,7 @@
         "evidence": [
           "c_log_impressora",
           "c_foto_gabarito",
-          "c_email",
-          "c_confissao"
+          "c_email"
         ]
       },
       {
@@ -1809,7 +1933,8 @@
         "evidence": [
           "c_escala",
           "c_log_impressora",
-          "c_dep_rosa"
+          "c_dep_rosa",
+          "c_confissao"
         ]
       },
       {
@@ -1844,7 +1969,7 @@
     "Olhe o canto da foto do gabarito. De que impressora ela saiu?",
     "Quem estava sozinho na coordenação às 13h48?",
     "Um computador gamer novo custa caro. Quem anunciou um?",
-    "Perfis anônimos também precisam de e-mail."
+    "Ninguém vai confessar tudo: o quadro é a sua prova."
   ],
   "reveal": {
     "timeline": [
@@ -1876,7 +2001,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "O Nico, ajudante da coordenação, ficou sozinho lá na quinta e imprimiu o gabarito às 13h48. Criou o perfil @fantasma e recrutou o Pedro como vendedor, ficando com 70% e exigindo anonimato. O dinheiro caiu na conta do Pedro, que virou o suspeito óbvio. O Nico queria um computador gamer e se vingar da Profa. Rosa, que o reprovou.",
+    "summary": "O Nico, ajudante da coordenação, ficou sozinho lá na quinta e imprimiu o gabarito às 13h48. Criou o perfil @fantasma e recrutou o Pedro como vendedor, ficando com 70% e exigindo anonimato. O dinheiro caiu na conta do Pedro, que virou o suspeito óbvio. O Nico queria um computador gamer e se vingar da Profa. Rosa, que o reprovou. Atenção: Nico NÃO confessa tudo. O máximo que se arranca é isto: Nico admite que imprimiu o gabarito às 13h48, dizendo que a professora pediu, e nega ser o @fantasma. O resto a equipe precisa provar no quadro. Quem mente: Kauã (desmonte mostrando 'Mochila do Kauã'); Lia (desmonte mostrando 'DM da Lia').",
     "twist": "Plantado na DM do @fantasma ('nunca fala meu nome'), no story do Nico (computador novo, chaveiro de controle) e no canto da foto (bandeja da coordenação e o mesmo chaveiro). Quem acha o comprovante do Pix para cedo demais no Pedro. Segundo giro: a Mari, que denunciou, também comprou.",
     "solution_steps": [
       "Ver o perfil de venda e o aviso: a prova foi cancelada.",
@@ -1886,7 +2011,7 @@
       "Na foto impressa, a bandeja da impressora da coordenação e o chaveiro de videogame.",
       "Na coordenação, a impressora registra nico.ajudante às 13h48 e a escala mostra o Nico sozinho. Na biblioteca, o álibi da Lia.",
       "O recado da coordenação (cerca de 4 min 30 s) liga o e-mail do @fantasma ao Nico.",
-      "Provar no quadro os 4 objetivos secundários e apontar o Nico."
+      "Provar no quadro os 4 objetivos secundários e apontar o Nico. Não esperem confissão completa: o quadro é a prova."
     ],
     "pacing": [
       {
@@ -1908,6 +2033,11 @@
         "when": "22 min em diante",
         "aha": "Aha 3: o e-mail do @fantasma (t+) confirma o Nico.",
         "if_stuck": "Por que o Nico precisava de alguém para vender?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado admite só uma parte, ou nada.",
+        "if_stuck": "O que, no quadro, prova o que ele ainda nega?"
       }
     ],
     "clue_map": [
@@ -1998,7 +2128,7 @@
       },
       {
         "clue": "c_dep_kaua",
-        "where": "conversar com Kauã ('De quem você comprou?')",
+        "where": "conversar com Kauã ('De quem você comprou?'); ou mostrar 'Mochila do Kauã' para Kauã",
         "proves": "Prova a linha: Pedro repassou para Kauã (objetivo: Quem vendeu o gabarito aos alunos)."
       },
       {
@@ -2008,8 +2138,8 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Recado da coordenação' + 'Impressora da coordenação' para Nico; ou mostrar 'Foto impressa' + 'Impressora da coordenação' para Nico; ou mostrar 'Recado da coordenação' para Pedro",
-        "proves": "Prova a linha: Nico pegou O gabarito da prova final (objetivo: Quem tirou o gabarito da coordenação). Aponta para Nico."
+        "where": "mostrar 'Recado da coordenação' + 'Impressora da coordenação' para Nico; ou mostrar 'Foto impressa' + 'Impressora da coordenação' para Nico",
+        "proves": "Prova a linha: Nico estava em Coordenação (objetivo: Quem tirou o gabarito da coordenação)."
       }
     ],
     "red_herrings": [
@@ -2034,8 +2164,8 @@
         "a": "O celular dele morreu. Procurem um carregador."
       },
       {
-        "q": "Por que o Nico faria isso?",
-        "a": "Vejam o story dele. E perguntem à Profa. Rosa sobre o ano passado."
+        "q": "O culpado não confessa!",
+        "a": "É assim mesmo: o culpado nunca confessa tudo. Não precisa: com os fios provados no quadro e o culpado apontado, a teoria está certa. Atenção a quem mente: Kauã, Lia."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -2047,6 +2177,5 @@
       "Por que é tão fácil acusar quem aparece no Pix?",
       "O que a Mari fez depois de comprar muda o que ela fez antes?"
     ]
-  },
-  "cover_icon": "prancheta"
+  }
 }

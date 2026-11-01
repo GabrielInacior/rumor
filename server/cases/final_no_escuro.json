@@ -372,13 +372,13 @@
             "conta": {
               "lines": [
                 {
-                  "text": "...Os Ácaros iam ganhar. A Juju é minha filha. Ela ensaiou um ano pra essa bolsa.",
-                  "expr": "triste",
+                  "text": "Peguei as chaves do Jorge às 19h40, sim. Pra buscar cadeiras no depósito. Esqueci de devolver.",
+                  "expr": "nervoso",
                   "anim": "pensando"
                 },
                 {
-                  "text": "Peguei as chaves do Jorge, desliguei o disjuntor e deixei aquele bilhete pro Enzo levar a culpa. Ela não sabe de nada.",
-                  "expr": "nervoso",
+                  "text": "Disjuntor? Eu nem sei onde fica. Eu ORGANIZEI esse festival, detetive.",
+                  "expr": "bravo",
                   "anim": "negando"
                 }
               ],
@@ -392,7 +392,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "partial"
             },
             "bravo": {
               "lines": [
@@ -484,17 +485,17 @@
               "lines": [
                 {
                   "who": "marta",
-                  "text": "...Fui eu, Juju. As chaves, o disjuntor, o bilhete. Fiz por você.",
-                  "expr": "triste",
-                  "anim": "pensando",
+                  "text": "Filha, eu só queria que você ganhasse... quer dizer, eu não fiz nada! Nada.",
+                  "expr": "nervoso",
+                  "anim": "negando",
                   "react": "triste"
                 },
                 {
                   "who": "juju",
-                  "text": "Você não fez por mim. Você fez por você.",
+                  "text": "'Que eu ganhasse' como, mãe?",
                   "expr": "triste",
-                  "anim": "negando",
-                  "react": "triste"
+                  "anim": "apontando",
+                  "react": "nervoso"
                 }
               ],
               "choices": [
@@ -504,10 +505,10 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao",
               "cast": [
                 "juju"
-              ]
+              ],
+              "confession": "slip"
             }
           }
         }
@@ -827,7 +828,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_dep_enzo_verdade"
+              "unlock": "c_dep_enzo_verdade",
+              "contradiction": true
             },
             "bravo": {
               "lines": [
@@ -1028,12 +1030,23 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Meu vocalista tá verde e alguém escreveu que ele 'canta de mentira'. Que maravilha de noite.",
-                  "expr": "desconfiado",
-                  "anim": "dando_de_ombros"
+                  "text": "O Enzo canta de verdade, tá? Para de ouvir fofoca.",
+                  "expr": "bravo",
+                  "anim": "apontando"
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar o pendrive PLAYBACK_FINAL",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_kit_enzo"
+                  ],
+                  "ifnot": [
+                    "gabi_versao"
+                  ]
+                },
                 {
                   "text": "Mostrar o quadro de horários",
                   "kind": "boa",
@@ -1063,6 +1076,17 @@
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar o pendrive PLAYBACK_FINAL",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_kit_enzo"
+                  ],
+                  "ifnot": [
+                    "gabi_versao"
+                  ]
+                },
                 {
                   "text": "Mostrar o quadro de horários",
                   "kind": "boa",
@@ -1096,6 +1120,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o pendrive PLAYBACK_FINAL",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_kit_enzo"
+                  ],
+                  "ifnot": [
+                    "gabi_versao"
+                  ]
+                },
+                {
                   "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
@@ -1128,6 +1163,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o pendrive PLAYBACK_FINAL",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_kit_enzo"
+                  ],
+                  "ifnot": [
+                    "gabi_versao"
+                  ]
+                },
+                {
                   "text": "Mostrar o quadro de horários",
                   "kind": "boa",
                   "next": "conta",
@@ -1137,6 +1183,26 @@
                 },
                 {
                   "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "...Tá. Ele canta de playback. Eu sabia e protegi. Mas ele não apagou luz nenhuma.",
+                  "expr": "triste",
+                  "anim": "pensando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "gabi_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
                   "kind": "neutra",
                   "end": true
                 }
@@ -2126,9 +2192,9 @@
     {
       "id": "c_confissao",
       "kind": "depoimento",
-      "title": "Confissão da Profa. Marta",
+      "title": "Versão da Profa. Marta",
       "who": "marta",
-      "text": "A organizadora pegou as chaves do zelador, desligou o disjuntor pela porta dos fundos e deixou o bilhete para o Enzo levar a culpa.",
+      "text": "A organizadora admite que pegou as chaves do zelador às 19h40, 'para buscar cadeiras', e nega ter ido ao disjuntor.",
       "release": "interrogatorio",
       "deal": "team"
     }
@@ -2227,8 +2293,7 @@
       "c_ordem",
       "c_notas",
       "c_dep_gabi",
-      "c_dep_helio",
-      "c_confissao"
+      "c_dep_helio"
     ],
     "categories": [
       {
@@ -2262,8 +2327,7 @@
           "c_bala",
           "c_porta",
           "c_bolsa_marta",
-          "c_dep_gabi",
-          "c_confissao"
+          "c_dep_gabi"
         ]
       },
       {
@@ -2273,7 +2337,8 @@
         "category": "chaves",
         "evidence": [
           "c_bolsa_marta",
-          "c_dep_jorge"
+          "c_dep_jorge",
+          "c_confissao"
         ]
       },
       {
@@ -2347,7 +2412,7 @@
     "Uma voz no camarim prova que a pessoa estava lá? E um segredo prova culpa?",
     "Quem distribui as balas de mel?",
     "Quem sabia do segredo do Enzo para escrever aquele bilhete?",
-    "Quem ganhava se a banda favorita levasse zero?"
+    "Ninguém vai confessar tudo: o quadro é a sua prova."
   ],
   "reveal": {
     "timeline": [
@@ -2393,7 +2458,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "A Profa. Marta, organizadora do festival, viu pelas notas parciais que Os Ácaros iam vencer a filha dela, Juju. O jurado Hélio tinha contado a ela que o vocalista Enzo canta de playback. Ela pegou as chaves do zelador às 19h40, saiu pelos fundos às 20h10 e desligou o disjuntor às 20h12, deixando cair uma das balas de mel que ela mesma distribui. Antes, deixou no camarim o bilhete 'QUEM CANTA DE MENTIRA, CAI NO ESCURO' para o Enzo levar a culpa.",
+    "summary": "A Profa. Marta, organizadora do festival, viu pelas notas parciais que Os Ácaros iam vencer a filha dela, Juju. O jurado Hélio tinha contado a ela que o vocalista Enzo canta de playback. Ela pegou as chaves do zelador às 19h40, saiu pelos fundos às 20h10 e desligou o disjuntor às 20h12, deixando cair uma das balas de mel que ela mesma distribui. Antes, deixou no camarim o bilhete 'QUEM CANTA DE MENTIRA, CAI NO ESCURO' para o Enzo levar a culpa. Atenção: Profa. Marta NÃO confessa tudo. O máximo que se arranca é isto: A organizadora admite que pegou as chaves do zelador às 19h40, 'para buscar cadeiras', e nega ter ido ao disjuntor. O resto a equipe precisa provar no quadro. Quem mente: Enzo (desmonte mostrando 'Celular da caixinha'); Gabi (desmonte mostrando 'Armário da banda').",
     "twist": "Duas camadas. Primeira: o áudio falso (t+240) e a bala de mel transformam o Enzo no culpado perfeito; essa é a isca, preparada pelo bilhete do camarim. Segunda: o armário do Enzo não tem balas, o quadro diz que quem distribui é a Profa. Marta, e as chaves do zelador estão na bolsa dela. Giro final: o jurado contou o segredo do playback para a organizadora, e a filha dela não sabia de nada.",
     "solution_steps": [
       "Ler o post e o bilhete: o rival e a técnica são os primeiros suspeitos.",
@@ -2403,7 +2468,7 @@
       "Sala de música: o armário do Enzo não tem bala nenhuma, e o quadro diz que as balas são distribuídas pela Profa. Marta. A Gabi viu a Marta sair pelos fundos às 20h10.",
       "Sala dos professores: as notas mostram o motivo, e a bolsa da Marta tem as chaves do zelador. O Hélio conta que revelou o playback a ela.",
       "Pistas só de um aluno (DM da Marta à filha, grupo da dança) ligam a Marta à Juju.",
-      "Provar no quadro os 5 objetivos secundários e apontar a Profa. Marta."
+      "Provar no quadro os 5 objetivos secundários e apontar a Profa. Marta. Não esperem confissão completa: o quadro é a prova."
     ],
     "pacing": [
       {
@@ -2430,6 +2495,11 @@
         "when": "30 min em diante",
         "aha": "Giro final: a DM à filha e a fala do Hélio fecham o motivo.",
         "if_stuck": "A Juju sabia do plano?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado admite só uma parte, ou nada.",
+        "if_stuck": "O que, no quadro, prova o que ele ainda nega?"
       }
     ],
     "clue_map": [
@@ -2560,8 +2630,8 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Bolsa da organizadora' + 'Notas dos jurados' para Profa. Marta; ou mostrar 'Bolsa da organizadora' para Profa. Marta",
-        "proves": "Prova a linha: Profa. Marta estava em Depósito (objetivo: Quem foi ao disjuntor). Aponta para Profa. Marta."
+        "where": "mostrar 'Bolsa da organizadora' + 'Notas dos jurados' para Profa. Marta",
+        "proves": "Prova a linha: Profa. Marta pegou As chaves do zelador (objetivo: Quem pegou as chaves do zelador)."
       }
     ],
     "red_herrings": [
@@ -2587,8 +2657,8 @@
         "a": "Leiam o rodapé do quadro de horários."
       },
       {
-        "q": "Quem escreveu o bilhete?",
-        "a": "Quem sabia do playback? Perguntem ao jurado."
+        "q": "O culpado não confessa!",
+        "a": "É assim mesmo: o culpado nunca confessa tudo. Não precisa: com os fios provados no quadro e o culpado apontado, a teoria está certa. Atenção a quem mente: Enzo, Gabi."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -2600,6 +2670,5 @@
       "O Enzo mentiu. A mentira dele quase condenou um inocente: ele mesmo. O que aprendemos?",
       "Por que a pista mais 'óbvia' foi plantada?"
     ]
-  },
-  "cover_icon": "microfone"
+  }
 }

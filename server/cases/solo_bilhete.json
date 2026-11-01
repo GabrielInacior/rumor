@@ -536,7 +536,8 @@
                   "kind": "neutra",
                   "end": true
                 }
-              ]
+              ],
+              "confession": "full"
             },
             "bravo": {
               "lines": [
@@ -567,7 +568,7 @@
                   "kind": "boa",
                   "next": "conta",
                   "requires": [
-                    "c_ficha"
+                    "c_armario"
                   ]
                 },
                 {
@@ -799,7 +800,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "A Lu, reserva há três anos, leu na ficha do técnico que viraria titular se a Bia saísse. Começou a deixar bilhetes ameaçadores no armário da Bia, usando o segredo da recuperação. Hoje chegou cedo, deixou o quarto bilhete e apareceu no treino às 7h25 dizendo que pegou trânsito.",
+    "summary": "A Lu, reserva há três anos, leu na ficha do técnico que viraria titular se a Bia saísse. Começou a deixar bilhetes ameaçadores no armário da Bia, usando o segredo da recuperação. Hoje chegou cedo, deixou o quarto bilhete e apareceu no treino às 7h25 dizendo que pegou trânsito. Lu confessa quando vê a pista achada na cena (a pista que chega com o tempo, sozinha, não basta).",
     "twist": "Plantado no grupo do time: a Lu é a única que pede calma ('somos um time ❤️') e é exatamente quem ganha a vaga. A chamada mostra que ela 'chegou' às 7h25, depois do bilhete. Segundo giro: a vítima também escondia um segredo, a recuperação.",
     "solution_steps": [
       "Ler o bilhete e o grupo do time: a capitã Duda parece a suspeita.",
@@ -824,6 +825,11 @@
         "when": "6 min em diante",
         "aha": "A ficha do técnico confirma o motivo.",
         "if_stuck": "Que segredo da Bia a Lu usou?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado cede depois das provas certas.",
+        "if_stuck": "Que prova vocês ainda não mostraram para ele?"
       }
     ],
     "clue_map": [
@@ -879,6 +885,10 @@
         "a": "Algo dela foi parar no lixo. Devolvam."
       },
       {
+        "q": "Mostramos a prova e ele mentiu de novo.",
+        "a": "Às vezes uma prova só faz a pessoa recuar. Procurem uma segunda prova diferente e mostrem depois."
+      },
+      {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
@@ -888,6 +898,5 @@
       "Ameaçar alguém com um segredo é uma forma de violência?",
       "Que pista ligou a ameaça à pessoa?"
     ]
-  },
-  "cover_icon": "carta"
+  }
 }

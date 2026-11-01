@@ -690,7 +690,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "full"
             },
             "bravo": {
               "lines": [
@@ -1015,7 +1016,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "Na sexta, o Prof. Nogueira pegou o Thiago colando, zerou a prova e o tirou da viagem. No domingo às 22h10, o Thiago entrou pela tranca quebrada dos fundos do depósito e pichou o muro com spray de papelaria. Na fuga, deixou pegadas e depois esqueceu o tênis sujo nos achados da coordenação.",
+    "summary": "Na sexta, o Prof. Nogueira pegou o Thiago colando, zerou a prova e o tirou da viagem. No domingo às 22h10, o Thiago entrou pela tranca quebrada dos fundos do depósito e pichou o muro com spray de papelaria. Na fuga, deixou pegadas e depois esqueceu o tênis sujo nos achados da coordenação. Thiago confessa quando vê a pista achada na cena (a pista que chega com o tempo, sozinha, não basta).",
     "twist": "Plantado na lata de spray de papelaria (grafiteiro não usa), na pegada de raio 41 e na ocorrência de sexta. A live do Kevin (t+) só derruba a pista falsa. Segundo giro: a tranca dos fundos estava quebrada havia uma semana e ninguém consertou.",
     "solution_steps": [
       "Ver a foto do muro: todos culpam o Kevin.",
@@ -1041,6 +1042,11 @@
         "when": "8 min em diante",
         "aha": "A ocorrência mostra o motivo; a live confirma o Kevin longe.",
         "if_stuck": "Por que alguém escreveria 'ladrão de nota'?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado cede depois das provas certas.",
+        "if_stuck": "Que prova vocês ainda não mostraram para ele?"
       }
     ],
     "clue_map": [
@@ -1116,6 +1122,10 @@
         "a": "Leiam as ocorrências de sexta na sala dos professores."
       },
       {
+        "q": "Mostramos a prova e ele mentiu de novo.",
+        "a": "Às vezes uma prova só faz a pessoa recuar. Procurem uma segunda prova diferente e mostrem depois."
+      },
+      {
         "q": "Precisamos resolver tudo antes de entregar?",
         "a": "Não. Podem entregar quando quiserem: o culpado certo vale mais, e cada objetivo secundário provado no quadro soma pontos. Vejam na lista quais ainda faltam."
       }
@@ -1125,6 +1135,5 @@
       "Por que a escola culpou o Kevin antes de olhar as provas?",
       "Como o Thiago poderia ter contestado a nota de outro jeito?"
     ]
-  },
-  "cover_icon": "spray"
+  }
 }

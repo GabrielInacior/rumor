@@ -304,17 +304,17 @@
               "lines": [
                 {
                   "who": "caique",
-                  "text": "...O Kevin me humilhou na frente de todo mundo. Eu só quis que ele sentisse.",
-                  "expr": "triste",
-                  "anim": "pensando",
+                  "text": "O Kevin mereceu ser exposto... quer dizer, quem quer que tenha feito, né?",
+                  "expr": "nervoso",
+                  "anim": "negando",
                   "react": "surpreso"
                 },
                 {
                   "who": "joana",
-                  "text": "E usou meu nome pra isso.",
-                  "expr": "triste",
-                  "anim": "negando",
-                  "react": "triste"
+                  "text": "'Exposto' por quem, Caíque?",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
                 }
               ],
               "choices": [
@@ -324,10 +324,10 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao",
               "cast": [
                 "caique"
-              ]
+              ],
+              "confession": "slip"
             }
           }
         }
@@ -435,12 +435,12 @@
             "conta": {
               "lines": [
                 {
-                  "text": "...Os celulares perdidos chegam desbloqueados. Diários. Bilhetes. Eu só... lia.",
+                  "text": "Tá, eu olho as coisas dos achados. Pra achar o dono! Isso é meu trabalho.",
                   "expr": "nervoso",
                   "anim": "pensando"
                 },
                 {
-                  "text": "O Kevin me zoou no grupo do 9º ano inteiro. Eu fiz ele pagar. Depois quis que todo mundo pagasse.",
+                  "text": "Cobri o plantão, sim. Mas qualquer um via aquele post-it. A @ninguém não sou eu.",
                   "expr": "bravo",
                   "anim": "negando"
                 }
@@ -455,7 +455,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "partial"
             },
             "bravo": {
               "lines": [
@@ -548,9 +549,9 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Tá, eu colei na olimpíada. Agora a escola inteira sabe. Quem contou vai pagar caro.",
+                  "text": "Ninguém mexeu no meu celular. Ele nunca sai do meu bolso.",
                   "expr": "bravo",
-                  "anim": "dando_de_ombros"
+                  "anim": "negando"
                 }
               ],
               "choices": [
@@ -619,7 +620,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_dep_kevin"
+              "unlock": "c_dep_kevin",
+              "contradiction": true
             },
             "bravo": {
               "lines": [
@@ -953,7 +955,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_dep_pedro"
+              "unlock": "c_dep_pedro",
+              "contradiction": true
             },
             "bravo": {
               "lines": [
@@ -1611,9 +1614,9 @@
     {
       "id": "c_confissao",
       "kind": "depoimento",
-      "title": "Confissão do Caíque",
+      "title": "Versão do Caíque",
       "who": "caique",
-      "text": "Caíque lia os celulares e diários dos achados. Cobrindo o plantão da Joana, usou a senha dela para postar e chantagear.",
+      "text": "Caíque admite que mexia nos celulares e diários dos achados e que cobriu o plantão, mas nega ser a @ninguém.",
       "release": "interrogatorio",
       "deal": "team"
     }
@@ -1684,8 +1687,7 @@
       "c_escala_troca",
       "c_achados",
       "c_bilhete_kevin",
-      "c_comanda",
-      "c_confissao"
+      "c_comanda"
     ],
     "categories": [
       {
@@ -1713,8 +1715,7 @@
         "category": "conta",
         "evidence": [
           "c_coord_log",
-          "c_escala_troca",
-          "c_confissao"
+          "c_escala_troca"
         ]
       },
       {
@@ -1725,7 +1726,8 @@
         "evidence": [
           "c_achados",
           "c_bilhete_kevin",
-          "c_dep_kevin"
+          "c_dep_kevin",
+          "c_confissao"
         ]
       },
       {
@@ -1781,7 +1783,7 @@
     "Quem estava no plantão da biblioteca na terça? Confira as trocas.",
     "Um bilhete assinado só com uma letra ainda é uma assinatura.",
     "Uma vítima que diz que não pagou pode estar mentindo por vergonha.",
-    "Quem riu de quem, antes de tudo isso começar?"
+    "Ninguém vai confessar tudo: o quadro é a sua prova."
   ],
   "reveal": {
     "timeline": [
@@ -1822,7 +1824,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "O Caíque cuida dos achados e perdidos e lia os celulares e diários que chegavam lá. Humilhado pelo Kevin no grupo do 9º ano, decidiu se vingar. Na terça cobriu o plantão da Joana na biblioteca, usou a senha dela, que estava num post-it, e postou como @ninguém às 14h05. Depois mandou ameaças de cinquenta reais para seis alunos. O Pedro pagou e escondeu.",
+    "summary": "O Caíque cuida dos achados e perdidos e lia os celulares e diários que chegavam lá. Humilhado pelo Kevin no grupo do 9º ano, decidiu se vingar. Na terça cobriu o plantão da Joana na biblioteca, usou a senha dela, que estava num post-it, e postou como @ninguém às 14h05. Depois mandou ameaças de cinquenta reais para seis alunos. O Pedro pagou e escondeu. Atenção: Caíque NÃO confessa tudo. O máximo que se arranca é isto: Caíque admite que mexia nos celulares e diários dos achados e que cobriu o plantão, mas nega ser a @ninguém. O resto a equipe precisa provar no quadro. Quem mente: Pedro (desmonte mostrando 'Comprovante do Pedro'); Kevin (desmonte mostrando 'Bolsa do Kevin').",
     "twist": "O rastreio (t+300) parece fechar o caso contra a Joana: é a isca. Ele foi preparado pela troca de escala (split), pelo post-it da senha e pela etiqueta 'Responsável: Caíque' nos achados, que estavam no quadro antes. Segundo giro: o Pedro, que jurava não ter pago, pagou, e o recebedor era 'C. Monteiro'.",
     "solution_steps": [
       "Ler o post e a DM: a escrita 'tá ligado??' aponta a Lia.",
@@ -1832,7 +1834,7 @@
       "Na biblioteca, a senha num post-it explica como ele entrou na conta.",
       "No corredor, os achados com celulares e diário abertos (responsável: Caíque); na quadra, o bilhete 'C.' na bolsa do Kevin.",
       "Na cantina, o Caíque perguntou sobre o wifi às 14h. O Pedro (com chocolate) admite o Pix para 'C. Monteiro'.",
-      "Provar no quadro os 4 objetivos secundários e apontar o Caíque."
+      "Provar no quadro os 4 objetivos secundários e apontar o Caíque. Não esperem confissão completa: o quadro é a prova."
     ],
     "pacing": [
       {
@@ -1854,6 +1856,11 @@
         "when": "22 min em diante",
         "aha": "Aha 2: o atestado e a troca de escala viram o caso para o Caíque.",
         "if_stuck": "Quem tinha motivo contra o Kevin?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado admite só uma parte, ou nada.",
+        "if_stuck": "O que, no quadro, prova o que ele ainda nega?"
       }
     ],
     "clue_map": [
@@ -1944,8 +1951,8 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Rastreio da coordenação' + 'Troca de escala' para Joana; ou mostrar 'Rastreio da coordenação' + 'Troca de escala' para Caíque; ou mostrar 'Bolsa do Kevin' + 'Rastreio da coordenação' para Caíque",
-        "proves": "Prova a linha: Caíque postou como A conta @ninguém (objetivo: Quem postou como @ninguém). Aponta para Caíque."
+        "where": "mostrar 'Rastreio da coordenação' + 'Troca de escala' para Caíque; ou mostrar 'Bolsa do Kevin' + 'Rastreio da coordenação' para Caíque",
+        "proves": "Prova a linha: Caíque leu Os segredos dos achados e perdidos (objetivo: De onde vieram os segredos)."
       }
     ],
     "red_herrings": [
@@ -1970,8 +1977,8 @@
         "a": "Ele tem vergonha. Um chocolate e uma conversa sem julgamento ajudam."
       },
       {
-        "q": "Meu colega tem a troca de escala.",
-        "a": "Peçam para fixar no quadro. É uma das pistas mais importantes."
+        "q": "O culpado não confessa!",
+        "a": "É assim mesmo: o culpado nunca confessa tudo. Não precisa: com os fios provados no quadro e o culpado apontado, a teoria está certa. Atenção a quem mente: Pedro, Kevin."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -1983,6 +1990,5 @@
       "Quem tem acesso às coisas dos outros tem mais responsabilidade?",
       "Uma humilhação justifica uma vingança? Onde termina uma e começa a outra?"
     ]
-  },
-  "cover_icon": "celular"
+  }
 }

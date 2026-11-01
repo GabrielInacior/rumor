@@ -255,6 +255,21 @@ Comum aos dois: 2 a 3 link_types, objetivos secundários conforme a seção "Obj
 `unlock` pode apontar para uma pista `t+` (vira **atalho**: a equipe ganha antes do tempo). Nunca para
 start ou hotspot.
 
+## Confissões e mentiras
+
+- Nó do culpado (ou de uma acareação) pode ter `"confession": "full" | "partial" | "slip"`.
+  - `full` (confessa tudo): só em **solo nível 1** e em **solo nível 2**. No nível 1, a escolha que leva à confissão
+    exige uma pista achada pelo jogador (a pista `t+` sozinha não basta). No nível 2, a confissão exige **duas provas
+    diferentes em sequência**: a primeira leva a um nó de recuo (`"confession": "partial"`, meia verdade ou culpa
+    jogada em outro) que seta uma flag; a escolha da confissão exige essa flag (`if`) e a segunda prova.
+  - `partial` (admite só um pedaço: "estive lá, mas não peguei nada"): o máximo permitido em **solo nível 3** e em
+    **todo multi**. A pista liberada por esse nó conta só o que ele admite e não prova o culpado sozinha.
+  - `slip` (deixa escapar algo numa acareação): a conversa a dois termina num deslize revelador, nunca numa confissão.
+- **Testemunhas que mentem:** um nó com `"contradiction": true` é a mudança de versão de alguém que mentiu ou omitiu.
+  Só se chega nele por uma escolha que exige pista (o jogador confronta mostrando a prova). Mínimo: 2 pessoas
+  diferentes por caso multi, 1 nos solo nível 2 e 3. O culpado não conta como testemunha.
+- O guia do professor avisa o que o culpado admite e quem mente, e como desmontar cada mentira.
+
 ## Objetivos
 
 - **Principal:** o culpado (`solution.culprit`, pergunta em `culprit_question`).

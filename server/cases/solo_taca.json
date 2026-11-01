@@ -347,6 +347,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o molde de resina",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_molde"
+                  ],
+                  "ifnot": [
+                    "sofia_versao"
+                  ]
+                },
+                {
                   "text": "Toma, fita pra consertar o cenário",
                   "kind": "boa",
                   "next": "troca",
@@ -389,6 +400,17 @@
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar o molde de resina",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_molde"
+                  ],
+                  "ifnot": [
+                    "sofia_versao"
+                  ]
+                },
                 {
                   "text": "Toma, fita pra consertar o cenário",
                   "kind": "boa",
@@ -433,6 +455,31 @@
                 }
               ],
               "unlock": "c_dep_sofia"
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá. Eu fiz uma taça. Disse que só fazia coroa, mas fiz uma taça.",
+                  "expr": "nervoso",
+                  "anim": "nervoso"
+                },
+                {
+                  "text": "Foi encomenda. Da Profa. Marta. 'Pra peça.'",
+                  "expr": "triste",
+                  "anim": "pensando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "sofia_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
             }
           }
         }
@@ -551,12 +598,12 @@
             "conta": {
               "lines": [
                 {
-                  "text": "...Eu caí num golpe de empréstimo. Doze mil de dívida. Meu nome ia pro lixo.",
-                  "expr": "triste",
-                  "anim": "pensando"
+                  "text": "Tá. Peguei a chave da vitrine sexta, às 18h. Pra limpeza. Isso é crime agora?",
+                  "expr": "bravo",
+                  "anim": "apontando"
                 },
                 {
-                  "text": "Sábado vendi a taça pro antiquário. Ninguém olhava aquela vitrine havia anos. Até hoje.",
+                  "text": "A taça? Pra mim ela já era falsa havia anos. Ninguém nunca olhou de perto.",
                   "expr": "nervoso",
                   "anim": "negando"
                 }
@@ -571,7 +618,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "partial"
             },
             "bravo": {
               "lines": [
@@ -701,9 +749,9 @@
               "lines": [
                 {
                   "who": "marta",
-                  "text": "...Eu caí num golpe. Doze mil. Vendi no sábado. Pronto.",
-                  "expr": "triste",
-                  "anim": "pensando",
+                  "text": "Sábado eu só levei a peça pra avaliar... quer dizer, que peça? Eu não levei nada.",
+                  "expr": "nervoso",
+                  "anim": "negando",
                   "react": "surpreso"
                 }
               ],
@@ -714,10 +762,10 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao",
               "cast": [
                 "sofia"
-              ]
+              ],
+              "confession": "slip"
             }
           }
         }
@@ -1352,9 +1400,9 @@
     {
       "id": "c_confissao",
       "kind": "depoimento",
-      "title": "Confissão da Profa. Marta",
+      "title": "Versão da Profa. Marta",
       "who": "marta",
-      "text": "A vice-diretora caiu num golpe, encomendou a réplica, trocou a taça na sexta e vendeu a verdadeira no sábado.",
+      "text": "A vice admite que pegou a chave da vitrine sexta às 18h, 'para limpeza', e diz que a taça já devia ser falsa havia anos.",
       "release": "interrogatorio",
       "deal": "team"
     }
@@ -1431,8 +1479,7 @@
       "c_chave_log",
       "c_cartao",
       "c_antiquario",
-      "c_livro_jorge",
-      "c_confissao"
+      "c_livro_jorge"
     ],
     "categories": [
       {
@@ -1461,8 +1508,7 @@
         "evidence": [
           "c_chave_log",
           "c_cartao",
-          "c_antiquario",
-          "c_confissao"
+          "c_antiquario"
         ]
       },
       {
@@ -1484,7 +1530,8 @@
         "evidence": [
           "c_chave_log",
           "c_livro_jorge",
-          "c_dep_nanda"
+          "c_dep_nanda",
+          "c_confissao"
         ]
       },
       {
@@ -1519,7 +1566,8 @@
     "Uma réplica perfeita precisa de alguém que saiba fazer molde.",
     "Quem pediu a chave da vitrine fora do horário?",
     "A peça dos 60 anos tinha mesmo uma taça em cena?",
-    "Prata roubada precisa ser vendida. Para quem?"
+    "Prata roubada precisa ser vendida. Para quem?",
+    "Ninguém vai confessar tudo: o quadro é a sua prova."
   ],
   "reveal": {
     "timeline": [
@@ -1551,7 +1599,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "A vice-diretora Marta caiu num golpe e ficou com doze mil reais de dívida. Encomendou à Sofia uma réplica da taça 'para a peça dos 60 anos', que nem tem taça. Na sexta às 18h pegou a chave da vitrine, liberou o zelador, trocou as taças e no sábado vendeu a verdadeira a um antiquário. A Sofia percebeu e ficou quieta em troca de uma bolsa.",
+    "summary": "A vice-diretora Marta caiu num golpe e ficou com doze mil reais de dívida. Encomendou à Sofia uma réplica da taça 'para a peça dos 60 anos', que nem tem taça. Na sexta às 18h pegou a chave da vitrine, liberou o zelador, trocou as taças e no sábado vendeu a verdadeira a um antiquário. A Sofia percebeu e ficou quieta em troca de uma bolsa. Atenção: Profa. Marta NÃO confessa tudo. O máximo que se arranca é isto: A vice admite que pegou a chave da vitrine sexta às 18h, 'para limpeza', e diz que a taça já devia ser falsa havia anos. O resto a equipe precisa provar no quadro. Quem mente: Sofia (desmonte mostrando 'Caixa de objetos').",
     "twist": "Plantado na comparação de duas pistas visuais (a alça lisa da vitrine e o amassado na foto de março) e numa frase do curador: a peça não tem taça. A encomenda 'para a peça' era mentira. Segundo giro: a Sofia percebeu a troca e ficou calada em troca de uma bolsa.",
     "solution_steps": [
       "Ler o laudo e o grupo da direção: a suspeita cai no Seu Jorge.",
@@ -1560,7 +1608,7 @@
       "O Prof. Nogueira conta que a peça não tem taça: a encomenda era mentira.",
       "Na diretoria, o caderno da chave mostra a Marta na sexta às 18h; no depósito, o livro do zelador confirma que ela o liberou.",
       "No escaninho da vice, o cartão do antiquário. O post do antiquário (chega com o tempo) mostra a taça com o amassado.",
-      "Mostrar o caderno e o post à Marta, provar no quadro os 4 objetivos secundários e apontá-la."
+      "Mostrar o caderno e o post à Marta, provar no quadro os 4 objetivos secundários e apontá-la. Não esperem confissão completa: o quadro é a prova."
     ],
     "pacing": [
       {
@@ -1582,6 +1630,11 @@
         "when": "20 min em diante",
         "aha": "O post do antiquário mostra o amassado. A Sofia conta o que escondeu.",
         "if_stuck": "Ficar calada também é participar?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado admite só uma parte, ou nada.",
+        "if_stuck": "O que, no quadro, prova o que ele ainda nega?"
       }
     ],
     "clue_map": [
@@ -1657,8 +1710,8 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Caderno da chave' + 'Post do antiquário' para Profa. Marta; ou mostrar 'Caderno da chave' para Profa. Marta",
-        "proves": "Prova a linha: Profa. Marta pegou A Taça do Fundador (prata) (objetivo: Quem levou a taça verdadeira). Aponta para Profa. Marta."
+        "where": "mostrar 'Caderno da chave' + 'Post do antiquário' para Profa. Marta",
+        "proves": "Prova a linha: Profa. Marta estava em Sala do diretor (objetivo: Onde a vice estava sexta às 18h)."
       }
     ],
     "red_herrings": [
@@ -1683,8 +1736,8 @@
         "a": "Prata vale dinheiro. Quem precisaria tanto de dinheiro?"
       },
       {
-        "q": "A Sofia não fala.",
-        "a": "Ela está com medo. Talvez ajudar com o cenário destrave."
+        "q": "O culpado não confessa!",
+        "a": "É assim mesmo: o culpado nunca confessa tudo. Não precisa: com os fios provados no quadro e o culpado apontado, a teoria está certa. Atenção a quem mente: Sofia."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -1696,6 +1749,5 @@
       "Por que confiamos mais em quem tem cargo?",
       "Que detalhe pequeno (o amassado) desmontou o plano?"
     ]
-  },
-  "cover_icon": "trofeu"
+  }
 }

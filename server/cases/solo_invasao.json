@@ -83,6 +83,15 @@
           "entries": [
             {
               "if": [
+                "ana_recuou"
+              ],
+              "ifnot": [
+                "ana_falou"
+              ],
+              "node": "recua"
+            },
+            {
+              "if": [
                 "ana_falou"
               ],
               "node": "conta"
@@ -111,12 +120,11 @@
               ],
               "choices": [
                 {
-                  "text": "Mostrar o registro do alarme e os códigos",
+                  "text": "Mostrar a ficha do armário",
                   "kind": "boa",
-                  "next": "conta",
+                  "next": "recua",
                   "requires": [
-                    "c_alarme",
-                    "c_codigos"
+                    "c_ficha_lab"
                   ]
                 },
                 {
@@ -141,12 +149,11 @@
               ],
               "choices": [
                 {
-                  "text": "Mostrar o registro do alarme e os códigos",
+                  "text": "Mostrar a ficha do armário",
                   "kind": "boa",
-                  "next": "conta",
+                  "next": "recua",
                   "requires": [
-                    "c_alarme",
-                    "c_codigos"
+                    "c_ficha_lab"
                   ]
                 },
                 {
@@ -179,7 +186,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "full"
             },
             "bravo": {
               "lines": [
@@ -208,9 +216,46 @@
                 {
                   "text": "Mostrar a ficha do armário",
                   "kind": "boa",
-                  "next": "conta",
+                  "next": "recua",
                   "requires": [
                     "c_ficha_lab"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "recua": {
+              "lines": [
+                {
+                  "text": "Tá, eu tirei o microscópio sexta. Pra manutenção numa oficina.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Domingo roubaram de lá! Ou daqui. Foi o Seu Jorge que não viu nada, né?",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "ana_recuou"
+              ],
+              "confession": "partial",
+              "choices": [
+                {
+                  "text": "Mostrar o alarme e os códigos",
+                  "kind": "boa",
+                  "next": "conta",
+                  "requires": [
+                    "c_alarme",
+                    "c_codigos"
+                  ],
+                  "if": [
+                    "ana_recuou"
                   ]
                 },
                 {
@@ -394,29 +439,20 @@
               "lines": [
                 {
                   "who": "ana",
-                  "text": "Eu... levei pra manutenção. Sexta. É isso. Manutenção.",
+                  "text": "Eu levei pra manutenção sexta... quer dizer, domingo. Domingo roubaram.",
                   "expr": "nervoso",
                   "anim": "nervoso",
                   "react": "desconfiado"
                 },
                 {
                   "who": "lari",
-                  "text": "Manutenção não quebra janela domingo de madrugada.",
+                  "text": "A senhora acabou de dizer sexta, professora.",
                   "expr": "desconfiado",
-                  "anim": "dando_de_ombros",
+                  "anim": "apontando",
                   "react": "nervoso"
                 }
               ],
               "choices": [
-                {
-                  "text": "Mostrar o alarme e os códigos",
-                  "kind": "boa",
-                  "next": "duo_conf",
-                  "requires": [
-                    "c_alarme",
-                    "c_codigos"
-                  ]
-                },
                 {
                   "text": "Deixa os dois conversarem.",
                   "kind": "neutra",
@@ -428,29 +464,8 @@
               ],
               "cast": [
                 "ana"
-              ]
-            },
-            "duo_conf": {
-              "lines": [
-                {
-                  "who": "ana",
-                  "text": "...Quebrou no meu cursinho. Eu entrei em pânico. Desculpa, Lari.",
-                  "expr": "triste",
-                  "anim": "negando",
-                  "react": "triste"
-                }
               ],
-              "choices": [
-                {
-                  "text": "Valeu, os dois.",
-                  "kind": "neutra",
-                  "end": true
-                }
-              ],
-              "unlock": "c_confissao",
-              "cast": [
-                "ana"
-              ]
+              "confession": "slip"
             }
           }
         }
@@ -806,6 +821,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o story do Theo das 2h04",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_story_theo"
+                  ],
+                  "ifnot": [
+                    "jorge_versao"
+                  ]
+                },
+                {
                   "text": "Achei suas chaves no armário do corredor",
                   "kind": "boa",
                   "next": "troca",
@@ -849,6 +875,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o story do Theo das 2h04",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_story_theo"
+                  ],
+                  "ifnot": [
+                    "jorge_versao"
+                  ]
+                },
+                {
                   "text": "Achei suas chaves no armário do corredor",
                   "kind": "boa",
                   "next": "troca",
@@ -887,6 +924,32 @@
               "choices": [
                 {
                   "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_jorge"
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá bom. Eu disse que não vi nada, mas vi um carro prata entrar pela rua de trás às 2h.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Fiquei quieto porque achei que era gente da diretoria.",
+                  "expr": "triste",
+                  "anim": "dando_de_ombros"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "jorge_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
                   "kind": "neutra",
                   "end": true
                 }
@@ -1215,7 +1278,8 @@
     "Poeira grossa não se forma em uma noite.",
     "Alarme desligado com código não foi invasão. De quem é o código?",
     "Quem mais ganha com um 'furto' coberto pelo seguro?",
-    "Um anúncio antigo pode mostrar onde o microscópio trabalhava nos fins de semana."
+    "Um anúncio antigo pode mostrar onde o microscópio trabalhava nos fins de semana.",
+    "Uma prova só pode não bastar. Junte duas."
   ],
   "reveal": {
     "timeline": [
@@ -1247,7 +1311,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "A Profa. Ana levava escondido o microscópio da escola para o cursinho particular dela nos fins de semana, e ele quebrou. Com o inventário marcado para segunda, ela tirou o aparelho na sexta 'para manutenção'. No domingo às 2h03 voltou de carro, desligou o alarme com o próprio código, quebrou a janela por dentro e religou o alarme para parecer invasão.",
+    "summary": "A Profa. Ana levava escondido o microscópio da escola para o cursinho particular dela nos fins de semana, e ele quebrou. Com o inventário marcado para segunda, ela tirou o aparelho na sexta 'para manutenção'. No domingo às 2h03 voltou de carro, desligou o alarme com o próprio código, quebrou a janela por dentro e religou o alarme para parecer invasão. Profa. Ana mente no começo e só confessa depois de duas provas seguidas: a primeira faz recuar e jogar a culpa em outro, a segunda quebra. Quem mente: Seu Jorge (desmonte mostrando 'Story do Theo').",
     "twist": "Plantado em três detalhes físicos que parecem decoração: os cacos caídos para fora, a poeira grossa de dias e o alarme desligado com código. A vítima indignada é a autora. Segundo giro: o anúncio do cursinho (t+) mostra que o microscópio da escola trabalhava escondido havia semanas.",
     "solution_steps": [
       "Ler o grupo: todos aceitam a 'invasão'.",
@@ -1273,6 +1337,11 @@
         "when": "12 min em diante",
         "aha": "Aha 2: o código 07 é da professora; o anúncio dá o motivo.",
         "if_stuck": "Quem ganha com o dinheiro do seguro?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado cede depois das provas certas.",
+        "if_stuck": "Que prova vocês ainda não mostraram para ele?"
       }
     ],
     "clue_map": [
@@ -1333,12 +1402,12 @@
       },
       {
         "clue": "c_dep_jorge",
-        "where": "mostrar 'Livro da ronda' para Seu Jorge; ou trocar 'Molho de chaves do zelador' com Seu Jorge",
+        "where": "mostrar 'Livro da ronda' para Seu Jorge; ou trocar 'Molho de chaves do zelador' com Seu Jorge; ou mostrar 'Story do Theo' para Seu Jorge",
         "proves": "Prova a linha: Seu Jorge estava em Guarita do zelador (objetivo: Onde o zelador estava às 2h03)."
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Painel do alarme' + 'Códigos do alarme' para Profa. Ana; ou mostrar 'Ficha do armário' para Profa. Ana; ou mostrar 'Painel do alarme' + 'Códigos do alarme' para Lari",
+        "where": "mostrar 'Painel do alarme' + 'Códigos do alarme' para Profa. Ana",
         "proves": "Aponta para Profa. Ana."
       }
     ],
@@ -1363,8 +1432,8 @@
         "a": "Conversem com a monitora do laboratório. E olhem a poeira."
       },
       {
-        "q": "A professora é a vítima!",
-        "a": "A vítima ganha alguma coisa com o seguro? Esperem o anúncio que chega."
+        "q": "Mostramos a prova e ele mentiu de novo.",
+        "a": "Às vezes uma prova só faz a pessoa recuar. Procurem uma segunda prova diferente e mostrem depois. Atenção a quem mente: Seu Jorge."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -1376,6 +1445,5 @@
       "Esconder um erro pode virar um erro muito maior. Como?",
       "Quais pistas físicas desmontaram a encenação?"
     ]
-  },
-  "cover_icon": "microscopio"
+  }
 }

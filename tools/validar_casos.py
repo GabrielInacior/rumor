@@ -231,6 +231,42 @@ def check(p):
     if mode == "multi" and not (2 <= moves <= 3 and 1 <= duo_count[0] <= 2): err.append("multi: movimentos %d, conversas a dois %d" % (moves, duo_count[0]))
     if mode == "solo" and not 1 <= moves <= 2: err.append("solo: movimentos %d" % moves)
     if mode == "solo" and d["difficulty"] >= 2 and duo_count[0] != 1: err.append("solo médio/difícil: conversas a dois %d" % duo_count[0])
+    # confissões e mentiras
+    culprit = d["solution"]["culprit"]
+    liars = set()
+    for pid, t in trees.items():
+        nodes = t["nodes"]
+        flag_src = {}
+        for nid, nd in nodes.items():
+            for f in nd.get("sets", []): flag_src.setdefault(f, []).append(nid)
+        def incoming(nid): return [c for o in nodes.values() for c in o["choices"] if c.get("next") == nid]
+        for nid, nd in nodes.items():
+            cf = nd.get("confession")
+            if cf is not None and cf not in ("full", "partial", "slip"): err.append("confession inválida %s.%s" % (pid, nid))
+            if nd.get("contradiction"):
+                if pid == culprit: err.append("contradiction no culpado %s.%s" % (pid, nid))
+                elif all(c.get("requires") for c in incoming(nid)) and incoming(nid): liars.add(pid)
+                else: err.append("mudança de versão sem pista %s.%s" % (pid, nid))
+            if cf != "full": continue
+            if mode == "multi" or d["difficulty"] >= 3: err.append("confissão completa proibida aqui %s.%s" % (pid, nid)); continue
+            for e in t["entries"]:
+                if e["node"] == nid and not set(e.get("if", [])) <= set(nd.get("sets", [])): err.append("entrada direta para confissão %s.%s" % (pid, nid))
+            for c in incoming(nid):
+                req = [r for r in c.get("requires", []) if r in clues]
+                chain = set(req)
+                for f in c.get("if", []):
+                    for src in flag_src.get(f, []):
+                        for x in incoming(src): chain |= {r for r in x.get("requires", []) if r in clues}
+                if not req or all(clues[r]["release"].startswith("t+") for r in chain): err.append("confissão sem pista achada pelo jogador %s.%s" % (pid, nid))
+                if d["difficulty"] == 2:
+                    ok2 = False
+                    for f in c.get("if", []):
+                        for src in flag_src.get(f, []):
+                            prev = [set(x.get("requires", [])) for x in incoming(src)]
+                            if prev and all(p and not (p & set(req)) for p in prev): ok2 = True
+                    if not ok2: err.append("nível 2: confissão sem duas provas encadeadas %s.%s" % (pid, nid))
+    need_l = 2 if mode == "multi" else (1 if d["difficulty"] >= 2 else 0)
+    if len(liars) < need_l: err.append("testemunhas que mentem: %d (mínimo %d)" % (len(liars), need_l))
     if len(takers) < R["trades"]: err.append("trocas %d" % len(takers))
     for it, who in takers.items():
         if len(who) > 1: err.append("item %s usado por mais de uma pessoa" % it)

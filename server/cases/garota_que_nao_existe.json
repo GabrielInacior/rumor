@@ -301,8 +301,8 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Eu fui no shopping às 17h. Ela não apareceu. Fiquei duas horas segurando um sorvete derretido.",
-                  "expr": "triste",
+                  "text": "Eu? Faltar treino por uma menina? Eu tava doente, mano.",
+                  "expr": "nervoso",
                   "anim": "negando"
                 }
               ],
@@ -356,6 +356,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar a foto do mural",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_shopping"
+                  ],
+                  "ifnot": [
+                    "gabriel_versao"
+                  ]
+                },
+                {
                   "text": "Toma um carregador pro seu celular",
                   "kind": "boa",
                   "next": "troca",
@@ -399,6 +410,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar a foto do mural",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_shopping"
+                  ],
+                  "ifnot": [
+                    "gabriel_versao"
+                  ]
+                },
+                {
                   "text": "Toma um carregador pro seu celular",
                   "kind": "boa",
                   "next": "troca",
@@ -437,6 +459,27 @@
               "choices": [
                 {
                   "text": "Valeu, de verdade.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_gabriel"
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá... eu tava no shopping. Esperando ela. Com flores. Duas horas.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "gabriel_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
                   "kind": "neutra",
                   "end": true
                 }
@@ -890,7 +933,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_dep_kevin"
+              "unlock": "c_dep_kevin",
+              "contradiction": true
             },
             "bravo": {
               "lines": [
@@ -1197,13 +1241,13 @@
             "conta": {
               "lines": [
                 {
-                  "text": "...Dois anos no banco. Dois anos. Eu só queria UM jogo.",
-                  "expr": "bravo",
-                  "anim": "pensando"
+                  "text": "Usei o computador às 14h10, tá. Pra olhar o Instagram do time. Proibido?",
+                  "expr": "nervoso",
+                  "anim": "dando_de_ombros"
                 },
                 {
-                  "text": "A Luiza era eu. O Kevin me deu as fotos da prima. Eu sabia exatamente o que cada um queria ouvir.",
-                  "expr": "triste",
+                  "text": "Luiza? Nunca falei com ela. E 'excessão' muita gente erra.",
+                  "expr": "bravo",
                   "anim": "negando"
                 }
               ],
@@ -1217,7 +1261,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "partial"
             },
             "bravo": {
               "lines": [
@@ -1309,17 +1354,17 @@
               "lines": [
                 {
                   "who": "leo",
-                  "text": "...Dois anos no banco. Eu só queria um jogo. A Luiza era eu.",
-                  "expr": "triste",
-                  "anim": "pensando",
-                  "react": "triste"
+                  "text": "Ela só respondia às 23h porque... quer dizer, sei lá quando ela respondia.",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "surpreso"
                 },
                 {
                   "who": "kevin",
-                  "text": "E eu deixei. Também tenho culpa.",
-                  "expr": "triste",
-                  "anim": "negando",
-                  "react": "triste"
+                  "text": "Você sabe exatamente quando ela respondia, Léo.",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
                 }
               ],
               "choices": [
@@ -1329,10 +1374,10 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao",
               "cast": [
                 "kevin"
-              ]
+              ],
+              "confession": "slip"
             }
           }
         }
@@ -1772,9 +1817,9 @@
     {
       "id": "c_confissao",
       "kind": "depoimento",
-      "title": "Confissão do Léo",
+      "title": "Versão do Léo",
       "who": "leo",
-      "text": "O Léo criou a Luiza com as fotos que o Kevin deu, para tirar os titulares da semifinal e finalmente jogar.",
+      "text": "Léo admite que usou o computador da biblioteca às 14h10, mas nega qualquer ligação com a Luiza.",
       "release": "interrogatorio",
       "deal": "team"
     },
@@ -1859,8 +1904,7 @@
       "c_prancheta",
       "c_redacao",
       "c_campeonato",
-      "c_computador",
-      "c_confissao"
+      "c_computador"
     ],
     "categories": [
       {
@@ -1893,8 +1937,7 @@
         "evidence": [
           "c_redacao",
           "c_prancheta",
-          "c_computador",
-          "c_confissao"
+          "c_computador"
         ]
       },
       {
@@ -1916,7 +1959,8 @@
         "category": "computador",
         "evidence": [
           "c_computador",
-          "c_dep_nanda"
+          "c_dep_nanda",
+          "c_confissao"
         ]
       },
       {
@@ -1962,7 +2006,7 @@
     "Um erro de ortografia pode ser uma impressão digital.",
     "Quem fica online toda noite às 23h, e com quem?",
     "Achar o dono das fotos não é achar o dono do perfil.",
-    "O reserva mais solidário do grupo estreou no gol."
+    "Ninguém vai confessar tudo: o quadro é a sua prova."
   ],
   "reveal": {
     "timeline": [
@@ -1998,7 +2042,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "O Léo, goleiro reserva há dois anos, queria jogar a semifinal. Com as fotos da prima de Lisboa, cedidas pelo amigo Kevin (capitão do time rival), criou a falsa Luiza. Usando o que ouvia no vestiário, conquistou três titulares e marcou com eles no shopping na hora do treino de véspera. Os três foram suspensos, o Léo estreou no gol e o time perdeu.",
+    "summary": "O Léo, goleiro reserva há dois anos, queria jogar a semifinal. Com as fotos da prima de Lisboa, cedidas pelo amigo Kevin (capitão do time rival), criou a falsa Luiza. Usando o que ouvia no vestiário, conquistou três titulares e marcou com eles no shopping na hora do treino de véspera. Os três foram suspensos, o Léo estreou no gol e o time perdeu. Atenção: Léo NÃO confessa tudo. O máximo que se arranca é isto: Léo admite que usou o computador da biblioteca às 14h10, mas nega qualquer ligação com a Luiza. O resto a equipe precisa provar no quadro. Quem mente: Gabriel (desmonte mostrando 'Mural do corredor'); Kevin (desmonte mostrando 'Investigação do jornal').",
     "twist": "A investigação do jornal (t+270) entrega a prima do Kevin, e a turma acha que acabou: é a isca. Antes disso, as três DMs (cada uma com um aluno) já tinham as digitais do Léo: a 'jogada 7' (só dita no vestiário), o 'excessão' da redação dele e o 'só às 23h' do campeonato com o Kevin. O 'deixa comigo no gol' no grupo é o detalhe que dá arrepio na revelação.",
     "solution_steps": [
       "Ver o perfil e o grupo do time: a Luiza enganou três titulares.",
@@ -2008,7 +2052,7 @@
       "Na cantina, o cartaz do campeonato mostra a dupla Kevin e Léo online toda noite às 23h.",
       "A investigação do jornal (cerca de 4 min 30 s) liga as fotos à prima do Kevin: ele vira o suspeito.",
       "Na biblioteca, a reserva e o histórico do computador põem o Léo no Instagram às 14h10.",
-      "Provar no quadro os 5 objetivos secundários e apontar o Léo; o Kevin entra como quem entregou as fotos."
+      "Provar no quadro os 5 objetivos secundários e apontar o Léo; o Kevin entra como quem entregou as fotos. Não esperem confissão completa: o quadro é a prova."
     ],
     "pacing": [
       {
@@ -2035,6 +2079,11 @@
         "when": "30 min em diante",
         "aha": "Giro final: o Kevin entregou as fotos.",
         "if_stuck": "Os dois devem ser responsabilizados do mesmo jeito?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado admite só uma parte, ou nada.",
+        "if_stuck": "O que, no quadro, prova o que ele ainda nega?"
       }
     ],
     "clue_map": [
@@ -2110,7 +2159,7 @@
       },
       {
         "clue": "c_dep_gabriel",
-        "where": "mostrar 'DM com o Gabriel' para Gabriel; ou trocar 'Carregador de celular' com Gabriel",
+        "where": "mostrar 'DM com o Gabriel' para Gabriel; ou trocar 'Carregador de celular' com Gabriel; ou mostrar 'Mural do corredor' para Gabriel",
         "proves": "A Luiza perguntou da 'jogada 7', segredo do vestiário."
       },
       {
@@ -2135,8 +2184,8 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Redação corrigida' + 'Prancheta do técnico' + 'Computador da biblioteca' para Léo; ou mostrar 'Redação corrigida' + 'Cartaz do campeonato' para Léo; ou mostrar 'Redação corrigida' para Léo",
-        "proves": "Prova a linha: Léo criou O perfil @luiza.intercambio (objetivo: Quem criou a Luiza). Aponta para Léo."
+        "where": "mostrar 'Redação corrigida' + 'Prancheta do técnico' + 'Computador da biblioteca' para Léo; ou mostrar 'Redação corrigida' + 'Cartaz do campeonato' para Léo",
+        "proves": "Prova a linha: Léo estava em Biblioteca (objetivo: Onde a Luiza foi usada na escola)."
       },
       {
         "clue": "c_redacao_lista",
@@ -2166,8 +2215,8 @@
         "a": "Procurem um cartaz na cantina."
       },
       {
-        "q": "Mas o Léo foi tão solidário...",
-        "a": "Quem ganhou com a suspensão dos titulares?"
+        "q": "O culpado não confessa!",
+        "a": "É assim mesmo: o culpado nunca confessa tudo. Não precisa: com os fios provados no quadro e o culpado apontado, a teoria está certa. Atenção a quem mente: Gabriel, Kevin."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -2179,6 +2228,5 @@
       "Usar a foto de uma pessoa real sem ela saber também é uma violência. Por quê?",
       "O Léo estava frustrado. O que ele poderia ter feito em vez disso?"
     ]
-  },
-  "cover_icon": "camera"
+  }
 }

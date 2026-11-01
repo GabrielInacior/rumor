@@ -389,10 +389,17 @@
               "lines": [
                 {
                   "who": "bento",
-                  "text": "...Fui eu. A bolsa era minha única chance. O Davi não merecia isso.",
-                  "expr": "triste",
+                  "text": "Eu só pus a prova lá pra... quer dizer, eu nunca vi prova nenhuma!",
+                  "expr": "nervoso",
                   "anim": "negando",
-                  "react": "triste"
+                  "react": "desconfiado"
+                },
+                {
+                  "who": "vera",
+                  "text": "'Pus a prova lá', Bento?",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
                 }
               ],
               "choices": [
@@ -402,10 +409,10 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao",
               "cast": [
                 "bento"
-              ]
+              ],
+              "confession": "slip"
             }
           }
         }
@@ -514,6 +521,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o registro do computador",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_impressora"
+                  ],
+                  "ifnot": [
+                    "mel_versao"
+                  ]
+                },
+                {
                   "text": "Toma um chocolate, respira",
                   "kind": "boa",
                   "next": "troca",
@@ -556,6 +574,17 @@
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar o registro do computador",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_impressora"
+                  ],
+                  "ifnot": [
+                    "mel_versao"
+                  ]
+                },
                 {
                   "text": "Toma um chocolate, respira",
                   "kind": "boa",
@@ -600,6 +629,31 @@
                 }
               ],
               "unlock": "c_dep_mel"
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá, imprimi a prova quinta 17h10. Mas era pra mim, pra estudar!",
+                  "expr": "nervoso",
+                  "anim": "negando"
+                },
+                {
+                  "text": "...Ou quase. Alguém me pediu uma cópia. Não vou dizer quem.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "mel_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
             }
           }
         }
@@ -705,13 +759,13 @@
             "conta": {
               "lines": [
                 {
-                  "text": "...Ele era perfeito em tudo. A bolsa de intercâmbio era a minha única chance.",
+                  "text": "Fiquei na sala no almoço, sim. Estudando. E comprei uma cópia da prova com a Mel. Pra estudar.",
                   "expr": "bravo",
-                  "anim": "pensando"
+                  "anim": "apontando"
                 },
                 {
-                  "text": "Fiquei sozinho na sala no almoço, pus a prova e o dinheiro na mochila dele e mandei o e-mail daqui.",
-                  "expr": "triste",
+                  "text": "A mochila do Davi? Nunca toquei. A denúncia? Não fui eu. Me prova.",
+                  "expr": "nervoso",
                   "anim": "negando"
                 }
               ],
@@ -725,7 +779,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "partial"
             },
             "bravo": {
               "lines": [
@@ -1233,9 +1288,9 @@
     {
       "id": "c_confissao",
       "kind": "depoimento",
-      "title": "Confissão do Bento",
+      "title": "Versão do Bento",
       "who": "bento",
-      "text": "Bento comprou a prova da Mel, plantou a prova e o dinheiro na mochila do Davi e mandou a denúncia da biblioteca.",
+      "text": "Bento admite que comprou uma cópia da prova da Mel e ficou sozinho na sala no almoço, mas nega ter mexido na mochila ou mandado a denúncia.",
       "release": "interrogatorio",
       "deal": "team"
     }
@@ -1319,8 +1374,7 @@
       "c_lousa",
       "c_ranking",
       "c_bilhete_mel",
-      "c_rede",
-      "c_confissao"
+      "c_rede"
     ],
     "categories": [
       {
@@ -1349,7 +1403,8 @@
         "evidence": [
           "c_bilhete_mel",
           "c_impressora",
-          "c_dep_mel"
+          "c_dep_mel",
+          "c_confissao"
         ]
       },
       {
@@ -1359,7 +1414,8 @@
         "category": "plantou",
         "evidence": [
           "c_lousa",
-          "c_dep_caique"
+          "c_dep_caique",
+          "c_confissao"
         ]
       },
       {
@@ -1380,8 +1436,7 @@
         "category": "denuncia",
         "evidence": [
           "c_rede",
-          "c_dep_joana",
-          "c_confissao"
+          "c_dep_joana"
         ]
       }
     ],
@@ -1406,7 +1461,7 @@
     "Onde o Davi estava enquanto a mochila ficou sozinha?",
     "A prova saiu de um computador com usuário. Para quem foi a cópia?",
     "Quem estava sozinho na sala no almoço, com autorização?",
-    "Celulares deixam rastro na rede da escola."
+    "Ninguém vai confessar tudo: o quadro é a sua prova."
   ],
   "reveal": {
     "timeline": [
@@ -1446,7 +1501,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "O Bento, segundo do ranking, ganharia a bolsa de intercâmbio se o Davi fosse desclassificado. Comprou uma cópia da prova de química da monitora Mel por cinquenta reais e sacou trezentos reais em notas novas. No almoço, sozinho na sala com autorização, plantou tudo na mochila do Davi e mandou a denúncia anônima do celular, na rede da biblioteca. O Davi dava monitoria (paga, escondido) com sete testemunhas.",
+    "summary": "O Bento, segundo do ranking, ganharia a bolsa de intercâmbio se o Davi fosse desclassificado. Comprou uma cópia da prova de química da monitora Mel por cinquenta reais e sacou trezentos reais em notas novas. No almoço, sozinho na sala com autorização, plantou tudo na mochila do Davi e mandou a denúncia anônima do celular, na rede da biblioteca. O Davi dava monitoria (paga, escondido) com sete testemunhas. Atenção: Bento NÃO confessa tudo. O máximo que se arranca é isto: Bento admite que comprou uma cópia da prova da Mel e ficou sozinho na sala no almoço, mas nega ter mexido na mochila ou mandado a denúncia. O resto a equipe precisa provar no quadro. Quem mente: Mel (desmonte mostrando 'Computador do laboratório').",
     "twist": "Plantado na própria denúncia (sabia o que e quando), no ranking (quem ganha a bolsa) e no 'que decepção' do Bento no grupo. O registro da rede (t+) confirma. Segundo giro: a monitora Mel vendeu a cópia, e a vítima, Davi, escondia uma monitoria paga.",
     "solution_steps": [
       "Ler a denúncia: ela sabe demais (o que e quando).",
@@ -1455,7 +1510,7 @@
       "No laboratório, a prova foi impressa pela monitoria e o bilhete 'valeu pela cópia, B.' liga a Mel ao Bento.",
       "Na biblioteca, o registro da monitoria dá o álibi do Davi; a Joana viu o Bento digitando às 12h47.",
       "No corredor, o comprovante do saque; com a figurinha, o Caíque conta que viu o Bento saindo da sala às 12h44.",
-      "O registro da rede (chega com o tempo) mostra o aparelho 'Galaxy-do-Bento'. Mostrar a ele, provar no quadro os 4 objetivos secundários e apontá-lo."
+      "O registro da rede (chega com o tempo) mostra o aparelho 'Galaxy-do-Bento'. Mostrar a ele, provar no quadro os 4 objetivos secundários e apontá-lo. Não esperem confissão completa: o quadro é a prova."
     ],
     "pacing": [
       {
@@ -1477,6 +1532,11 @@
         "when": "20 min em diante",
         "aha": "A rede mostra o celular do Bento mandando a denúncia.",
         "if_stuck": "Por que alguém se faz de 'decepcionado'?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado admite só uma parte, ou nada.",
+        "if_stuck": "O que, no quadro, prova o que ele ainda nega?"
       }
     ],
     "clue_map": [
@@ -1557,8 +1617,8 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Rede da biblioteca' para Dona Vera; ou mostrar 'Rede da biblioteca' para Bento",
-        "proves": "Prova a linha: Bento enviou A denúncia anônima das 12h47 (objetivo: Quem mandou a denúncia anônima). Aponta para Bento."
+        "where": "mostrar 'Rede da biblioteca' para Bento",
+        "proves": "Prova a linha: Mel entregou para Bento (objetivo: Quem passou a prova para o Bento); Bento estava em Sala do Davi (objetivo: Quem ficou sozinho com a mochila)."
       }
     ],
     "red_herrings": [
@@ -1583,8 +1643,8 @@
         "a": "Esperem o recado da coordenação sobre a rede da biblioteca."
       },
       {
-        "q": "Ninguém quer falar.",
-        "a": "A Mel está com medo e o Caíque coleciona figurinhas. Procurem pela escola."
+        "q": "O culpado não confessa!",
+        "a": "É assim mesmo: o culpado nunca confessa tudo. Não precisa: com os fios provados no quadro e o culpado apontado, a teoria está certa. Atenção a quem mente: Mel."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -1596,6 +1656,5 @@
       "A Mel 'só imprimiu'. Ela tem parte da culpa?",
       "O que a competição por uma bolsa pode fazer com as pessoas?"
     ]
-  },
-  "cover_icon": "mensagem"
+  }
 }

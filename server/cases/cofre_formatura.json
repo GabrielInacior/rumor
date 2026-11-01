@@ -509,6 +509,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o print da câmera",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_camera"
+                  ],
+                  "ifnot": [
+                    "rafa_versao"
+                  ]
+                },
+                {
                   "text": "Mostrar o armário dos celulares arrombado",
                   "kind": "boa",
                   "next": "conta",
@@ -537,6 +548,17 @@
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar o print da câmera",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_camera"
+                  ],
+                  "ifnot": [
+                    "rafa_versao"
+                  ]
+                },
                 {
                   "text": "Mostrar o armário dos celulares arrombado",
                   "kind": "boa",
@@ -569,6 +591,17 @@
                 "rafa_falou"
               ],
               "choices": [
+                {
+                  "text": "Mostrar o print da câmera",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_camera"
+                  ],
+                  "ifnot": [
+                    "rafa_versao"
+                  ]
+                },
                 {
                   "text": "Valeu pela ajuda.",
                   "kind": "neutra",
@@ -604,6 +637,17 @@
                 {
                   "text": "Mostrar o print da câmera",
                   "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_camera"
+                  ],
+                  "ifnot": [
+                    "rafa_versao"
+                  ]
+                },
+                {
+                  "text": "Mostrar o print da câmera",
+                  "kind": "boa",
                   "next": "conta",
                   "requires": [
                     "c_camera"
@@ -615,6 +659,32 @@
                   "end": true
                 }
               ]
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá, o moletom laranja era eu. Disse que dormi cedo, mas pulei o muro.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                },
+                {
+                  "text": "Só que eu fui na sala dos professores, não na diretoria. Olha o print de novo.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "rafa_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ],
+              "unlock": "c_dep_rafa"
             }
           }
         }
@@ -949,7 +1019,7 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "A Lari é minha melhor amiga e tá destruída. Deixa ela em paz, detetive.",
+                  "text": "A Lari tava comigo contando rifa a tarde toda. Deixa ela em paz, detetive.",
                   "expr": "bravo",
                   "anim": "apontando"
                 }
@@ -1004,6 +1074,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar a ata da assembleia",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_ata"
+                  ],
+                  "ifnot": [
+                    "bia_versao"
+                  ]
+                },
+                {
                   "text": "Toma um chocolate, a gente precisa conversar",
                   "kind": "boa",
                   "next": "troca",
@@ -1046,6 +1127,17 @@
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar a ata da assembleia",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_ata"
+                  ],
+                  "ifnot": [
+                    "bia_versao"
+                  ]
+                },
                 {
                   "text": "Toma um chocolate, a gente precisa conversar",
                   "kind": "boa",
@@ -1090,6 +1182,26 @@
                 }
               ],
               "unlock": "c_dep_bia"
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá... ela não tava comigo. Saiu 17h45 e sumiu. Eu disse aquilo porque ela me pediu.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "bia_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
             }
           }
         }
@@ -1208,12 +1320,12 @@
             "conta": {
               "lines": [
                 {
-                  "text": "...Eu peguei oitocentos pra minha festa de quinze. Ia devolver. Não deu.",
-                  "expr": "triste",
+                  "text": "Tá bom. Eu abri o cofre às 17h52. Pra conferir as contas antes da auditoria.",
+                  "expr": "nervoso",
                   "anim": "pensando"
                 },
                 {
-                  "text": "Então levei tudo e deixei o nome dele. Ele terminou comigo por mensagem, sabia? Por MENSAGEM.",
+                  "text": "Mas o dinheiro já tava faltando! Alguém mexeu antes de mim. Bilhete? Nunca vi.",
                   "expr": "bravo",
                   "anim": "negando"
                 }
@@ -1228,7 +1340,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "partial"
             },
             "bravo": {
               "lines": [
@@ -1317,10 +1430,17 @@
               "lines": [
                 {
                   "who": "lari",
-                  "text": "...Tá. Eu peguei. O bilhete foi raiva. Ele terminou comigo por MENSAGEM.",
+                  "text": "Eu nem queria pôr o nome dele no... quer dizer, que bilhete? Eu nem sei de bilhete.",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "surpreso"
+                },
+                {
+                  "who": "bia",
+                  "text": "Ninguém falou em bilhete, amiga.",
                   "expr": "triste",
-                  "anim": "pensando",
-                  "react": "triste"
+                  "anim": "apontando",
+                  "react": "nervoso"
                 }
               ],
               "choices": [
@@ -1343,7 +1463,8 @@
               ],
               "cast": [
                 "bia"
-              ]
+              ],
+              "confession": "slip"
             },
             "duo_culpa": {
               "lines": [
@@ -1373,10 +1494,10 @@
               "lines": [
                 {
                   "who": "lari",
-                  "text": "17h52. Código da tesouraria. Levei tudo. Desculpa, Bia.",
-                  "expr": "triste",
-                  "anim": "negando",
-                  "react": "triste"
+                  "text": "Às 17h52 eu só conferi! O cofre já tava... tava leve, sabe?",
+                  "expr": "nervoso",
+                  "anim": "nervoso",
+                  "react": "desconfiado"
                 }
               ],
               "choices": [
@@ -1386,10 +1507,10 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao",
               "cast": [
                 "bia"
-              ]
+              ],
+              "confession": "slip"
             }
           }
         }
@@ -1786,9 +1907,9 @@
     {
       "id": "c_confissao",
       "kind": "depoimento",
-      "title": "Confissão da Lari",
+      "title": "Versão da Lari",
       "who": "lari",
-      "text": "Lari usou oitocentos reais na festa, não conseguiu repor e levou tudo às 17h52, deixando o nome do ex.",
+      "text": "Lari admite que abriu o cofre às 17h52 'para conferir', mas jura que o dinheiro já estava faltando e nega o bilhete.",
       "release": "interrogatorio",
       "deal": "team"
     }
@@ -1865,8 +1986,7 @@
       "c_log_cofre",
       "c_impressora",
       "c_rascunho",
-      "c_dm_bia_lari",
-      "c_confissao"
+      "c_dm_bia_lari"
     ],
     "categories": [
       {
@@ -1890,8 +2010,7 @@
         "category": "cofre",
         "evidence": [
           "c_log_cofre",
-          "c_rascunho",
-          "c_confissao"
+          "c_rascunho"
         ]
       },
       {
@@ -1901,8 +2020,7 @@
         "category": "bilhete",
         "evidence": [
           "c_impressora",
-          "c_dep_joana",
-          "c_confissao"
+          "c_dep_joana"
         ]
       },
       {
@@ -1913,7 +2031,8 @@
         "evidence": [
           "c_log_cofre",
           "c_ata",
-          "c_dep_jorge"
+          "c_dep_jorge",
+          "c_confissao"
         ]
       },
       {
@@ -1960,7 +2079,7 @@
     "Quem saiu cedo da assembleia e nunca voltou?",
     "Quem deixa um bilhete com o nome do ex dentro de um cofre?",
     "O cofre é digital. Ele lembra quando foi aberto.",
-    "Uma melhor amiga sabe o que a outra fez com oitocentos reais."
+    "Ninguém vai confessar tudo: o quadro é a sua prova."
   ],
   "reveal": {
     "timeline": [
@@ -2000,7 +2119,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "A Lari, vice-tesoureira, usou oitocentos reais da formatura na própria festa de quinze e não conseguiu repor antes da prestação de contas. Na quinta, saiu da assembleia às 17h45, imprimiu um bilhete 'Obrigado, Caio' para incriminar o ex-namorado e abriu o cofre às 17h52 com o código da tesouraria. À noite, o Rafa invadiu a escola só para recuperar o próprio celular confiscado e disparou o alarme, o que fez todos pensarem num roubo noturno.",
+    "summary": "A Lari, vice-tesoureira, usou oitocentos reais da formatura na própria festa de quinze e não conseguiu repor antes da prestação de contas. Na quinta, saiu da assembleia às 17h45, imprimiu um bilhete 'Obrigado, Caio' para incriminar o ex-namorado e abriu o cofre às 17h52 com o código da tesouraria. À noite, o Rafa invadiu a escola só para recuperar o próprio celular confiscado e disparou o alarme, o que fez todos pensarem num roubo noturno. Atenção: Lari NÃO confessa tudo. O máximo que se arranca é isto: Lari admite que abriu o cofre às 17h52 'para conferir', mas jura que o dinheiro já estava faltando e nega o bilhete. O resto a equipe precisa provar no quadro. Quem mente: Bia (desmonte mostrando 'Ata da assembleia'); Rafa (desmonte mostrando 'Print da câmera').",
     "twist": "Plantado em três pistas: a câmera mostra o vulto indo para a sala dos professores, e não para a diretoria; a ata mostra a Lari saindo às 17h45; e a impressão 'obrigado_caio' é das 17h40. O relatório do cofre (t+240) só confirma que o roubo foi à tarde. Segundo giro: a melhor amiga, Bia, sabia do rombo e escondeu.",
     "solution_steps": [
       "Ler o alerta: o bilhete aponta o Caio e a câmera aponta um vulto à noite.",
@@ -2010,7 +2129,7 @@
       "Na biblioteca, a impressora mostra 'obrigado_caio.docx' do usuário lari.gremio às 17h40; na mesa, o rascunho do rombo.",
       "As pistas só de um aluno (DM da Bia, aviso da auditoria) mostram o motivo: alguém da equipe precisa contar.",
       "O relatório do cofre (por volta dos 4 min) mostra a abertura às 17h52 com o código da tesouraria.",
-      "Mostrar o relatório e a impressão à Lari, provar no quadro os 3 objetivos secundários e apontá-la."
+      "Mostrar o relatório e a impressão à Lari, provar no quadro os 3 objetivos secundários e apontá-la. Não esperem confissão completa: o quadro é a prova."
     ],
     "pacing": [
       {
@@ -2032,6 +2151,11 @@
         "when": "20 min em diante",
         "aha": "Aha 3: a DM da Bia revela o motivo e o segredo da amiga.",
         "if_stuck": "Por que a Lari escolheria o nome do Caio?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado admite só uma parte, ou nada.",
+        "if_stuck": "O que, no quadro, prova o que ele ainda nega?"
       }
     ],
     "clue_map": [
@@ -2127,8 +2251,8 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Relatório do cofre' + 'Fila da impressora' para Lari; ou mostrar 'Mesa de estudo' + 'Relatório do cofre' para Lari; ou mostrar 'Relatório do cofre' para Lari",
-        "proves": "Prova a linha: Lari pegou R$ 4.800 da formatura (objetivo: Quem abriu o cofre e quando); Lari escreveu Bilhete 'Obrigado, Caio' (objetivo: Quem escreveu o bilhete 'Obrigado, Caio'). Aponta para Lari."
+        "where": "mostrar 'Relatório do cofre' + 'Fila da impressora' para Lari; ou mostrar 'Mesa de estudo' + 'Relatório do cofre' para Lari",
+        "proves": "Prova a linha: Lari estava em Sala do diretor (objetivo: Quem abriu o cofre e quando)."
       }
     ],
     "red_herrings": [
@@ -2153,8 +2277,8 @@
         "a": "Onde ela estava entre 17h45 e 18h? Olhem a ata."
       },
       {
-        "q": "A Bia não quer falar.",
-        "a": "Ela protege a amiga. Um chocolate e a DM certa ajudam."
+        "q": "O culpado não confessa!",
+        "a": "É assim mesmo: o culpado nunca confessa tudo. Não precisa: com os fios provados no quadro e o culpado apontado, a teoria está certa. Atenção a quem mente: Bia, Rafa."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -2166,6 +2290,5 @@
       "A Bia sabia do rombo e ficou quieta. Isso também é culpa?",
       "O Rafa invadiu a escola. Ele deve ser punido mesmo sem ter roubado?"
     ]
-  },
-  "cover_icon": "cofre"
+  }
 }

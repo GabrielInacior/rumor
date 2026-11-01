@@ -128,9 +128,9 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Eu só saí dez minutos! Dez! Me chamaram urgente na cantina. Agora eu sou o vilão da democracia.",
-                  "expr": "nervoso",
-                  "anim": "nervoso"
+                  "text": "A urna nunca ficou sozinha, nem um segundo. Mesário raiz.",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
                 }
               ],
               "choices": [
@@ -183,6 +183,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar a ata da urna",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_urna"
+                  ],
+                  "ifnot": [
+                    "kaua_versao"
+                  ]
+                },
+                {
                   "text": "Toma um chocolate, mesário",
                   "kind": "boa",
                   "next": "troca",
@@ -225,6 +236,17 @@
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar a ata da urna",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_urna"
+                  ],
+                  "ifnot": [
+                    "kaua_versao"
+                  ]
+                },
                 {
                   "text": "Toma um chocolate, mesário",
                   "kind": "boa",
@@ -269,6 +291,26 @@
                 }
               ],
               "unlock": "c_dep_kaua"
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá... ficou dez minutos sozinha. Me chamaram urgente na cantina. Eu menti por vergonha.",
+                  "expr": "triste",
+                  "anim": "negando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "kaua_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
             }
           }
         }
@@ -481,13 +523,13 @@
             "conta": {
               "lines": [
                 {
-                  "text": "...A gente ia perder por pouco. Se tivesse mais voto que assinatura, a eleição era anulada.",
-                  "expr": "nervoso",
-                  "anim": "pensando"
+                  "text": "Tá, eu chamei o Kauã na cantina. Pra pedir um salgado. Crime?",
+                  "expr": "bravo",
+                  "anim": "dando_de_ombros"
                 },
                 {
-                  "text": "Pus catorze votos pra Rosa. Pra elas parecerem as fraudadoras. E o Caio... o Caio me deu a chave.",
-                  "expr": "triste",
+                  "text": "Urna? Nunca toquei. Bloco de papel é pra panfleto. Me prova o contrário.",
+                  "expr": "nervoso",
                   "anim": "negando"
                 }
               ],
@@ -501,7 +543,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "partial"
             },
             "bravo": {
               "lines": [
@@ -834,10 +877,17 @@
               "lines": [
                 {
                   "who": "teo",
-                  "text": "Catorze cédulas pra Rosa. Pra anular. Era o único jeito de não perder.",
-                  "expr": "triste",
-                  "anim": "pensando",
-                  "react": "triste"
+                  "text": "Catorze cédulas não é nada... quer dizer, eu nem sei quantas cédulas tinha!",
+                  "expr": "nervoso",
+                  "anim": "negando",
+                  "react": "surpreso"
+                },
+                {
+                  "who": "caio",
+                  "text": "Quem falou em catorze, Téo?",
+                  "expr": "bravo",
+                  "anim": "apontando",
+                  "react": "nervoso"
                 }
               ],
               "choices": [
@@ -847,10 +897,10 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao",
               "cast": [
                 "teo"
-              ]
+              ],
+              "confession": "slip"
             }
           }
         }
@@ -1100,12 +1150,23 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Coordenador da Rosa. Sim, eu mandei mensagem pro mesário. Era pra pedir que ele não deixasse ninguém fraudar.",
-                  "expr": "feliz",
-                  "anim": "rindo"
+                  "text": "Nem falei com o mesário hoje. Coordenador de campanha não se mistura.",
+                  "expr": "desconfiado",
+                  "anim": "dando_de_ombros"
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar a sua DM para o Kauã",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_dm_rui"
+                  ],
+                  "ifnot": [
+                    "rui_versao"
+                  ]
+                },
                 {
                   "text": "Mostrar o cartaz do comício",
                   "kind": "boa",
@@ -1144,6 +1205,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar a sua DM para o Kauã",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_dm_rui"
+                  ],
+                  "ifnot": [
+                    "rui_versao"
+                  ]
+                },
+                {
                   "text": "Valeu pela ajuda.",
                   "kind": "neutra",
                   "end": true
@@ -1176,6 +1248,17 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar a sua DM para o Kauã",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_dm_rui"
+                  ],
+                  "ifnot": [
+                    "rui_versao"
+                  ]
+                },
+                {
                   "text": "Mostrar o cartaz do comício",
                   "kind": "boa",
                   "next": "conta",
@@ -1185,6 +1268,26 @@
                 },
                 {
                   "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá, mandei mensagem. Mas era pra ele CUIDAR da urna, não pra fraudar.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "rui_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
                   "kind": "neutra",
                   "end": true
                 }
@@ -1668,9 +1771,9 @@
     {
       "id": "c_confissao",
       "kind": "depoimento",
-      "title": "Confissão do Téo",
+      "title": "Versão do Téo",
       "who": "teo",
-      "text": "Téo colocou 14 cédulas falsas para a Rosa, para a eleição ser anulada. Usou a chave que o Caio emprestou.",
+      "text": "Téo admite que tirou o mesário da urna às 12h02 'para pedir um salgado', mas nega ter tocado nas cédulas.",
       "release": "interrogatorio",
       "deal": "team"
     }
@@ -1747,8 +1850,7 @@
       "c_bloco",
       "c_cedulas",
       "c_regra",
-      "c_lousa",
-      "c_confissao"
+      "c_lousa"
     ],
     "categories": [
       {
@@ -1772,8 +1874,7 @@
         "category": "fraude",
         "evidence": [
           "c_bloco",
-          "c_lousa",
-          "c_confissao"
+          "c_lousa"
         ]
       },
       {
@@ -1794,7 +1895,8 @@
         "category": "fraude",
         "evidence": [
           "c_comanda",
-          "c_dep_kaua"
+          "c_dep_kaua",
+          "c_confissao"
         ]
       },
       {
@@ -1839,7 +1941,8 @@
     "Quem ganha quando uma eleição é ANULADA?",
     "Quem tirou o mesário da urna no almoço?",
     "Lacre de outra cor veio de algum armário. De quem é a chave?",
-    "Quem grita 'fraude' mais alto às vezes sabe demais."
+    "Quem grita 'fraude' mais alto às vezes sabe demais.",
+    "Ninguém vai confessar tudo: o quadro é a sua prova."
   ],
   "reveal": {
     "timeline": [
@@ -1875,7 +1978,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "O Téo, vice da Chapa Azul, sabia pela pesquisa interna que ia perder. O regulamento anula a eleição se houver mais votos que assinaturas. Ele recortou 14 cédulas, todas votando na Rosa, tirou o mesário da urna às 12h02 com um chamado falso, colocou as cédulas e trocou o lacre usando a chave do armário do grêmio. A chave foi emprestada pelo Caio, que fingiu não saber do 'plano B'.",
+    "summary": "O Téo, vice da Chapa Azul, sabia pela pesquisa interna que ia perder. O regulamento anula a eleição se houver mais votos que assinaturas. Ele recortou 14 cédulas, todas votando na Rosa, tirou o mesário da urna às 12h02 com um chamado falso, colocou as cédulas e trocou o lacre usando a chave do armário do grêmio. A chave foi emprestada pelo Caio, que fingiu não saber do 'plano B'. Atenção: Téo NÃO confessa tudo. O máximo que se arranca é isto: Téo admite que tirou o mesário da urna às 12h02 'para pedir um salgado', mas nega ter tocado nas cédulas. O resto a equipe precisa provar no quadro. Quem mente: Kauã (desmonte mostrando 'Mesa da urna'); Rui (desmonte mostrando 'DM do Rui').",
     "twist": "Plantado nas cédulas separadas (a Rosa vence sem elas) e no regulamento (anulação). As duas estão no começo, e quase toda turma lê sem fazer a conta. O 'ou não 😏' do Téo e a lousa 'PLANO B' confirmam. Segundo giro: o Caio, que grita fraude, emprestou a chave do armário.",
     "solution_steps": [
       "Ver o resultado: 212 votos para 198 assinaturas. Todos acusam a chapa vencedora.",
@@ -1885,7 +1988,7 @@
       "Na sala do grêmio, a mochila do Téo tem o bloco com 14 folhas faltando, e a lousa diz 'PLANO B: ANULAR'.",
       "No pátio, o cartaz do comício dá o álibi do Rui.",
       "O relatório do lacre (cerca de 4 min) aponta o armário do grêmio. Mostrar ao Caio: ele emprestou a chave.",
-      "Provar no quadro os 3 objetivos secundários e apontar o Téo."
+      "Provar no quadro os 3 objetivos secundários e apontar o Téo. Não esperem confissão completa: o quadro é a prova."
     ],
     "pacing": [
       {
@@ -1907,6 +2010,11 @@
         "when": "20 min em diante",
         "aha": "Aha 3: o lacre vem do armário do grêmio, e o Caio emprestou a chave.",
         "if_stuck": "De quem é a chave do armário do grêmio?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado admite só uma parte, ou nada.",
+        "if_stuck": "O que, no quadro, prova o que ele ainda nega?"
       }
     ],
     "clue_map": [
@@ -1997,8 +2105,8 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Mochila do Téo' para Téo; ou mostrar 'Cédulas separadas' + 'Regulamento' para Téo; ou mostrar 'Mochila do Téo' para Caio",
-        "proves": "Prova a linha: Téo colocou As 14 cédulas falsas (objetivo: Quem colocou as cédulas falsas). Aponta para Téo."
+        "where": "mostrar 'Mochila do Téo' para Téo; ou mostrar 'Cédulas separadas' + 'Regulamento' para Téo",
+        "proves": "Prova a linha: Téo estava em Biblioteca (urna) (objetivo: Quem colocou as cédulas falsas)."
       }
     ],
     "red_herrings": [
@@ -2023,8 +2131,8 @@
         "a": "De quem é a chave do armário de onde veio o lacre?"
       },
       {
-        "q": "O Rui mandou mensagem pro mesário!",
-        "a": "Leiam a mensagem inteira. E onde o Rui estava ao meio-dia?"
+        "q": "O culpado não confessa!",
+        "a": "É assim mesmo: o culpado nunca confessa tudo. Não precisa: com os fios provados no quadro e o culpado apontado, a teoria está certa. Atenção a quem mente: Kauã, Rui."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -2036,6 +2144,5 @@
       "O Caio não fez a fraude, mas emprestou a chave sem perguntar. Isso é culpa?",
       "Por que a gente olha primeiro para quem ganhou?"
     ]
-  },
-  "cover_icon": "urna"
+  }
 }

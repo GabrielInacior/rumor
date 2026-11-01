@@ -94,12 +94,23 @@
             "inicio": {
               "lines": [
                 {
-                  "text": "Três mil reais, mano. E o cadeado tava FECHADO. Alguém sabia meu segredo.",
+                  "text": "Arrombaram meu cadeado, mano! Na força! Três mil reais!",
                   "expr": "bravo",
                   "anim": "negando"
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar o cadeado aberto sem força",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_cadeado"
+                  ],
+                  "ifnot": [
+                    "gabriel_versao"
+                  ]
+                },
                 {
                   "text": "Quem sabe o segredo do seu cadeado?",
                   "kind": "neutra",
@@ -126,6 +137,17 @@
                 }
               ],
               "choices": [
+                {
+                  "text": "Mostrar o cadeado aberto sem força",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_cadeado"
+                  ],
+                  "ifnot": [
+                    "gabriel_versao"
+                  ]
+                },
                 {
                   "text": "Valeu, depois eu volto.",
                   "kind": "neutra",
@@ -158,7 +180,43 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o cadeado aberto sem força",
+                  "kind": "boa",
+                  "next": "versao",
+                  "requires": [
+                    "c_cadeado"
+                  ],
+                  "ifnot": [
+                    "gabriel_versao"
+                  ]
+                },
+                {
                   "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "versao": {
+              "lines": [
+                {
+                  "text": "Tá... não tava arrombado. Falei aquilo porque fiquei com vergonha.",
+                  "expr": "triste",
+                  "anim": "negando"
+                },
+                {
+                  "text": "A senha é o aniversário da Mari. Só meus amigos sabem. Tipo o Gui.",
+                  "expr": "nervoso",
+                  "anim": "pensando"
+                }
+              ],
+              "contradiction": true,
+              "sets": [
+                "gabriel_versao"
+              ],
+              "choices": [
+                {
+                  "text": "Por que mentiu antes?",
                   "kind": "neutra",
                   "end": true
                 }
@@ -304,6 +362,15 @@
           "entries": [
             {
               "if": [
+                "gui_recuou"
+              ],
+              "ifnot": [
+                "gui_falou"
+              ],
+              "node": "recua"
+            },
+            {
+              "if": [
                 "gui_falou"
               ],
               "node": "conta"
@@ -334,7 +401,7 @@
                 {
                   "text": "Mostrar o papel do seu armário",
                   "kind": "boa",
-                  "next": "conta",
+                  "next": "recua",
                   "requires": [
                     "c_papel"
                   ]
@@ -363,7 +430,7 @@
                 {
                   "text": "Mostrar o papel do seu armário",
                   "kind": "boa",
-                  "next": "conta",
+                  "next": "recua",
                   "requires": [
                     "c_papel"
                   ]
@@ -398,7 +465,8 @@
                   "end": true
                 }
               ],
-              "unlock": "c_confissao"
+              "unlock": "c_confissao",
+              "confession": "full"
             },
             "bravo": {
               "lines": [
@@ -425,11 +493,47 @@
               ],
               "choices": [
                 {
+                  "text": "Mostrar o papel do seu armário",
+                  "kind": "boa",
+                  "next": "recua",
+                  "requires": [
+                    "c_papel"
+                  ]
+                },
+                {
+                  "text": "Valeu, depois eu volto.",
+                  "kind": "neutra",
+                  "end": true
+                }
+              ]
+            },
+            "recua": {
+              "lines": [
+                {
+                  "text": "Esse papel? Eu anotei porque o Gabriel vive esquecendo a senha. Eu AJUDO ele.",
+                  "expr": "nervoso",
+                  "anim": "rindo"
+                },
+                {
+                  "text": "Quem pegou foi o Kauã, aposto. Apareceu de tênis novo, né?",
+                  "expr": "desconfiado",
+                  "anim": "apontando"
+                }
+              ],
+              "sets": [
+                "gui_recuou"
+              ],
+              "confession": "partial",
+              "choices": [
+                {
                   "text": "Mostrar o anúncio do celular",
                   "kind": "boa",
                   "next": "conta",
                   "requires": [
                     "c_anuncio"
+                  ],
+                  "if": [
+                    "gui_recuou"
                   ]
                 },
                 {
@@ -829,28 +933,20 @@
               "lines": [
                 {
                   "who": "gui",
-                  "text": "...Tá. Tá bom. Eu devo dinheiro, mano. Muito.",
-                  "expr": "triste",
-                  "anim": "pensando",
+                  "text": "Eu devo dinheiro, mano. Muito... quer dizer, isso não tem nada a ver.",
+                  "expr": "nervoso",
+                  "anim": "negando",
                   "react": "surpreso"
                 },
                 {
                   "who": "pedro",
-                  "text": "Devolve o celular dele, Gui. Ele é teu amigo.",
-                  "expr": "triste",
-                  "anim": "falando",
-                  "react": "triste"
+                  "text": "Ninguém falou em dinheiro, Gui.",
+                  "expr": "desconfiado",
+                  "anim": "apontando",
+                  "react": "nervoso"
                 }
               ],
               "choices": [
-                {
-                  "text": "Mostrar o papel com o segredo 0408",
-                  "kind": "boa",
-                  "next": "duo_conf",
-                  "requires": [
-                    "c_papel"
-                  ]
-                },
                 {
                   "text": "Deixa os dois conversarem.",
                   "kind": "neutra",
@@ -862,29 +958,8 @@
               ],
               "cast": [
                 "gui"
-              ]
-            },
-            "duo_conf": {
-              "lines": [
-                {
-                  "who": "gui",
-                  "text": "Fui eu. Peguei e anunciei. Desculpa, Pedro. Desculpa pro Gabriel também.",
-                  "expr": "triste",
-                  "anim": "negando",
-                  "react": "triste"
-                }
               ],
-              "choices": [
-                {
-                  "text": "Valeu, os dois.",
-                  "kind": "neutra",
-                  "end": true
-                }
-              ],
-              "unlock": "c_confissao",
-              "cast": [
-                "gui"
-              ]
+              "confession": "slip"
             }
           }
         }
@@ -1156,7 +1231,8 @@
     "Um tênis novo não é prova. Como foi pago?",
     "Quem saiu da aula antes das 10h?",
     "O amigo mais solidário do grupo pode ser o mais perto do armário.",
-    "O que um ladrão faz com um celular caro?"
+    "O que um ladrão faz com um celular caro?",
+    "Uma prova só pode não bastar. Junte duas."
   ],
   "reveal": {
     "timeline": [
@@ -1192,7 +1268,7 @@
     ]
   },
   "teacher_guide": {
-    "summary": "O Gui deve dinheiro num site de skins de jogo. Sabia o segredo do cadeado do melhor amigo, que é o aniversário da namorada. Saiu da educação física às 9h40, abriu o armário do Gabriel, guardou o celular e anunciou na internet. O Kauã foi acusado só por ter aparecido de tênis novo.",
+    "summary": "O Gui deve dinheiro num site de skins de jogo. Sabia o segredo do cadeado do melhor amigo, que é o aniversário da namorada. Saiu da educação física às 9h40, abriu o armário do Gabriel, guardou o celular e anunciou na internet. O Kauã foi acusado só por ter aparecido de tênis novo. Gui mente no começo e só confessa depois de duas provas seguidas: a primeira faz recuar e jogar a culpa em outro, a segunda quebra. Quem mente: Gabriel (desmonte mostrando 'Armário 12').",
     "twist": "Plantado no cadeado aberto sem força (o ladrão conhecia o Gabriel), na chamada (quem saiu cedo) e no Gui consolando o amigo no grupo. O anúncio (t+) com o adesivo de leão fecha. Segundo giro: a testemunha, Pedro, também mentia, para esconder que matava aula.",
     "solution_steps": [
       "Ler o grupo: a turma culpa o Kauã pelo tênis novo.",
@@ -1219,6 +1295,11 @@
         "when": "10 min em diante",
         "aha": "Aha 2: o papel com '0408' e o anúncio entregam o Gui.",
         "if_stuck": "O que uma pessoa endividada faria com um celular caro?"
+      },
+      {
+        "when": "Final",
+        "aha": "O culpado cede depois das provas certas.",
+        "if_stuck": "Que prova vocês ainda não mostraram para ele?"
       }
     ],
     "clue_map": [
@@ -1269,7 +1350,7 @@
       },
       {
         "clue": "c_confissao",
-        "where": "mostrar 'Armário do Gui' para Gui; ou mostrar 'Anúncio na internet' para Gui; ou mostrar 'Armário do Gui' para Pedro",
+        "where": "mostrar 'Anúncio na internet' para Gui",
         "proves": "Prova a linha: Gui pegou O celular do Gabriel (objetivo: Quem pegou o celular). Aponta para Gui."
       }
     ],
@@ -1295,8 +1376,8 @@
         "a": "Ele está com medo de ser pego matando aula. Um chocolate ajuda."
       },
       {
-        "q": "Como saber que é o celular dele?",
-        "a": "Esperem o anúncio. Comparem a capinha."
+        "q": "Mostramos a prova e ele mentiu de novo.",
+        "a": "Às vezes uma prova só faz a pessoa recuar. Procurem uma segunda prova diferente e mostrem depois. Atenção a quem mente: Gabriel."
       },
       {
         "q": "Precisamos resolver tudo antes de entregar?",
@@ -1308,6 +1389,5 @@
       "Dívida justifica trair um amigo?",
       "O Pedro também mentia. A mentira dele atrapalhou a investigação?"
     ]
-  },
-  "cover_icon": "cadeado"
+  }
 }
