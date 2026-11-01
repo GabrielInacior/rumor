@@ -6,7 +6,8 @@ Duas variações com sementes fixas:
 As duas têm, no horizonte, a silhueta da cidade com janelinhas amarelas acesas (360 graus, porque
 os interiores enxergam o céu pelas janelas laterais).
 
-Convenção do Godot: u = 0.5 é a frente da câmera (-Z), u = 0.75 é +X; v = 0 é o zênite.
+Pintado com a frente da câmera (-Z) em u = 0.5 e +X em u = 0.75 (v = 0 é o zênite); ao gravar, o
+arquivo gira meia volta porque o Godot usa a frente em u = 0.
 Uso: python tools/art/gen_sky.py
 """
 from __future__ import annotations
@@ -280,28 +281,30 @@ class Sky:
     def finish(self, path):
         c = kuwahara_wrap(self.cv.c, 1)
         im = Image.fromarray((np.clip(c, 0, 1) * 255 + 0.5).astype(np.uint8), "RGB")
-        im.save(path, optimize=True)
+        # o Godot põe a frente da câmera (-Z) em u = 0 (medido na sonda com um panorama de teste);
+        # pintamos com a frente no meio (mais fácil de ver) e giramos meia volta só ao gravar
+        Image.fromarray(np.roll(np.asarray(im), W // 2, axis=1)).save(path, optimize=True)
         return im
 
 
 def sky_lua():
     s = Sky(101,
             [(90, "#03071a"), (55, "#071030"), (30, "#0e1b46"), (14, "#18295e"), (5, "#22397a"), (0, "#2f4b8e"), (-5, "#1a2a5a")],
-            9, 0.462, 23.0, 3.6, "#6f8fd8", 22.0, 0.32)
+            9, 0.474, 30.0, 3.6, "#6f8fd8", 22.0, 0.32)
     s.paint_gradient()
     s.stars(520)
     # nuvens: uma faixa longa cortando perto da lua, outras espalhadas pelo horizonte inteiro
     rng = s.rng
-    s.cloud(0.50, 17.0, 34, 3.6, "#15224d", "#5b78bf", "#0c1638", lit_side=True)
-    s.cloud(0.405, 28.5, 22, 2.8, "#122046", "#4f6db3", "#0b1434", lit_side=True)
+    s.cloud(0.51, 24.0, 34, 3.6, "#15224d", "#5b78bf", "#0c1638", lit_side=True)
+    s.cloud(0.415, 36.0, 22, 2.8, "#122046", "#4f6db3", "#0b1434", lit_side=True)
     for _ in range(16):
         u = rng.random()
-        if abs(u - 0.46) < 0.07:
+        if abs(u - 0.474) < 0.07:
             continue
         s.cloud(u, rng.uniform(7, 30), rng.uniform(14, 36), rng.uniform(2.0, 4.2), "#121e44", "#3f5a9e", "#0a1332", 0.8, lit_side=True)
     s.paint_moon()
     # um fiapo de nuvem passando na frente da parte de baixo da lua (dá profundidade)
-    s.cloud(0.47, 21.0, 12, 0.9, "#1a2a5c", "#7f98d6", "#13204a", 1.4, lit_side=True)
+    s.cloud(0.482, 28.0, 12, 0.9, "#1a2a5c", "#7f98d6", "#13204a", 1.4, lit_side=True)
     s.city("#2a3f78", hexc("#0f1a40"), hexc("#060b1f"), 0.09, 0.3)
     return s.finish(os.path.join(OUT, "sky_lua.png"))
 

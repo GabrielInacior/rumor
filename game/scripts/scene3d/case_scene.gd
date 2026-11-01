@@ -133,14 +133,14 @@ func _build() -> void:
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
 	e.ambient_light_color = Color("#2a3f78")
-	e.ambient_light_energy = 1.35
+	e.ambient_light_energy = 1.45
 	e.fog_enabled = true
 	e.fog_light_color = Color("#16244d")
 	e.fog_density = 0.025
 	e.fog_sky_affect = 0.25
 	# exposição mais alta: tela de celular com brilho baixo engolia a metade de baixo da cena
 	e.tonemap_mode = Environment.TONE_MAPPER_LINEAR
-	e.tonemap_exposure = 1.5
+	e.tonemap_exposure = 1.9
 	env.environment = e
 	world.add_child(env)
 	_env = e
@@ -167,6 +167,7 @@ func _build() -> void:
 		_: _scene_corredor()
 	_place_hotspots()
 	_place_people()
+	_auto_frame()
 	# figurantes: rodinhas conversando e gente passando (não tocáveis)
 	var life := AmbientLife.new()
 	world.add_child(life)
@@ -192,8 +193,10 @@ func _sky_for(id: String) -> Sky:
 		return _skies[which]
 	var pm := PanoramaSkyMaterial.new()
 	pm.panorama = SKY_TEX[which]
+	if OS.get_environment("SKY_DEBUG") != "":
+		pm.panorama = ImageTexture.create_from_image(Image.load_from_file(OS.get_environment("SKY_DEBUG")))
 	# o tonemap da cena sobe a exposição para o celular; o céu compensa para manter a pintura
-	pm.energy_multiplier = 0.62
+	pm.energy_multiplier = 0.5
 	pm.filter = true
 	var s := Sky.new()
 	s.sky_material = pm
@@ -393,6 +396,61 @@ func _camera(pos: Vector3, target: Vector3, yaw_limit := 0.5) -> void:
 	_yaw_limit = yaw_limit
 
 
+## Enquadramento para o celular em pé: a cena define de onde a câmera olha; aqui a mira é
+## recentralizada no que importa (âncoras e pessoas, dos pés à cabeça) e o campo de visão abre ou
+## fecha para caber tudo com uma folga. Menos teto vazio, menos chão vazio, nada importante cortado.
+@export var frame_margin_x := 0.07     # folga lateral (fração da metade da tela)
+@export var frame_margin_y := 0.1
+@export var frame_aspect := 720.0 / 1280.0
+@export var frame_fov_min := 50.0
+@export var frame_fov_max := 72.0
+
+
+func _auto_frame() -> void:
+	if _anchors.is_empty() or not cam.is_inside_tree():
+		return
+	var pts: Array[Vector3] = []
+	for k in _anchors:
+		var mi = _anchors[k].get("mesh")
+		if mi is MeshInstance3D:
+			var m := mi as MeshInstance3D
+			pts.append(m.global_transform * m.get_aabb().get_center())
+	var spots: Array = PEOPLE_SPOTS.get(scene_id, [])
+	for i in mini(people.size(), spots.size()):
+		pts.append(spots[i] + Vector3(0, 0.05, 0))
+		pts.append(spots[i] + Vector3(0, 1.8, 0))
+	if pts.size() < 2:
+		return
+	var ext := Vector4.ZERO
+	for _pass in 2:
+		ext = _frame_extents(pts)
+		var cx := (ext.x + ext.y) * 0.5
+		var cy := (ext.z + ext.w) * 0.5
+		var dl := Vector3(tan(cx), tan(cy), -1.0).normalized()
+		var dw := cam.global_transform.basis * dl
+		cam.look_at(cam.global_position + dw, Vector3.UP)
+	ext = _frame_extents(pts)
+	var hx := (ext.y - ext.x) * 0.5
+	var hy := (ext.w - ext.z) * 0.5
+	# metade do campo vertical necessária para caber na largura (retrato) e na altura, com folga
+	var need_y := maxf(atan(tan(hx) / frame_aspect) / (1.0 - frame_margin_x), hy / (1.0 - frame_margin_y))
+	cam.fov = clampf(rad_to_deg(need_y * 2.0), frame_fov_min, frame_fov_max)
+
+
+## extremos angulares (x mín, x máx, y mín, y máx) dos pontos vistos pela câmera
+func _frame_extents(pts: Array[Vector3]) -> Vector4:
+	var inv := cam.global_transform.affine_inverse()
+	var e := Vector4(INF, -INF, INF, -INF)
+	for p in pts:
+		var l: Vector3 = inv * p
+		if l.z > -0.2:
+			continue
+		var ax := atan2(l.x, -l.z)
+		var ay := atan2(l.y, -l.z)
+		e = Vector4(minf(e.x, ax), maxf(e.y, ax), minf(e.z, ay), maxf(e.w, ay))
+	return e
+
+
 ## objeto tocável: registra o corpo de colisão com o que ele faz
 func _target(mi: MeshInstance3D, kind: String, data: Dictionary) -> void:
 	var body := StaticBody3D.new()
@@ -480,7 +538,7 @@ func _place_people() -> void:
 	# pessoa: as pessoas leem bem no escuro e a cena economiza até 2 luzes no celular
 	var fill := SpotLight3D.new()
 	fill.light_color = Color("#ffd9a8")
-	fill.light_energy = 0.75
+	fill.light_energy = 1.5
 	fill.spot_range = 14.0
 	fill.spot_angle = 30.0
 	fill.spot_attenuation = 0.6
@@ -1044,7 +1102,7 @@ func _scene_biblioteca() -> void:
 	# pilha de livros no chão perto da câmera, esperando alguém guardar
 	for b in 4:
 		_box(Vector3(-0.55, 0.05 + b * 0.09, -0.5), Vector3(0.34 - b * 0.03, 0.08, 0.26), BOOK_COLS[b + 1], b * 0.35 - 0.4, 0.0, 0.01)
-	_camera(Vector3(0.6, 2.6, 1.6), Vector3(0.1, 0.2, -4.4), 0.5)
+	_camera(Vector3(0.5, 2.0, 1.8), Vector3(0.1, 0.8, -4.4), 0.5)
 
 
 func _scene_teatro() -> void:
@@ -1147,7 +1205,7 @@ func _scene_teatro() -> void:
 		for sx in [-3.15, 3.15]:
 			_flat(Vector3(sx, 0.03, -3.2 + r * 1.2), Vector3(0.12, 0.05, 0.08), WARM, 0.0, 1.6, WARM)
 	_light(Vector3(0, 3.2, -1.2), Color("#ffb070"), 0.7, 5.0)
-	_camera(Vector3(0.0, 3.1, 3.4), Vector3(0.0, 0.6, -6.0), 0.5)
+	_camera(Vector3(0.2, 2.3, 1.2), Vector3(0.0, 1.2, -6.0), 0.5)
 
 
 func _scene_sala_aula() -> void:
@@ -1227,7 +1285,7 @@ func _scene_sala_aula() -> void:
 	}
 	_free_anchors = [{"mesh": ledges[0]}, {"pos": Vector3(0.0, 0.8, -4.4), "size": Vector3(0.3, 0.04, 0.25)}]
 	_moon(Vector3(0.9, -0.6, -0.3), 1.0)
-	_camera(Vector3(1.4, 2.7, 1.5), Vector3(-0.5, 0.3, -4.8), 0.45)
+	_camera(Vector3(1.6, 2.1, 1.9), Vector3(-0.5, 0.8, -4.8), 0.45)
 
 
 func _scene_cantina() -> void:
@@ -1326,7 +1384,7 @@ func _scene_cantina() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.9, 0.8, -1.4), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-1.0, 0.8, -4.2), "size": Vector3(0.3, 0.05, 0.25)}]
 	_moon(Vector3(-0.6, -0.7, -0.4), 0.8)
-	_camera(Vector3(0.3, 2.8, 1.6), Vector3(-0.2, 0.3, -5.5), 0.45)
+	_camera(Vector3(0.3, 2.1, 1.8), Vector3(-0.2, 0.8, -5.5), 0.45)
 
 
 func _scene_patio() -> void:
@@ -1413,7 +1471,7 @@ func _scene_patio() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.5, 0.5, -5.2), "size": Vector3(0.3, 0.06, 0.25)}, {"pos": Vector3(-1.0, 0.05, -3.4), "size": Vector3(0.3, 0.06, 0.3)}]
 	_moon(Vector3(0.7, -0.6, 0.5), 0.9)
-	_camera(Vector3(0.0, 1.9, 3.6), Vector3(0.0, 1.5, -6.0), 0.45)
+	_camera(Vector3(0.0, 1.7, 2.8), Vector3(0.0, 1.4, -6.0), 0.45)
 
 
 func _scene_sala_professores() -> void:
@@ -1506,7 +1564,7 @@ func _scene_sala_professores() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.2, 0.8, -3.7), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(2.9, 0.98, -2.7), "size": Vector3(0.2, 0.1, 0.2)}]
 	_moon(Vector3(0.8, -0.5, -0.2), 1.0)
-	_camera(Vector3(0.7, 2.6, 1.5), Vector3(-0.3, 0.2, -4.4), 0.45)
+	_camera(Vector3(0.6, 2.0, 2.0), Vector3(-0.3, 0.8, -4.4), 0.45)
 
 
 func _scene_quadra() -> void:
@@ -1601,7 +1659,7 @@ func _scene_quadra() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(-1.6, 0.48, -1.2), "size": Vector3(0.3, 0.06, 0.25)}, {"pos": Vector3(4.4, 1.02, -7.5), "size": Vector3(0.3, 0.06, 0.25)}]
 	_moon(Vector3(-0.8, -0.5, -0.3), 0.9)
-	_camera(Vector3(-0.5, 3.3, 2.4), Vector3(0.8, 0.2, -8.5), 0.5)
+	_camera(Vector3(-0.3, 2.5, 2.4), Vector3(0.8, 0.8, -8.5), 0.5)
 
 
 func _scene_sala_diretor() -> void:
@@ -1689,7 +1747,7 @@ func _scene_sala_diretor() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.3, 0.9, -4.5), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-2.3, 0.1, -4.6), "size": Vector3(0.3, 0.15, 0.3)}]
 	_moon(Vector3(-1.0, -0.5, -0.3), 1.0)
-	_camera(Vector3(0.3, 2.5, 1.6), Vector3(-0.2, 0.3, -4.4), 0.45)
+	_camera(Vector3(0.3, 1.9, 1.2), Vector3(-0.2, 0.8, -4.4), 0.45)
 
 
 func _scene_deposito() -> void:
@@ -1774,7 +1832,7 @@ func _scene_deposito() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(-1.95, 1.2, -2.8), "size": Vector3(0.3, 0.1, 0.25)}, {"pos": Vector3(0.0, 0.05, -2.4), "size": Vector3(0.3, 0.1, 0.3)}]
 	_moon(Vector3(0.4, -0.8, -0.3), 0.5)
-	_camera(Vector3(0.2, 2.5, 2.4), Vector3(0.0, 0.3, -4.0), 0.42)
+	_camera(Vector3(0.2, 1.9, 1.4), Vector3(0.0, 0.8, -4.0), 0.42)
 
 
 func _scene_laboratorio() -> void:
@@ -1880,7 +1938,7 @@ func _scene_laboratorio() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.6, 0.98, -5.0), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-1.0, 0.98, -2.6), "size": Vector3(0.2, 0.1, 0.2)}]
 	_moon(Vector3(0.9, -0.6, -0.3), 1.0)
-	_camera(Vector3(0.6, 2.7, 1.4), Vector3(-0.2, 0.3, -4.6), 0.45)
+	_camera(Vector3(0.6, 2.1, 1.4), Vector3(-0.2, 0.8, -4.6), 0.45)
 
 
 func _scene_sala_musica() -> void:
@@ -1982,7 +2040,7 @@ func _scene_sala_musica() -> void:
 	}
 	_free_anchors = [{"pos": Vector3(0.0, 0.5, -2.4), "size": Vector3(0.3, 0.05, 0.25)}, {"pos": Vector3(-1.6, 0.1, -3.2), "size": Vector3(0.3, 0.15, 0.3)}]
 	_moon(Vector3(0.6, -0.7, -0.3), 0.7)
-	_camera(Vector3(0.4, 2.7, 1.4), Vector3(-0.3, 0.3, -4.4), 0.45)
+	_camera(Vector3(0.4, 2.1, 1.9), Vector3(-0.3, 0.8, -4.4), 0.45)
 
 
 ## fachada da escola à noite, só para o menu: chuva, poste amarelo e uma janela acesa no 2º andar

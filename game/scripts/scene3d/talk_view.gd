@@ -179,10 +179,10 @@ func _build_set() -> void:
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
-	e.background_color = Color("#0a1226")
+	e.background_color = Color("#16244d")
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = Color("#2a3f78")
-	e.ambient_light_energy = 0.7
+	e.ambient_light_energy = 1.15
 	env.environment = e
 	w.add_child(env)
 	# parede com persiana: faixas de luz da lua atravessando (clichê noir obrigatório)
@@ -192,7 +192,7 @@ func _build_set() -> void:
 	wall.mesh = wm
 	var mat := ShaderMaterial.new()
 	mat.shader = preload("res://shaders/toon.gdshader")
-	mat.set_shader_parameter("albedo", Color("#3d4f8a"))
+	mat.set_shader_parameter("albedo", Color("#55689f"))
 	wall.material_override = mat
 	wall.position = Vector3(0, 1.6, -1.6)
 	w.add_child(wall)
@@ -215,13 +215,13 @@ func _build_set() -> void:
 	ch.rotation.y = 0.18
 	var key := OmniLight3D.new()
 	key.light_color = Color("#ffcf7a")
-	key.light_energy = 2.4
+	key.light_energy = 3.2
 	key.omni_range = 4.0
 	key.position = Vector3(0.9, 1.9, 1.1)
 	w.add_child(key)
 	var rim := OmniLight3D.new()
 	rim.light_color = Color("#7fa0ff")
-	rim.light_energy = 2.0
+	rim.light_energy = 2.4
 	rim.omni_range = 4.0
 	rim.position = Vector3(-1.1, 2.0, -0.8)
 	w.add_child(rim)

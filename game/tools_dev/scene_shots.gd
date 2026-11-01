@@ -69,7 +69,7 @@ func _ready() -> void:
 			var sp2: Vector2 = cs.cam.unproject_position(hp)
 			if sp2.x < 0 or sp2.y < 0 or sp2.x > vs.x or sp2.y > vs.y:
 				off.append("pessoa%d(%d,%d)" % [i, sp2.x, sp2.y])
-		print("FRAME %s fora=%s" % [id, off])
+		print("FRAME %s fov=%.1f fora=%s" % [id, cs.cam.fov, off])
 		var counts := _count(cs.world)
 		print("SHOT %s size=%s meshes=%d char_meshes=%d omni_spot=%d dir=%d flavors=%d missing=%s" % [id, img.get_size(), counts[0], counts[3], counts[1], counts[2], _flavors(cs), missing])
 		cs.queue_free()

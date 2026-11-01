@@ -992,6 +992,11 @@ func refresh() -> void:
 	# hotspots já achados pela equipe ficam apagados na cena
 	for hid in Net.state.get("hotspots", []):
 		scene3d.mark_found(str(hid))
+	# quem a equipe já interrogou ganha o sinal de "já conversou" na cena
+	if scene3d.has_method("set_talked"):
+		for f in (Net.state.get("flags", {}) as Dictionary).keys():
+			if str(f).begins_with("talk:"):
+				scene3d.call("set_talked", str(f).split(":")[1], true)
 	_refresh_loc_strip()
 	var lr: Variant = Net.state.get("lastResult")
 	if lr is Dictionary and float(lr.get("at", 0)) > last_result_at:
