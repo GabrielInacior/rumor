@@ -30,8 +30,12 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
   // sala_diretor | deposito | laboratorio | sala_musica
   "locations": ["corredor", "sala_aula", "sala_musica"],
   "scene": "corredor",                // legado: sempre igual a locations[0]
-  // pessoas presentes fisicamente nas cenas (1 a 3 por cena). Cada uma precisa de talk.tree.
-  "scene_people": [{"id": "caio", "scene": "corredor"}, {"id": "duda", "scene": "sala_musica"}],
+  // pessoas presentes nas cenas. Cada uma precisa de talk.tree. Uma pessoa pode MUDAR DE LUGAR: várias entradas em ordem,
+  // vale a PRIMEIRA cuja condição (if/ifnot com flags da equipe) bate; a última, sem condição, é a padrão (obrigatória).
+  // O jogo avisa "X saiu daqui, procure no mapa". Multi: 2 a 3 movimentos. Solo: 1 a 2.
+  // Nunca mais de 3 pessoas possíveis na mesma cena, contando quem pode chegar.
+  "scene_people": [{"id": "caio", "scene": "quadra", "if": ["caio_bravo"]}, {"id": "caio", "scene": "corredor"},
+                   {"id": "duda", "scene": "sala_musica"}],
   "briefing": "Máx. 45 palavras, com gancho forte. Voz de narrador noir.",
   "goal": "1 frase, fica fixa na tela.",
 
@@ -43,10 +47,15 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
   "cards": [                          // tudo que pode ir pro quadro, menos pistas
     {"id": "caio", "kind": "pessoa", "name": "Caio", "gender": "m", "role": "presidente do grêmio",
      "look": {"skin": "#8d5524", "hair": "raspado", "hair_color": "#1a1a1a", "top": "#2e7d32", "accessory": "bone"},
-     // gender: "f" | "m" (escolhe o modelo 3D; adultos seguem a mesma regra)
+     // gender: "f" | "m" (escolhe o modelo 3D)
+     // ADULTOS (professores, diretor, vice, zelador, funcionários, pais): "adult": true na carta e, no look,
+     //   "outfit": "formal" | "uniforme"; homens adultos também "facial_hair": nenhum | bigode | barba | cavanhaque.
+     //   hair de homem adulto: calvo | grisalho_curto | curto | raspado
+     //   hair de mulher adulta: coque_baixo | chanel | coque | longo
+     //   Adolescentes não têm "adult", "outfit" nem "facial_hair".
      // hair para "f" (sempre comprido): longo | rabo | coque | trancas | ondulado | cacheado_longo
      // hair para "m": curto | raspado | franja | cacheado
-     // accessory: nenhum | oculos | bone | fones | brinco | cachecol
+     // accessory: nenhum | oculos | bone | fones | brinco | cachecol | oculos_leitura | cracha
      "talk": {
        "greet": [{"text": "Eu? Tô só passando. Juro.", "expr": "nervoso", "anim": "negando"}],  // 1 a 2 falas, sem revelar nada
        "mood": "desconfiado",                                                                      // expressão padrão
@@ -180,6 +189,22 @@ O cliente NUNCA recebe `solution` nem `reveal` antes do fim da rodada (o servido
 `sets` (flags), `unlock` (pista com release interrogatorio), `give_item` (item na mochila). `take_item` tira o item da mochila
 (o nó só é alcançável se a equipe tem o item). `end: true` + `lock: N` encerra e bloqueia a conversa com essa pessoa por N segundos.
 
+**Conversa a dois (acareação, cumplicidade, briga):** um nó pode ter `"cast": ["id_da_outra_pessoa"]`. Cada fala
+desse nó pode ter `"who"` (id de quem fala: o dono da árvore ou alguém do cast) e `"react"` (expressão de quem escuta:
+neutro | feliz | surpreso | bravo | desconfiado | triste | nervoso). A conversa é aberta por uma entrada com condição
+(`if`/`ifnot`) que aponta para o nó com `cast`; a outra pessoa precisa estar na mesma sala com essas flags (use a mudança
+de lugar para juntar as duas). Os nós seguintes da conversa repetem o `cast`. O nó de abertura seta uma flag de "já
+aconteceu" para não repetir. Multi: 1 a 2 conversas a dois. Solo médio e difícil: 1.
+
+```jsonc
+"entries": [{"if": ["pedro_falou"], "ifnot": ["duo_vest"], "node": "duo_gui"}, ...],
+"nodes": {"duo_gui": {"cast": ["gui"], "sets": ["duo_vest"],
+  "lines": [{"who": "gui", "text": "Vai acreditar nesse cara?", "expr": "bravo", "anim": "apontando", "react": "bravo"},
+            {"who": "pedro", "text": "Eu vi a lanterna, Gui.", "expr": "bravo", "anim": "apontando", "react": "nervoso"}],
+  "choices": [{"text": "O seu armário é no corredor, Gui", "kind": "boa", "next": "duo_fim"},
+              {"text": "Deixa os dois conversarem.", "kind": "neutra", "end": true}]}}
+```
+
 **Escolha:** `text` (até 9 palavras, fala do detetive), `kind` (boa | neutra | ruim), `next` OU `end: true`.
 Condições: `requires` (ids de pista ou item que a equipe tem), `if` / `ifnot` (flags). Escolha que não passa nas
 condições fica escondida.
@@ -188,7 +213,7 @@ condições fica escondida.
 ou que é aberto por uma entry com essa flag em `if`.
 
 **Regras de roteiro:**
-- 3 a 6 nós por pessoa. Entradas diferentes para a 1ª conversa, o reencontro e depois de flags importantes.
+- 3 a 10 nós por pessoa (até 4 falas por nó). Entradas diferentes para a 1ª conversa, o reencontro e depois de flags importantes.
 - Todo nó não final tem uma saída livre (escolha sem `requires`/`if`, que não seja ruim).
 - Escolha `ruim` leva a um nó final com `sets` (ex.: `bia_ofendida`), `lock` e expressão brava ou nervosa.
   A flag fecha a rota fácil: a pessoa passa a dar menos, ou só fala depois de uma troca ou de uma prova melhor.
